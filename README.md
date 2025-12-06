@@ -26,7 +26,16 @@ pip install -r requirements.txt
 ```bash
 uvicorn app.main:app --reload
 # API docs at: https://edtech-api-zigm.onrender.com/docs
+
+
+67) Promote to Admin
+python manage.py promote-admin admin@gmail.com
+
+MAIL_PASSWORD = "vusy xyyo dnlv nkpy" 
+
 ```
+
+ุึุึุ
 
 ## 3) Test quickly (HTTPie or curl)
 ```bash

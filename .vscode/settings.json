@@ -4,8 +4,11 @@
 
   "liveServer.settings.ignoreFiles": [
       "**/*.db",
+      "**/*.db-journal", 
+      "**/*.db-wal",
       "**/*.sqlite",
       "**/*.pyc",
-      "**/__pycache__/**"
+      "**/__pycache__/**",
+      "**/backend/**" 
   ]
 }

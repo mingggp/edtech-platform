@@ -3,108 +3,178 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ประวัติการสอบ — EdTech</title>
+  <title>ประวัติการสอบ — MingSmileyFace</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>.brand-gradient{background:linear-gradient(90deg,#231762 0%,#ef1931 100%)}</style>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
+    .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+    .table-row-hover:hover td { background-color: #f1f5f9; }
+  </style>
 </head>
-<body class="min-h-screen bg-slate-50">
+<body class="min-h-screen text-slate-800 flex flex-col">
   
-  <header class="brand-gradient text-white shadow sticky top-0 z-10">
-    <nav class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-      <a href="./me.html" class="font-black tracking-widest text-lg">LOGO</a>
-      <ul class="flex items-center gap-4 text-sm font-semibold">
-        <li><a href="./mock_exam.html" class="opacity-90 hover:opacity-100">← คลังข้อสอบ</a></li>
-        <li><a href="./me.html" class="opacity-90 hover:opacity-100">Dashboard</a></li>
-      </ul>
-    </nav>
-  </header>
+  <nav class="fixed w-full z-50 transition-all duration-300 glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <a href="./me.html" class="flex items-center gap-2 group">
+          <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
+        </a>
 
-  <main class="max-w-4xl mx-auto px-4 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <h1 class="text-2xl font-bold text-slate-900">📄 ประวัติคะแนนสอบ</h1>
-      <div class="text-sm text-slate-500" id="summary">...</div>
+        <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
+          <a href="./me.html" class="hover:text-indigo-600 transition">Dashboard</a>
+          <a href="./course.html" class="hover:text-indigo-600 transition">คอร์สทั้งหมด</a>
+          <a href="./exam_history.html" class="text-indigo-600 font-bold relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600">ประวัติสอบ</a>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="hidden md:block text-right leading-tight">
+            <div id="navName" class="text-sm font-bold text-slate-800">...</div>
+            <div class="text-xs text-slate-500 uppercase">Student</div>
+          </div>
+          <button onclick="logout()" class="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-red-500 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          </button>
+        </div>
+      </div>
     </div>
+  </nav>
+  <div class="h-20"></div>
 
-    <div class="bg-white rounded-xl shadow overflow-hidden border border-slate-100">
-      <table class="w-full text-left border-collapse">
-        <thead class="bg-slate-50 border-b">
-          <tr>
-            <th class="p-4 text-sm font-bold text-slate-600">วันที่ส่ง</th>
-            <th class="p-4 text-sm font-bold text-slate-600">ชื่อชุดข้อสอบ</th>
-            <th class="p-4 text-sm font-bold text-slate-600 text-center">คะแนน</th>
-            <th class="p-4 text-sm font-bold text-slate-600 text-center">สถานะ</th>
-          </tr>
-        </thead>
-        <tbody id="rows" class="text-sm divide-y divide-slate-100">
-          <tr><td colspan="4" class="p-8 text-center text-gray-400">กำลังโหลด...</td></tr>
-        </tbody>
-      </table>
+  <div class="bg-indigo-900 text-white py-12 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-16 -mt-16"></div>
+    <div class="max-w-5xl mx-auto px-4 relative z-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">📄 ประวัติผลสอบ</h1>
+          <p class="text-indigo-200 text-sm">ติดตามพัฒนาการของคุณในทุกการสอบ</p>
+        </div>
+        
+        <div class="flex gap-4">
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center min-w-[100px]">
+            <div class="text-2xl font-bold" id="statTotal">0</div>
+            <div class="text-[10px] uppercase tracking-wider opacity-70">ครั้งที่สอบ</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center min-w-[100px]">
+            <div class="text-2xl font-bold text-green-400" id="statPass">0</div>
+            <div class="text-[10px] uppercase tracking-wider opacity-70">ผ่านเกณฑ์</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 -mt-8 relative z-20 flex-1 w-full">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden min-h-[400px]">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-bold">
+              <th class="p-5 pl-8">วันที่ส่ง</th>
+              <th class="p-5">ชื่อชุดข้อสอบ</th>
+              <th class="p-5 text-center">คะแนนที่ได้</th>
+              <th class="p-5 text-center">คิดเป็น %</th>
+              <th class="p-5 text-center">สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="rows" class="text-sm divide-y divide-slate-100 text-slate-700">
+            <tr><td colspan="5" class="p-10 text-center text-slate-400">กำลังโหลดข้อมูล...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="mt-6 text-center">
+      <a href="./mock_exam.html" class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-800 hover:underline transition">
+        <span>← กลับไปทำข้อสอบเพิ่ม</span>
+      </a>
     </div>
   </main>
 
+  <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
+      <p>© 2025 MingSmileyFace. All rights reserved.</p>
+    </div>
+  </footer>
+
 <script>
-const API = "https://edtech-api-zigm.onrender.com";
+const API = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
+  ? "http://127.0.0.1:8000" : "https://edtech-api-zigm.onrender.com";
 const token = localStorage.getItem("token");
 if(!token) location.href="./login.html";
+function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
 
-// Format Date Thai
 const df = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
 
+// 1. Load Profile Name
+fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }}).then(r=>r.json()).then(u => {
+  document.getElementById("navName").textContent = u.full_name || u.email.split('@')[0];
+});
+
+// 2. Load History
 async function loadHistory(){
   try {
     const res = await fetch(`${API}/users/me/exam-results`, { headers:{ Authorization:`Bearer ${token}` } });
     if(!res.ok) throw new Error("Load failed");
     const results = await res.json();
-    
     render(results);
+    updateStats(results);
   } catch(e){ 
-    document.getElementById("rows").innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-500">โหลดข้อมูลไม่สำเร็จ</td></tr>`;
+    document.getElementById("rows").innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-400 bg-red-50">โหลดข้อมูลไม่สำเร็จ: ${e.message}</td></tr>`;
   }
+}
+
+function updateStats(list) {
+  document.getElementById("statTotal").textContent = list.length;
+  const passed = list.filter(r => (r.score / r.total_score) >= 0.6).length;
+  document.getElementById("statPass").textContent = passed;
 }
 
 function render(list){
   const tbody = document.getElementById("rows");
-  const summary = document.getElementById("summary");
   
   if(list.length === 0){
-    tbody.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-gray-400">ยังไม่มีประวัติการสอบ</td></tr>`;
-    summary.textContent = "สอบไปแล้ว 0 ครั้ง";
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="p-12 text-center">
+          <div class="text-4xl mb-2">📝</div>
+          <p class="text-slate-400 font-medium">ยังไม่มีประวัติการสอบ</p>
+          <a href="./mock_exam.html" class="text-indigo-500 text-xs hover:underline mt-2 inline-block">ไปลองทำข้อสอบกันเถอะ</a>
+        </td>
+      </tr>`;
     return;
   }
 
-  summary.textContent = `สอบไปแล้ว ${list.length} ครั้ง`;
-
   tbody.innerHTML = list.map(r => {
-    // คำนวณเปอร์เซ็นต์
     const pct = r.total_score > 0 ? Math.round((r.score / r.total_score)*100) : 0;
-    // เกณฑ์สมมติ: >60% ผ่าน (สีเขียว)
-    const isPass = pct >= 60;
+    const isPass = pct >= 60; // เกณฑ์ 60%
+    
+    // Badge Style
     const badgeClass = isPass 
       ? "bg-emerald-100 text-emerald-700 border-emerald-200" 
-      : "bg-red-50 text-red-700 border-red-100";
-    const statusText = isPass ? "เยี่ยม" : "พยายามอีกนิด";
+      : "bg-red-50 text-red-600 border-red-100";
+    const statusIcon = isPass ? "Pass" : "Fail";
 
-    // แปลงวันที่ (มาจาก Server เป็น UTC -> แปลงเป็น Local Time)
-    const dt = new Date(r.submitted_at);
-    // ปรับเวลาให้เป็น UTC object ก่อนแปลง (ถ้า backend ส่งมาเป็น UTC string)
-    // แต่ถ้า backend ส่งมาเป็น ISO ปกติ JS new Date() จะจัดการ time zone ให้ระดับนึง
-    // เพื่อความชัวร์ ใช้ string ตรงๆ ไปก่อน
-    
     return `
-      <tr class="hover:bg-slate-50 transition">
-        <td class="p-4 text-slate-500">${df.format(dt)}</td>
-        <td class="p-4 font-medium text-slate-800">
-          ${r.exam ? r.exam.title : "ข้อสอบ (ลบแล้ว)"}
+      <tr class="table-row-hover transition duration-150">
+        <td class="p-5 pl-8 font-mono text-slate-500 text-xs">${df.format(new Date(r.submitted_at))}</td>
+        <td class="p-5">
+          <div class="font-bold text-slate-800 text-base">${r.exam ? r.exam.title : "ข้อสอบ (ถูกลบ)"}</div>
+          <div class="text-xs text-slate-400 mt-0.5">Mock Exam ID: #${r.exam_id}</div>
         </td>
-        <td class="p-4 text-center">
-          <span class="font-bold text-lg ${isPass ? 'text-emerald-600':'text-red-500'}">
-            ${r.score}
-          </span>
-          <span class="text-slate-400 text-xs">/ ${r.total_score}</span>
+        <td class="p-5 text-center">
+          <span class="text-xl font-bold ${isPass ? 'text-slate-800':'text-red-500'}">${r.score}</span>
+          <span class="text-slate-400 text-xs font-medium">/ ${r.total_score}</span>
         </td>
-        <td class="p-4 text-center">
-          <span class="text-xs px-2 py-1 rounded border font-bold ${badgeClass}">
-            ${statusText} (${pct}%)
+        <td class="p-5 text-center">
+          <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1 max-w-[80px] mx-auto overflow-hidden">
+            <div class="h-full ${isPass ? 'bg-emerald-500':'bg-red-400'}" style="width: ${pct}%"></div>
+          </div>
+          <span class="text-xs font-bold ${isPass ? 'text-emerald-600':'text-red-500'}">${pct}%</span>
+        </td>
+        <td class="p-5 text-center">
+          <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wide ${badgeClass}">
+            ${statusIcon}
           </span>
         </td>
       </tr>

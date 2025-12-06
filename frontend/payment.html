@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ชำระเงิน — EdTech</title><script src="https://cdn.tailwindcss.com"></script>
+  <style>.scan-line{position:absolute;width:100%;height:2px;background:#ef4444;animation:scan 2s linear infinite;top:0}@keyframes scan{0%{top:0}50%{top:100%}100%{top:0}}</style>
+</head>
+<body class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+  <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center space-y-6 relative overflow-hidden">
+    <h1 class="text-2xl font-bold text-slate-800">สแกนจ่ายเพื่อเริ่มเรียน</h1>
+    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+      <div class="text-sm text-slate-500">กำลังชำระเงินวิชา</div>
+      <div id="courseName" class="font-bold text-lg text-indigo-700 mt-1">...</div>
+      <div class="text-3xl font-black text-slate-900 mt-2">฿ <span id="coursePrice">-</span></div>
+    </div>
+    <div class="relative inline-block group">
+      <div class="p-3 border-4 border-slate-900 rounded-xl bg-white shadow-lg"><img id="qrImage" src="" class="w-56 h-56 object-contain opacity-50" alt="Loading QR..."></div>
+      <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-xl"><div class="scan-line shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div></div>
+    </div>
+    <div class="space-y-2"><p class="text-sm font-bold text-slate-700 animate-pulse">⏳ กำลังรอการชำระเงิน...</p><p class="text-xs text-slate-400">ระบบจะตรวจสอบและเปิดคอร์สให้อัตโนมัติภายใน 10 วินาที</p></div>
+    <div class="pt-4 border-t"><button onclick="simulatePay()" class="text-xs text-indigo-400 hover:text-indigo-600 underline">(Demo) จำลองว่าลูกค้าโอนเงินแล้ว</button></div>
+    <a href="./course.html" class="block text-sm text-slate-400 hover:text-slate-600">ยกเลิก</a>
+  </div>
+  <script>
+    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    const token = localStorage.getItem("token");
+    if(!token) location.href="./login.html";
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get("id");
+    if(!courseId) location.href="./course.html";
+    let checkInterval, myUserId;
+
+    async function init(){
+      try {
+        myUserId = (await (await fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }})).json()).id;
+        const c = await (await fetch(`${API}/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` }})).json();
+        document.getElementById("courseName").textContent = c.title;
+        document.getElementById("coursePrice").textContent = c.price.toLocaleString();
+        const qr = document.getElementById("qrImage"); qr.src = `${API}/payments/qr/${courseId}`; qr.onload = ()=>qr.classList.remove("opacity-50");
+        checkInterval = setInterval(checkStatus, 3000);
+      } catch(e){}
+    }
+    async function checkStatus(){
+      try {
+        const res = await fetch(`${API}/payments/check-status/${courseId}`, { headers: { Authorization: `Bearer ${token}` }});
+        if((await res.json()).paid){ clearInterval(checkInterval); alert("🎉 ชำระเงินสำเร็จ!"); location.href="./me.html"; }
+      } catch{}
+    }
+    async function simulatePay(){
+      if(!confirm("จำลองจ่าย?")) return;
+      await fetch(`${API}/payments/simulate-success`, { method:"POST", headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` }, body:JSON.stringify({ course_id: parseInt(courseId), user_id: myUserId }) });
+    }
+    init();
+  </script>
+</body>
+</html>

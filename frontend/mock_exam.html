@@ -3,67 +3,119 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mock Exam — EdTech</title>
+  <title>คลังข้อสอบ — MingSmileyFace</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>.brand-gradient{background:linear-gradient(90deg,#231762 0%,#ef1931 100%)}</style>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
+    .bg-brand-dark { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+    .text-gradient { background: linear-gradient(90deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+    .exam-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .exam-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+  </style>
 </head>
-<body class="min-h-screen bg-slate-50">
-  <header class="brand-gradient text-white shadow sticky top-0 z-10">
-    <nav class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-      <a href="./me.html" class="font-black tracking-widest text-lg">LOGO</a>
-      <a href="./me.html" class="text-sm font-semibold opacity-90 hover:opacity-100">← กลับ Dashboard</a>
-    </nav>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+  <nav class="fixed w-full z-50 transition-all duration-300 glass shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <a href="./me.html" class="flex items-center gap-2 group">
+          <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform group-hover:scale-110 drop-shadow-sm">
+        </a>
+        <div class="hidden md:flex gap-8 font-medium text-slate-600">
+          <a href="./me.html" class="hover:text-indigo-600 transition">Dashboard</a>
+          <a href="./course.html" class="hover:text-indigo-600 transition">คอร์สทั้งหมด</a>
+          <a href="./mock_exam.html" class="text-indigo-600 font-bold relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600">คลังข้อสอบ</a>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="hidden md:block text-right leading-tight">
+            <div id="navName" class="text-sm font-bold text-slate-800">...</div>
+            <div class="text-xs text-slate-500 uppercase">Student</div>
+          </div>
+          <button onclick="logout()" class="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-red-500 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="h-20"></div>
+
+  <header class="relative bg-brand-dark text-white overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-20 -mt-20"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 bg-purple-600 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -ml-20 -mb-20"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 py-16 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold tracking-wider mb-6 backdrop-blur-sm">
+        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> MOCK EXAM ARENA
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight">ฝึกฝนกับ <span class="text-gradient">ข้อสอบเสมือนจริง</span></h1>
+      <p class="text-slate-300 text-lg max-w-2xl mx-auto mb-8 font-light">จำลองบรรยากาศห้องสอบ จับเวลาจริง พร้อมรู้คะแนนทันที เตรียมตัวให้พร้อมก่อนลงสนามจริง</p>
+      
+      <div class="flex justify-center gap-8 text-center border-t border-white/10 pt-6 w-max mx-auto px-10">
+        <div><div class="text-3xl font-bold" id="statTotalExams">0</div><div class="text-xs text-slate-400 uppercase tracking-wide">ชุดข้อสอบ</div></div>
+        <div class="w-px bg-white/10"></div>
+        <div><div class="text-3xl font-bold text-emerald-400">Real</div><div class="text-xs text-slate-400 uppercase tracking-wide">Time Exam</div></div>
+      </div>
+    </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-8">
-    <div class="text-center mb-10">
-      <h1 class="text-3xl font-extrabold text-slate-900">คลังข้อสอบ Mock Exam</h1>
-      <p class="text-slate-500 mt-2">ฝึกฝนกับข้อสอบเสมือนจริง จับเวลาจริง</p>
-      
-      <a href="./exam_history.html" class="inline-block mt-4 text-indigo-600 font-bold hover:underline text-sm">
-        📜 ดูประวัติคะแนนสอบของฉัน
+  <main class="max-w-7xl mx-auto px-4 py-12 flex-1">
+    
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span class="text-2xl">📚</span> เลือกชุดข้อสอบ</h2>
+      <a href="./exam_history.html" class="px-5 py-2.5 bg-white text-indigo-600 text-sm font-bold rounded-xl border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50 transition shadow-sm flex items-center gap-2">
+        <span>📜 ดูประวัติคะแนนของฉัน</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
       </a>
     </div>
 
-    <div id="grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="col-span-full text-center text-gray-400">กำลังโหลด...</div>
+    <div id="examGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full py-20 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-200 border-t-indigo-600 mb-4"></div><p class="text-slate-400">กำลังโหลดข้อสอบ...</p></div>
     </div>
+
   </main>
 
+  <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm"><p>© 2025 MingSmileyFace. All rights reserved.</p></div>
+  </footer>
+
 <script>
-const API = "https://edtech-api-zigm.onrender.com";
+const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
 const token = localStorage.getItem("token");
-if(!token) location.href="./login.html";
+if (!token) location.href = "./login.html";
+function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
+
+fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }}).then(r=>r.json()).then(u => { document.getElementById("navName").textContent = u.full_name || u.email.split('@')[0]; });
 
 async function init(){
   try {
     const res = await fetch(`${API}/exams`);
     const exams = await res.json();
+    document.getElementById("statTotalExams").textContent = exams.length;
     render(exams);
-  } catch(e){ document.getElementById("grid").innerHTML = "Error loading exams"; }
+  } catch(e){ document.getElementById("examGrid").innerHTML = `<div class="col-span-full text-center text-red-400">โหลดข้อมูลไม่สำเร็จ</div>`; }
 }
 
 function render(list){
-  const el = document.getElementById("grid");
-  if(list.length===0){ el.innerHTML = `<div class="col-span-full text-center text-gray-400">ยังไม่มีข้อสอบ</div>`; return; }
+  const el = document.getElementById("examGrid");
+  if(list.length === 0){ el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 bg-white rounded-3xl border border-dashed border-slate-300">ยังไม่มีข้อสอบเปิดให้ทำในขณะนี้</div>`; return; }
 
   el.innerHTML = list.map(ex => `
-    <div class="bg-white rounded-xl shadow p-5 hover:shadow-lg transition border border-slate-100 flex flex-col">
-      <div class="flex-1">
-        <h3 class="font-bold text-lg text-slate-800">${ex.title}</h3>
-        <p class="text-sm text-slate-500 mt-1">${ex.description||"ไม่มีรายละเอียด"}</p>
-        <div class="flex gap-2 mt-4">
-          <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-100">
-            ⏱ ${ex.time_limit} นาที
-          </span>
-          <span class="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-100">
-            📝 ${ex.questions?ex.questions.length:0} ข้อ
-          </span>
-        </div>
+    <div class="exam-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:border-indigo-200 flex flex-col h-full relative group overflow-hidden">
+      <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500 group-hover:w-1.5 transition-all"></div>
+      <div class="mb-4 pl-3">
+        <h3 class="font-bold text-xl text-slate-800 line-clamp-2 leading-tight group-hover:text-indigo-600 transition">${ex.title}</h3>
+        <p class="text-sm text-slate-500 mt-2 line-clamp-2 h-10">${ex.description || "ไม่มีรายละเอียดเพิ่มเติม"}</p>
       </div>
-      <a href="./exam_room.html?id=${ex.id}" class="mt-5 block w-full text-center py-2.5 bg-black text-white rounded-lg font-bold text-sm hover:bg-gray-800 transition">
-        เริ่มทำข้อสอบ
-      </a>
+      <div class="mt-auto pl-3 space-y-4">
+        <div class="flex gap-2">
+          <div class="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 flex items-center gap-2 text-xs font-bold text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>${ex.time_limit} นาที</div>
+          <div class="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 flex items-center gap-2 text-xs font-bold text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>${ex.questions ? ex.questions.length : 0} ข้อ</div>
+        </div>
+        <a href="./exam_room.html?id=${ex.id}" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl text-sm font-bold shadow-lg group-hover:bg-indigo-600 transition-all flex items-center justify-center gap-2"><span>เริ่มทำข้อสอบ</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></a>
+      </div>
     </div>
   `).join("");
 }

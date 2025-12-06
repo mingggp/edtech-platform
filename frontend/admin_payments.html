@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ระบบการเงิน — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .admin-gradient { background: linear-gradient(135deg,#111827 0%, #1e1b4b 100%); }
+    dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 font-sans text-slate-800">
+
+  <header class="admin-gradient text-white shadow-md sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative">
+      <a href="./admin_users.html" class="flex items-center gap-3 group relative z-10">
+        <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain bg-white/10 rounded p-1">
+        <div class="leading-tight"><div class="font-bold text-lg">ADMIN CONSOLE</div></div>
+      </a>
+      <div class="relative bg-white/10 p-1.5 rounded-xl hidden md:flex items-center gap-1">
+        <div id="nav-slider" class="absolute h-[calc(100%-12px)] top-1.5 bg-white/20 rounded-lg transition-all duration-300 ease-out opacity-0 pointer-events-none z-0"></div>
+        <a href="./admin_users.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="users">👥 Users</a>
+        <a href="./admin_courses.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="courses">📚 Courses</a>
+        <a href="./admin_payments.html" class="nav-link px-4 py-2 rounded-lg text-sm font-bold text-slate-300 hover:text-white relative z-10 transition-colors" data-page="payments">💰 Payments</a>
+        <a href="./admin_exams.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="exams">📝 Exams</a>
+        <a href="./admin_audit.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="audit">🛡️ Logs</a>
+      </div>
+      <div class="flex items-center gap-4 relative z-10">
+        <a href="./me.html" class="text-xs text-slate-300 hover:text-white border-b border-transparent hover:border-slate-300 transition">กลับหน้าเรียน</a>
+        <button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 px-3 py-1.5 rounded transition">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+        <div class="text-indigo-100 text-sm font-bold uppercase">รายได้รวม</div>
+        <div class="text-4xl font-black">฿ <span id="statTotal">-</span></div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+        <div class="text-slate-400 text-xs font-bold uppercase">รอตรวจสอบ</div>
+        <div class="text-3xl font-black text-orange-500 mt-1" id="statPending">-</div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm md:col-span-2 relative">
+        <div class="h-32 w-full"><canvas id="chartTrend"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-slate-800">📋 รายการแจ้งโอน</h2>
+          <div class="flex gap-2">
+            <button onclick="filterStatus('')" class="text-xs px-3 py-1 bg-slate-800 text-white rounded-full">ทั้งหมด</button>
+            <button onclick="filterStatus('pending')" class="text-xs px-3 py-1 border rounded-full hover:bg-slate-50">รอตรวจ</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 border-b">
+              <tr>
+                <th class="p-4">เวลา</th>
+                <th class="p-4">ผู้ใช้งาน</th>
+                <th class="p-4">คอร์ส / ราคา</th>
+                <th class="p-4 text-center">สลิป</th>
+                <th class="p-4 text-center">สถานะ</th>
+              </tr>
+            </thead>
+            <tbody id="payRows" class="divide-y"><tr><td colspan="5" class="p-8 text-center text-slate-400">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-800">🏆 Top Courses</h2>
+        <div class="bg-white rounded-xl border p-6 flex justify-center"><canvas id="chartPie"></canvas></div>
+        <div id="topCourseList" class="bg-white rounded-xl border p-4 space-y-3"></div>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="slipDlg" class="p-0 rounded-xl overflow-hidden backdrop:bg-black/90 shadow-2xl max-h-[90vh]">
+    <div class="bg-black flex flex-col items-center">
+      <img id="slipImg" src="" class="max-w-[500px] w-full max-h-[80vh] object-contain">
+      <div class="w-full bg-white p-4 flex justify-center gap-3">
+        <button onclick="processSlip('approve')" class="px-6 py-2 bg-emerald-500 text-white rounded-lg font-bold">✅ อนุมัติ</button>
+        <button onclick="processSlip('reject')" class="px-6 py-2 bg-red-500 text-white rounded-lg font-bold">❌ ปฏิเสธ</button>
+        <button onclick="document.getElementById('slipDlg').close()" class="px-4 py-2 border rounded-lg">ปิด</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // Navbar Animation
+    const page = "payments";
+    const slider = document.getElementById("nav-slider");
+    const links = document.querySelectorAll(".nav-link");
+    let activeLink = null;
+    links.forEach(link => {
+      if(link.dataset.page === page) { activeLink = link; link.classList.add("text-white"); moveSlider(link); slider.style.opacity = "1"; }
+      link.addEventListener("mouseenter", (e) => { moveSlider(e.target); slider.style.opacity = "1"; });
+    });
+    document.querySelector(".relative.bg-white\\/10").addEventListener("mouseleave", () => { if(activeLink) moveSlider(activeLink); else slider.style.opacity = "0"; });
+    function moveSlider(el) { slider.style.width = el.offsetWidth + "px"; slider.style.left = el.offsetLeft + "px"; }
+
+    // API Config
+    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    const token = localStorage.getItem("token");
+    if(!token) location.href="./login.html";
+    function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
+    
+    const df = new Intl.DateTimeFormat('th-TH', { dateStyle:'short', timeStyle:'short' });
+    let currentStatus = "", currentPayId = null;
+
+    async function loadDashboard(){
+      try {
+        const resS = await fetch(`${API}/admin/payment-stats`, { headers: { Authorization: `Bearer ${token}` }});
+        const stats = await resS.json();
+        document.getElementById("statTotal").textContent = stats.total_revenue.toLocaleString();
+        document.getElementById("statPending").textContent = stats.pending_count;
+        initTrendChart(stats.chart_labels, stats.chart_data);
+        initPieChart(stats.top_courses);
+        renderTopCourses(stats.top_courses);
+        loadPayments();
+      } catch(e) {}
+    }
+
+    async function loadPayments(){
+      try {
+        const url = currentStatus ? `${API}/admin/payments?status=${currentStatus}` : `${API}/admin/payments`;
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` }});
+        const list = await res.json();
+        renderTable(list);
+      } catch(e) {}
+    }
+
+    function filterStatus(s){ currentStatus = s; loadPayments(); }
+
+    function renderTable(list){
+      const el = document.getElementById("payRows");
+      if(list.length===0){ el.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">ไม่มีข้อมูล</td></tr>`; return; }
+      el.innerHTML = list.map(p => {
+        const u = p.user||{email:"-"}, c = p.course||{title:"-"}, url = p.slip_url.startsWith("http")?p.slip_url:`${API}${p.slip_url}`;
+        let badge = p.status==='pending' ? `<span class="px-2 py-1 rounded text-xs font-bold bg-orange-100 text-orange-600 animate-pulse">รอตรวจ</span>` : (p.status==='approved' ? `<span class="px-2 py-1 rounded text-xs font-bold bg-emerald-100 text-emerald-700">อนุมัติ</span>` : `<span class="px-2 py-1 rounded text-xs font-bold bg-red-100 text-red-700">ปฏิเสธ</span>`);
+        let btn = p.status==='pending' ? `<button onclick="openSlip(${p.id}, '${url}')" class="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold hover:bg-indigo-700">ตรวจ</button>` : `<span class="text-xs text-slate-400">-</span>`;
+        return `
+          <tr class="hover:bg-slate-50 border-b last:border-0">
+            <td class="p-4 text-xs text-slate-500">${df.format(new Date(p.created_at))}</td>
+            <td class="p-4"><div class="font-bold text-sm">${u.full_name||u.email.split('@')[0]}</div><div class="text-[10px] text-slate-400">${u.email}</div></td>
+            <td class="p-4"><div class="text-sm line-clamp-1">${c.title}</div><div class="text-xs font-bold text-indigo-600">฿${p.amount.toLocaleString()}</div></td>
+            <td class="p-4 text-center"><a href="${url}" target="_blank" class="text-xs text-slate-400 hover:text-indigo-600">ไฟล์</a></td>
+            <td class="p-4 text-center flex flex-col items-center gap-1">${badge}${btn}</td>
+          </tr>`;
+      }).join("");
+    }
+
+    function openSlip(id, url){ currentPayId = id; document.getElementById("slipImg").src = url; document.getElementById("slipDlg").showModal(); }
+    async function processSlip(act){
+      if(!confirm(act)) return;
+      await fetch(`${API}/admin/payments/${currentPayId}/${act}`, { method:"POST", headers:{ Authorization:`Bearer ${token}` }});
+      document.getElementById("slipDlg").close(); loadDashboard();
+    }
+
+    // Chart Config
+    function initTrendChart(lbl, dat){ new Chart(document.getElementById('chartTrend'), { type:'line', data:{ labels:lbl, datasets:[{ label:'รายได้', data:dat, borderColor:'#6366f1', borderWidth:2, pointRadius:0, tension:0.4, fill:{target:'origin', above:'rgba(99, 102, 241, 0.1)'} }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{beginAtZero:true, grid:{display:false}}} } }); }
+    function initPieChart(tops){ if(tops.length===0)return; new Chart(document.getElementById('chartPie'), { type:'doughnut', data:{ labels:tops.map(c=>c.title), datasets:[{ data:tops.map(c=>c.amount), backgroundColor:['#6366f1','#ec4899','#10b981','#f59e0b','#8b5cf6'], borderWidth:0 }] }, options:{ responsive:true, plugins:{legend:{display:false}}, cutout:'75%' } }); }
+    function renderTopCourses(list){ document.getElementById("topCourseList").innerHTML = list.map((c,i)=>`<div class="flex justify-between text-xs items-center"><div class="flex gap-2 items-center"><div class="w-2 h-2 rounded-full bg-indigo-500"></div><span class="truncate w-32">${c.title}</span></div><span class="font-bold">฿${c.amount.toLocaleString()}</span></div>`).join(""); }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

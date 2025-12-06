@@ -1,249 +1,77 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Audit Logs — Admin</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Audit Logs — Admin</title><script src="https://cdn.tailwindcss.com"></script>
+  <style>.admin-gradient{background:linear-gradient(135deg,#111827 0%,#1e1b4b 100%)}dialog::backdrop{background:rgba(0,0,0,0.5);backdrop-filter:blur(2px)}</style>
 </head>
-<body class="min-h-screen bg-gray-50 p-6">
-  <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow p-6 space-y-4">
-    <div class="flex items-center justify-between gap-4">
-      <h1 class="text-2xl font-bold">Audit Logs</h1>
-      <div class="flex flex-wrap gap-2">
-        <a href="./admin_users.html" class="px-3 py-2 text-sm border rounded">← กลับหน้า Users</a>
+<body class="min-h-screen bg-slate-100 font-sans text-slate-800">
+  <header class="admin-gradient text-white shadow-md sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative">
+      <a href="./admin_users.html" class="flex items-center gap-3 group relative z-10"><img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain bg-white/10 rounded p-1"><div class="leading-tight"><div class="font-bold text-lg">ADMIN CONSOLE</div></div></a>
+      <div class="relative bg-white/10 p-1.5 rounded-xl hidden md:flex items-center gap-1">
+        <div id="nav-slider" class="absolute h-[calc(100%-12px)] top-1.5 bg-white/20 rounded-lg transition-all duration-300 ease-out opacity-0 pointer-events-none z-0"></div>
+        <a href="./admin_users.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="users">👥 Users</a>
+        <a href="./admin_courses.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="courses">📚 Courses</a>
+        <a href="./admin_payments.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="payments">💰 Payments</a>
+        <a href="./admin_exams.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="exams">📝 Exams</a>
+        <a href="./admin_audit.html" class="nav-link px-4 py-2 rounded-lg text-sm font-bold text-slate-300 hover:text-white relative z-10 transition-colors" data-page="audit">🛡️ Logs</a>
       </div>
+      <div class="flex items-center gap-4 relative z-10"><a href="./me.html" class="text-xs text-slate-300 hover:text-white border-b border-transparent hover:border-slate-300 transition">กลับหน้าเรียน</a><button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 px-3 py-1.5 rounded transition">Logout</button></div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+    <div class="flex items-center justify-between"><h1 class="text-3xl font-bold text-slate-900">Audit Logs</h1><p class="text-sm text-slate-500">บันทึกทุกกิจกรรมในระบบ</p></div>
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap gap-2 items-end">
+      <div><label class="text-xs text-slate-500 font-bold">Action</label><input id="fAction" class="border rounded px-3 py-2 text-sm w-40" placeholder="LOGIN..."></div>
+      <div><label class="text-xs text-slate-500 font-bold">User ID</label><input id="fActor" class="border rounded px-3 py-2 text-sm w-20" type="number"></div>
+      <div><label class="text-xs text-slate-500 font-bold">จากวันที่</label><input id="fFrom" class="border rounded px-3 py-2 text-sm" type="date"></div>
+      <div><label class="text-xs text-slate-500 font-bold">ถึงวันที่</label><input id="fTo" class="border rounded px-3 py-2 text-sm" type="date"></div>
+      <button id="btnSearch" class="px-4 py-2 bg-slate-800 text-white rounded text-sm hover:bg-slate-900">ค้นหา</button>
     </div>
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><table class="w-full text-sm text-left"><thead class="bg-slate-50 border-b"><tr><th class="p-4">เวลา</th><th class="p-4">Action</th><th class="p-4">User</th><th class="p-4">Detail</th><th class="p-4">Diff</th></tr></thead><tbody id="rows" class="divide-y"><tr><td colspan="5" class="p-8 text-center text-slate-400">Loading...</td></tr></tbody></table></div>
+    <div class="flex justify-between items-center"><div id="meta" class="text-xs text-slate-500">Page 1</div><div class="flex gap-2"><button id="prev" class="px-3 py-1 border rounded text-xs">Prev</button><button id="next" class="px-3 py-1 border rounded text-xs">Next</button></div></div>
+  </main>
 
-    <div class="flex flex-wrap gap-2 items-end">
-      <div>
-        <label class="text-xs text-gray-600">Action (contains)</label>
-        <input id="fAction" class="border rounded px-3 py-2 text-sm" placeholder="LOGIN_FAIL / USER_UPDATE ...">
-      </div>
-      <div>
-        <label class="text-xs text-gray-600">Actor ID</label>
-        <input id="fActor" class="border rounded px-3 py-2 text-sm" type="number" min="1" placeholder="เช่น 1">
-      </div>
-      <div>
-        <label class="text-xs text-gray-600">Target ID</label>
-        <input id="fTarget" class="border rounded px-3 py-2 text-sm" type="number" min="1" placeholder="เช่น 7">
-      </div>
-      <div>
-        <label class="text-xs text-gray-600">จากวันที่</label>
-        <input id="fFrom" class="border rounded px-3 py-2 text-sm" type="date">
-      </div>
-      <div>
-        <label class="text-xs text-gray-600">ถึงวันที่</label>
-        <input id="fTo" class="border rounded px-3 py-2 text-sm" type="date">
-      </div>
-      <div>
-        <label class="text-xs text-gray-600">เรียง</label>
-        <select id="sort" class="border rounded px-3 py-2 text-sm">
-          <option value="created_at:desc">ล่าสุดก่อน</option>
-          <option value="created_at:asc">เก่าสุดก่อน</option>
-          <option value="id:desc">id ↓</option>
-          <option value="id:asc">id ↑</option>
-        </select>
-      </div>
-      <div>
-        <label class="text-xs text-gray-600">แสดงต่อหน้า</label>
-        <select id="pageSize" class="border rounded px-3 py-2 text-sm">
-          <option>20</option><option>50</option><option>100</option>
-        </select>
-      </div>
-      <button id="btnSearch" class="px-3 py-2 text-sm bg-black text-white rounded">ค้นหา</button>
-    </div>
+  <dialog id="detailDlg" class="p-0 rounded-xl overflow-hidden backdrop:bg-black/50 shadow-2xl w-[600px]"><div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center"><h3 class="font-bold">Log Details</h3><button onclick="document.getElementById('detailDlg').close()" class="text-slate-400 hover:text-white">✕</button></div><div class="p-6 bg-white space-y-4 max-h-[80vh] overflow-y-auto"><h4 class="font-bold text-sm text-slate-700">Changes (Diff)</h4><table class="w-full text-xs border"><thead class="bg-slate-50"><tr class="text-left"><th class="p-2 border">Field</th><th class="p-2 border">Old</th><th class="p-2 border">New</th></tr></thead><tbody id="dlgDiff"></tbody></table><h4 class="font-bold text-sm text-slate-700 mt-4">Raw Data</h4><pre id="dlgRaw" class="bg-slate-50 p-3 rounded border text-xs overflow-auto"></pre></div></dialog>
 
-    <div id="msg" class="text-sm"></div>
+  <script>
+    const page="audit"; const slider=document.getElementById("nav-slider"); const links=document.querySelectorAll(".nav-link"); let activeLink=null;
+    links.forEach(link=>{ if(link.dataset.page===page){activeLink=link;link.classList.add("text-white");moveSlider(link);slider.style.opacity="1";} link.addEventListener("mouseenter",(e)=>{moveSlider(e.target);slider.style.opacity="1";});});
+    document.querySelector(".relative.bg-white\\/10").addEventListener("mouseleave",()=>{if(activeLink)moveSlider(activeLink);else slider.style.opacity="0";});
+    function moveSlider(el){slider.style.width=el.offsetWidth+"px";slider.style.left=el.offsetLeft+"px";}
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="text-left border-b">
-            <th class="py-2 pr-3">เวลา (ไทย)</th>
-            <th class="py-2 pr-3">Action</th>
-            <th class="py-2 pr-3">Actor</th>
-            <th class="py-2 pr-3">Target</th>
-            <th class="py-2 pr-3">Diff</th>
-            <th class="py-2 pr-3">รายละเอียด</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
+    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    const token = localStorage.getItem("token");
+    if(!token) location.href="./login.html";
+    function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
 
-    <div class="flex items-center justify-between pt-2">
-      <div id="meta" class="text-sm text-gray-600"></div>
-      <div class="flex gap-2">
-        <button id="prev" class="px-3 py-2 text-sm border rounded">ก่อนหน้า</button>
-        <button id="next" class="px-3 py-2 text-sm border rounded">ถัดไป</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal รายละเอียด -->
-  <dialog id="detailDlg" class="p-0 rounded-xl backdrop:bg-black/40">
-    <div class="bg-white w-[95vw] max-w-4xl rounded-xl overflow-hidden">
-      <div class="flex items-center justify-between px-4 py-3 border-b">
-        <h3 id="dlgTitle" class="font-semibold">รายละเอียด</h3>
-        <button id="btnCloseDlg" class="px-3 py-1 text-sm border rounded">ปิด</button>
-      </div>
-      <div class="p-4 space-y-4">
-        <div>
-          <h4 class="font-semibold mb-2">Diff (เฉพาะที่เปลี่ยน)</h4>
-          <table class="w-full text-sm border">
-            <thead>
-              <tr class="bg-gray-50 text-left">
-                <th class="px-3 py-2 border">Field</th>
-                <th class="px-3 py-2 border">Before</th>
-                <th class="px-3 py-2 border">After</th>
-                <th class="px-3 py-2 border">Status</th>
-              </tr>
-            </thead>
-            <tbody id="dlgDiff"></tbody>
-          </table>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">Raw data</h4>
-          <pre id="dlgRaw" class="text-xs bg-gray-50 p-3 rounded border overflow-auto"></pre>
-        </div>
-      </div>
-    </div>
-  </dialog>
-
-<script>
-const API = "https://edtech-api-zigm.onrender.com";
-const token = localStorage.getItem("token");
-if (!token) location.href = "./login.html";
-
-const msg = document.getElementById("msg");
-const tbody = document.getElementById("rows");
-const metaEl = document.getElementById("meta");
-
-const fAction = document.getElementById("fAction");
-const fActor = document.getElementById("fActor");
-const fTarget = document.getElementById("fTarget");
-const fFrom = document.getElementById("fFrom");
-const fTo = document.getElementById("fTo");
-const sortEl = document.getElementById("sort");
-const pageSizeEl = document.getElementById("pageSize");
-const btnSearch = document.getElementById("btnSearch");
-const prevBtn = document.getElementById("prev");
-const nextBtn = document.getElementById("next");
-
-const detailDlg = document.getElementById("detailDlg");
-const btnCloseDlg = document.getElementById("btnCloseDlg");
-const dlgTitle = document.getElementById("dlgTitle");
-const dlgDiff = document.getElementById("dlgDiff");
-const dlgRaw = document.getElementById("dlgRaw");
-
-let page = 1;
-
-function showError(t){ msg.className="text-red-600"; msg.textContent="✖ "+t; }
-function showOk(t){ msg.className="text-emerald-600"; msg.textContent="✔ "+t; }
-
-async function fetchJSON(url, options={}){
-  const res = await fetch(url, { ...options, headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}`, ...(options.headers||{}) }});
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.detail || data.message || res.statusText);
-  return data;
-}
-
-function briefDiff(it){
-  if (!it.diff || it.diff.length === 0) return "";
-  // แสดงสั้น ๆ 1-2 ช่องแรก
-  const first = it.diff.slice(0, 2).map(d => d.field).join(", ");
-  return it.diff.length > 2 ? `${first} (+${it.diff.length-2})` : first;
-}
-
-function renderDiffRows(diff){
-  dlgDiff.innerHTML = "";
-  if (!diff || diff.length === 0) {
-    dlgDiff.innerHTML = `<tr><td class="px-3 py-2 border text-gray-500" colspan="4">ไม่มีการเปลี่ยนแปลง หรือไม่มีข้อมูล before/after</td></tr>`;
-    return;
-  }
-  for (const d of diff){
-    const tr = document.createElement("tr");
-    const cls =
-      d.status === "added" ? "bg-green-50" :
-      d.status === "removed" ? "bg-red-50" :
-      d.status === "changed" ? "bg-yellow-50" : "";
-    tr.className = cls;
-    tr.innerHTML = `
-      <td class="px-3 py-2 border font-medium">${d.field}</td>
-      <td class="px-3 py-2 border">${escapeHTML(d.before ?? "")}</td>
-      <td class="px-3 py-2 border">${escapeHTML(d.after ?? "")}</td>
-      <td class="px-3 py-2 border">${d.status}</td>
-    `;
-    dlgDiff.appendChild(tr);
-  }
-}
-
-function escapeHTML(s){
-  return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
-}
-
-async function loadLogs(){
-  try{
-    const params = new URLSearchParams();
-    const pageSize = parseInt(pageSizeEl.value || "20", 10);
-    params.set("page", page);
-    params.set("page_size", pageSize);
-    params.set("sort", sortEl.value);
-    if (fAction.value) params.set("action", fAction.value.trim());
-    if (fActor.value) params.set("actor_id", fActor.value);
-    if (fTarget.value) params.set("target_id", fTarget.value);
-    if (fFrom.value) params.set("date_from", fFrom.value);
-    if (fTo.value) params.set("date_to", fTo.value);
-
-    const payload = await fetchJSON(`${API}/admin/audit?`+params.toString());
-    tbody.innerHTML = "";
-    for (const it of payload.items){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="py-2 px-3 border-t whitespace-nowrap" title="${it.created_at_iso_bkk}">${it.created_at_bkk}</td>
-        <td class="py-2 px-3 border-t">${it.action}</td>
-        <td class="py-2 px-3 border-t">${it.actor_id ?? ""}</td>
-        <td class="py-2 px-3 border-t">${it.target_id ?? ""}</td>
-        <td class="py-2 px-3 border-t text-xs text-gray-700">${escapeHTML(briefDiff(it))}</td>
-        <td class="py-2 px-3 border-t">
-          <button class="px-2 py-1 text-xs border rounded" data-id="${it.id}" data-json='${escapeHTML(JSON.stringify(it))}'>Details</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+    let pageNum=1;
+    async function loadLogs(){
+      try{
+        const q=new URLSearchParams({page:pageNum,page_size:20,sort:"created_at:desc"});
+        if(document.getElementById("fAction").value) q.append("action",document.getElementById("fAction").value);
+        if(document.getElementById("fActor").value) q.append("actor_id",document.getElementById("fActor").value);
+        if(document.getElementById("fFrom").value) q.append("date_from",document.getElementById("fFrom").value);
+        if(document.getElementById("fTo").value) q.append("date_to",document.getElementById("fTo").value);
+        const res=await fetch(`${API}/admin/audit?${q}`,{headers:{Authorization:`Bearer ${token}`}});
+        const data=await res.json();
+        renderTable(data.items);
+        document.getElementById("meta").textContent=`Page ${data.meta.page} / ${Math.ceil(data.meta.total/20)}`;
+      }catch(e){}
     }
-    const m = payload.meta;
-    metaEl.textContent = `หน้า ${m.page} ขนาด ${m.page_size} ทั้งหมด ${m.total} รายการ`;
-    prevBtn.disabled = m.page <= 1;
-    nextBtn.disabled = m.page * m.page_size >= m.total;
-  }catch(e){ showError(e.message); }
-}
-
-tbody.addEventListener("click", (e)=>{
-  const btn = e.target.closest("button");
-  if (!btn) return;
-  const raw = btn.dataset.json;
-  try{
-    const it = JSON.parse(raw);
-    dlgTitle.textContent = `${it.action} • ${it.created_at_bkk}`;
-    renderDiffRows(it.diff);
-    // raw data สวย ๆ
-    let rawObj = {};
-    try { rawObj = it.data ? JSON.parse(it.data) : {}; } catch {}
-    dlgRaw.textContent = JSON.stringify(rawObj, null, 2);
-    detailDlg.showModal();
-  }catch(err){ alert("ไม่สามารถเปิดรายละเอียดได้: "+err.message); }
-});
-
-btnCloseDlg.onclick = ()=> detailDlg.close();
-
-btnSearch.onclick = ()=> { page = 1; loadLogs(); };
-sortEl.onchange = ()=> { page = 1; loadLogs(); };
-pageSizeEl.onchange = ()=> { page = 1; loadLogs(); };
-prevBtn.onclick = ()=> { page = Math.max(1, page-1); loadLogs(); };
-nextBtn.onclick = ()=> { page = page+1; loadLogs(); };
-
-loadLogs();
-</script>
+    function renderTable(list){
+      document.getElementById("rows").innerHTML = list.map(l => `<tr class="hover:bg-slate-50"><td class="p-4 text-xs text-slate-500 whitespace-nowrap">${l.created_at_bkk}</td><td class="p-4 font-bold text-slate-700">${l.action}</td><td class="p-4 text-xs">ID: ${l.actor_id||"-"}</td><td class="p-4 text-xs text-slate-500 truncate max-w-[200px]">${l.data||""}</td><td class="p-4"><button onclick='openDetail(${JSON.stringify(l).replace(/'/g,"&#39;")})' class="text-xs bg-slate-200 px-2 py-1 rounded hover:bg-slate-300">View</button></td></tr>`).join("");
+    }
+    function openDetail(l){
+      const diffEl=document.getElementById("dlgDiff"); diffEl.innerHTML="";
+      if(l.diff && l.diff.length){ l.diff.forEach(d=>{ diffEl.innerHTML+=`<tr class="${d.status==='changed'?'bg-yellow-50':(d.status==='added'?'bg-green-50':'bg-red-50')}"><td class="p-2 border font-mono text-slate-600">${d.field}</td><td class="p-2 border text-red-600">${d.before||"-"}</td><td class="p-2 border text-green-600">${d.after||"-"}</td></tr>`; }); } else { diffEl.innerHTML=`<tr><td colspan="3" class="p-4 text-center text-slate-400">No changes detected</td></tr>`; }
+      document.getElementById("dlgRaw").textContent=l.data?JSON.stringify(JSON.parse(l.data),null,2):"-";
+      document.getElementById("detailDlg").showModal();
+    }
+    document.getElementById("btnSearch").onclick=()=>{pageNum=1;loadLogs();}; document.getElementById("prev").onclick=()=>{if(pageNum>1){pageNum--;loadLogs();}}; document.getElementById("next").onclick=()=>{pageNum++;loadLogs();};
+    loadLogs();
+  </script>
 </body>
 </html>

@@ -42,7 +42,9 @@
   </dialog>
 
 <script>
-const API = "https://edtech-api-zigm.onrender.com";
+const API = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
+  ? "http://127.0.0.1:8000"                       // ถ้าเปิดในเครื่อง ใช้ Database ในเครื่อง
+  : "https://edtech-api-zigm.onrender.com";       // ถ้าอยู่บนเว็บจริง ให้ใช้ Database ของจริงzigm.onrender.com";
 const token = localStorage.getItem("token");
 if(!token) location.href="./login.html";
 

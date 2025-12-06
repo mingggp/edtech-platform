@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ห้องเรียน — MingSmileyFace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .chk-circle {
+      appearance: none; width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 50%;
+      display: grid; place-content: center; cursor: pointer; transition: all 0.2s ease-in-out;
+    }
+    .chk-circle:checked { background: #10b981; border-color: #10b981; transform: scale(1.1); }
+    .chk-circle:checked::before { content: "✓"; color: white; font-size: 14px; font-weight: bold; }
+    .lesson-item.active { background-color: #eef2ff; border-right: 4px solid #6366f1; }
+    .lesson-item:hover:not(.active) { background-color: #f8fafc; }
+  </style>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col overflow-hidden">
+
+  <header class="bg-white border-b border-gray-200 h-16 shrink-0 flex items-center justify-between px-6 z-30 shadow-sm relative">
+    <div class="flex items-center gap-4">
+      <a href="./me.html" class="p-2 hover:bg-gray-100 rounded-full transition text-slate-500 hover:text-slate-800" title="กลับ Dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+      </a>
+      <div>
+        <h1 class="font-bold text-lg text-slate-800 leading-tight" id="courseTitle">Loading...</h1>
+        <div class="flex items-center gap-2 text-xs text-slate-500">
+          <span>ความคืบหน้า</span>
+          <div class="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div id="topProgressBar" class="h-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span id="topProgressText" class="font-mono font-bold text-green-600">0%</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-bold border border-indigo-100">
+        <span>🎓 ตั้งใจเรียนนะ!</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+    <aside class="w-full lg:w-96 bg-white border-r border-gray-200 flex flex-col h-[40vh] lg:h-auto shrink-0 z-20 shadow-lg lg:shadow-none order-2 lg:order-1">
+      <div class="p-4 border-b border-gray-100 bg-gray-50/50 backdrop-blur">
+        <h2 class="font-bold text-sm text-slate-500 uppercase tracking-wider">บทเรียนในคอร์สนี้</h2>
+      </div>
+      <div class="flex-1 overflow-y-auto p-2 space-y-1" id="playlist"></div>
+    </aside>
+
+    <main class="flex-1 bg-black flex flex-col relative group overflow-hidden order-1 lg:order-2">
+      <div class="w-full h-full flex items-center justify-center bg-zinc-900 relative">
+        <iframe id="ytPlayer" class="w-full h-full aspect-video" src="" frameborder="0" allowfullscreen></iframe>
+        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6 pt-20 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <h2 class="text-2xl font-bold mb-1 pointer-events-auto" id="lessonTitle">...</h2>
+          <div class="flex items-center gap-3 pointer-events-auto" id="lessonActions"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+const token = localStorage.getItem("token");
+if (!token) location.href = "./login.html";
+
+const params = new URLSearchParams(window.location.search);
+const courseId = params.get("id");
+const startLessonIdx = params.get("lesson"); // รับ parameter lesson
+if(!courseId) location.href = "./me.html";
+
+let courseData = null, completedSet = new Set(), currentLessonIndex = 0;
+
+async function init(){
+  try {
+    const [cRes, pRes] = await Promise.all([
+      fetch(`${API}/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` }}),
+      fetch(`${API}/courses/${courseId}/my-progress`, { headers: { Authorization: `Bearer ${token}` }})
+    ]);
+    if(!cRes.ok) throw new Error("Course not found");
+    courseData = await cRes.json();
+    completedSet = new Set((await pRes.json()).completed_ids);
+
+    renderUI();
+    
+    // Logic การเริ่มเล่น: ถ้ามี ?lesson=X ให้เล่นอันนั้น, ถ้าไม่มีให้เล่นอันแรกที่ยังไม่จบ
+    let targetIdx = 0;
+    if(startLessonIdx !== null) {
+      targetIdx = parseInt(startLessonIdx);
+    } else {
+      const firstUnfinished = courseData.lessons.findIndex(l => !completedSet.has(l.id));
+      targetIdx = firstUnfinished !== -1 ? firstUnfinished : 0;
+    }
+    playLesson(targetIdx);
+
+  } catch(e){ alert(e.message); location.href="./me.html"; }
+}
+
+function renderUI(){
+  document.getElementById("courseTitle").textContent = courseData.title;
+  renderPlaylist();
+  updateProgressUI();
+}
+
+function renderPlaylist(){
+  document.getElementById("playlist").innerHTML = courseData.lessons.map((l, idx) => {
+    const isDone = completedSet.has(l.id);
+    const isActive = idx === currentLessonIndex;
+    return `<div onclick="playLesson(${idx})" class="lesson-item flex items-center gap-4 p-3.5 cursor-pointer transition-all duration-200 group ${isActive ? 'active' : 'border-r-4 border-transparent'}"><div class="shrink-0 relative" onclick="event.stopPropagation()"><input type="checkbox" class="chk-circle" ${isDone ? "checked" : ""} onchange="toggleLesson(${l.id}, this)"></div><div class="flex-1 min-w-0"><div class="flex justify-between items-baseline mb-0.5"><div class="text-[10px] font-bold tracking-wider uppercase ${isActive ? 'text-indigo-600' : 'text-slate-400'}">EPISODE ${idx+1}</div>${l.doc_url ? '<span class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">DOC</span>' : ''}</div><div class="text-sm font-medium truncate ${isActive ? 'text-indigo-900' : 'text-slate-700 group-hover:text-slate-900'}">${l.title}</div></div>${isActive ? '<div class="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-sm animate-pulse"></div>' : ''}</div>`;
+  }).join("");
+}
+
+function playLesson(idx){
+  if(!courseData.lessons[idx]) return;
+  currentLessonIndex = idx;
+  const l = courseData.lessons[idx];
+
+  document.getElementById("ytPlayer").src = `https://www.youtube.com/embed/${l.youtube_id}?autoplay=1&rel=0`;
+  document.getElementById("lessonTitle").textContent = `${idx+1}. ${l.title}`;
+  document.getElementById("lessonActions").innerHTML = l.doc_url ? `<a href="${l.doc_url}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 rounded-lg text-sm font-bold transition">📄 เอกสาร</a>` : "";
+
+  updateActivity(`กำลังเรียน ${l.title}`);
+  
+  // --- บันทึกประวัติการเรียนล่าสุด (สำคัญสำหรับหน้า Dashboard) ---
+  const history = {
+    courseId: courseData.id,
+    courseTitle: courseData.title,
+    lessonIdx: idx,
+    lessonTitle: l.title,
+    thumbnail: courseData.thumbnail,
+    timestamp: Date.now()
+  };
+  localStorage.setItem("last_watched", JSON.stringify(history));
+  // --------------------------------------------------------
+
+  renderPlaylist();
+  setTimeout(() => { const el = document.querySelector(".lesson-item.active"); if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+}
+
+async function toggleLesson(lid, chk){
+  const original = !chk.checked;
+  if(chk.checked) completedSet.add(lid); else completedSet.delete(lid);
+  updateProgressUI();
+  try { await fetch(`${API}/courses/${courseId}/lessons/${lid}/toggle-progress`, { method: "POST", headers: { Authorization: `Bearer ${token}` } }); } 
+  catch { if(original) completedSet.add(lid); else completedSet.delete(lid); chk.checked = original; updateProgressUI(); }
+}
+
+function updateProgressUI(){
+  const pct = Math.round((completedSet.size/courseData.lessons.length)*100);
+  document.getElementById("topProgressBar").style.width = `${pct}%`;
+  document.getElementById("topProgressText").textContent = `${pct}%`;
+}
+
+async function updateActivity(act){
+  try { await fetch(`${API}/users/me/activity`, { method:"POST", headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` }, body:JSON.stringify({activity: act}) }); } catch{}
+}
+
+init();
+</script>
+</body>
+</html>

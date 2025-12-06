@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ประวัติการชำระเงิน — EdTech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>.brand-gradient{background:linear-gradient(90deg,#231762 0%,#ef1931 100%)}</style>
+</head>
+<body class="min-h-screen bg-slate-50 font-sans text-slate-800">
+  
+  <header class="brand-gradient text-white shadow-lg sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
+      <a href="./me.html" class="flex items-center">
+        <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-20 w-auto object-contain hover:scale-105 transition duration-300">
+      </a>
+      <ul class="hidden md:flex items-center gap-8 font-bold text-base tracking-wide">
+        <li><a class="opacity-80 hover:opacity-100 border-b-2 border-transparent hover:border-white pb-1 transition" href="./me.html">DASHBOARD</a></li>
+        <li><a class="opacity-80 hover:opacity-100 border-b-2 border-transparent hover:border-white pb-1 transition" href="./course.html">ALL COURSES</a></li>
+        <li><a class="opacity-100 border-b-2 border-white pb-1 transition" href="./payment_history.html">PAYMENTS</a></li>
+      </ul>
+      <button onclick="logout()" class="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm transition border border-white/10">Logout</button>
+    </nav>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-slate-900">🧾 ประวัติการชำระเงิน</h1>
+      <a href="./course.html" class="text-sm text-indigo-600 hover:underline">ซื้อคอร์สเพิ่ม</a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+            <tr>
+              <th class="px-6 py-4">วันที่แจ้งโอน</th>
+              <th class="px-6 py-4">รายการคอร์ส</th>
+              <th class="px-6 py-4 text-right">ยอดเงิน</th>
+              <th class="px-6 py-4 text-center">หลักฐาน</th>
+              <th class="px-6 py-4 text-center">สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="rows" class="divide-y divide-slate-100">
+            <tr><td colspan="5" class="px-6 py-10 text-center text-slate-400">กำลังโหลดข้อมูล...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="slipDlg" class="p-0 rounded-xl overflow-hidden backdrop:bg-black/80 max-h-[90vh]">
+    <div class="relative">
+      <img id="slipImg" src="" class="max-w-md w-full object-contain">
+      <button onclick="document.getElementById('slipDlg').close()" class="absolute top-2 right-2 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black/80">✕</button>
+    </div>
+  </dialog>
+
+<script>
+const API = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
+  ? "http://127.0.0.1:8000" : "https://edtech-api-zigm.onrender.com";
+const token = localStorage.getItem("token");
+if (!token) location.href = "./login.html";
+function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
+
+const df = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+
+async function loadHistory(){
+  try {
+    const res = await fetch(`${API}/users/me/payments`, { headers: { Authorization: `Bearer ${token}` }});
+    const payments = await res.json();
+    renderTable(payments);
+  } catch(e) { 
+    document.getElementById("rows").innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
+  }
+}
+
+function renderTable(list){
+  const tbody = document.getElementById("rows");
+  if(list.length === 0){
+    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-slate-400">ยังไม่เคยมีรายการชำระเงิน</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(p => {
+    // สถานะ
+    let statusBadge = "";
+    if(p.status === "approved") statusBadge = `<span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-200">✅ อนุมัติแล้ว</span>`;
+    else if(p.status === "rejected") statusBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold border border-red-200">❌ ไม่ผ่าน</span>`;
+    else statusBadge = `<span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-200 animate-pulse">⏳ รอตรวจสอบ</span>`;
+
+    // จัดการ URL สลิป (รองรับทั้ง path ธรรมดา และ full url)
+    const slipSrc = p.slip_url.startsWith("http") ? p.slip_url : `${API}${p.slip_url}`;
+
+    return `
+      <tr class="hover:bg-slate-50 transition group">
+        <td class="px-6 py-4 text-slate-500">${df.format(new Date(p.created_at))}</td>
+        <td class="px-6 py-4 font-bold text-slate-700">${p.course ? p.course.title : "ไม่ระบุ"}</td>
+        <td class="px-6 py-4 text-right font-mono font-bold text-slate-900">฿${p.amount.toLocaleString()}</td>
+        <td class="px-6 py-4 text-center">
+          <button onclick="viewSlip('${slipSrc}')" class="text-xs text-indigo-600 hover:underline border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-50 transition">
+            ดูสลิป
+          </button>
+        </td>
+        <td class="px-6 py-4 text-center">${statusBadge}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function viewSlip(url){
+  document.getElementById("slipImg").src = url;
+  document.getElementById("slipDlg").showModal();
+}
+
+loadHistory();
+</script>
+</body>
+</html>

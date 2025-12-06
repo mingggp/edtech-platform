@@ -3,140 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>เข้าสู่ระบบ</title>
+  <title>เข้าสู่ระบบ — MingSmileyFace</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .brand-gradient { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
+  </style>
 </head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-  <div class="w-full max-w-sm bg-white rounded-2xl shadow p-6 space-y-4">
-    <h1 class="text-xl font-bold">เข้าสู่ระบบ</h1>
+<body class="h-screen w-full bg-gray-50 flex items-center justify-center overflow-hidden">
 
-    <form id="loginForm" class="space-y-3">
-      <div>
-        <label class="block text-sm text-gray-600">อีเมล</label>
-        <input id="email" type="email" class="w-full border rounded px-3 py-2"
-               placeholder="you@example.com" autocomplete="username" required />
+  <div class="w-full h-full md:h-auto md:w-[900px] bg-white md:rounded-3xl shadow-2xl flex overflow-hidden">
+    
+    <div class="hidden md:flex w-1/2 brand-gradient text-white flex-col justify-center items-center p-12 relative text-center">
+      <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')] bg-cover opacity-20 mix-blend-overlay"></div>
+      <div class="relative z-10">
+        <h2 class="text-4xl font-extrabold mb-4 tracking-tight">Welcome Back!</h2>
+        <p class="text-indigo-200 text-lg">ยินดีต้อนรับกลับสู่พื้นที่แห่งการเรียนรู้ พัฒนาตัวเองไปอีกขั้นกับ MingSmileyFace</p>
+      </div>
+    </div>
+
+    <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+      <div class="text-center md:text-left mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">เข้าสู่ระบบ</h1>
+        <p class="text-gray-500 text-sm">กรอกข้อมูลเพื่อเข้าถึงคอร์สเรียนของคุณ</p>
       </div>
 
-      <div>
-        <label class="block text-sm text-gray-600">รหัสผ่าน</label>
-        <input id="password" type="password" class="w-full border rounded px-3 py-2"
-               placeholder="••••••••" autocomplete="current-password" required />
+      <form id="loginForm" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
+          <input id="email" type="email" placeholder="name@example.com" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" required />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-sm font-medium text-gray-700">รหัสผ่าน</label>
+            <a href="./forgot_password.html" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">ลืมรหัสผ่าน?</a>
+          </div>
+          <input id="password" type="password" placeholder="••••••••" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" required />
+        </div>
+
+        <p id="msg" class="text-xs text-center font-semibold text-red-500 min-h-[1.25rem]"></p>
+
+        <button id="btnLogin" type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all transform active:scale-95">
+          เข้าสู่ระบบ
+        </button>
+      </form>
+
+      <div class="mt-8 text-center border-t pt-6">
+        <p class="text-sm text-gray-600">
+          ยังไม่มีบัญชีใช่ไหม? 
+          <a href="./signup.html" class="text-indigo-600 font-bold hover:underline">สมัครสมาชิกฟรี</a>
+        </p>
       </div>
-
-      <p id="msg" class="text-sm min-h-[1.25rem]"></p>
-
-      <button id="btnLogin" type="submit" class="w-full py-2 rounded bg-black text-white disabled:opacity-60">
-        เข้าสู่ระบบ
-      </button>
-    </form>
-
-    <div class="text-xs text-gray-500 pt-2">
-      Dev tip: เปิดหน้านี้ผ่าน <code>http://</code> ไม่ใช่ <code>file://</code>
     </div>
   </div>
 
-<script>
-const API = "https://edtech-api-zigm.onrender.com";   // ปรับให้ตรงกับ backend
-const LS_EMAIL = "login_email";        // จำอีเมลอัตโนมัติ
-const SS_ERR   = "login_last_error";   // สำรองข้อความผิดพลาด (ต่อแท็บ)
+  <script>
+    // Logic เดิม (Auto API detection)
+    const API = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
+      ? "http://127.0.0.1:8000" : "https://edtech-api-zigm.onrender.com";
 
-const form = document.getElementById("loginForm");
-const msg = document.getElementById("msg");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const btnLogin = document.getElementById("btnLogin");
+    const form = document.getElementById("loginForm");
+    const msg = document.getElementById("msg");
+    const btnLogin = document.getElementById("btnLogin");
 
-function showError(t){
-  msg.className = "text-sm text-red-600 min-h-[1.25rem]";
-  msg.textContent = "✖ " + t;
-  sessionStorage.setItem(SS_ERR, t);
-}
-function showOk(t){
-  msg.className = "text-sm text-emerald-600 min-h-[1.25rem]";
-  msg.textContent = "✔ " + t;
-  sessionStorage.removeItem(SS_ERR);
-}
-function setLoading(on){
-  btnLogin.disabled = on;
-  btnLogin.textContent = on ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ";
-}
+    // Auto-fill email
+    const savedEmail = localStorage.getItem("login_email");
+    if(savedEmail) document.getElementById("email").value = savedEmail;
 
-// เติมอีเมลอัตโนมัติ + กู้ข้อความ error (ถ้ามี)
-(function init(){
-  const savedEmail = localStorage.getItem(LS_EMAIL);
-  if (savedEmail) email.value = savedEmail;
+    document.getElementById("email").addEventListener("input", (e) => localStorage.setItem("login_email", e.target.value.trim()));
 
-  const lastErr = sessionStorage.getItem(SS_ERR);
-  if (lastErr) showError(lastErr);
-})();
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      btnLogin.disabled = true; btnLogin.textContent = "กำลังตรวจสอบ..."; msg.textContent = "";
+      
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-// บันทึกอีเมลทุกครั้งที่พิมพ์ (auto remember)
-email.addEventListener("input", () => {
-  localStorage.setItem(LS_EMAIL, email.value.trim());
-});
+      try{
+        const res = await fetch(`${API}/auth/login`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json().catch(()=>({}));
+        if(!res.ok) throw new Error(data.detail || "รหัสผ่านไม่ถูกต้อง");
+        
+        localStorage.setItem("token", data.access_token);
+        
+        // Check Role
+        const meRes = await fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${data.access_token}` }});
+        const me = await meRes.json();
+        
+        msg.className = "text-xs text-center font-bold text-emerald-600";
+        msg.textContent = "สำเร็จ! กำลังเข้าสู่ระบบ...";
+        setTimeout(() => location.href = (me.role === "admin") ? "./admin_users.html" : "./me.html", 800);
 
-// ปลอดภัยขึ้น: อนุญาต redirect เฉพาะ path ภายใน (เช่น /me.html) ไม่ให้เป็น http(s):// โดเมนอื่น
-function safeNextUrl(defaultPath){
-  const url = new URL(window.location.href);
-  const next = url.searchParams.get("next");
-  if (!next) return defaultPath;
-  try {
-    // ต้องเป็น path ภายในเท่านั้น
-    if (next.startsWith("/") && !next.startsWith("//")) return next;
-    // หรือเป็นไฟล์ในโฟลเดอร์เดียวกัน เช่น "./page.html"
-    if (next.startsWith("./") || next.endsWith(".html")) return next;
-  } catch {}
-  return defaultPath;
-}
-
-form.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  sessionStorage.removeItem(SS_ERR);
-
-  const emailVal = email.value.trim();
-  const passwordVal = password.value;
-  localStorage.setItem(LS_EMAIL, emailVal);
-
-  setLoading(true);
-  msg.textContent = "";
-
-  try{
-    // 1) ขอ token
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: emailVal, password: passwordVal })
+      }catch(err){
+        msg.className = "text-xs text-center font-bold text-red-500";
+        msg.textContent = err.message;
+        document.getElementById("password").value = "";
+      }finally{
+        btnLogin.disabled = false; btnLogin.textContent = "เข้าสู่ระบบ";
+      }
     });
-    const data = await res.json().catch(()=> ({}));
-    if (!res.ok) {
-      password.value = "";
-      password.focus();
-      throw new Error(data.detail || data.message || res.statusText || "เข้าสู่ระบบไม่สำเร็จ");
-    }
-    localStorage.setItem("token", data.access_token);
-
-    // 2) ดึงโปรไฟล์ เพื่อเช็ค role
-    const meRes = await fetch(`${API}/users/me`, {
-      headers: { Authorization: `Bearer ${data.access_token}` }
-    });
-    const me = await meRes.json().catch(()=> ({}));
-    if (!meRes.ok) {
-      throw new Error(me.detail || "โหลดข้อมูลผู้ใช้ไม่สำเร็จ");
-    }
-
-    showOk("เข้าสู่ระบบสำเร็จ");
-
-    // 3) ตัดสินใจเส้นทาง
-    const defPath = (me.role === "admin") ? "./admin_users.html" : "./me.html";
-    const target = safeNextUrl(defPath);
-    location.href = target;
-
-  }catch(err){
-    showError(err.message || "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์");
-  }finally{
-    setLoading(false);
-  }
-});
-</script>
+  </script>
 </body>
 </html>
