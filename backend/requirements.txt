@@ -7,3 +7,5 @@ python-jose[cryptography]
 email-validator
 python-multipart
 psycopg2-binary
+qrcode[pil]
+fastapi-mail
