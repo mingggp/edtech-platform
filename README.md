@@ -25,7 +25,7 @@ pip install -r requirements.txt
 ## 2) Run
 ```bash
 uvicorn app.main:app --reload
-# API docs at: http://127.0.0.1:8000/docs
+# API docs at: https://edtech-api-zigm.onrender.com/docs
 ```
 
 ## 3) Test quickly (HTTPie or curl)
