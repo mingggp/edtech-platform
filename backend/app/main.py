@@ -231,13 +231,6 @@ async def update_me_combined(
 def protected_hello(current_user = Depends(get_current_user)):
     return {"message": f"Hello, {current_user.email}!"}
 
-# ---------- ensure columns ----------
-with engine.connect() as conn:
-    cols = [row[1] for row in conn.execute(sql_text("PRAGMA table_info(users)"))]
-    if "last_login" not in cols:
-        conn.execute(sql_text("ALTER TABLE users ADD COLUMN last_login TIMESTAMP"))
-        conn.commit()
-
 Base.metadata.create_all(bind=engine)
 
 # ---------- Admin: Users ----------
