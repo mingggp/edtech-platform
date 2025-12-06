@@ -5,6 +5,7 @@ from datetime import datetime
 from .database import Base
 
 # --- 1. ประกาศตารางเพื่อน (friendship) ไว้บนสุด ก่อน class User ---
+# ต้องประกาศตรงนี้เท่านั้น User ถึงจะมองเห็น
 friendship = Table(
     'friendships', Base.metadata,
     Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
@@ -30,7 +31,7 @@ class User(Base):
 
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     last_login = Column(DateTime, nullable=True)
-    current_activity = Column(String, nullable=True)
+    current_activity = Column(String, nullable=True) # เพิ่มบรรทัดนี้สำหรับสถานะ "กำลังเรียน..."
 
     # --- 2. เชื่อมความสัมพันธ์ตรงนี้ ---
     friends = relationship(
@@ -42,7 +43,7 @@ class User(Base):
     )
     
     completed_lessons = relationship("LessonProgress", backref="user")
-    enrollments = relationship("Enrollment", back_populates="user") # เพิ่มเผื่อไว้สำหรับการดึงข้อมูลย้อนกลับ
+    enrollments = relationship("Enrollment", back_populates="user")
 
 
 class AuditLog(Base):
