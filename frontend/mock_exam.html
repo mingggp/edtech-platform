@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mock Exam — EdTech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>.brand-gradient{background:linear-gradient(90deg,#231762 0%,#ef1931 100%)}</style>
+</head>
+<body class="min-h-screen bg-slate-50">
+  <header class="brand-gradient text-white shadow sticky top-0 z-10">
+    <nav class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <a href="./me.html" class="font-black tracking-widest text-lg">LOGO</a>
+      <a href="./me.html" class="text-sm font-semibold opacity-90 hover:opacity-100">← กลับ Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-extrabold text-slate-900">คลังข้อสอบ Mock Exam</h1>
+      <p class="text-slate-500 mt-2">ฝึกฝนกับข้อสอบเสมือนจริง จับเวลาจริง</p>
+      
+      <a href="./exam_history.html" class="inline-block mt-4 text-indigo-600 font-bold hover:underline text-sm">
+        📜 ดูประวัติคะแนนสอบของฉัน
+      </a>
+    </div>
+
+    <div id="grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full text-center text-gray-400">กำลังโหลด...</div>
+    </div>
+  </main>
+
+<script>
+const API = "http://127.0.0.1:8000";
+const token = localStorage.getItem("token");
+if(!token) location.href="./login.html";
+
+async function init(){
+  try {
+    const res = await fetch(`${API}/exams`);
+    const exams = await res.json();
+    render(exams);
+  } catch(e){ document.getElementById("grid").innerHTML = "Error loading exams"; }
+}
+
+function render(list){
+  const el = document.getElementById("grid");
+  if(list.length===0){ el.innerHTML = `<div class="col-span-full text-center text-gray-400">ยังไม่มีข้อสอบ</div>`; return; }
+
+  el.innerHTML = list.map(ex => `
+    <div class="bg-white rounded-xl shadow p-5 hover:shadow-lg transition border border-slate-100 flex flex-col">
+      <div class="flex-1">
+        <h3 class="font-bold text-lg text-slate-800">${ex.title}</h3>
+        <p class="text-sm text-slate-500 mt-1">${ex.description||"ไม่มีรายละเอียด"}</p>
+        <div class="flex gap-2 mt-4">
+          <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-100">
+            ⏱ ${ex.time_limit} นาที
+          </span>
+          <span class="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-100">
+            📝 ${ex.questions?ex.questions.length:0} ข้อ
+          </span>
+        </div>
+      </div>
+      <a href="./exam_room.html?id=${ex.id}" class="mt-5 block w-full text-center py-2.5 bg-black text-white rounded-lg font-bold text-sm hover:bg-gray-800 transition">
+        เริ่มทำข้อสอบ
+      </a>
+    </div>
+  `).join("");
+}
+init();
+</script>
+</body>
+</html>

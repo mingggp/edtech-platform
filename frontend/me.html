@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome Back! — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  
+  <style>
+    .brand-gradient { background: linear-gradient(90deg,#231762 0%, #ef1931 100%); }
+    .card { border-radius: 1.5rem; }
+    .shadow-soft { box-shadow: 0 8px 24px rgba(20,20,20,.08); }
+    .badge { font-size:.75rem; padding:.125rem .5rem; border-radius:999px; }
+    .icon-btn { width: 36px; height: 36px; display:grid; place-items:center; border-radius: 999px; }
+    canvas { display:block; width:100%; height:220px; }
+    dialog::backdrop { background: rgba(0,0,0,0.8); }
+    
+    /* Custom Checkbox */
+    .chk-circle {
+      appearance: none; width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 50%;
+      display: grid; place-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .chk-circle:checked { background: #10b981; border-color: #10b981; }
+    .chk-circle:checked::before { content: "✔"; color: white; font-size: 12px; font-weight: bold; }
+
+    /* Tooltip เพื่อน */
+    .friend-avatar:hover .friend-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+    .friend-tooltip {
+      opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.2s;
+      position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+      white-space: nowrap; z-index: 50; margin-bottom: 8px; pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50">
+  
+  <header class="brand-gradient text-white shadow-lg sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
+      <a href="./me.html" class="flex items-center">
+        <img src="http://127.0.0.1:8000/static/logo.png" alt="MingSmileyFace" class="h-20 w-auto object-contain hover:scale-105 transition duration-300">
+      </a>
+      <ul class="hidden md:flex items-center gap-8 font-bold text-base tracking-wide">
+        <li><a class="opacity-90 hover:opacity-100 border-b-2 border-transparent hover:border-white pb-1 transition" href="./me.html">DASHBOARD</a></li>
+        <li><a class="opacity-80 hover:opacity-100 border-b-2 border-transparent hover:border-white pb-1 transition" href="./course.html">ALL COURSES</a></li>
+        <li><a class="opacity-80 hover:opacity-100 border-b-2 border-transparent hover:border-white pb-1 transition" href="./exam_history.html">HISTORY</a></li>
+      </ul>
+      <button onclick="logout()" class="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm transition border border-white/10">
+        Logout
+      </button>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 space-y-10">
+    
+    <section class="grid md:grid-cols-2 gap-6">
+      <div class="card bg-indigo-900 text-indigo-50 p-6 shadow-soft relative overflow-hidden">
+        <div class="relative z-10 flex gap-5 items-start">
+          <div class="shrink-0 relative">
+            <img id="avatar" src="" class="w-24 h-24 rounded-2xl object-cover bg-indigo-800 border-2 border-indigo-700">
+            <a href="./profile.html" class="absolute -right-2 -bottom-2 w-8 h-8 bg-white text-indigo-900 rounded-full flex items-center justify-center shadow hover:scale-110 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+            </a>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold" id="fullName">...</h2>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span id="grade" class="badge bg-indigo-800/50 border border-indigo-700">Class -</span>
+              <span id="dek" class="badge bg-indigo-800/50 border border-indigo-700">DEK -</span>
+            </div>
+            <p id="bio" class="mt-3 text-sm text-indigo-200 line-clamp-2">...</p>
+          </div>
+        </div>
+        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
+      </div>
+
+      <div class="card bg-white p-6 shadow-soft">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-slate-700">เวลาเรียนสัปดาห์นี้</h3>
+          <div class="text-xs text-slate-400">เป้าหมาย: <span id="goalText" class="text-slate-900 font-bold">0</span> ชม./วัน</div>
+        </div>
+        <canvas id="hist"></canvas>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="text-sm font-bold text-slate-500 mb-2 uppercase tracking-wider">เพื่อนของฉัน</h3>
+      <div class="flex items-center gap-4 overflow-x-auto pb-4 pt-12 px-2 no-scrollbar -mx-2">
+        <div id="friendList" class="flex items-center gap-4"></div>
+        <button onclick="addFriend()" class="shrink-0 w-12 h-12 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-indigo-500 hover:text-indigo-500 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-extrabold text-slate-900">คอร์สของฉัน</h2>
+        <a href="./course.html" class="text-sm font-semibold text-indigo-600 hover:underline">+ ลงทะเบียนเพิ่ม</a>
+      </div>
+      <div class="swiper mySwiper !pb-10">
+        <div class="swiper-wrapper" id="courseWrapper">
+          <div class="swiper-slide w-auto"><div class="p-10 text-center text-gray-400">กำลังโหลดคอร์ส...</div></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-3xl shadow-soft p-6 md:p-8 border border-slate-100">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="p-2 bg-yellow-100 text-yellow-600 rounded-lg text-xl">🏆</div>
+        <div>
+          <h3 class="font-bold text-xl text-slate-900">อันดับเพื่อนสัปดาห์นี้</h3>
+          <p class="text-xs text-slate-500">ใครขยันที่สุดมาดูกัน!</p>
+        </div>
+      </div>
+      <div class="space-y-4" id="leaderboardList"></div>
+      <button id="btnShowMore" onclick="toggleLeaderboard()" class="w-full mt-6 py-2 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition">
+        ดูเพิ่มเติม ▼
+      </button>
+    </section>
+
+  </main>
+
+  <dialog id="playerDlg" class="w-full max-w-4xl p-0 rounded-xl overflow-hidden backdrop:bg-black/80">
+    <div class="bg-black aspect-video relative flex items-center justify-center">
+      <iframe id="ytPlayer" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="bg-white p-4 flex justify-between items-start border-b">
+      <div>
+        <h3 id="playerTitle" class="font-bold text-lg">ชื่อบทเรียน</h3>
+        <div id="playerActions" class="flex gap-2 mt-1"></div>
+      </div>
+      <button onclick="closePlayer()" class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm font-bold">ปิด</button>
+    </div>
+    <div class="bg-gray-50 p-4 max-h-64 overflow-y-auto">
+      <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">บทเรียนในคอร์สนี้</h4>
+      <div id="playerLessonList" class="space-y-1"></div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+const API = "http://127.0.0.1:8000";
+const token = localStorage.getItem("token");
+if (!token) location.href = "./login.html";
+
+function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
+
+// ---- Global Data Store ----
+const COURSES_DATA = {};
+let currentCourseId = null;
+let currentLessons = [];
+let currentCompletedSet = new Set();
+
+// ---- Social Logic ----
+async function loadFriends(){
+  try {
+    const res = await fetch(`${API}/users/me/friends`, { headers: { Authorization: `Bearer ${token}` }});
+    const friends = await res.json();
+    renderFriends(friends);
+  } catch(e) { console.error(e); }
+}
+
+function renderFriends(list){
+  const el = document.getElementById("friendList");
+  if(list.length === 0){
+    el.innerHTML = `<div class="text-xs text-gray-400">ยังไม่มีเพื่อน (ลองกด +)</div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(f => {
+    let ringColor = "border-gray-300 grayscale opacity-70";
+    let tooltip = `<span class="px-2 py-1 bg-gray-500 text-white text-xs rounded">Offline</span>`;
+    
+    if (f.is_online) {
+      if (f.current_activity) {
+        ringColor = "border-blue-500";
+        tooltip = `
+          <div class="bg-blue-600 text-white px-3 py-2 rounded-lg shadow-lg text-center">
+            <div class="text-[10px] uppercase opacity-75">Studying</div>
+            <div class="font-bold text-xs whitespace-nowrap">📚 ${f.current_activity}</div>
+          </div>`;
+      } else {
+        ringColor = "border-green-500";
+        tooltip = `<span class="px-2 py-1 bg-green-600 text-white text-xs rounded">Online</span>`;
+      }
+    }
+
+    const avatar = f.avatar_url ? (f.avatar_url.startsWith("http")?f.avatar_url:`${API}${f.avatar_url}`) : `https://ui-avatars.com/api/?name=${f.full_name||f.email}&background=random`;
+
+    return `
+      <div class="relative group friend-avatar cursor-pointer">
+        <div class="w-12 h-12 rounded-full border-2 ${ringColor} p-0.5 bg-white transition hover:scale-105">
+          <img src="${avatar}" class="w-full h-full rounded-full object-cover">
+        </div>
+        <div class="friend-tooltip">
+          ${tooltip}
+          <div class="w-2 h-2 bg-inherit absolute top-full left-1/2 -translate-x-1/2 -mt-1 rotate-45"></div>
+        </div>
+        <div class="text-[10px] text-center mt-1 text-slate-600 truncate w-12">${f.full_name || f.email.split('@')[0]}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function addFriend() {
+  const email = prompt("กรอกอีเมลเพื่อนที่ต้องการเพิ่ม:");
+  if(!email) return;
+  const fd = new FormData(); fd.append("email", email);
+  try {
+    const res = await fetch(`${API}/users/me/friends`, {
+      method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd
+    });
+    if(!res.ok) throw new Error("ไม่พบผู้ใช้นี้ หรือเป็นเพื่อนกันแล้ว");
+    alert("เพิ่มเพื่อนสำเร็จ!");
+    loadFriends();
+  } catch(e) { alert(e.message); }
+}
+
+async function loadLeaderboard(){
+  try {
+    const res = await fetch(`${API}/leaderboard`, { headers: { Authorization: `Bearer ${token}` }});
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch(e) { console.error(e); }
+}
+
+function renderLeaderboard(list){
+  const el = document.getElementById("leaderboardList");
+  const maxScore = list.length > 0 ? Math.max(...list.map(u => u.completed_count)) : 1;
+  
+  el.innerHTML = list.map((u, idx) => {
+    const isHidden = idx >= 5 ? "hidden more-items" : "";
+    const widthPct = maxScore === 0 ? 0 : (u.completed_count / maxScore) * 100;
+    const rankColor = idx === 0 ? "text-yellow-500" : (idx === 1 ? "text-gray-400" : (idx === 2 ? "text-orange-400" : "text-slate-400"));
+    const avatar = u.avatar_url ? (u.avatar_url.startsWith("http")?u.avatar_url:`${API}${u.avatar_url}`) : `https://ui-avatars.com/api/?name=${u.full_name}&background=random`;
+
+    return `
+      <div class="flex items-center gap-4 ${isHidden}">
+        <div class="font-black text-lg w-6 text-center ${rankColor}">${idx+1}</div>
+        <img src="${avatar}" class="w-10 h-10 rounded-full bg-gray-200 object-cover">
+        <div class="flex-1">
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-bold text-slate-700">${u.full_name}</span>
+            <span class="font-mono text-slate-500">${u.completed_count} บทเรียน</span>
+          </div>
+          <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-indigo-500 rounded-full" style="width: ${widthPct}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleLeaderboard(){
+  const hiddenItems = document.querySelectorAll(".more-items");
+  const btn = document.getElementById("btnShowMore");
+  hiddenItems.forEach(el => {
+    if(el.classList.contains("hidden")){
+      el.classList.remove("hidden");
+      btn.textContent = "ย่อรายการ ▲";
+    } else {
+      el.classList.add("hidden");
+      btn.textContent = "ดูเพิ่มเติม ▼";
+    }
+  });
+}
+
+// ---- Main Logic ----
+async function loadProfile(){
+  try {
+    const res = await fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }});
+    if(!res.ok) throw new Error();
+    const u = await res.json();
+    document.getElementById("avatar").src = u.avatar_url ? (u.avatar_url.startsWith("http")?u.avatar_url:`${API}${u.avatar_url}`) : "https://placehold.co/200?text=User";
+    document.getElementById("fullName").textContent = u.full_name || u.email.split("@")[0];
+    document.getElementById("grade").textContent = u.grade_level || "M-";
+    document.getElementById("dek").textContent = u.dek_code ? `DEK${u.dek_code}` : "DEK-";
+    document.getElementById("bio").textContent = u.bio || "เขียนแนะนำตัวหน่อยสิ...";
+  } catch { logout(); }
+}
+
+async function loadMyCourses(){
+  const wrapper = document.getElementById("courseWrapper");
+  try {
+    const res = await fetch(`${API}/users/me/courses`, { headers: { Authorization: `Bearer ${token}` }});
+    const enrollments = await res.json();
+    
+    if(enrollments.length === 0){
+      wrapper.innerHTML = `<div class="w-full text-center py-10 text-gray-400">ยังไม่มีคอร์สเรียน</div>`;
+      return;
+    }
+
+    wrapper.innerHTML = "";
+    for(const key in COURSES_DATA) delete COURSES_DATA[key];
+
+    for(const enr of enrollments){
+      const cRes = await fetch(`${API}/courses/${enr.course_id}`, { headers: { Authorization: `Bearer ${token}` }});
+      const course = await cRes.json();
+      const pRes = await fetch(`${API}/courses/${enr.course_id}/my-progress`, { headers: { Authorization: `Bearer ${token}` }});
+      const prog = await pRes.json();
+      const completedIds = new Set(prog.completed_ids);
+
+      const lessons = course.lessons || [];
+      const total = lessons.length;
+      const done = completedIds.size;
+      const pct = total === 0 ? 0 : Math.round((done/total)*100);
+
+      COURSES_DATA[course.id] = { course, lessons, completedIds };
+
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      slide.innerHTML = `
+        <div class="card bg-white p-5 shadow-soft border border-slate-100 h-full flex flex-col">
+          <div class="flex justify-between items-start mb-3">
+            <div class="font-bold text-lg line-clamp-1" title="${course.title}">${course.title}</div>
+            <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full shrink-0">Active</span>
+          </div>
+          <div class="flex justify-between text-xs text-slate-500 mb-2">
+            <span id="prog-text-${course.id}">${done}/${total} บทเรียน</span>
+            <span id="prog-pct-${course.id}">${pct}%</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 mb-4 overflow-hidden">
+            <div id="prog-bar-${course.id}" class="bg-indigo-500 h-full transition-all duration-500" style="width: ${pct}%"></div>
+          </div>
+          <button type="button" onclick="openPlayer(${course.id})" 
+            class="mt-auto w-full py-2 text-sm font-bold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            ${total === 0 ? "disabled" : ""}
+          >
+            ${total > 0 ? "▶ เข้าเรียน" : "ยังไม่มีเนื้อหา"}
+          </button>
+        </div>
+      `;
+      wrapper.appendChild(slide);
+    }
+
+    new Swiper(".mySwiper", {
+      slidesPerView: 1, spaceBetween: 20,
+      pagination: { el: ".swiper-pagination", clickable: true },
+      breakpoints: { 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
+    });
+  } catch(e) { console.error(e); }
+}
+
+function openPlayer(courseId){
+  const data = COURSES_DATA[courseId];
+  if(!data || !data.lessons || data.lessons.length === 0) return;
+  currentCourseId = courseId;
+  currentLessons = data.lessons;
+  currentCompletedSet = data.completedIds;
+  renderPlaylist();
+  playVideoByIndex(0);
+  document.getElementById("playerDlg").showModal();
+}
+
+function renderPlaylist(){
+  const listEl = document.getElementById("playerLessonList");
+  listEl.innerHTML = currentLessons.map((l, idx) => {
+    const isDone = currentCompletedSet.has(l.id);
+    return `
+    <div class="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded group ${isDone ? 'bg-green-50/50' : ''}">
+      <input type="checkbox" class="chk-circle shrink-0" ${isDone ? "checked" : ""} onclick="toggleLesson(event, ${l.id}, this)">
+      <button type="button" onclick="playVideoByIndex(${idx})" class="flex-1 text-left flex gap-2 items-center min-w-0">
+        <span class="text-xs font-mono text-gray-400 w-5 shrink-0">${idx+1}.</span>
+        <div class="truncate text-sm text-gray-700 group-hover:text-black font-medium">${l.title}</div>
+        ${l.doc_url ? '<span class="text-[10px] bg-yellow-100 text-yellow-700 px-1 rounded shrink-0">DOC</span>' : ''}
+      </button>
+    </div>`;
+  }).join("");
+}
+
+async function toggleLesson(e, lessonId, checkbox){
+  e.stopPropagation();
+  const row = checkbox.closest("div");
+  if(checkbox.checked){ currentCompletedSet.add(lessonId); row.classList.add("bg-green-50/50"); }
+  else { currentCompletedSet.delete(lessonId); row.classList.remove("bg-green-50/50"); }
+  updateCardProgressUI();
+  try {
+    const res = await fetch(`${API}/courses/${currentCourseId}/lessons/${lessonId}/toggle-progress`, {
+      method: "POST", headers: { Authorization: `Bearer ${token}` }
+    });
+    if(!res.ok) throw new Error();
+    loadLeaderboard();
+  } catch {
+    checkbox.checked = !checkbox.checked;
+    updateCardProgressUI();
+  }
+}
+
+function updateCardProgressUI(){
+  const total = currentLessons.length;
+  if(!currentCourseId || total === 0) return;
+  const done = currentCompletedSet.size;
+  const pct = Math.round((done/total)*100);
+  document.getElementById(`prog-text-${currentCourseId}`).textContent = `${done}/${total} บทเรียน`;
+  document.getElementById(`prog-pct-${currentCourseId}`).textContent = `${pct}%`;
+  document.getElementById(`prog-bar-${currentCourseId}`).style.width = `${pct}%`;
+}
+
+function playVideoByIndex(idx){
+  const l = currentLessons[idx];
+  if(!l) return;
+  document.getElementById("ytPlayer").src = `https://www.youtube.com/embed/${l.youtube_id}?autoplay=1`;
+  document.getElementById("playerTitle").textContent = l.title;
+  const act = document.getElementById("playerActions");
+  act.innerHTML = l.doc_url ? `<a href="${l.doc_url}" target="_blank" class="px-3 py-1 bg-yellow-50 text-yellow-700 text-xs font-bold rounded border border-yellow-200">📄 เอกสาร</a>` : "";
+}
+
+function closePlayer(){
+  document.getElementById("ytPlayer").src = "";
+  document.getElementById("playerDlg").close();
+}
+
+function initChart(){
+  const ctx = document.getElementById("hist").getContext("2d");
+  ctx.fillStyle = "#f1f5f9"; ctx.fillRect(0,0,300,150);
+  ctx.fillStyle = "#6366f1";
+  [20, 40, 60, 30, 80, 50, 90].forEach((h, i) => ctx.fillRect(20 + i*40, 150-h, 20, h));
+  document.getElementById("goalText").textContent = "2";
+}
+
+loadProfile();
+loadMyCourses();
+loadFriends();
+loadLeaderboard();
+requestAnimationFrame(initChart);
+</script>
+</body>
+</html>

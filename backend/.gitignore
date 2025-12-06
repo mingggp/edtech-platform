@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment Variables (ความลับ ห้ามขึ้น GitHub)
+.env
+
+# Database (เราจะใช้ Cloud DB แทน)
+*.db
+*.sqlite3
+backend/app.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db

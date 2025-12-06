@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>เข้าสู่ระบบ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+  <div class="w-full max-w-sm bg-white rounded-2xl shadow p-6 space-y-4">
+    <h1 class="text-xl font-bold">เข้าสู่ระบบ</h1>
+
+    <form id="loginForm" class="space-y-3">
+      <div>
+        <label class="block text-sm text-gray-600">อีเมล</label>
+        <input id="email" type="email" class="w-full border rounded px-3 py-2"
+               placeholder="you@example.com" autocomplete="username" required />
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-600">รหัสผ่าน</label>
+        <input id="password" type="password" class="w-full border rounded px-3 py-2"
+               placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+
+      <p id="msg" class="text-sm min-h-[1.25rem]"></p>
+
+      <button id="btnLogin" type="submit" class="w-full py-2 rounded bg-black text-white disabled:opacity-60">
+        เข้าสู่ระบบ
+      </button>
+    </form>
+
+    <div class="text-xs text-gray-500 pt-2">
+      Dev tip: เปิดหน้านี้ผ่าน <code>http://</code> ไม่ใช่ <code>file://</code>
+    </div>
+  </div>
+
+<script>
+const API = "http://127.0.0.1:8000";   // ปรับให้ตรงกับ backend
+const LS_EMAIL = "login_email";        // จำอีเมลอัตโนมัติ
+const SS_ERR   = "login_last_error";   // สำรองข้อความผิดพลาด (ต่อแท็บ)
+
+const form = document.getElementById("loginForm");
+const msg = document.getElementById("msg");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const btnLogin = document.getElementById("btnLogin");
+
+function showError(t){
+  msg.className = "text-sm text-red-600 min-h-[1.25rem]";
+  msg.textContent = "✖ " + t;
+  sessionStorage.setItem(SS_ERR, t);
+}
+function showOk(t){
+  msg.className = "text-sm text-emerald-600 min-h-[1.25rem]";
+  msg.textContent = "✔ " + t;
+  sessionStorage.removeItem(SS_ERR);
+}
+function setLoading(on){
+  btnLogin.disabled = on;
+  btnLogin.textContent = on ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ";
+}
+
+// เติมอีเมลอัตโนมัติ + กู้ข้อความ error (ถ้ามี)
+(function init(){
+  const savedEmail = localStorage.getItem(LS_EMAIL);
+  if (savedEmail) email.value = savedEmail;
+
+  const lastErr = sessionStorage.getItem(SS_ERR);
+  if (lastErr) showError(lastErr);
+})();
+
+// บันทึกอีเมลทุกครั้งที่พิมพ์ (auto remember)
+email.addEventListener("input", () => {
+  localStorage.setItem(LS_EMAIL, email.value.trim());
+});
+
+// ปลอดภัยขึ้น: อนุญาต redirect เฉพาะ path ภายใน (เช่น /me.html) ไม่ให้เป็น http(s):// โดเมนอื่น
+function safeNextUrl(defaultPath){
+  const url = new URL(window.location.href);
+  const next = url.searchParams.get("next");
+  if (!next) return defaultPath;
+  try {
+    // ต้องเป็น path ภายในเท่านั้น
+    if (next.startsWith("/") && !next.startsWith("//")) return next;
+    // หรือเป็นไฟล์ในโฟลเดอร์เดียวกัน เช่น "./page.html"
+    if (next.startsWith("./") || next.endsWith(".html")) return next;
+  } catch {}
+  return defaultPath;
+}
+
+form.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  sessionStorage.removeItem(SS_ERR);
+
+  const emailVal = email.value.trim();
+  const passwordVal = password.value;
+  localStorage.setItem(LS_EMAIL, emailVal);
+
+  setLoading(true);
+  msg.textContent = "";
+
+  try{
+    // 1) ขอ token
+    const res = await fetch(`${API}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: emailVal, password: passwordVal })
+    });
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) {
+      password.value = "";
+      password.focus();
+      throw new Error(data.detail || data.message || res.statusText || "เข้าสู่ระบบไม่สำเร็จ");
+    }
+    localStorage.setItem("token", data.access_token);
+
+    // 2) ดึงโปรไฟล์ เพื่อเช็ค role
+    const meRes = await fetch(`${API}/users/me`, {
+      headers: { Authorization: `Bearer ${data.access_token}` }
+    });
+    const me = await meRes.json().catch(()=> ({}));
+    if (!meRes.ok) {
+      throw new Error(me.detail || "โหลดข้อมูลผู้ใช้ไม่สำเร็จ");
+    }
+
+    showOk("เข้าสู่ระบบสำเร็จ");
+
+    // 3) ตัดสินใจเส้นทาง
+    const defPath = (me.role === "admin") ? "./admin_users.html" : "./me.html";
+    const target = safeNextUrl(defPath);
+    location.href = target;
+
+  }catch(err){
+    showError(err.message || "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์");
+  }finally{
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>

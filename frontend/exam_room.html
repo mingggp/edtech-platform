@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>กำลังสอบ... — EdTech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .choice-radio:checked + div { border-color: #4f46e5; background-color: #eef2ff; color: #312e81; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen select-none"> <div class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 px-6 h-16 flex items-center justify-between">
+    <h1 class="font-bold text-gray-700 truncate max-w-[200px] md:max-w-md" id="examTitle">Loading...</h1>
+    <div class="flex items-center gap-4">
+      <div class="text-xl font-mono font-bold text-red-600 bg-red-50 px-3 py-1 rounded" id="timer">00:00</div>
+      <button onclick="submitExam()" class="bg-indigo-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-indigo-700">ส่งคำตอบ</button>
+    </div>
+  </div>
+
+  <main class="max-w-3xl mx-auto pt-24 pb-20 px-4">
+    <div id="qContainer" class="space-y-8">
+      </div>
+  </main>
+
+  <div id="loading" class="fixed inset-0 bg-white z-[60] flex items-center justify-center">
+    <div class="text-center">
+      <div class="text-2xl mb-2">⏳</div>
+      <p>กำลังเตรียมข้อสอบ...</p>
+    </div>
+  </div>
+
+  <dialog id="scoreDlg" class="p-8 rounded-2xl shadow-2xl backdrop:bg-black/50 text-center w-80">
+    <div class="text-5xl mb-4">🏆</div>
+    <h2 class="text-2xl font-bold mb-1">ส่งข้อสอบเรียบร้อย!</h2>
+    <div class="py-6">
+      <p class="text-gray-500 text-sm">คะแนนของคุณ</p>
+      <div class="text-5xl font-black text-indigo-600 mt-2">
+        <span id="scoreVal">0</span> <span class="text-lg text-gray-400 font-normal">/ <span id="totalVal">0</span></span>
+      </div>
+    </div>
+    <button onclick="location.href='./mock_exam.html'" class="w-full py-2.5 bg-black text-white rounded-lg font-bold">กลับหน้าหลัก</button>
+  </dialog>
+
+<script>
+const API = "http://127.0.0.1:8000";
+const token = localStorage.getItem("token");
+if(!token) location.href="./login.html";
+
+const urlParams = new URLSearchParams(window.location.search);
+const examId = urlParams.get("id");
+if(!examId) location.href="./mock_exam.html";
+
+let questions = [];
+let timeLeft = 0; // seconds
+let timerInterval;
+
+async function init(){
+  try {
+    const res = await fetch(`${API}/exams/${examId}`, { headers:{ Authorization:`Bearer ${token}` } });
+    if(!res.ok) throw new Error("Exam not found");
+    const exam = await res.json();
+    
+    document.getElementById("examTitle").textContent = exam.title;
+    questions = exam.questions || [];
+    
+    renderQuestions();
+    
+    // Start Timer
+    timeLeft = exam.time_limit * 60;
+    updateTimerDisplay();
+    timerInterval = setInterval(()=>{
+      timeLeft--;
+      updateTimerDisplay();
+      if(timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("หมดเวลาสอบ! ระบบจะส่งคำตอบอัตโนมัติ");
+        submitExam();
+      }
+    }, 1000);
+
+    document.getElementById("loading").classList.add("hidden");
+  } catch(e){ alert(e.message); location.href="./mock_exam.html"; }
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const s = (timeLeft % 60).toString().padStart(2, '0');
+  const el = document.getElementById("timer");
+  el.textContent = `${m}:${s}`;
+  if(timeLeft < 60) el.classList.add("animate-pulse"); // กระพริบนาทีสุดท้าย
+}
+
+function renderQuestions(){
+  const container = document.getElementById("qContainer");
+  // เรียงข้อ
+  questions.sort((a,b)=> a.order - b.order);
+
+  container.innerHTML = questions.map((q, idx) => `
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100" id="q-${q.id}">
+      <div class="flex gap-3 mb-4">
+        <span class="flex-shrink-0 w-8 h-8 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center font-bold text-sm">${idx+1}</span>
+        <div class="text-lg font-medium text-slate-800 pt-1">${q.text.replace(/\n/g, "<br>")}</div>
+      </div>
+      
+      <div class="space-y-2 ml-11">
+        ${q.choices.map(c => `
+          <label class="block cursor-pointer group">
+            <input type="radio" name="ans_${q.id}" value="${c.id}" class="choice-radio hidden">
+            <div class="p-3 border rounded-lg hover:bg-gray-50 transition border-gray-200 text-slate-700 flex items-center gap-3">
+              <div class="w-4 h-4 rounded-full border border-gray-300 group-hover:border-indigo-400 flex items-center justify-center">
+                <div class="w-2 h-2 rounded-full bg-indigo-600 hidden group-hover:block"></div>
+              </div>
+              <span>${c.text}</span>
+            </div>
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+async function submitExam(){
+  clearInterval(timerInterval);
+  
+  // Collect Answers
+  const answers = [];
+  questions.forEach(q => {
+    const selected = document.querySelector(`input[name="ans_${q.id}"]:checked`);
+    if(selected) {
+      answers.push({ question_id: q.id, choice_id: parseInt(selected.value) });
+    }
+  });
+
+  if(timeLeft > 0 && !confirm(`คุณทำไปแล้ว ${answers.length} จาก ${questions.length} ข้อ\nยืนยันจะส่งคำตอบ?`)) {
+    // Resume timer if cancelled (แบบง่ายๆ คือปล่อยเวลาเดินต่อถ้ายังไม่หมด)
+    timerInterval = setInterval(()=>{ timeLeft--; updateTimerDisplay(); if(timeLeft<=0) submitExam(); }, 1000);
+    return;
+  }
+
+  // Submit
+  try {
+    const res = await fetch(`${API}/exams/${examId}/submit`, {
+      method: "POST",
+      headers: { "Content-Type":"application/json", Authorization:`Bearer ${token}` },
+      body: JSON.stringify({ answers })
+    });
+    if(!res.ok) throw new Error("Submit failed");
+    const result = await res.json();
+    
+    document.getElementById("scoreVal").textContent = result.score;
+    document.getElementById("totalVal").textContent = result.total_score;
+    document.getElementById("scoreDlg").showModal();
+  } catch(e){ alert(e.message); }
+}
+
+// Warn before leave
+window.onbeforeunload = () => {
+  return "กำลังสอบอยู่ หากออกตอนนี้คะแนนจะไม่ถูกบันทึก";
+};
+
+init();
+</script>
+</body>
+</html>

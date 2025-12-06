@@ -1,0 +1,11 @@
+{
+  "python.defaultInterpreterPath": "C:\\dev\\edtech_login_starter\\backend\\.venv\\Scripts\\python.exe",
+  "python.terminal.activateEnvironment": true,
+
+  "liveServer.settings.ignoreFiles": [
+      "**/*.db",
+      "**/*.sqlite",
+      "**/*.pyc",
+      "**/__pycache__/**"
+  ]
+}

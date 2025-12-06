@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ผู้ใช้ทั้งหมด — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow p-6 space-y-4">
+    <div class="flex items-center justify-between gap-4">
+      <h1 class="text-2xl font-bold">รายชื่อผู้ใช้ (Admin)</h1>
+      <div class="flex flex-wrap items-center gap-2">
+        <input id="q" class="border rounded px-3 py-2 text-sm" placeholder="ค้นหา email / ชื่อ...">
+        <select id="sort" class="border rounded px-3 py-2 text-sm">
+          <option value="id:asc">id ↑</option>
+          <option value="id:desc">id ↓</option>
+          <option value="email:asc">email ↑</option>
+          <option value="email:desc">email ↓</option>
+          <option value="created_at:desc">created_at ↓</option>
+          <option value="created_at:asc">created_at ↑</option>
+          <option value="last_login:desc">last_login ↓</option>
+          <option value="last_login:asc">last_login ↑</option>
+        </select>
+        <select id="pageSize" class="border rounded px-3 py-2 text-sm">
+          <option>10</option><option>20</option><option>50</option>
+        </select>
+        <select id="fRole" class="border rounded px-3 py-2 text-sm">
+          <option value="">role: all</option>
+          <option value="admin">admin</option>
+          <option value="student">student</option>
+        </select>
+        <select id="fActive" class="border rounded px-3 py-2 text-sm">
+          <option value="">status: all</option>
+          <option value="true">active</option>
+          <option value="false">inactive</option>
+        </select>
+
+        <button id="btnSearch" class="px-3 py-2 text-sm bg-black text-white rounded">ค้นหา</button>
+        <button id="btnCreate" class="px-3 py-2 text-sm bg-emerald-600 text-white rounded">+ สร้างผู้ใช้</button>
+        <a href="./admin_audit.html" class="px-3 py-2 text-sm border rounded">ดู Audit Logs</a>
+
+        <!-- CSV -->
+        <button id="btnExport" class="px-3 py-2 text-sm border rounded">Export CSV</button>
+        <input id="fileCSV" type="file" accept=".csv" class="hidden">
+        <button id="btnImport" class="px-3 py-2 text-sm border rounded">Import CSV</button>
+
+        <a href="./me.html" class="underline ml-2">กลับหน้าโปรไฟล์</a>
+      </div>
+    </div>
+
+    <div id="cards" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="p-3 rounded-xl border"><div class="text-xs text-gray-500">ผู้ใช้ทั้งหมด</div><div id="m_total" class="text-2xl font-bold">-</div></div>
+      <div class="p-3 rounded-xl border"><div class="text-xs text-gray-500">แอดมิน</div><div id="m_admins" class="text-2xl font-bold">-</div></div>
+      <div class="p-3 rounded-xl border"><div class="text-xs text-gray-500">แอคทีฟ</div><div id="m_active" class="text-2xl font-bold">-</div></div>
+      <div class="p-3 rounded-xl border"><div class="text-xs text-gray-500">สมัครวันนี้</div><div id="m_new" class="text-2xl font-bold">-</div></div>
+    </div>
+
+    <div id="msg" class="text-sm"></div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left border-b">
+            <th class="py-2 pr-3">ID</th>
+            <th class="py-2 pr-3">อีเมล</th>
+            <th class="py-2 pr-3">ชื่อ</th>
+            <th class="py-2 pr-3">บทบาท</th>
+            <th class="py-2 pr-3">ชั้น</th>
+            <th class="py-2 pr-3">dek</th>
+            <th class="py-2 pr-3">สร้างเมื่อ</th>
+            <th class="py-2 pr-3">เข้าสู่ระบบล่าสุด</th>
+            <th class="py-2 pr-3">สถานะ</th>
+            <th class="py-2 pr-3">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="flex items-center justify-between pt-2">
+      <div id="meta" class="text-sm text-gray-600"></div>
+      <div class="flex gap-2">
+        <button id="prev" class="px-3 py-2 text-sm border rounded">ก่อนหน้า</button>
+        <button id="next" class="px-3 py-2 text-sm border rounded">ถัดไป</button>
+      </div>
+    </div>
+
+    <!-- Import Result -->
+    <div id="importBox" class="hidden border rounded-xl p-4">
+      <div class="font-semibold mb-2">ผลการนำเข้า CSV</div>
+      <div id="importSummary" class="text-sm mb-2"></div>
+      <div class="max-h-56 overflow-auto">
+        <table class="w-full text-xs">
+          <thead><tr class="text-left border-b"><th class="py-1 pr-2">แถว</th><th class="py-1 pr-2">อีเมล</th><th class="py-1 pr-2">สถานะ</th><th class="py-1 pr-2">ข้อความ</th></tr></thead>
+          <tbody id="importRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <dialog id="editDlg" class="p-0 rounded-xl backdrop:bg-black/40">
+    <form id="editForm" class="bg-white p-6 w-[420px] space-y-3">
+      <h3 class="font-semibold text-lg">แก้ไขผู้ใช้</h3>
+      <input type="hidden" id="edit_id">
+      <div>
+        <label class="text-xs text-gray-600">อีเมล</label>
+        <input id="edit_email" class="w-full border rounded px-3 py-2 text-sm bg-gray-50" disabled>
+      </div>
+      <div>
+        <label class="text-xs text-gray-600">ชื่อ</label>
+        <input id="edit_full_name" class="w-full border rounded px-3 py-2 text-sm">
+      </div>
+      <div class="flex gap-2">
+        <div class="flex-1">
+          <label class="text-xs text-gray-600">บทบาท</label>
+          <select id="edit_role" class="w-full border rounded px-3 py-2 text-sm">
+            <option value="student">student</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
+        <div class="flex-1">
+          <label class="text-xs text-gray-600">ชั้น (M1..M6)</label>
+          <input id="edit_grade" class="w-full border rounded px-3 py-2 text-sm" placeholder="M1..M6">
+        </div>
+      </div>
+      <div>
+        <label class="inline-flex items-center gap-2">
+          <input type="checkbox" id="edit_active">
+          <span>is_active</span>
+        </label>
+      </div>
+      <div>
+        <label class="text-xs text-gray-600">bio</label>
+        <textarea id="edit_bio" class="w-full border rounded px-3 py-2 text-sm"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" id="btnResetPass" class="px-3 py-2 text-sm border rounded">Reset password</button>
+        <button type="submit" class="px-3 py-2 text-sm bg-black text-white rounded">บันทึก</button>
+        <button type="button" id="btnClose" class="px-3 py-2 text-sm border rounded">ปิด</button>
+      </div>
+      <p id="edit_msg" class="text-sm text-red-600"></p>
+    </form>
+  </dialog>
+
+<script>
+const API = "http://127.0.0.1:8000";
+const token = localStorage.getItem("token");
+if (!token) location.href = "./login.html";
+
+const qEl = document.getElementById("q");
+const sortEl = document.getElementById("sort");
+const pageSizeEl = document.getElementById("pageSize");
+const msg = document.getElementById("msg");
+const tbody = document.getElementById("rows");
+const metaEl = document.getElementById("meta");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const btnSearch = document.getElementById("btnSearch");
+const btnCreate = document.getElementById("btnCreate");
+const fRole = document.getElementById("fRole");
+const fActive = document.getElementById("fActive");
+
+const btnExport = document.getElementById("btnExport");
+const btnImport = document.getElementById("btnImport");
+const fileCSV = document.getElementById("fileCSV");
+const importBox = document.getElementById("importBox");
+const importSummary = document.getElementById("importSummary");
+const importRows = document.getElementById("importRows");
+
+let page = 1;
+
+function showError(text){ msg.className="text-red-600"; msg.textContent="✖ "+text; }
+function showOk(text){ msg.className="text-emerald-600"; msg.textContent="✔ "+text; }
+
+async function fetchJSON(url, options={}) {
+  const res = await fetch(url, {
+    ...options,
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...(options.headers||{}) }
+  });
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || res.statusText);
+  return data;
+}
+
+/* ---------- ฟังก์ชันเวลาไทย ---------- */
+const TZ = 'Asia/Bangkok';
+const dfDT = new Intl.DateTimeFormat('th-TH', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: TZ
+});
+function fmt(dt){
+  if (!dt) return '';
+  // dt จาก backend เป็น ISO (UTC) → สร้าง Date แล้วฟอร์แมตเป็นโซนไทย
+  return dfDT.format(new Date(dt));
+}
+
+async function loadUsers() {
+  try {
+    const q = encodeURIComponent(qEl.value || "");
+    const sort = encodeURIComponent(sortEl.value);
+    const pageSize = parseInt(pageSizeEl.value || "10", 10);
+    const role = fRole.value ? `&role=${encodeURIComponent(fRole.value)}` : "";
+    const active = fActive.value ? `&active=${fActive.value}` : "";
+    const url = `${API}/admin/users?q=${q}&page=${page}&page_size=${pageSize}&sort=${sort}${role}${active}`;
+
+    const payload = await fetchJSON(url);
+    tbody.innerHTML = "";
+    for (const u of payload.items) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="py-2 px-3 border-t">${u.id}</td>
+        <td class="py-2 px-3 border-t">${u.email}</td>
+        <td class="py-2 px-3 border-t">${u.full_name ?? ""}</td>
+        <td class="py-2 px-3 border-t">${u.role ?? "student"}</td>
+        <td class="py-2 px-3 border-t">${u.grade_level ?? ""}</td>
+        <td class="py-2 px-3 border-t">${u.dek_code ?? ""}</td>
+        <td class="py-2 px-3 border-t">${fmt(u.created_at)}</td>
+        <td class="py-2 px-3 border-t">${fmt(u.last_login)}</td>
+        <td class="py-2 px-3 border-t">${u.is_active ? "✅" : "⛔"}</td>
+        <td class="py-2 px-3 border-t">
+          <div class="flex gap-2">
+            <button class="px-2 py-1 text-xs border rounded" data-act="edit" data-id="${u.id}">แก้ไข</button>
+            <button class="px-2 py-1 text-xs border rounded" data-act="toggle" data-id="${u.id}">${u.is_active ? "ปิดใช้งาน" : "เปิดใช้งาน"}</button>
+            <button class="px-2 py-1 text-xs border rounded text-red-600" data-act="delete" data-id="${u.id}">ลบ</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+    const m = payload.meta;
+    metaEl.textContent = `หน้า ${m.page} ขนาด ${m.page_size} ทั้งหมด ${m.total} รายการ`;
+    prevBtn.disabled = m.page <= 1;
+    nextBtn.disabled = m.page * m.page_size >= m.total;
+  } catch (e) {
+    showError(e.message);
+  }
+}
+fRole.onchange = ()=> { page = 1; loadUsers(); }
+fActive.onchange = ()=> { page = 1; loadUsers(); }
+prevBtn.onclick = ()=> { page = Math.max(1, page-1); loadUsers(); }
+nextBtn.onclick = ()=> { page = page+1; loadUsers(); }
+btnSearch.onclick = ()=> { page = 1; loadUsers(); }
+pageSizeEl.onchange = ()=> { page = 1; loadUsers(); }
+sortEl.onchange = ()=> { page = 1; loadUsers(); }
+
+// Row actions
+tbody.addEventListener("click", async (e)=>{
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const act = btn.dataset.act;
+  if (act === "edit") {
+    openEdit(id);
+  } else if (act === "toggle") {
+    try {
+      const u = await fetchJSON(`${API}/admin/users/${id}`);
+      const payload = { is_active: !u.is_active };
+      await fetchJSON(`${API}/admin/users/${id}`, { method:"PATCH", body: JSON.stringify(payload) });
+      showOk("อัปเดตสถานะเรียบร้อย");
+      loadUsers();
+    } catch (e) { showError(e.message); }
+  } else if (act === "delete") {
+    if (!confirm("ยืนยันลบผู้ใช้คนนี้?")) return;
+    try {
+      const res = await fetch(`${API}/admin/users/${id}`, { method:"DELETE", headers:{ Authorization: `Bearer ${token}` }});
+      if (!res.ok) {
+        const data = await res.json().catch(()=>({}));
+        throw new Error(data.detail || res.statusText);
+      }
+      showOk("ลบผู้ใช้เรียบร้อย");
+      loadUsers();
+    } catch (e) { showError(e.message); }
+  }
+});
+
+// Create
+btnCreate.onclick = async ()=>{
+  const email = prompt("อีเมล:"); if (!email) return;
+  const password = prompt("รหัสผ่านเริ่มต้น (อย่างน้อย 8 ตัวอักษร):"); if (!password) return;
+  const full_name = prompt("ชื่อ (เว้นว่างได้):") || null;
+  const role = confirm("ให้สิทธิ์เป็น admin?") ? "admin" : "student";
+  try {
+    await fetchJSON(`${API}/admin/users`, {
+      method:"POST",
+      body: JSON.stringify({ email, password, full_name, role })
+    });
+    showOk("สร้างผู้ใช้สำเร็จ");
+    loadUsers();
+  } catch (e) { showError(e.message); }
+};
+
+// Edit modal
+const dlg = document.getElementById("editDlg");
+const editForm = document.getElementById("editForm");
+const editMsg = document.getElementById("edit_msg");
+const editId = document.getElementById("edit_id");
+const editEmail = document.getElementById("edit_email");
+const editName = document.getElementById("edit_full_name");
+const editRole = document.getElementById("edit_role");
+const editGrade = document.getElementById("edit_grade");
+const editActive = document.getElementById("edit_active");
+const editBio = document.getElementById("edit_bio");
+document.getElementById("btnClose").onclick = ()=> dlg.close();
+
+async function openEdit(id) {
+  editMsg.textContent = "";
+  try {
+    const u = await fetchJSON(`${API}/admin/users/${id}`);
+    editId.value = u.id;
+    editEmail.value = u.email;
+    editName.value = u.full_name || "";
+    editRole.value = u.role || "student";
+    editGrade.value = u.grade_level || "";
+    editActive.checked = !!u.is_active;
+    editBio.value = u.bio || "";
+    dlg.showModal();
+  } catch (e) { showError(e.message); }
+}
+editForm.onsubmit = async (e)=>{
+  e.preventDefault();
+  try {
+    const payload = {
+      full_name: editName.value,
+      role: editRole.value,
+      is_active: editActive.checked,
+      bio: editBio.value,
+      grade_level: editGrade.value || null
+    };
+    await fetchJSON(`${API}/admin/users/${editId.value}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload)
+    });
+    dlg.close();
+    showOk("บันทึกเรียบร้อย");
+    loadUsers();
+  } catch (err) {
+    editMsg.textContent = err.message;
+  }
+};
+document.getElementById("btnResetPass").onclick = async ()=>{
+  try {
+    const data = await fetchJSON(`${API}/admin/users/${editId.value}/reset-password`, { method:"POST" });
+    alert(`Temporary password: ${data.temp_password}`);
+  } catch (e) { editMsg.textContent = e.message; }
+};
+
+// Metrics
+async function loadMetrics() {
+  try {
+    const m = await fetchJSON(`${API}/admin/metrics`);
+    document.getElementById("m_total").textContent = m.total_users;
+    document.getElementById("m_admins").textContent = m.admins;
+    document.getElementById("m_active").textContent = m.active_users;
+    document.getElementById("m_new").textContent = m.new_users_today;
+  } catch(e) { /* ignore */ }
+}
+loadMetrics();
+loadUsers();
+
+// Export CSV
+btnExport.onclick = async ()=>{
+  try {
+    const res = await fetch(`${API}/admin/users/export.csv`, { headers: { Authorization: `Bearer ${token}` }});
+    if (!res.ok) throw new Error("Export failed");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "users_export.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showOk("ดาวน์โหลดไฟล์ users_export.csv แล้ว");
+  } catch(e){ showError(e.message); }
+};
+
+// Import CSV
+btnImport.onclick = ()=> fileCSV.click();
+fileCSV.onchange = async (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch(`${API}/admin/users/import`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Import failed");
+    importBox.classList.remove("hidden");
+    importSummary.textContent = `สร้างใหม่: ${data.created} | อัปเดต: ${data.updated} | ข้าม: ${data.skipped} | ผิดพลาด: ${data.errors}`;
+    importRows.innerHTML = "";
+    for (const r of data.results) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class="py-1 pr-2 border-t">${r.row}</td>
+        <td class="py-1 pr-2 border-t">${r.email}</td>
+        <td class="py-1 pr-2 border-t">${r.status}</td>
+        <td class="py-1 pr-2 border-t">${r.message || ""}</td>`;
+      importRows.appendChild(tr);
+    }
+    showOk("นำเข้าเสร็จแล้ว");
+    loadUsers();
+  } catch(e){
+    showError(e.message);
+  } finally {
+    fileCSV.value = "";
+  }
+};
+</script>
+</body>
+</html>

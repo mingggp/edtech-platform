@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ประวัติการสอบ — EdTech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>.brand-gradient{background:linear-gradient(90deg,#231762 0%,#ef1931 100%)}</style>
+</head>
+<body class="min-h-screen bg-slate-50">
+  
+  <header class="brand-gradient text-white shadow sticky top-0 z-10">
+    <nav class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <a href="./me.html" class="font-black tracking-widest text-lg">LOGO</a>
+      <ul class="flex items-center gap-4 text-sm font-semibold">
+        <li><a href="./mock_exam.html" class="opacity-90 hover:opacity-100">← คลังข้อสอบ</a></li>
+        <li><a href="./me.html" class="opacity-90 hover:opacity-100">Dashboard</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-bold text-slate-900">📄 ประวัติคะแนนสอบ</h1>
+      <div class="text-sm text-slate-500" id="summary">...</div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow overflow-hidden border border-slate-100">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-slate-50 border-b">
+          <tr>
+            <th class="p-4 text-sm font-bold text-slate-600">วันที่ส่ง</th>
+            <th class="p-4 text-sm font-bold text-slate-600">ชื่อชุดข้อสอบ</th>
+            <th class="p-4 text-sm font-bold text-slate-600 text-center">คะแนน</th>
+            <th class="p-4 text-sm font-bold text-slate-600 text-center">สถานะ</th>
+          </tr>
+        </thead>
+        <tbody id="rows" class="text-sm divide-y divide-slate-100">
+          <tr><td colspan="4" class="p-8 text-center text-gray-400">กำลังโหลด...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+<script>
+const API = "http://127.0.0.1:8000";
+const token = localStorage.getItem("token");
+if(!token) location.href="./login.html";
+
+// Format Date Thai
+const df = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+
+async function loadHistory(){
+  try {
+    const res = await fetch(`${API}/users/me/exam-results`, { headers:{ Authorization:`Bearer ${token}` } });
+    if(!res.ok) throw new Error("Load failed");
+    const results = await res.json();
+    
+    render(results);
+  } catch(e){ 
+    document.getElementById("rows").innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-500">โหลดข้อมูลไม่สำเร็จ</td></tr>`;
+  }
+}
+
+function render(list){
+  const tbody = document.getElementById("rows");
+  const summary = document.getElementById("summary");
+  
+  if(list.length === 0){
+    tbody.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-gray-400">ยังไม่มีประวัติการสอบ</td></tr>`;
+    summary.textContent = "สอบไปแล้ว 0 ครั้ง";
+    return;
+  }
+
+  summary.textContent = `สอบไปแล้ว ${list.length} ครั้ง`;
+
+  tbody.innerHTML = list.map(r => {
+    // คำนวณเปอร์เซ็นต์
+    const pct = r.total_score > 0 ? Math.round((r.score / r.total_score)*100) : 0;
+    // เกณฑ์สมมติ: >60% ผ่าน (สีเขียว)
+    const isPass = pct >= 60;
+    const badgeClass = isPass 
+      ? "bg-emerald-100 text-emerald-700 border-emerald-200" 
+      : "bg-red-50 text-red-700 border-red-100";
+    const statusText = isPass ? "เยี่ยม" : "พยายามอีกนิด";
+
+    // แปลงวันที่ (มาจาก Server เป็น UTC -> แปลงเป็น Local Time)
+    const dt = new Date(r.submitted_at);
+    // ปรับเวลาให้เป็น UTC object ก่อนแปลง (ถ้า backend ส่งมาเป็น UTC string)
+    // แต่ถ้า backend ส่งมาเป็น ISO ปกติ JS new Date() จะจัดการ time zone ให้ระดับนึง
+    // เพื่อความชัวร์ ใช้ string ตรงๆ ไปก่อน
+    
+    return `
+      <tr class="hover:bg-slate-50 transition">
+        <td class="p-4 text-slate-500">${df.format(dt)}</td>
+        <td class="p-4 font-medium text-slate-800">
+          ${r.exam ? r.exam.title : "ข้อสอบ (ลบแล้ว)"}
+        </td>
+        <td class="p-4 text-center">
+          <span class="font-bold text-lg ${isPass ? 'text-emerald-600':'text-red-500'}">
+            ${r.score}
+          </span>
+          <span class="text-slate-400 text-xs">/ ${r.total_score}</span>
+        </td>
+        <td class="p-4 text-center">
+          <span class="text-xs px-2 py-1 rounded border font-bold ${badgeClass}">
+            ${statusText} (${pct}%)
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+loadHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutor School — ติวเข้ม ม.ปลาย</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .brand-gradient { background: linear-gradient(135deg,#1e1b4b 0%, #312e81 100%); }
+        /* เพิ่ม background-clip: text; ต่อท้าย -webkit-background-clip: text; */
+        .text-gradient { 
+        background: linear-gradient(90deg,#4f46e5,#ec4899); 
+        -webkit-background-clip: text; 
+        background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        }
+  </style>
+</head>
+<body class="font-sans text-slate-800 antialiased">
+
+<nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+      <a href="./index.html" class="flex items-center">
+        <img src="http://127.0.0.1:8000/static/logo.png" alt="MingSmileyFace" class="h-20 w-auto object-contain">
+      </a>
+      
+      <div class="flex items-center gap-4">
+        <a href="./login.html" class="text-base font-bold text-gray-600 hover:text-black">เข้าสู่ระบบ</a>
+        <a href="./signup.html" class="px-6 py-3 bg-black text-white rounded-full text-base font-bold hover:bg-gray-800 transition shadow-lg">สมัครเรียน</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold tracking-wide uppercase border border-indigo-100">
+          🚀 เตรียมสอบเข้ามหาวิทยาลัย
+        </span>
+        <h1 class="text-5xl md:text-7xl font-extrabold leading-tight text-slate-900">
+          พิชิตฝัน <br>
+          <span class="text-gradient">TGAT & A-Level</span>
+        </h1>
+        <p class="text-lg text-slate-600 leading-relaxed max-w-lg">
+          คอร์สเรียนออนไลน์ฟิสิกส์และคณิตศาสตร์ ที่เน้นความเข้าใจ ไม่ใช่แค่ท่องจำ 
+          พร้อมระบบ Mock Exam เสมือนจริง เรียนได้ทุกที่ ทุกเวลา
+        </p>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <a href="./signup.html" class="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-1 transition">
+            เริ่มเรียนเลย
+          </a>
+          <a href="#courses" class="px-8 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-lg hover:bg-gray-50 transition">
+            ดูคอร์สเรียน
+          </a>
+        </div>
+        <div class="flex items-center gap-4 text-sm text-gray-500 pt-4">
+          <div class="flex -space-x-2">
+            <img class="w-8 h-8 rounded-full border-2 border-white bg-gray-200" src="https://i.pravatar.cc/100?img=1">
+            <img class="w-8 h-8 rounded-full border-2 border-white bg-gray-200" src="https://i.pravatar.cc/100?img=2">
+            <img class="w-8 h-8 rounded-full border-2 border-white bg-gray-200" src="https://i.pravatar.cc/100?img=3">
+          </div>
+          <p>นักเรียนกว่า 1,000+ คนไว้วางใจ</p>
+        </div>
+      </div>
+      
+      <div class="relative">
+        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-pink-500 rounded-[2rem] rotate-3 opacity-20 blur-2xl"></div>
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" 
+             class="relative rounded-[2rem] shadow-2xl border-4 border-white transform hover:rotate-1 transition duration-500">
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-4">📺</div>
+          <h3 class="text-xl font-bold mb-2">Video HD & เอกสารครบ</h3>
+          <p class="text-gray-500">เรียนผ่านวิดีโอความชัดสูง พร้อมไฟล์ PDF ให้ดาวน์โหลดประกอบการเรียนทุกบท</p>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+          <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-2xl mb-4">⏱</div>
+          <h3 class="text-xl font-bold mb-2">ระบบ Mock Exam</h3>
+          <p class="text-gray-500">จำลองสนามสอบจริง จับเวลาจริง รู้คะแนนทันทีหลังสอบเสร็จ พร้อมเฉลยละเอียด</p>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-2xl mb-4">📊</div>
+          <h3 class="text-xl font-bold mb-2">ติดตามผลการเรียน</h3>
+          <p class="text-gray-500">Dashboard ส่วนตัว เช็คเปอร์เซ็นต์ความคืบหน้า และประวัติคะแนนสอบได้ตลอดเวลา</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="courses" class="py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold">คอร์สยอดนิยม</h2>
+        <p class="text-gray-500 mt-2">อัปเดตเนื้อหาล่าสุดตามหลักสูตร สสวท.</p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition group cursor-pointer" onclick="location.href='./login.html'">
+          <div class="h-48 bg-gray-200 relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-lg">ตะลุยโจทย์ A-Level คณิต 1</h3>
+            <p class="text-sm text-gray-500 mt-2">รวมข้อสอบเก่าย้อนหลัง 10 ปี พร้อมเทคนิคการตัดช้อยส์</p>
+            <div class="mt-4 font-bold text-indigo-600">ดูรายละเอียด →</div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition group cursor-pointer" onclick="location.href='./login.html'">
+          <div class="h-48 bg-gray-200 relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-lg">ฟิสิกส์ ม.6 เทอม 1</h3>
+            <p class="text-sm text-gray-500 mt-2">แม่เหล็กไฟฟ้า ไฟฟ้ากระแสสลับ และฟิสิกส์อะตอม</p>
+            <div class="mt-4 font-bold text-indigo-600">ดูรายละเอียด →</div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition group cursor-pointer" onclick="location.href='./login.html'">
+          <div class="h-48 bg-gray-200 relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-lg">TGAT2 & TGAT3 ครบจบ</h3>
+            <p class="text-sm text-gray-500 mt-2">การคิดอย่างมีเหตุผล และสมรรถนะการทำงาน</p>
+            <div class="mt-4 font-bold text-indigo-600">ดูรายละเอียด →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-slate-900 text-white py-10 text-center">
+    <div class="max-w-7xl mx-auto px-6">
+      <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-16 w-auto mx-auto mb-4 rounded-xl">
+      <p class="text-slate-400 text-sm">© 2025 EdTech Tutor. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
