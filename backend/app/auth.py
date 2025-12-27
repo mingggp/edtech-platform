@@ -51,3 +51,13 @@ def require_admin(current_user: models.User = Depends(get_current_user)) -> mode
     if current_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
     return current_user
+
+async def get_current_active_user(current_user: models.User = Depends(get_current_user)):
+    # สามารถเพิ่ม Logic เช็ค active status ได้ที่นี่ ถ้ามี field is_active
+    return current_user
+
+# ✅ แถมฟังก์ชันนี้ให้ด้วย เผื่อใช้สำหรับ Admin
+async def require_admin(current_user: models.User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    return current_user

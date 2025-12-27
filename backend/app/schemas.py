@@ -1,53 +1,325 @@
-# backend/app/schemas.py
-from pydantic import BaseModel, EmailStr, ConfigDict
-from typing import Optional, List
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional, Any, Dict
 from datetime import datetime
 
-class UserBase(BaseModel): email: EmailStr; full_name: Optional[str] = None
-class UserCreate(UserBase): password: str
-class UserLogin(BaseModel): email: EmailStr; password: str
-class Token(BaseModel): access_token: str; token_type: str = "bearer"
-class UserUpdate(BaseModel): full_name: Optional[str]=None; avatar_url: Optional[str]=None; bio: Optional[str]=None; grade_level: Optional[str]=None
-class PasswordChange(BaseModel): old_password: str; new_password: str
-class UserRead(BaseModel):
-    email: str; full_name: Optional[str]=None; id: int; is_active: bool; created_at: datetime; role: str; avatar_url: Optional[str]=None; bio: Optional[str]=None; grade_level: Optional[str]=None; dek_code: Optional[int]=None; last_login: Optional[datetime]=None; current_activity: Optional[str]=None; is_online: bool=False
-    model_config = ConfigDict(from_attributes=True)
-class PageMeta(BaseModel): page: int; page_size: int; total: int
-class AdminUserListResponse(BaseModel): items: List[UserRead]; meta: PageMeta
-class AdminUserUpdate(BaseModel): full_name: Optional[str]=None; role: Optional[str]=None; is_active: Optional[bool]=None; bio: Optional[str]=None; grade_level: Optional[str]=None
-class AdminUserCreate(BaseModel): email: EmailStr; password: str; full_name: Optional[str]=None; role: Optional[str]=None; is_active: Optional[bool]=None; grade_level: Optional[str]=None
-class LessonBase(BaseModel): title: str; youtube_id: str; doc_url: Optional[str]=None; order: int=0
-class LessonCreate(LessonBase): pass
-class LessonUpdate(BaseModel): title: Optional[str]=None; youtube_id: Optional[str]=None; doc_url: Optional[str]=None; order: Optional[int]=None
-class LessonRead(LessonBase): id: int; course_id: int; model_config = ConfigDict(from_attributes=True)
-class CourseBase(BaseModel): title: str; description: Optional[str]=None; thumbnail: Optional[str]=None
-class CourseCreate(CourseBase): price: float=0.0
-class CourseUpdate(BaseModel): title: Optional[str]=None; description: Optional[str]=None; thumbnail: Optional[str]=None; price: Optional[float]=None
-class CourseRead(CourseBase): id: int; created_at: datetime; price: float=0.0; lessons: List[LessonRead]=[]; model_config = ConfigDict(from_attributes=True)
-class EnrollmentRead(BaseModel): id: int; course_id: int; user_id: int; enrolled_at: datetime; course: Optional[CourseRead]=None; model_config = ConfigDict(from_attributes=True)
-class ChoiceBase(BaseModel): text: str; is_correct: bool=False
-class ChoiceRead(BaseModel): id: int; text: str; model_config = ConfigDict(from_attributes=True)
-class QuestionCreate(BaseModel): text: str; order: int=0; choices: List[ChoiceBase]
-class QuestionRead(BaseModel): id: int; text: str; order: int; choices: List[ChoiceRead]; model_config = ConfigDict(from_attributes=True)
-class ExamCreate(BaseModel): title: str; description: Optional[str]=None; time_limit: int=60
-class ExamRead(BaseModel): id: int; title: str; description: Optional[str]=None; time_limit: int; questions: List[QuestionRead]=[]; model_config = ConfigDict(from_attributes=True)
-class AnswerItem(BaseModel): question_id: int; choice_id: int
-class ExamSubmit(BaseModel): answers: List[AnswerItem]
-class ExamResultRead(BaseModel): id: int; score: int; total_score: int; submitted_at: datetime; exam: Optional[ExamRead]=None; model_config = ConfigDict(from_attributes=True)
-class DiffItem(BaseModel): field: str; before: Optional[str]=None; after: Optional[str]=None; status: str
-class AuditItem(BaseModel): id: int; action: str; actor_id: Optional[int]=None; target_id: Optional[int]=None; data: Optional[str]=None; created_at: datetime; created_at_bkk: str; created_at_iso_bkk: str; diff: Optional[List[DiffItem]]=None; model_config = ConfigDict(from_attributes=True)
-class AuditListResponse(BaseModel): items: List[AuditItem]; meta: PageMeta
-class FriendRead(BaseModel): id: int; email: str; full_name: Optional[str]=None; avatar_url: Optional[str]=None; is_online: bool=False; current_activity: Optional[str]=None; model_config = ConfigDict(from_attributes=True)
-class LeaderboardItem(BaseModel): id: int; full_name: str; avatar_url: Optional[str]=None; completed_count: int
-class ActivityUpdate(BaseModel): activity: str
-class PaymentRead(BaseModel): id: int; user_id: int; course_id: int; slip_url: str; amount: float; status: str; created_at: datetime; user: Optional[UserRead]=None; course: Optional[CourseRead]=None; model_config = ConfigDict(from_attributes=True)
+# --- Token ---
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
-# --- Settings Schema (Updated) ---
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+# --- User ---
+class UserBase(BaseModel):
+    email: EmailStr
+
+class UserCreate(UserBase):
+    password: str
+    full_name: str
+    nickname: Optional[str] = None
+    grade_level: Optional[str] = None
+    dek_code: Optional[str] = None
+
+class UserLogin(UserBase):
+    password: str
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    nickname: Optional[str] = None
+    grade_level: Optional[str] = None
+    dek_code: Optional[str] = None
+
+class UserUpdateMe(BaseModel):
+    full_name: Optional[str] = None
+    nickname: Optional[str] = None
+    grade_level: Optional[str] = None
+    dek_code: Optional[str] = None
+
+class AdminUserUpdate(BaseModel):
+    role: Optional[str] = None
+    full_name: Optional[str] = None
+    nickname: Optional[str] = None
+    grade_level: Optional[str] = None
+    dek_code: Optional[str] = None
+
+class UserRead(UserBase):
+    id: int
+    full_name: Optional[str] = None
+    nickname: Optional[str] = None
+    grade_level: Optional[str] = None
+    dek_code: Optional[str] = None
+    role: str
+    total_minutes: int
+    avatar_url: Optional[str] = None
+    showcase_badges: Optional[str] = None
+    created_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+# Alias for backward compatibility
+class UserOut(UserRead):
+    pass
+
+class AdminUserListResponse(BaseModel):
+    items: List[UserRead]
+    meta: dict
+
+# --- Course ---
+class CourseBase(BaseModel):
+    title: str
+    description: str
+    price: float
+    category: str
+    thumbnail: Optional[str] = None
+    target_audience: Optional[str] = None
+    highlights: Optional[str] = None
+
+class CourseCreate(CourseBase):
+    pass
+
+class CourseUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    category: Optional[str] = None
+    thumbnail: Optional[str] = None
+    target_audience: Optional[str] = None
+    highlights: Optional[str] = None
+
+class CourseRead(CourseBase):
+    id: int
+    total_lessons: int = 0
+    created_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+class CourseOut(CourseRead):
+    pass
+
+# --- Chapters & Lessons ---
+class ChapterBase(BaseModel):
+    title: str
+    order: int
+
+class ChapterCreate(ChapterBase):
+    pass
+
+class ChapterRead(ChapterBase):
+    id: int
+    course_id: int
+    class Config: from_attributes = True
+
+class LessonBase(BaseModel):
+    title: str
+    youtube_id: str
+    duration: int
+    order: int
+    doc_url: Optional[str] = None
+
+class LessonCreate(LessonBase):
+    pass
+
+class LessonUpdate(BaseModel):
+    title: Optional[str] = None
+    youtube_id: Optional[str] = None
+    duration: Optional[int] = None
+    order: Optional[int] = None
+    doc_url: Optional[str] = None
+
+class LessonRead(LessonBase):
+    id: int
+    chapter_id: int
+    class Config: from_attributes = True
+
+class LessonOut(LessonRead):
+    pass
+
+# --- Enrollment & Progress ---
+class EnrollmentRead(BaseModel):
+    id: int
+    course_id: int
+    user_id: int
+    enrolled_at: datetime
+    class Config: from_attributes = True
+
+class ProgressUpdate(BaseModel):
+    seconds_watched: int
+    completed: bool = False
+
+class StudyTimeCreate(BaseModel):
+    minutes: int
+
+# --- Friends ---
+class FriendRead(BaseModel):
+    id: int
+    full_name: Optional[str]
+    nickname: Optional[str]
+    email: str
+    avatar_url: Optional[str]
+    is_online: bool = False
+    current_activity: Optional[str] = None
+    class Config: from_attributes = True
+
+class FriendRequest(BaseModel):
+    email: str
+
+# --- Comments & Ratings ---
+class CommentCreate(BaseModel):
+    text: str
+
+class CommentRead(BaseModel):
+    id: int
+    user_id: int
+    text: str
+    created_at: datetime
+    user: UserRead
+    class Config: from_attributes = True
+
+class RatingCreate(BaseModel):
+    score: int
+
+# --- Coupons ---
+class CouponBase(BaseModel):
+    code: str
+    discount_type: str
+    discount_value: float
+    max_usage: int = 0
+    expires_at: Optional[datetime] = None
+
+class CouponCreate(CouponBase):
+    pass
+
+class CouponRead(CouponBase):
+    id: int
+    current_usage: int
+    class Config: from_attributes = True
+
+class CouponOut(CouponRead): 
+    pass
+
+# --- Payments ---
+class PaymentCreate(BaseModel):
+    course_id: int
+    amount: float
+    slip_url: str
+
+class PaymentRead(BaseModel):
+    id: int
+    user_id: int
+    course_id: int
+    amount: float
+    status: str
+    created_at: datetime
+    slip_url: str
+    class Config: from_attributes = True
+
+# --- Reports ---
+class ReportCreate(BaseModel):
+    target_type: str
+    target_id: Optional[int]
+    reason: str
+
+# --- Audit ---
+class AuditItem(BaseModel):
+    id: int
+    action: str
+    actor_id: Optional[int]
+    target_id: Optional[int]
+    data: Optional[str]
+    created_at: datetime
+    created_at_bkk: str = ""
+    created_at_iso_bkk: str = ""
+    diff: List[dict] = []
+
+class AuditListResponse(BaseModel):
+    items: List[AuditItem]
+    meta: dict
+
+# --- Settings ---
 class SettingsUpdate(BaseModel):
+    banner_active: Optional[bool] = None
+    banner_text: Optional[str] = None
+    banner_color: Optional[str] = None
+    image_banner_active: Optional[bool] = None
+    banner_images: Optional[List[str]] = None
+    banner_interval: Optional[int] = None
+    countdown_active: Optional[bool] = None
     countdown_title: Optional[str] = None
     countdown_date: Optional[str] = None
-    countdown_active: Optional[bool] = None
-    banner_text: Optional[str] = None
-    banner_active: Optional[bool] = None
-    image_banner_active: Optional[bool] = None
-    banner_interval: Optional[int] = None # <-- เพิ่มตัวนี้
+    countdown_audience: Optional[str] = None
+
+# --- EXAMS SYSTEM (✅ ส่วนที่เพิ่มเข้ามาแก้ Error) ---
+class ChoiceBase(BaseModel):
+    text: str
+    is_correct: bool = False
+
+class ChoiceCreate(ChoiceBase):
+    pass
+
+class ChoiceRead(ChoiceBase):
+    id: int
+    class Config: from_attributes = True
+
+class QuestionBase(BaseModel):
+    text: str
+    image_url: Optional[str] = None
+    question_type: str = "choice"
+    order: int = 0
+
+class QuestionCreate(QuestionBase):
+    choices: List[ChoiceCreate] = []
+
+class QuestionRead(QuestionBase):
+    id: int
+    choices: List[ChoiceRead] = []
+    class Config: from_attributes = True
+
+class ExamBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    time_limit: int = 0
+
+class ExamCreate(ExamBase):
+    pass
+
+class ExamRead(ExamBase):
+    id: int
+    questions: List[QuestionRead] = []
+    class Config: from_attributes = True
+
+class ExamSubmit(BaseModel):
+    answers: Dict[str, Any]
+
+# --- Other Features ---
+class LeaderboardItem(BaseModel):
+    id: int
+    full_name: str
+    avatar_url: Optional[str] = None
+    completed_count: int
+    total_minutes: int
+
+class BadgeOut(BaseModel):
+    id: str
+    name: str
+    description: str
+    icon: str
+    category: Optional[str] = None
+    is_unlocked: bool
+    is_showcased: bool
+
+class UserPublicProfile(BaseModel):
+    id: int
+    full_name: Optional[str] = None
+    nickname: Optional[str] = None
+    grade_level: Optional[str] = None
+    dek_code: Optional[str] = None
+    avatar_url: Optional[str] = None
+    total_minutes: int
+    showcase_badges: Optional[str] = None
+    
+    # สถิติเพิ่มเติมที่คำนวณมา
+    total_courses: int
+    total_completed: int
