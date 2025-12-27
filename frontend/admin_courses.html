@@ -1,59 +1,318 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>จัดการคอร์สเรียน — Admin</title><script src="https://cdn.tailwindcss.com"></script>
-  <style>.admin-gradient{background:linear-gradient(135deg,#111827 0%,#1e1b4b 100%)}dialog::backdrop{background:rgba(0,0,0,0.5);backdrop-filter:blur(2px)}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>จัดการคอร์สเรียน — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <style> body { font-family: 'Prompt', sans-serif; } </style>
 </head>
-<body class="min-h-screen bg-slate-100 font-sans text-slate-800">
-  <header class="admin-gradient text-white shadow-md sticky top-0 z-50">
-    <nav class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative">
-      <a href="./admin_users.html" class="flex items-center gap-3 group relative z-10"><img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain bg-white/10 rounded p-1"><div class="leading-tight"><div class="font-bold text-lg">ADMIN CONSOLE</div></div></a>
-      <div class="relative bg-white/10 p-1.5 rounded-xl hidden md:flex items-center gap-1">
-        <div id="nav-slider" class="absolute h-[calc(100%-12px)] top-1.5 bg-white/20 rounded-lg transition-all duration-300 ease-out opacity-0 pointer-events-none z-0"></div>
-        <a href="./admin_users.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="users">👥 Users</a>
-        <a href="./admin_courses.html" class="nav-link px-4 py-2 rounded-lg text-sm font-bold text-slate-300 hover:text-white relative z-10 transition-colors" data-page="courses">📚 Courses</a>
-        <a href="./admin_payments.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="payments">💰 Payments</a>
-        <a href="./admin_exams.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="exams">📝 Exams</a>
-        <a href="./admin_audit.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="audit">🛡️ Logs</a>
+<body class="bg-slate-50 text-slate-800">
+
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-20 shadow-2xl transition-all duration-300">
+      <div class="h-16 flex items-center justify-center border-b border-slate-800 text-xl font-bold tracking-wider">
+        <span class="text-indigo-400 mr-2 text-2xl">✦</span> Admin Panel
       </div>
-      <div class="flex items-center gap-4 relative z-10"><a href="./me.html" class="text-xs text-slate-300 hover:text-white border-b border-transparent hover:border-slate-300 transition">กลับหน้าเรียน</a><button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 px-3 py-1.5 rounded transition">Logout</button></div>
-    </nav>
-  </header>
+      
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scroll">
+        <a href="./admin_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">📊</span> <span>Dashboard</span>
+        </a>
+        <a href="./admin_users.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">👥</span> <span>Users</span>
+        </a>
+        <a href="./admin_courses.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg font-bold transition-all duration-200 transform translate-x-1">
+            <span class="text-xl">📚</span> <span>Courses</span>
+        </a>
+        <a href="./admin_exams.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">📝</span> <span>Exams</span>
+        </a>
+        <a href="./admin_payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">💰</span> <span>Payments</span>
+        </a>
+        <a href="./admin_coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">🎟️</span> <span>Coupons</span>
+        </a>
+        <a href="./admin_reports.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">🚩</span> <span>Reports</span>
+        </a>
 
-  <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
-    <div class="flex items-center justify-between"><div><h1 class="text-3xl font-bold text-slate-900">จัดการคอร์สเรียน</h1><p class="text-slate-500 mt-1 text-sm">สร้างคอร์ส กำหนดราคา และจัดการวิดีโอ</p></div><button onclick="openCreateCourseModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 transition shadow-md flex items-center gap-2"><span>+</span> สร้างคอร์สใหม่</button></div>
-    <div id="courseList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><div class="text-center col-span-full py-10 text-gray-400">กำลังโหลดข้อมูล...</div></div>
-  </main>
+        <div class="border-t border-slate-800 my-2 pt-2">
+            <p class="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">System</p>
+            <a href="./admin_audit.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+                <span class="text-xl">🛡️</span> <span>Audit Log</span>
+            </a>
+            <a href="./admin_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+                <span class="text-xl">⚙️</span> <span>Settings</span>
+            </a>
+        </div>
+      </nav>
 
-  <dialog id="createCourseDlg" class="p-0 rounded-2xl shadow-2xl w-[450px] overflow-hidden"><div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center"><h3 class="font-bold text-lg">สร้างคอร์สใหม่</h3><button onclick="document.getElementById('createCourseDlg').close()" class="text-slate-400 hover:text-white">✕</button></div><form id="createCourseForm" class="bg-white p-6 space-y-4"><div><label class="block text-xs font-bold text-slate-500 mb-1">ชื่อคอร์ส</label><input name="title" required class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-bold text-slate-500 mb-1">ราคา (บาท)</label><input name="price" type="number" min="0" value="0" required class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-bold text-slate-500 mb-1">รายละเอียด</label><textarea name="description" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div><div><label class="block text-xs font-bold text-slate-500 mb-1">รูปปก (URL)</label><input name="thumbnail" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div class="flex justify-end gap-2 pt-2"><button type="submit" class="w-full px-3 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 shadow-lg">บันทึก</button></div></form></dialog>
-  <dialog id="editCourseDlg" class="p-0 rounded-2xl shadow-2xl w-[450px] overflow-hidden"><div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center"><h3 class="font-bold text-lg">แก้ไขคอร์ส</h3><button onclick="document.getElementById('editCourseDlg').close()" class="text-slate-400 hover:text-white">✕</button></div><form id="editCourseForm" class="bg-white p-6 space-y-4"><input type="hidden" name="id"><div><label class="block text-xs font-bold text-slate-500 mb-1">ชื่อคอร์ส</label><input name="title" required class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-bold text-slate-500 mb-1">ราคา (บาท)</label><input name="price" type="number" min="0" required class="w-full border rounded-lg px-3 py-2 text-sm"></div><div><label class="block text-xs font-bold text-slate-500 mb-1">รายละเอียด</label><textarea name="description" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div><div><label class="block text-xs font-bold text-slate-500 mb-1">รูปปก (URL)</label><input name="thumbnail" class="w-full border rounded-lg px-3 py-2 text-sm"></div><div class="flex justify-end gap-2 pt-2"><button type="submit" class="w-full px-3 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 shadow-lg">อัปเดต</button></div></form></dialog>
-  <dialog id="manageLessonsDlg" class="p-0 rounded-2xl shadow-2xl w-[600px] h-[80vh] overflow-hidden"><div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center"><div><h3 class="font-bold text-lg" id="manageTitle">จัดการบทเรียน</h3><p class="text-xs text-slate-400" id="manageId">ID: -</p></div><button onclick="document.getElementById('manageLessonsDlg').close()" class="text-slate-400 hover:text-white">✕</button></div><div class="flex-1 overflow-y-auto p-6 space-y-6 h-full bg-white"><div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 space-y-3"><h4 class="text-sm font-bold text-indigo-900">เพิ่มวิดีโอใหม่</h4><form id="addLessonForm" class="grid grid-cols-2 gap-3"><div class="col-span-2"><input name="title" required class="w-full border rounded px-3 py-2 text-sm" placeholder="ชื่อคลิป"></div><div><input name="youtube_id" required class="w-full border rounded px-3 py-2 text-sm" placeholder="YouTube ID"></div><div><input name="doc_url" class="w-full border rounded px-3 py-2 text-sm" placeholder="ลิงก์เอกสาร"></div><div class="col-span-2 text-right"><button type="submit" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">เพิ่ม</button></div></form></div><div><h4 class="text-sm font-bold text-slate-700 mb-3">รายการวิดีโอ</h4><div id="lessonList" class="space-y-2"></div></div></div></dialog>
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="localStorage.removeItem('token');location.href='./login.html'" class="w-full py-3 bg-slate-800 hover:bg-red-600/90 text-slate-300 hover:text-white rounded-xl transition-all duration-200 font-bold flex items-center justify-center gap-2 group">
+            <span>🚪</span> <span class="group-hover:translate-x-1 transition-transform">Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex-1 ml-64 p-8">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-800">จัดการคอร์สเรียน</h1>
+          <p class="text-slate-500 text-sm mt-1">เพิ่ม ลบ แก้ไข คอร์สเรียนและบทเรียน</p>
+        </div>
+        <button onclick="openModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 font-bold">
+          <span>+ เพิ่มคอร์สใหม่</span>
+        </button>
+      </div>
+
+      <div id="courseList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
+  </div>
+
+  <dialog id="courseModal" class="rounded-2xl shadow-2xl p-0 w-full max-w-2xl backdrop:bg-slate-900/50">
+    <div class="bg-white">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-bold text-lg text-slate-800" id="modalTitle">เพิ่มคอร์สใหม่</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <form onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
+        <input type="hidden" id="courseId">
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+                <label class="block text-sm font-bold text-slate-700 mb-1">ชื่อคอร์ส <span class="text-red-500">*</span></label>
+                <input type="text" id="cTitle" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" required placeholder="เช่น ตะลุยโจทย์ A-Level">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">ราคา (บาท)</label>
+                <input type="number" id="cPrice" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0 = ฟรี">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">หมวดวิชา</label>
+                <select id="cCategory" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none bg-white cursor-pointer">
+                    <option value="Math">คณิตศาสตร์ (Math)</option>
+                    <option value="Physics">ฟิสิกส์ (Physics)</option>
+                    <option value="Others">อื่นๆ (Others)</option>
+                </select>
+            </div>
+            
+            <div class="col-span-2">
+                <label class="block text-sm font-bold text-slate-700 mb-1">รูปปก (URL)</label>
+                <input type="text" id="cThumb" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://...">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">คำอธิบายคอร์ส</label>
+            <textarea id="cDesc" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="รายละเอียดเนื้อหา..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">🎯 เหมาะกับใคร</label>
+                <textarea id="cTarget" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">✨ จุดเด่นของคอร์ส</label>
+                <textarea id="cHigh" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
+            <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl transition font-bold text-sm">ยกเลิก</button>
+            <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md transition text-sm">บันทึกข้อมูล</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="chapterModal" class="rounded-2xl shadow-2xl p-0 w-full max-w-6xl h-[85vh] backdrop:bg-slate-900/50">
+    <div class="bg-white h-full flex flex-col">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-white shrink-0">
+            <div>
+                <h3 class="font-bold text-xl text-slate-800" id="chapModalTitle">จัดการบทเรียน</h3>
+                <p class="text-xs text-slate-500">เลือกบทเรียนทางซ้าย แล้วจัดการวิดีโอทางขวา (ลากวางเพื่อเรียงลำดับได้)</p>
+            </div>
+            <button onclick="document.getElementById('chapterModal').close()" class="text-slate-400 hover:text-red-500 text-2xl font-bold p-2 leading-none">&times;</button>
+        </div>
+        
+        <div class="flex-1 overflow-hidden flex flex-col md:flex-row">
+            <div class="w-full md:w-80 border-r border-slate-200 flex flex-col bg-slate-50">
+                <div class="p-4 border-b border-slate-200 bg-white shadow-sm z-10 shrink-0">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">เพิ่มบทเรียนใหม่</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="newChapTitle" class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500" placeholder="ชื่อบทเรียน..." onkeypress="if(event.key==='Enter') addChapter()">
+                        <button onclick="addChapter()" class="bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition font-bold shadow-sm">+</button>
+                    </div>
+                </div>
+                <div id="chapterList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll"></div>
+            </div>
+
+            <div class="flex-1 flex flex-col bg-white relative">
+                <div id="lessonArea" class="flex-1 flex flex-col h-full hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
+                        <div>
+                            <span class="text-xs text-indigo-500 font-bold uppercase tracking-wider">กำลังแก้ไขบทเรียน:</span>
+                            <h4 class="font-bold text-xl text-slate-800" id="currentChapterName">...</h4>
+                        </div>
+                        <button onclick="deleteChapter(currentChapterId)" class="text-xs text-red-500 hover:text-red-700 font-medium hover:underline">ลบบทเรียนนี้</button>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 shrink-0 transition-all" id="lessonFormContainer">
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                                <span id="formModeText">เพิ่มวิดีโอใหม่</span>
+                                <span id="editIndicator" class="hidden bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px]">กำลังแก้ไข</span>
+                            </label>
+                            <button id="cancelEditBtn" onclick="resetForm()" class="hidden text-xs text-slate-400 hover:text-slate-600 underline">ยกเลิกการแก้ไข</button>
+                        </div>
+                        
+                        <input type="hidden" id="editingLessonId"> <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                            <div class="md:col-span-4">
+                                <input type="text" id="newLesTitle" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="ชื่อวิดีโอ (เช่น EP.1 แนะนำตัว)" onkeypress="if(event.key==='Enter') saveLesson()">
+                            </div>
+                            <div class="md:col-span-3">
+                                <input type="text" id="newLesYoutube" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="YouTube URL" onkeypress="if(event.key==='Enter') saveLesson()">
+                            </div>
+                            <div class="md:col-span-3">
+                                <input type="text" id="newLesDoc" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="เอกสาร URL (Optional)" onkeypress="if(event.key==='Enter') saveLesson()">
+                            </div>
+                            <div class="md:col-span-2">
+                                <button id="saveLessonBtn" onclick="saveLesson()" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-lg shadow-sm transition flex items-center justify-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> เพิ่ม
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="lessonList" class="flex-1 overflow-y-auto p-6 space-y-2 custom-scroll bg-slate-50/30"></div>
+                </div>
+
+                <div id="lessonEmpty" class="flex-1 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                        <svg class="w-10 h-10 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    </div>
+                    <p class="font-medium text-slate-500">เลือกบทเรียนทางซ้ายเพื่อจัดการเนื้อหา</p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </dialog>
 
   <script>
-    const page="courses"; const slider=document.getElementById("nav-slider"); const links=document.querySelectorAll(".nav-link"); let activeLink=null;
-    links.forEach(link=>{ if(link.dataset.page===page){activeLink=link;link.classList.add("text-white");moveSlider(link);slider.style.opacity="1";} link.addEventListener("mouseenter",(e)=>{moveSlider(e.target);slider.style.opacity="1";});});
-    document.querySelector(".relative.bg-white\\/10").addEventListener("mouseleave",()=>{if(activeLink)moveSlider(activeLink);else slider.style.opacity="0";});
-    function moveSlider(el){slider.style.width=el.offsetWidth+"px";slider.style.left=el.offsetLeft+"px";}
-
-    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    const API = "https://edtech-api-zigm.onrender.com";
     const token = localStorage.getItem("token");
     if(!token) location.href = "./login.html";
-    function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
 
-    async function loadCourses(){ try { const res = await fetch(`${API}/courses`, { headers: { Authorization: `Bearer ${token}` }}); const courses = await res.json(); renderCourses(courses); } catch(e) { alert(e.message); } }
-    function renderCourses(list){ const el = document.getElementById("courseList"); if(list.length === 0){ el.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">ยังไม่มีคอร์สเรียน</div>`; return; } el.innerHTML = list.map(c => `<div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col group"><div class="aspect-video bg-slate-100 relative overflow-hidden">${c.thumbnail ? `<img src="${c.thumbnail}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>`}<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition"><button onclick='openEditCourse(${JSON.stringify(c).replace(/'/g, "&#39;")})' class="bg-white/90 hover:bg-white text-indigo-600 p-1.5 rounded shadow">✏️</button></div><div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">${c.price > 0 ? '฿'+c.price.toLocaleString() : 'FREE'}</div></div><div class="p-4 flex-1 flex flex-col"><h3 class="font-bold text-slate-800 line-clamp-1" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</h3><p class="text-xs text-slate-500 mt-1 line-clamp-2 mb-4 flex-1">${escapeHtml(c.description||"")}</p><div class="flex justify-between items-center pt-3 border-t border-slate-100"><span class="text-[10px] text-slate-400 font-mono">ID: ${c.id}</span><button onclick="openManageLessons(${c.id})" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded font-bold transition">จัดการวิดีโอ (${c.lessons ? c.lessons.length : 0})</button></div></div></div>`).join(""); }
-    function openCreateCourseModal() { document.getElementById("createCourseDlg").showModal(); }
-    document.getElementById("createCourseForm").onsubmit = async (e) => { e.preventDefault(); const form = e.target; const payload = { title: form.title.value, description: form.description.value, thumbnail: form.thumbnail.value || null, price: parseFloat(form.price.value) || 0 }; await submitCourse(payload, "POST", `${API}/admin/courses`); document.getElementById("createCourseDlg").close(); form.reset(); };
-    function openEditCourse(c) { const form = document.getElementById("editCourseForm"); form.id.value = c.id; form.title.value = c.title; form.description.value = c.description || ""; form.thumbnail.value = c.thumbnail || ""; form.price.value = c.price || 0; document.getElementById("editCourseDlg").showModal(); }
-    document.getElementById("editCourseForm").onsubmit = async (e) => { e.preventDefault(); const form = e.target; const payload = { title: form.title.value, description: form.description.value, thumbnail: form.thumbnail.value || null, price: parseFloat(form.price.value) || 0 }; await submitCourse(payload, "PATCH", `${API}/admin/courses/${form.id.value}`); document.getElementById("editCourseDlg").close(); };
-    async function submitCourse(payload, method, url){ try { const res = await fetch(url, { method: method, headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) }); if(!res.ok) throw new Error("Failed"); loadCourses(); } catch(err) { alert(err.message); } }
     let currentCourseId = null;
-    async function openManageLessons(id){ currentCourseId = id; document.getElementById("manageLessonsDlg").showModal(); refreshLessons(); }
-    async function refreshLessons(){ try { const res = await fetch(`${API}/courses/${currentCourseId}`, { headers: { Authorization: `Bearer ${token}` }}); const c = await res.json(); document.getElementById("manageTitle").textContent = c.title; document.getElementById("manageId").textContent = `ID: ${c.id}`; renderLessons(c.lessons || []); } catch(e) {} }
-    function renderLessons(lessons){ lessons.sort((a,b) => (a.order||0) - (b.order||0)); document.getElementById("lessonList").innerHTML = lessons.map((l, idx) => `<div class="flex items-center gap-3 p-3 bg-slate-50 rounded border border-slate-100 hover:border-indigo-200 transition"><div class="w-6 h-6 flex items-center justify-center bg-white border rounded text-xs font-bold text-slate-400">${idx+1}</div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><div class="text-sm font-bold text-slate-700 truncate">${escapeHtml(l.title)}</div>${l.doc_url ? '<span class="text-[10px] bg-yellow-100 text-yellow-700 px-1 rounded font-bold">DOC</span>' : ''}</div><div class="text-[10px] text-slate-400 truncate">ID: ${l.youtube_id}</div></div></div>`).join(""); }
-    document.getElementById("addLessonForm").onsubmit = async (e) => { e.preventDefault(); const form = e.target; const payload = { title: form.title.value, youtube_id: form.youtube_id.value, doc_url: form.doc_url.value || null, order: 999 }; try { const res = await fetch(`${API}/admin/courses/${currentCourseId}/lessons`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) }); if(!res.ok) throw new Error("Failed"); form.reset(); refreshLessons(); } catch(err) { alert(err.message); } };
-    function escapeHtml(text) { return text ? text.replace(/"/g, "&quot;") : ""; }
+    let currentChapterId = null;
+    let lessonsCache = [];
+    let sortable = null;
+
+    async function loadCourses() {
+        try {
+            const res = await fetch(`${API}/courses`);
+            const courses = await res.json();
+            document.getElementById("courseList").innerHTML = courses.map(c => `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition group">
+                    <div class="h-40 bg-slate-200 relative overflow-hidden">
+                        ${c.thumbnail ? `<img src="${c.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">` : `<div class="flex items-center justify-center h-full text-slate-400">No Image</div>`}
+                        <div class="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold shadow-sm">${c.price > 0 ? c.price.toLocaleString()+' ฿' : 'Free'}</div>
+                        <span class="absolute bottom-2 left-2 px-2 py-0.5 bg-black/50 text-white text-[10px] rounded backdrop-blur-sm">${c.category || 'General'}</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-slate-800 mb-1 truncate">${c.title}</h3>
+                        <p class="text-sm text-slate-500 mb-4 line-clamp-2">${c.description || "ไม่มีคำอธิบาย"}</p>
+                        <div class="flex gap-2">
+                            <button onclick="openChapterManager(${c.id}, '${c.title}')" class="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-100 transition">จัดการบทเรียน</button>
+                            <button onclick='editCourse(${JSON.stringify(c).replace(/'/g, "&#39;")})' class="p-2 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-white border border-slate-100 rounded-lg transition">✏️</button>
+                            <button onclick="deleteCourse(${c.id})" class="p-2 text-slate-400 hover:text-red-600 bg-slate-50 hover:bg-white border border-slate-100 rounded-lg transition">🗑</button>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        } catch(e) { console.error(e); }
+    }
+
+    function openModal() {
+        document.getElementById("modalTitle").innerText = "เพิ่มคอร์สใหม่";
+        document.getElementById("courseId").value = "";
+        document.querySelector("form").reset();
+        document.getElementById("courseModal").showModal();
+    }
+    function closeModal() { document.getElementById("courseModal").close(); }
+
+    function editCourse(c) {
+        document.getElementById("modalTitle").innerText = "แก้ไขคอร์ส";
+        document.getElementById("courseId").value = c.id;
+        document.getElementById("cTitle").value = c.title;
+        document.getElementById("cDesc").value = c.description || "";
+        document.getElementById("cPrice").value = c.price;
+        document.getElementById("cThumb").value = c.thumbnail || "";
+        document.getElementById("cCategory").value = c.category || "Math"; 
+        document.getElementById("cTarget").value = c.target_audience || "";
+        document.getElementById("cHigh").value = c.highlights || "";
+        document.getElementById("courseModal").showModal();
+    }
+
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        const cid = document.getElementById("courseId").value;
+        const body = {
+            title: document.getElementById("cTitle").value,
+            description: document.getElementById("cDesc").value,
+            price: parseFloat(document.getElementById("cPrice").value) || 0,
+            thumbnail: document.getElementById("cThumb").value,
+            category: document.getElementById("cCategory").value,
+            target_audience: document.getElementById("cTarget").value,
+            highlights: document.getElementById("cHigh").value
+        };
+
+        const url = cid ? `${API}/admin/courses/${cid}` : `${API}/admin/courses`;
+        const method = cid ? "PATCH" : "POST";
+        
+        const res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify(body)
+        });
+
+        if(res.ok) {
+            Swal.fire("สำเร็จ", "บันทึกเรียบร้อย", "success");
+            closeModal();
+            loadCourses();
+        } else {
+            Swal.fire("Error", "บันทึกไม่สำเร็จ", "error");
+        }
+    }
+
+    async function deleteCourse(id) {
+        if(!confirm("ลบ?")) return;
+        await fetch(`${API}/admin/courses/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+        loadCourses();
+    }
+
+    // Chapter & Lesson Logic (same as before)
+    function openChapterManager(cid, t) { currentCourseId=cid; document.getElementById("chapModalTitle").innerText=t; document.getElementById("chapterModal").showModal(); loadChapters(); document.getElementById("lessonArea").classList.add("hidden"); document.getElementById("lessonEmpty").classList.remove("hidden"); }
+    async function loadChapters() { const res=await fetch(`${API}/courses/${currentCourseId}`,{headers:{Authorization:`Bearer ${token}`}}); const d=await res.json(); document.getElementById("chapterList").innerHTML=d.chapters.sort((a,b)=>a.order-b.order).map(c=>`<div onclick="selectChapter(${c.id}, '${c.title}')" class="p-3 rounded-lg cursor-pointer transition border border-transparent group ${currentChapterId===c.id?'bg-indigo-50 border-indigo-100 text-indigo-700 shadow-sm':'hover:bg-white text-slate-700'}"><div class="flex justify-between font-bold text-sm"><span>${c.title}</span><button onclick="event.stopPropagation();deleteChapter(${c.id})" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100">×</button></div></div>`).join(""); }
+    async function addChapter() { const t=document.getElementById("newChapTitle").value; if(t) await fetch(`${API}/admin/courses/${currentCourseId}/chapters`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify({title:t,order:99})}); document.getElementById("newChapTitle").value=""; loadChapters(); }
+    function selectChapter(cid, t) { currentChapterId=cid; document.getElementById("currentChapterName").innerText=t; document.getElementById("lessonEmpty").classList.add("hidden"); document.getElementById("lessonArea").classList.remove("hidden"); resetForm(); loadLessons(cid); }
+    async function loadLessons(cid) { const res=await fetch(`${API}/courses/${currentCourseId}`,{headers:{Authorization:`Bearer ${token}`}}); const d=await res.json(); const ch=d.chapters.find(c=>c.id===cid); lessonsCache=ch?ch.lessons.sort((a,b)=>a.order-b.order):[]; renderLessonList(); }
+    function renderLessonList() { document.getElementById("lessonList").innerHTML=lessonsCache.map((l,i)=>`<div class="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 hover:border-indigo-200 shadow-sm group" data-id="${l.id}"><div class="handle w-8 h-8 bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 rounded cursor-move">☰</div><div class="flex-1"><div class="font-bold text-slate-700">${l.title}</div></div><div class="flex gap-2 opacity-0 group-hover:opacity-100"><button onclick='populateEditForm(${JSON.stringify(l).replace(/'/g,"&#39;")})' class="text-slate-400 hover:text-indigo-600">✎</button><button onclick="deleteLesson(${l.id})" class="text-slate-400 hover:text-red-600">🗑</button></div></div>`).join(""); if(sortable) sortable.destroy(); sortable=new Sortable(document.getElementById("lessonList"),{handle:".handle",animation:150,onEnd:updateLessonOrder}); }
+    async function saveLesson() { const id=document.getElementById("editingLessonId").value, t=document.getElementById("newLesTitle").value, y=document.getElementById("newLesYoutube").value, d=document.getElementById("newLesDoc").value; if(!t||!y) return Swal.fire("แจ้งเตือน","กรอกข้อมูลให้ครบ","warning"); const m=id?"PATCH":"POST", u=id?`${API}/admin/lessons/${id}`:`${API}/admin/chapters/${currentChapterId}/lessons`; await fetch(u,{method:m,headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify({title:t,youtube_id:y,doc_url:d,duration:0})}); resetForm(); loadLessons(currentChapterId); }
+    function populateEditForm(l) { document.getElementById("editingLessonId").value=l.id; document.getElementById("newLesTitle").value=l.title; document.getElementById("newLesYoutube").value=l.youtube_id; document.getElementById("newLesDoc").value=l.doc_url||""; document.getElementById("formModeText").innerText="แก้ไขวิดีโอ"; document.getElementById("editIndicator").classList.remove("hidden"); document.getElementById("cancelEditBtn").classList.remove("hidden"); document.getElementById("saveLessonBtn").innerHTML="บันทึกแก้ไข"; document.getElementById("newLesTitle").focus(); }
+    function resetForm() { document.getElementById("editingLessonId").value=""; document.getElementById("newLesTitle").value=""; document.getElementById("newLesYoutube").value=""; document.getElementById("newLesDoc").value=""; document.getElementById("formModeText").innerText="เพิ่มวิดีโอใหม่"; document.getElementById("editIndicator").classList.add("hidden"); document.getElementById("cancelEditBtn").classList.add("hidden"); document.getElementById("saveLessonBtn").innerHTML="เพิ่ม"; }
+    async function deleteLesson(id) { if(confirm("ลบ?")) { await fetch(`${API}/admin/lessons/${id}`,{method:"DELETE",headers:{Authorization:`Bearer ${token}`}}); loadLessons(currentChapterId); } }
+    async function deleteChapter(id) { if(confirm("ลบ?")) { alert("API Delete Chapter Not Implemented Yet"); } }
+    async function updateLessonOrder() { const items=document.querySelectorAll("#lessonList > div"); for(let i=0;i<items.length;i++) { await fetch(`${API}/admin/lessons/${items[i].dataset.id}`,{method:"PATCH",headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify({order:i})}); } }
+
     loadCourses();
   </script>
 </body>

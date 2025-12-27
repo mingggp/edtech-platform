@@ -18,7 +18,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
         <a href="./me.html" class="flex items-center gap-2 group">
-          <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
+          <img src="https://edtech-api-zigm.onrender.com/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
         </a>
 
         <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
@@ -99,7 +99,7 @@
 
 <script>
 const API = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
-  ? "http://127.0.0.1:8000" : "https://edtech-api-zigm.onrender.com";
+  ? "https://edtech-api-zigm.onrender.com" : "https://edtech-api-zigm.onrender.com";
 const token = localStorage.getItem("token");
 if(!token) location.href="./login.html";
 function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }

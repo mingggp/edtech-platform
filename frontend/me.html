@@ -4,133 +4,817 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard — MingSmileyFace</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
-    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.5); }
+    /* ... (CSS Variables เดิม) ... */
+    :root {
+        --primary-hue: 245; 
+        --primary-sat: 85%;
+        --primary-lig: 65%;
+        --text-main: #1e293b; --text-muted: #64748b; --bg-solid: #f8fafc;
+        --glass-bg: rgba(255, 255, 255, 0.65); --glass-border: rgba(255, 255, 255, 0.6);
+        --switch-bg: rgba(0, 0, 0, 0.05); --switch-knob: #ffffff; --switch-active-text: #1e293b;
+        --primary-rgb: 99, 102, 241; 
+        --bg-grad-1: #dbeafe; --bg-grad-2: #e0e7ff; --bg-grad-3: #f3e8ff; --bg-grad-4: #fae8ff;
+    }
+
+    body.dark-mode {
+        --text-main: #e2e8f0; --text-muted: #94a3b8; --bg-solid: #0f172a;
+        --glass-bg: rgba(15, 23, 42, 0.80); --glass-border: rgba(255, 255, 255, 0.08);
+        --switch-bg: rgba(255, 255, 255, 0.1); --switch-knob: rgb(var(--primary-rgb)); --switch-active-text: #ffffff;
+    }
+    
+    body { font-family: 'Prompt', sans-serif; color: var(--text-main); background-color: var(--bg-solid); transition: background-color 0.3s, color 0.3s; }
+    
+    /* Tailwind Overrides */
+    .text-indigo-600, .text-indigo-500 { color: rgb(var(--primary-rgb)) !important; } 
+    .bg-indigo-600 { background-color: rgb(var(--primary-rgb)) !important; }
+    .bg-indigo-500 { background-color: rgb(var(--primary-rgb)) !important; }
+    .bg-indigo-50 { background-color: rgba(var(--primary-rgb), 0.1) !important; }
+    .border-indigo-100, .border-indigo-200 { border-color: rgba(var(--primary-rgb), 0.2) !important; }
+    .ring-indigo-100 { --tw-ring-color: rgba(var(--primary-rgb), 0.2) !important; }
+    .focus\:border-indigo-500:focus { border-color: rgb(var(--primary-rgb)) !important; }
+    .focus\:ring-indigo-500:focus { --tw-ring-color: rgb(var(--primary-rgb)) !important; }
+    .text-pink-500 { color: rgb(var(--primary-rgb)) !important; filter: hue-rotate(45deg); } 
+    .bg-pink-50 { background-color: rgba(var(--primary-rgb), 0.05) !important; filter: hue-rotate(45deg); }
+
+    .glass { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); transition: 0.3s; }
+    .glass-dark { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-shadow { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 10px 15px -3px rgba(var(--primary-rgb),0.15); transition: 0.4s; }
+    .glass-shadow:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -4px rgba(var(--primary-rgb),0.25); }
+
+    .animated-bg {
+        background: linear-gradient(-45deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3), var(--bg-grad-4));
+        background-size: 400% 400%; animation: gradient-flow 15s ease infinite; position: fixed; inset: 0; z-index: -30; opacity: 0.5;
+    }
+    @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .spotlight-overlay { position: fixed; inset: 0; pointer-events: none; z-index: -20; background: radial-gradient(120px circle at var(--x, 50%) var(--y, 50%), rgba(var(--primary-rgb), 0.15), transparent 40%); }
+
+    /* Settings Panel */
+    .settings-panel { position: fixed; right: 0; top: 50%; transform: translateY(-50%) translateX(100%); background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); padding: 24px; z-index: 100; transition: 0.4s; width: 340px; border-radius: 1.5rem 0 0 1.5rem; }
+    .settings-panel.open { transform: translateY(-50%) translateX(0); }
+    .settings-toggle { position: absolute; left: -60px; top: 20px; width: 60px; height: 60px; border-radius: 16px 0 0 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--glass-bg); border: 1px solid var(--glass-border); border-right: none; transition: 0.3s; }
+    
+    .rainbow-slider { -webkit-appearance: none; width: 100%; height: 16px; border-radius: 99px; outline: none; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
+    .rainbow-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #ffffff; border: 2px solid rgba(0,0,0,0.1); box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; transition: 0.1s; }
+    .rainbow-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+    .switch-group { display: flex; background-color: var(--switch-bg); border-radius: 999px; padding: 4px; border: 1px solid var(--glass-border); position: relative; }
+    .switch-slider { position: absolute; top: 4px; left: 4px; bottom: 4px; background-color: var(--switch-knob); border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: 0.3s; z-index: 1; }
+    .switch-option { flex: 1; text-align: center; padding: 8px 0; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); cursor: pointer; z-index: 2; transition: 0.3s; }
+    .switch-option.active { color: var(--switch-active-text); }
+    .switch-group[data-opts="2"] .switch-slider { width: calc(50% - 4px); } .switch-group[data-opts="2"].pos-1 .switch-slider { transform: translateX(100%); }
+
+    .custom-range { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: rgba(0,0,0,0.1); border-radius: 10px; outline: none; }
+    .custom-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: rgb(var(--primary-rgb)); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: 0.1s; }
+    .custom-range::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    select.custom-select { -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+
+    dialog { background: transparent !important; border: none !important; outline: none !important; padding: 0 !important; }
+    dialog::backdrop { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+    .badge-slot { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; cursor: pointer; transition: all 0.2s; overflow: hidden; }
+    .badge-slot:hover { border-color: rgb(var(--primary-rgb)); color: rgb(var(--primary-rgb)); background: rgba(var(--primary-rgb), 0.1); }
+    
+    .badge-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(10px); opacity: 0; pointer-events: none; transition: 0.2s; z-index: 20; width: max-content; }
+    .badge-item:hover .badge-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    .friend-tooltip { opacity: 0; visibility: hidden; transform: translate(-50%, 5px); transition: all 0.2s; position: absolute; top: 100%; left: 50%; white-space: nowrap; z-index: 50; pointer-events: none; }
-    .friend-group:hover .friend-tooltip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
-    @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+    .avatar-hover:hover .avatar-overlay { opacity: 1; }
+    .friend-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(5px); opacity: 0; pointer-events: none; transition: 0.2s; z-index: 20; width: max-content; }
+    .group:hover .friend-tooltip { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
     .animate-enter { animation: slideDown 0.5s ease-out forwards; }
-    .panic-active .countdown-digits { filter: blur(8px); transition: filter 0.3s; user-select: none; }
-    .panic-active:hover .countdown-digits { filter: blur(0); cursor: help; }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+    
+    .countdown-blurred { filter: blur(15px) !important; -webkit-filter: blur(15px) !important; opacity: 0.3; transition: all 0.3s ease; user-select: none; }
+
+    /* ✅ Glassmorphism Modal Specifics */
+    .glass-card-pro {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+    body.dark-mode .glass-card-pro {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .glass-tile {
+        background: rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: inset 0 0 20px rgba(255,255,255,0.2);
+    }
+    body.dark-mode .glass-tile {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 pb-20">
+<body class="min-h-screen pb-20 pt-28 transition-colors duration-300">
   
-  <nav class="fixed w-full z-50 transition-all duration-300 glass shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-        <a href="./me.html" class="flex items-center gap-2 group">
-          <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform group-hover:scale-110 drop-shadow-sm">
-        </a>
-        <div class="hidden md:flex gap-8 font-medium text-slate-600">
-          <a href="./me.html" class="text-indigo-600 font-bold relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600">Dashboard</a>
-          <a href="./course.html" class="hover:text-indigo-600 transition">คอร์สทั้งหมด</a>
-          <a href="./mock_exam.html" class="hover:text-indigo-600 transition">คลังข้อสอบ</a>
+  <div class="animated-bg"></div>
+  <div class="spotlight-overlay" id="spotlight"></div>
+  <div class="fixed inset-0 opacity-[0.03] pointer-events-none z-[-19]" style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
+
+  <div id="toastNotification" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-300 opacity-0 translate-y-[-20px] pointer-events-none">
+    <div id="toastContent" class="glass px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-white/50 bg-white/80 backdrop-blur-xl">
+        <div id="toastIcon" class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold">✓</div>
+        <span id="toastMessage" class="text-sm font-bold text-slate-700">บันทึกสำเร็จ!</span>
+    </div>
+  </div>
+
+  <nav class="fixed top-0 w-full z-50 transition-all duration-300 glass shadow-sm border-b-0 h-20">
+    <div class="max-w-7xl mx-auto px-4 h-full flex justify-between items-center">
+      <a href="./me.html" class="flex items-center gap-2 group">
+        <img src="https://edtech-api-zigm.onrender.com/static/logo.png" alt="Logo" class="h-10 w-auto object-contain transition group-hover:scale-110">
+        <span class="font-bold text-lg tracking-tight hidden md:block">MingSmileyFace</span>
+      </a>
+      <div class="hidden md:flex gap-1 p-1 bg-white/10 rounded-full border border-white/20 backdrop-blur-md">
+        <a href="./me.html" class="px-5 py-2 text-sm font-bold text-white bg-indigo-600 rounded-full shadow-md">Dashboard</a>
+        <a href="./course.html" class="px-5 py-2 text-sm font-bold hover:text-indigo-600 hover:bg-white/40 rounded-full transition">คอร์สเรียน</a>
+        <a href="./exam_history.html" class="px-5 py-2 text-sm font-bold hover:text-indigo-600 hover:bg-white/40 rounded-full transition">ผลสอบ</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:block text-right leading-tight">
+          <div id="navName" class="text-sm font-bold">...</div>
+          <div class="text-[10px] opacity-70 font-bold px-2 py-0.5 rounded-md inline-block mt-0.5 border border-current">STUDENT</div>
         </div>
-        <div class="flex items-center gap-4">
-          <div class="hidden md:block text-right leading-tight">
-            <div id="navName" class="text-sm font-bold text-slate-800">...</div>
-            <div class="text-xs text-slate-500">Student</div>
-          </div>
-          <button onclick="logout()" class="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-red-500 transition" title="ออกจากระบบ">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-          </button>
-        </div>
+        <button onclick="logout()" class="p-2.5 rounded-full hover:bg-red-500/10 text-slate-400 hover:text-red-500 border border-slate-400/20 shadow-sm transition group"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></button>
       </div>
     </div>
   </nav>
-  <div class="h-20"></div> 
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-    <div id="sysBanner" class="hidden rounded-xl bg-gradient-to-r from-pink-500 to-orange-400 text-white px-6 py-3 text-sm font-bold shadow-md flex items-center justify-center gap-2 animate-enter"><span class="text-lg">📢</span><span id="sysBannerText">...</span></div>
-    <div id="heroBannerSection" class="hidden w-full rounded-2xl overflow-hidden shadow-lg relative h-48 md:h-64 bg-slate-100 group animate-enter"><div class="swiper heroSwiper w-full h-full"><div class="swiper-wrapper" id="heroBannerWrapper"></div><div class="swiper-pagination"></div></div></div>
-    
-    <section class="grid lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-1 bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center relative overflow-hidden group">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 to-purple-50 opacity-50 group-hover:opacity-100 transition"></div>
-        <div class="relative z-10"><div class="relative inline-block"><img id="avatar" src="" class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md mb-3 bg-slate-200"><a href="./profile.html" class="absolute bottom-3 right-0 bg-white p-1.5 rounded-full shadow text-slate-400 hover:text-indigo-600 border border-slate-100 transition transform hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg></a></div><h2 class="text-xl font-bold text-slate-800" id="fullName">Loading...</h2><div class="flex justify-center gap-2 mt-2 mb-4"><span id="grade" class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded">-</span><span id="dek" class="px-2.5 py-0.5 bg-pink-100 text-pink-700 text-[10px] font-bold rounded">-</span></div><div class="w-full pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-center"><div><div class="text-xl font-bold text-slate-700" id="statCompleted">0</div><div class="text-[10px] text-slate-400 font-bold uppercase">บทเรียนจบ</div></div><div><div class="text-xl font-bold text-slate-700" id="statCourses">0</div><div class="text-[10px] text-slate-400 font-bold uppercase">คอร์ส</div></div></div></div>
-      </div>
-      <div class="lg:col-span-2 flex flex-col gap-6">
-        <div id="cdCard" class="hidden bg-slate-900 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-4 group animate-enter">
-          <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-10 -mt-10"></div>
-          <div class="relative z-10 flex items-center gap-3"><div class="p-3 bg-white/10 rounded-xl backdrop-blur-sm text-2xl">🔥</div><div><h3 class="font-bold text-lg text-white leading-tight" id="cdTitleDisplay">Exam Countdown</h3><p class="text-xs text-slate-400">เตรียมตัวให้พร้อม!</p></div></div>
-          <div class="relative z-10 flex items-center gap-4"><button onclick="togglePanic()" class="text-slate-500 hover:text-white transition p-2 bg-white/5 rounded-full"><svg id="iconEye" class="w-5 h-5 block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg><svg id="iconEyeOff" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg></button><div id="cdDigits" class="flex gap-3 text-center countdown-digits transition-all duration-300"><div><div class="text-2xl font-black font-mono tracking-tight" id="cdDays">00</div><div class="text-[9px] text-slate-500 uppercase font-bold">Days</div></div><div class="text-xl font-light text-slate-600 self-start pt-1">:</div><div><div class="text-2xl font-black font-mono tracking-tight" id="cdHours">00</div><div class="text-[9px] text-slate-500 uppercase font-bold">Hrs</div></div><div class="text-xl font-light text-slate-600 self-start pt-1">:</div><div><div class="text-2xl font-black font-mono tracking-tight" id="cdMins">00</div><div class="text-[9px] text-slate-500 uppercase font-bold">Min</div></div><div class="text-xl font-light text-slate-600 self-start pt-1">:</div><div><div class="text-2xl font-black font-mono tracking-tight text-indigo-400" id="cdSecs">00</div><div class="text-[9px] text-slate-500 uppercase font-bold">Sec</div></div></div></div>
+  
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-toggle group" onclick="toggleSettings()">
+        <svg class="w-8 h-8 text-indigo-600 group-hover:text-indigo-500 animate-[spin_8s_linear_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    </div>
+    <h3 class="font-bold text-xl mb-6 flex items-center gap-2 text-indigo-600"><span class="text-2xl">🎨</span> ปรับแต่งหน้าจอ</h3>
+    <div class="space-y-6">
+        <div>
+            <div class="flex justify-between mb-2">
+                <p class="text-xs font-extrabold opacity-50 uppercase tracking-wider ml-1">Color Theme</p>
+                <div id="colorPreview" class="w-4 h-4 rounded-full shadow-sm bg-indigo-600"></div>
+            </div>
+            <input type="range" id="colorSlider" min="0" max="360" value="245" class="rainbow-slider" oninput="updateColorTheme(this.value)">
+            <p class="text-[10px] text-slate-400 mt-2 text-center">เลื่อนเพื่อเปลี่ยนสีธีมตามใจชอบ</p>
         </div>
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex-1 flex flex-col"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-slate-700">เวลาเรียนสัปดาห์นี้</h3><span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">เป้าหมาย: <b class="text-indigo-600" id="goalText">2</b> ชม.</span></div><div class="flex-1 w-full h-40"><canvas id="hist"></canvas></div></div>
+        
+        <div><p class="text-xs font-extrabold opacity-50 uppercase mb-2 tracking-wider ml-1">Display Mode</p><div class="switch-group" id="themeSwitch" data-opts="2"><div class="switch-slider"></div><div class="switch-option active" onclick="setMode('light')">☀️ สว่าง</div><div class="switch-option" onclick="setMode('dark')">🌙 มืด</div></div></div>
+        <div><p class="text-xs font-extrabold opacity-50 uppercase mb-2 tracking-wider ml-1">Background</p><div class="switch-group" id="bgSwitch" data-opts="2"><div class="switch-slider"></div><div class="switch-option active" onclick="setBg('gradient')">🌈 Motion</div><div class="switch-option" onclick="setBg('solid')">⬜ Solid</div></div></div>
+    </div>
+  </div>
+
+  <div id="addFriendModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="glass p-6 rounded-3xl w-full max-w-sm shadow-2xl transform scale-90 transition-transform duration-300 border border-white/50 bg-white/90">
+        <h3 class="text-xl font-bold text-center mb-4 text-slate-800">เพิ่มเพื่อนใหม่ 🤝</h3>
+        <input type="email" id="friendEmailInput" placeholder="กรอกอีเมลเพื่อน..." class="w-full px-4 py-3 rounded-xl bg-white/50 border border-slate-200 focus:border-indigo-500 outline-none transition mb-4 text-sm">
+        <div class="flex gap-3">
+            <button onclick="closeAddFriendModal()" class="flex-1 px-4 py-2 rounded-xl bg-slate-100 text-slate-500 font-bold hover:bg-slate-200 transition">ยกเลิก</button>
+            <button onclick="confirmAddFriend()" class="flex-1 px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-md transition">เพิ่มเพื่อน</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="editProfileModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="glass p-6 rounded-3xl w-full max-w-sm shadow-2xl scale-95 transition-transform duration-300 border border-white/50 bg-white/90">
+        <h3 class="text-xl font-bold text-center mb-4 text-slate-800">แก้ไขข้อมูลโปรไฟล์ ✏️</h3>
+        <div class="flex flex-col items-center mb-4">
+            <div class="relative w-24 h-24 group cursor-pointer avatar-hover" onclick="document.getElementById('fileInput').click()">
+                <img id="previewAvatar" src="" class="w-full h-full rounded-full object-cover border-4 border-slate-100 shadow-md transition group-hover:brightness-90">
+                <div class="avatar-overlay absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 transition duration-300"><svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">แตะที่รูปเพื่อเปลี่ยน</p>
+            <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="previewImage(this)">
+        </div>
+        <div class="space-y-3 mb-4">
+            <div><label class="text-xs font-bold text-slate-500 ml-1">ชื่อจริง</label><input type="text" id="editFullName" class="w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 outline-none text-sm transition focus:border-indigo-500"></div>
+            <div><label class="text-xs font-bold text-slate-500 ml-1">ชื่อเล่น</label><input type="text" id="editNickname" class="w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 outline-none text-sm transition focus:border-indigo-500"></div>
+            <div class="flex gap-3">
+                <div class="flex-1"><label class="text-xs font-bold text-slate-500 ml-1">ระดับชั้น</label><select id="editGrade" onchange="autoUpdateDek()" class="custom-select w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 outline-none text-sm cursor-pointer"><option value="">เลือก</option><option value="M1">ม.1</option><option value="M2">ม.2</option><option value="M3">ม.3</option><option value="M4">ม.4</option><option value="M5">ม.5</option><option value="M6">ม.6</option></select></div>
+                <div class="flex-1"><label class="text-xs font-bold text-slate-500 ml-1">รุ่น (DEK)</label><input type="text" id="editDek" readonly class="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 outline-none text-sm text-center"></div>
+            </div>
+        </div>
+        <div class="flex gap-3"><button onclick="closeEditProfileModal()" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-500 font-bold hover:bg-slate-200 transition">ยกเลิก</button><button onclick="saveProfile()" class="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition text-sm shadow-md">บันทึก</button></div>
+    </div>
+  </div>
+
+  <dialog id="badgeModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-transparent backdrop:bg-black/40 backdrop:backdrop-blur-sm">
+    <div class="glass p-6 rounded-3xl w-full max-w-md max-h-[70vh] shadow-2xl scale-95 transition-transform duration-300 border border-white/50 flex flex-col bg-white/90">
+        <div class="flex justify-between items-center mb-2 shrink-0">
+            <h3 class="text-xl font-bold text-slate-800">จัดแต่ง Showcase ✨</h3>
+            <button onclick="closeBadgeModal()" class="text-slate-400 hover:text-red-500 text-2xl transition">&times;</button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4 shrink-0">เลือกเหรียญที่คุณภูมิใจมาโชว์หน้าโปรไฟล์ (สูงสุด 3 อัน)</p>
+        <div id="badgeSelectionList" class="flex-1 overflow-y-auto grid grid-cols-4 gap-3 p-1 custom-scroll min-h-0"></div>
+        <div class="pt-4 border-t border-slate-200/50 mt-4 flex justify-end gap-2 items-center shrink-0">
+            <a href="./achievements.html" class="text-xs font-bold text-slate-500 hover:text-indigo-600 mr-auto transition">🏆 ดูทั้งหมด</a>
+            <button onclick="saveShowcase()" class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow hover:bg-indigo-700 transition text-sm">บันทึก</button>
+        </div>
+    </div>
+  </dialog>
+
+  <dialog id="friendProfileModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/10 backdrop-blur-md cursor-pointer transition-all duration-300">
+    <div class="glass-card-pro rounded-[2.5rem] overflow-hidden w-full max-w-sm m-4 transform transition-all scale-95 opacity-0 cursor-default relative" id="friendModalContent" onclick="event.stopPropagation()">
+        
+        <div class="absolute top-[-50px] left-1/2 -translate-x-1/2 w-40 h-40 bg-indigo-500 rounded-full blur-[80px] opacity-40"></div>
+
+        <button onclick="closeFriendModal()" class="absolute top-4 right-4 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-sm transition z-20 border border-white/20">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="p-8 flex flex-col items-center text-center relative z-10">
+            <div class="p-1 rounded-full mb-4 relative">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-white/40 to-transparent blur-md"></div>
+                <img id="fpAvatar" src="" class="w-28 h-28 rounded-full object-cover relative z-10 border-[3px] border-white/40 shadow-lg bg-black/20">
+            </div>
+
+            <h2 class="text-3xl font-black tracking-tight leading-tight mb-1" id="fpName" style="color: var(--text-main); text-shadow: 0 2px 10px rgba(0,0,0,0.1);">Loading...</h2>
+            
+            <div class="flex items-center gap-2 mt-3 mb-8">
+                <span id="fpGrade" class="text-[10px] font-bold bg-white/30 px-3 py-1.5 rounded-full uppercase border border-white/40 text-indigo-500 backdrop-blur-sm shadow-sm">-</span>
+                <span id="fpDek" class="text-[10px] font-bold bg-white/30 px-3 py-1.5 rounded-full uppercase border border-white/40 text-pink-500 backdrop-blur-sm shadow-sm">-</span>
+            </div>
+
+            <div class="w-full grid grid-cols-3 gap-3 mb-8">
+                <div class="glass-tile rounded-2xl p-3 flex flex-col items-center justify-center h-20 transition hover:scale-105">
+                    <div class="text-2xl font-black text-indigo-500" id="fpStatCompleted">0</div>
+                    <div class="text-[8px] font-bold opacity-60 uppercase tracking-wide mt-1">Completed</div>
+                </div>
+                <div class="glass-tile rounded-2xl p-3 flex flex-col items-center justify-center h-20 transition hover:scale-105">
+                    <div class="text-2xl font-black" style="color: var(--text-main);" id="fpStatCourses">0</div>
+                    <div class="text-[8px] font-bold opacity-60 uppercase tracking-wide mt-1">Courses</div>
+                </div>
+                <div class="glass-tile rounded-2xl p-3 flex flex-col items-center justify-center h-20 transition hover:scale-105">
+                    <div class="text-xl font-black text-indigo-500" id="fpTotalTime">0</div>
+                    <div class="text-[8px] font-bold opacity-60 uppercase tracking-wide mt-1">Minutes</div>
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex items-center justify-between mb-4 px-1">
+                    <span class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]">Showcase</span>
+                    <div class="h-px bg-white/20 flex-1 ml-3"></div>
+                </div>
+                <div class="flex justify-center gap-4" id="fpBadgeContainer">
+                    <div class="w-12 h-12 rounded-full bg-white/20 animate-pulse"></div>
+                    <div class="w-12 h-12 rounded-full bg-white/20 animate-pulse"></div>
+                    <div class="w-12 h-12 rounded-full bg-white/20 animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </dialog>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-10 relative z-10">
+    
+    <div id="quoteCard" class="glass rounded-2xl p-4 flex items-center justify-center text-center relative overflow-hidden animate-enter border border-white/40 shadow-sm mx-auto max-w-2xl bg-white/30 backdrop-blur-md transition-all">
+       <span class="text-2xl mr-3">💡</span> <span id="quoteText" class="text-sm font-medium text-slate-600 italic">...</span>
+    </div>
+
+    <div id="sysBanner" class="hidden glass rounded-2xl bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-indigo-100/50 px-6 py-3 text-sm font-bold shadow-sm flex items-center justify-center gap-3 animate-enter mb-6">
+      <span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span></span>
+      <span id="sysBannerText">...</span>
+    </div>
+
+    <div id="heroBannerSection" class="hidden w-full rounded-[2.5rem] overflow-hidden shadow-2xl shadow-indigo-500/20 relative h-64 md:h-80 glass-shadow group animate-enter ring-1 ring-white/20 mb-8">
+      <div class="swiper heroSwiper w-full h-full"><div class="swiper-wrapper" id="heroBannerWrapper"></div><div class="swiper-pagination"></div></div>
+    </div>
+
+    <section class="grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-1 glass rounded-[2.5rem] p-8 glass-shadow flex flex-col items-center text-center relative overflow-hidden group">
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700" style="background: linear-gradient(to bottom right, rgba(var(--primary-rgb), 0.1), rgba(var(--primary-rgb), 0.05));"></div>
+        <div class="relative z-10 w-full">
+          <div class="relative inline-block mb-4">
+            <div class="absolute inset-0 rounded-full blur opacity-40 group-hover:opacity-60 transition" style="background: linear-gradient(to top right, rgb(var(--primary-rgb)), #ffffff);"></div>
+            <img id="avatar" src="" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';" class="w-32 h-32 rounded-full object-cover border-4 border-white/80 shadow-xl relative z-10 bg-slate-200">
+            <button onclick="openEditProfileModal()" class="absolute bottom-2 right-0 bg-white p-2.5 rounded-full shadow-lg text-slate-500 hover:text-indigo-600 border border-slate-100 transition transform hover:scale-110 hover:-rotate-12 z-20 cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg></button>
+          </div>
+          <h2 class="text-2xl font-black tracking-tight" id="fullName">Loading...</h2>
+          <div class="flex justify-center mt-3 mb-6">
+            <div class="flex items-center gap-3 px-4 py-1.5 bg-white/80 border border-indigo-200 rounded-full shadow-sm text-xs font-bold text-slate-600 backdrop-blur-sm">
+                <span id="grade" class="text-indigo-600 uppercase">-</span>
+                <div class="w-px h-3 bg-slate-300"></div>
+                <span id="dek" class="text-pink-500 uppercase">DEK-</span>
+            </div>
+          </div>
+          
+          <div class="w-full pt-6 border-t border-slate-500/10 grid grid-cols-3 gap-2">
+            <div class="bg-white/40 rounded-2xl p-2 py-3 border border-white/50">
+                <div class="text-2xl md:text-3xl font-black text-indigo-500" id="statCompleted">0</div>
+                <div class="text-[9px] md:text-[10px] opacity-70 font-bold uppercase tracking-wider">บทเรียนที่จบ</div>
+            </div>
+            <div class="bg-white/40 rounded-2xl p-2 py-3 border border-white/50">
+                <div class="text-2xl md:text-3xl font-black" id="statCourses">0</div>
+                <div class="text-[9px] md:text-[10px] opacity-70 font-bold uppercase tracking-wider">คอร์สทั้งหมด</div>
+            </div>
+            <div class="bg-white/40 rounded-2xl p-2 py-3 border border-white/50">
+                <div class="text-2xl md:text-3xl font-black text-indigo-500" id="totalTimeVal">0</div>
+                <div class="text-[9px] md:text-[10px] opacity-70 font-bold uppercase tracking-wider">นาทีเรียนรวม</div>
+            </div>
+          </div>
+
+          <div class="mt-6 w-full flex justify-center gap-3" id="badgeContainer">
+             <div class="text-xs text-slate-400 italic">กำลังโหลด...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-6">
+        <div id="cdCard" class="hidden glass-dark rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-8 group animate-enter border border-white/10">
+          <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20 -mr-20 -mt-20 animate-pulse"></div>
+          <div class="relative z-10 flex items-center gap-5">
+            <div class="w-16 h-16 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl backdrop-blur-md flex items-center justify-center text-3xl shadow-inner border border-white/10">🔥</div>
+            <div><h3 class="font-bold text-3xl text-white leading-tight mb-1 tracking-tight" id="cdTitleDisplay">Exam Countdown</h3><p class="text-sm text-indigo-200 font-medium">เวลาไม่คอยท่า... คว้ามันไว้ให้ทัน!</p></div>
+          </div>
+          <div class="relative z-10 flex items-center gap-6 bg-black/20 p-4 rounded-3xl backdrop-blur-sm border border-white/5">
+            <button onclick="togglePanic()" class="text-slate-400 hover:text-white transition p-3 bg-white/5 rounded-2xl hover:bg-white/10 border border-white/5">
+                <svg id="iconEye" class="w-5 h-5 block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <svg id="iconEyeOff" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+            </button>
+            <div id="cdDigits" class="flex gap-4 text-center countdown-digits transition-all duration-300">
+              <div><div class="text-4xl font-black font-mono tracking-tighter" id="cdDays">00</div><div class="text-[9px] text-indigo-300 uppercase font-bold tracking-widest mt-1">Days</div></div><div class="text-2xl font-light text-slate-500 self-start pt-1">:</div><div><div class="text-4xl font-black font-mono tracking-tighter" id="cdHours">00</div><div class="text-[9px] text-indigo-300 uppercase font-bold tracking-widest mt-1">Hrs</div></div><div class="text-2xl font-light text-slate-500 self-start pt-1">:</div><div><div class="text-4xl font-black font-mono tracking-tighter" id="cdMins">00</div><div class="text-[9px] text-indigo-300 uppercase font-bold tracking-widest mt-1">Min</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-[2.5rem] p-8 glass-shadow flex-1 flex flex-col relative overflow-hidden">
+          <div class="flex justify-between items-start mb-6 relative z-10">
+            <div>
+                <h3 class="font-bold text-lg flex items-center gap-2 mb-1">
+                    <span class="flex h-3 w-3 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span></span>
+                    เวลาเรียนสัปดาห์นี้
+                </h3>
+                <div class="flex items-center gap-1.5 mt-2 bg-orange-50/80 px-3 py-1 rounded-full border border-orange-100 w-fit">
+                    <span class="text-base">🔥</span>
+                    <span class="font-bold text-orange-600 text-sm" id="streakVal">0</span>
+                    <span class="text-[10px] font-bold text-orange-400 uppercase tracking-wide">Day Streak</span>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-end">
+                <div class="text-xs font-bold text-slate-500 mb-1">เป้าหมาย: <span id="goalDisplay" class="text-indigo-600 text-lg">2</span> ชม.</div>
+                <input type="range" id="goalSlider" min="1" max="10" step="0.5" value="2" class="custom-range w-32 cursor-pointer">
+            </div>
+          </div>
+          <div class="flex-1 w-full h-40 relative z-10"><canvas id="hist"></canvas></div>
+        </div>
       </div>
     </section>
 
-    <section><div class="flex items-center gap-2 mb-3"><h3 class="text-lg font-bold text-slate-800">เพื่อนที่ออนไลน์</h3><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div></div><div class="flex items-center gap-4 overflow-x-auto pb-4 px-2 no-scrollbar -mx-2"><button onclick="addFriend()" class="shrink-0 flex flex-col items-center gap-2 group transition hover:scale-105"><div class="w-14 h-14 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 group-hover:border-indigo-500 group-hover:text-indigo-500 bg-white shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div><span class="text-[10px] font-bold text-slate-400 group-hover:text-indigo-600">ADD</span></button><div id="friendList" class="flex items-center gap-4"></div></div></section>
-    
+    <section>
+      <div class="flex items-center gap-3 mb-4 px-2">
+        <h3 class="text-xl font-bold">เพื่อนที่ออนไลน์</h3>
+        <span class="relative flex h-2.5 w-2.5 ml-1"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span></span>
+      </div>
+      <div class="flex items-center gap-4 overflow-x-auto pb-8 px-2 no-scrollbar -mx-2">
+        <button onclick="openAddFriendModal()" class="shrink-0 flex flex-col items-center gap-2 group transition hover:scale-105">
+          <div class="w-16 h-16 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 group-hover:border-indigo-500 group-hover:text-indigo-500 bg-white/50 hover:bg-white shadow-sm transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+          <span class="text-[10px] font-bold opacity-60 group-hover:text-indigo-500 mt-1">เพิ่มเพื่อน</span>
+        </button>
+        <div id="friendList" class="flex items-center gap-4"></div>
+      </div>
+    </section>
+
     <div id="continueBanner" class="hidden"></div>
-    
-    <section><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold text-slate-800">คอร์สของฉัน</h2><a href="./course.html" class="text-xs font-bold text-indigo-600 hover:underline bg-indigo-50 px-3 py-1.5 rounded-full transition">ดูทั้งหมด →</a></div><div class="swiper mySwiper !pb-10 !px-1"><div class="swiper-wrapper" id="courseWrapper"><div class="swiper-slide w-auto"><div class="h-40 flex items-center justify-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-300 w-full text-sm">กำลังโหลด...</div></div></div><div class="swiper-pagination"></div></div></section>
-    
-    <section class="max-w-4xl mx-auto pt-4"><div class="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 relative overflow-hidden"><div class="flex items-center gap-3 mb-6 relative z-10"><span class="text-2xl">🏆</span><h3 class="text-lg font-bold text-slate-800">Leaderboard</h3></div><div class="space-y-3 relative z-10" id="leaderboardList"></div><button onclick="toggleLeaderboard()" id="btnShowMore" class="w-full mt-4 py-2 text-xs font-bold text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition border border-slate-100">ดูอันดับเพิ่มเติม</button></div></section>
+
+    <section>
+      <div class="flex items-center justify-between mb-6 px-2">
+        <h2 class="text-2xl font-bold flex items-center gap-2 tracking-tight">📚 คอร์สของฉัน</h2>
+        <a href="./course.html" class="text-xs font-bold text-indigo-500 hover:text-indigo-700 bg-white/40 px-5 py-2.5 rounded-full transition shadow-sm hover:shadow-md border border-indigo-500/20">ดูทั้งหมด →</a>
+      </div>
+      <div class="swiper mySwiper !pb-12 !px-2">
+        <div class="swiper-wrapper" id="courseWrapper">
+          <div class="swiper-slide w-auto"><div class="glass h-56 rounded-[2rem] animate-pulse flex items-center justify-center opacity-40 font-medium border border-dashed border-slate-300">กำลังโหลดคอร์ส...</div></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto pt-6">
+      <div class="glass rounded-[2.5rem] p-8 glass-shadow relative overflow-hidden border border-white/60">
+        <div class="flex items-center gap-4 mb-8 relative z-10">
+          <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-amber-200">🏆</div>
+          <div><h3 class="text-xl font-bold">Leaderboard</h3><p class="text-xs opacity-60">ใครเรียนเก่งที่สุดในสัปดาห์นี้?</p></div>
+        </div>
+        <div class="space-y-3 relative z-10" id="leaderboardList"></div>
+        <button onclick="toggleLeaderboard()" id="btnShowMore" class="w-full mt-6 py-3 text-xs font-bold opacity-60 hover:opacity-100 hover:text-indigo-600 hover:bg-white/50 rounded-xl transition border border-transparent hover:border-slate-200 shadow-sm">ดูอันดับเพิ่มเติม ↓</button>
+      </div>
+    </section>
+
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"https://edtech-api-zigm.onrender.com":"https://edtech-api-zigm.onrender.com";
     const token = localStorage.getItem("token");
     if (!token) location.href = "./login.html";
+    
+    let currentUserData = {}, myChart = null, allBadges = [], selectedBadges = [];
+
+    // Helper Functions
     function setText(id, txt) { const el = document.getElementById(id); if(el) el.textContent = txt; }
-    function setSrc(id, src) { const el = document.getElementById(id); if(el) el.src = src; }
     function logout(){ localStorage.removeItem("token"); localStorage.removeItem("last_watched"); location.href="./login.html"; }
-
+    
     function togglePanic() {
-      const digits = document.getElementById("cdDigits"); const eye=document.getElementById("iconEye"); const off=document.getElementById("iconEyeOff");
-      digits.classList.toggle("panic-active");
-      if(digits.classList.contains("panic-active")){ eye.classList.add("hidden"); off.classList.remove("hidden"); } else { eye.classList.remove("hidden"); off.classList.add("hidden"); }
+      const digits = document.getElementById("cdDigits");
+      const eye = document.getElementById("iconEye");
+      const off = document.getElementById("iconEyeOff");
+      digits.classList.toggle("countdown-blurred");
+      if (digits.classList.contains("countdown-blurred")) { eye.classList.add("hidden"); off.classList.remove("hidden"); } 
+      else { eye.classList.remove("hidden"); off.classList.add("hidden"); }
     }
 
-    async function initSettings() {
-      try {
-        const s = await (await fetch(`${API}/settings`)).json();
-        if(s.banner_active==="true" && s.banner_text){ document.getElementById("sysBanner").classList.remove("hidden"); setText("sysBannerText",s.banner_text); }
-        if(s.banner_images && s.banner_images.length>0){
-          const w=document.getElementById("heroBannerWrapper"); document.getElementById("heroBannerSection").classList.remove("hidden");
-          w.innerHTML=s.banner_images.map(u=>`<div class="swiper-slide w-full h-full"><img src="${u.startsWith("http")?u:`${API}${u}`}" class="w-full h-full object-cover"></div>`).join("");
-          new Swiper(".heroSwiper",{loop:true,autoplay:{delay:5000},pagination:{clickable:true}});
+    function showToast(msg, isError = false) {
+        const t = document.getElementById('toastNotification'), c = document.getElementById('toastContent'), i = document.getElementById('toastIcon'), txt = document.getElementById('toastMessage');
+        txt.textContent = msg;
+        if(isError) { c.className = "glass px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-red-200 bg-red-50/90 backdrop-blur-xl text-red-800"; i.className = "w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xs font-bold"; i.textContent = "✕"; } 
+        else { c.className = "glass px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-emerald-200 bg-emerald-50/90 backdrop-blur-xl text-emerald-800"; i.className = "w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold"; i.textContent = "✓"; }
+        t.classList.remove('opacity-0', 'translate-y-[-20px]', 'pointer-events-none'); setTimeout(() => t.classList.add('opacity-0', 'translate-y-[-20px]', 'pointer-events-none'), 3000);
+    }
+
+    // Modal Controls
+    function openAddFriendModal() { const m = document.getElementById('addFriendModal'); m.classList.remove('hidden'); setTimeout(() => { m.classList.remove('opacity-0'); m.firstElementChild.classList.remove('scale-90'); m.firstElementChild.classList.add('scale-100'); }, 10); }
+    function closeAddFriendModal() { const m = document.getElementById('addFriendModal'); m.classList.add('opacity-0'); m.firstElementChild.classList.remove('scale-100'); m.firstElementChild.classList.add('scale-90'); setTimeout(() => { m.classList.add('hidden'); document.getElementById('friendEmailInput').value = ''; }, 300); }
+    function openEditProfileModal() {
+        document.getElementById('editFullName').value = currentUserData.full_name || ''; document.getElementById('editNickname').value = currentUserData.nickname || ''; document.getElementById('editGrade').value = currentUserData.grade_level || ''; document.getElementById('editDek').value = currentUserData.dek_code || ''; document.getElementById("previewAvatar").src = document.getElementById("avatar").src; document.getElementById("fileInput").value = ""; 
+        const m = document.getElementById('editProfileModal'); m.classList.remove('hidden'); setTimeout(() => { m.classList.remove('opacity-0'); m.firstElementChild.classList.remove('scale-95'); m.firstElementChild.classList.add('scale-100'); }, 10);
+    }
+    function closeEditProfileModal() { const m = document.getElementById('editProfileModal'); m.classList.add('opacity-0'); m.firstElementChild.classList.remove('scale-100'); m.firstElementChild.classList.add('scale-95'); setTimeout(() => m.classList.add('hidden'), 300); }
+    
+    function openBadgeModal() {
+        const l = document.getElementById("badgeSelectionList"); l.innerHTML = "";
+        const unlocked = allBadges.filter(b => b.is_unlocked);
+        if(unlocked.length === 0) l.innerHTML = `<div class="col-span-4 text-center text-slate-400 text-xs py-10">ยังไม่มีเหรียญที่ปลดล็อกเลย พยายามเข้านะ! ✌️</div>`;
+        else unlocked.forEach(b => {
+            const isSel = selectedBadges.includes(b.id);
+            l.innerHTML += `<div onclick="toggleBadgeSelect('${b.id}')" class="cursor-pointer rounded-xl p-2 border-2 flex flex-col items-center transition ${isSel ? 'border-indigo-500 bg-indigo-50' : 'border-slate-100 hover:border-indigo-200'} relative"><div class="text-2xl mb-1">${b.icon}</div><div class="text-[10px] font-bold text-slate-600 truncate w-full text-center">${b.name}</div>${isSel ? '<div class="absolute top-1 right-1 w-2 h-2 bg-indigo-500 rounded-full"></div>' : ''}</div>`;
+        });
+        
+        const m = document.getElementById("badgeModal"); 
+        m.classList.remove('hidden'); 
+        m.style.display = 'flex'; 
+        
+        if(typeof m.showModal === 'function') {
+            try { m.showModal(); } catch(e) {} 
         }
-        if(s.countdown_active==="true"){
-          document.getElementById("cdCard").classList.remove("hidden");
-          if(s.countdown_title) setText("cdTitleDisplay",s.countdown_title);
-          startCountdown(s.countdown_date ? new Date(s.countdown_date) : new Date(Date.now()+30*86400000));
+        
+        setTimeout(() => { 
+            m.firstElementChild.classList.remove('scale-95'); 
+            m.firstElementChild.classList.add('scale-100'); 
+        }, 10);
+    }
+
+    function closeBadgeModal() { 
+        const m = document.getElementById("badgeModal"); 
+        m.firstElementChild.classList.remove('scale-100'); 
+        m.firstElementChild.classList.add('scale-95'); 
+        setTimeout(() => { 
+            if(typeof m.close === 'function') { try{ m.close(); }catch{} }
+            m.classList.add('hidden'); 
+            m.style.display = 'none';
+        }, 300); 
+    }
+
+    // ✅ Friend Profile Modal Logic
+    const friendModal = document.getElementById("friendProfileModal");
+    
+    friendModal.addEventListener('click', (e) => {
+        if (e.target === friendModal) {
+            closeFriendModal();
         }
-      } catch{}
-    }
-    function startCountdown(t){
-      function upd(){
-        const d=t-new Date();
-        if(d<=0){ setText("cdDays","00"); setText("cdHours","00"); setText("cdMins","00"); setText("cdSecs","00"); return; }
-        setText("cdDays",String(Math.floor(d/86400000)).padStart(2,'0')); setText("cdHours",String(Math.floor((d/3600000)%24)).padStart(2,'0')); setText("cdMins",String(Math.floor((d/60000)%60)).padStart(2,'0')); setText("cdSecs",String(Math.floor((d/1000)%60)).padStart(2,'0'));
-      } setInterval(upd,1000); upd();
+    });
+
+    async function viewFriend(id) {
+        const content = document.getElementById("friendModalContent");
+        
+        // Show Loading State Instantly
+        document.getElementById("fpAvatar").src = "https://ui-avatars.com/api/?name=Loading&background=random";
+        document.getElementById("fpName").textContent = "กำลังโหลด...";
+        document.getElementById("fpGrade").textContent = "...";
+        document.getElementById("fpDek").textContent = "...";
+        document.getElementById("fpStatCompleted").textContent = "-";
+        document.getElementById("fpStatCourses").textContent = "-";
+        document.getElementById("fpTotalTime").textContent = "-";
+        document.getElementById("fpBadgeContainer").innerHTML = `<div class="w-12 h-12 rounded-full bg-white/20 animate-pulse"></div><div class="w-12 h-12 rounded-full bg-white/20 animate-pulse"></div><div class="w-12 h-12 rounded-full bg-white/20 animate-pulse"></div>`;
+
+        friendModal.classList.remove('hidden');
+        friendModal.style.display = 'flex';
+        
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+
+        try {
+            const res = await fetch(`${API}/users/${id}/public`, { headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error();
+            const u = await res.json();
+
+            // Set Data
+            let avatarUrl = u.avatar_url; 
+            if (avatarUrl && !avatarUrl.startsWith('http')) avatarUrl = `${API}${avatarUrl}`;
+            if (!avatarUrl) avatarUrl = `https://ui-avatars.com/api/?name=${u.full_name}&background=random`;
+            
+            document.getElementById("fpAvatar").src = avatarUrl;
+            document.getElementById("fpName").textContent = u.nickname || u.full_name;
+            document.getElementById("fpGrade").textContent = u.grade_level || "-";
+            document.getElementById("fpDek").textContent = `DEK${u.dek_code || "-"}`;
+            
+            document.getElementById("fpStatCompleted").textContent = u.total_completed;
+            document.getElementById("fpStatCourses").textContent = u.total_courses;
+            document.getElementById("fpTotalTime").textContent = u.total_minutes;
+
+            // Render Badges
+            const badgeContainer = document.getElementById("fpBadgeContainer");
+            badgeContainer.innerHTML = "";
+            const showcaseIds = u.showcase_badges ? u.showcase_badges.split(",") : [];
+            
+            for (let i = 0; i < 3; i++) {
+                const bid = showcaseIds[i];
+                if (bid) {
+                    const bData = allBadges.find(b => b.id === bid);
+                    const icon = bData ? bData.icon : "🏅";
+                    const name = bData ? bData.name : "Badge";
+                    badgeContainer.innerHTML += `
+                        <div class="relative group">
+                            <div class="w-12 h-12 rounded-full bg-white/40 shadow-sm border border-white/50 flex items-center justify-center text-2xl cursor-help hover:scale-110 transition backdrop-blur-sm">
+                                ${icon}
+                            </div>
+                            <div class="badge-tooltip">
+                                <div class="glass-dark p-2 rounded-xl border border-white/10 shadow-xl backdrop-blur-md">
+                                    <div class="font-bold text-yellow-400 text-xs">${name}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    badgeContainer.innerHTML += `<div class="w-12 h-12 rounded-full border-2 border-white/20 flex items-center justify-center bg-white/10 backdrop-blur-sm"></div>`;
+                }
+            }
+
+        } catch (e) {
+            console.error(e);
+            showToast("ไม่สามารถโหลดข้อมูลเพื่อนได้", true);
+            closeFriendModal();
+        }
     }
 
-    function checkContinue(){
-      const l=localStorage.getItem("last_watched"); if(!l)return;
-      const d=JSON.parse(l); if(Date.now()-d.timestamp>2592000000){localStorage.removeItem("last_watched");return;}
-      const b=document.getElementById("continueBanner"); b.classList.remove("hidden");
-      b.className="animate-enter bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center justify-between gap-4 hover:shadow-md transition group cursor-pointer mb-8";
-      b.onclick=()=>location.href=`./learning_room.html?id=${d.courseId}&lesson=${d.lessonIdx}`;
-      b.innerHTML=`<div class="flex items-center gap-4 min-w-0"><div class="w-12 h-12 rounded-lg bg-indigo-100 shrink-0 overflow-hidden relative">${d.thumbnail?`<img src="${d.thumbnail}" class="w-full h-full object-cover">`:`<div class="flex items-center justify-center h-full text-[8px] text-indigo-400 font-bold">COURSE</div>`}<div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition"><span class="text-white text-xs">▶</span></div></div><div class="min-w-0"><div class="flex items-center gap-2 mb-0.5"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span><span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wide">เรียนต่อจากเดิม</span></div><div class="font-bold text-sm text-slate-700 truncate">${d.courseTitle}</div><div class="text-xs text-slate-400 truncate">ล่าสุด: ${d.lessonTitle}</div></div></div><div class="text-slate-300 group-hover:text-indigo-600 transition px-2">▶</div>`;
+    function closeFriendModal() {
+        const content = document.getElementById("friendModalContent");
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            friendModal.classList.add('hidden');
+            friendModal.style.display = 'none';
+        }, 300);
     }
 
-    async function loadProfile(){ try{const u=await(await fetch(`${API}/users/me`,{headers:{Authorization:`Bearer ${token}`}})).json();setText("navName",u.full_name||"User");setSrc("avatar",u.avatar_url||`https://ui-avatars.com/api/?name=${u.email}`);setText("fullName",u.full_name||u.email.split('@')[0]);setText("bio",u.bio||"-");setText("grade",u.grade_level||"-");setText("dek",`DEK${u.dek_code||"-"}`);}catch{logout();}}
-    async function loadMyCourses(){try{const l=await(await fetch(`${API}/users/me/courses`,{headers:{Authorization:`Bearer ${token}`}})).json();setText("statCourses",l.length);const w=document.getElementById("courseWrapper");if(l.length===0){w.innerHTML=`<div class="w-full py-10 text-center text-slate-400 text-sm">คุณยังไม่ได้ลงทะเบียนคอร์สเรียน</div>`;return;}w.innerHTML="";let tot=0;for(const e of l){const cRes=await fetch(`${API}/courses/${e.course_id}`,{headers:{Authorization:`Bearer ${token}`}});if(!cRes.ok)continue;const c=await cRes.json();const p=await(await fetch(`${API}/courses/${e.course_id}/my-progress`,{headers:{Authorization:`Bearer ${token}`}})).json();const d=p.completed_ids?p.completed_ids.length:0,t=c.lessons?c.lessons.length:0,pct=t>0?Math.round((d/t)*100):0;tot+=d;w.innerHTML+=`<div class="swiper-slide h-auto"><div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col h-full hover:shadow-md transition group cursor-pointer" onclick="location.href='./learning_room.html?id=${c.id}'"><div class="flex justify-between mb-3"><span class="px-2.5 py-0.5 bg-slate-100 text-[9px] font-bold rounded-full text-slate-500">COURSE</span>${pct===100?'🎉':''}</div><h3 class="font-bold text-lg mb-3 line-clamp-2 text-slate-800 group-hover:text-indigo-600 transition">${c.title}</h3><div class="mt-auto space-y-3"><div class="flex justify-between text-xs font-bold text-slate-500"><span>${d}/${t} บท</span><span class="text-indigo-600">${pct}%</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="h-full bg-indigo-500" style="width:${pct}%"></div></div></div></div></div>`;}setText("statCompleted",tot);new Swiper(".mySwiper",{slidesPerView:1,spaceBetween:20,pagination:{clickable:true},breakpoints:{640:{slidesPerView:2},1024:{slidesPerView:3}}});}catch{}}
-    async function loadFriends(){try{const l=await(await fetch(`${API}/users/me/friends`,{headers:{Authorization:`Bearer ${token}`}})).json();document.getElementById("friendList").innerHTML=l.length?l.map(f=>{let r="border-slate-200 grayscale opacity-60",b="Offline";if(f.is_online){if(f.current_activity){r="border-blue-500 ring-2 ring-blue-100";b=`📚 ${f.current_activity}`}else{r="border-green-500 ring-2 ring-green-100";b="Online"}}return `<div class="relative group friend-group cursor-pointer flex flex-col items-center gap-1.5"><div class="w-14 h-14 rounded-full border-2 ${r} p-0.5 bg-white transition hover:scale-105"><img src="${f.avatar_url||`https://ui-avatars.com/api/?name=${f.full_name||f.email}`}" class="w-full h-full rounded-full object-cover"></div><div class="friend-tooltip"><div class="bg-slate-800 text-white px-2 py-1 text-[10px] rounded shadow whitespace-nowrap">${b}</div></div><div class="text-[10px] font-medium text-slate-500 w-14 truncate text-center">${f.full_name||f.email.split('@')[0]}</div></div>`}).join(""):`<div class="text-xs text-slate-300 pl-2">ว่างเปล่า...</div>`;}catch{}}
-    async function addFriend(){const e=prompt("อีเมลเพื่อน:");if(e)await fetch(`${API}/users/me/friends`,{method:"POST",headers:{Authorization:`Bearer ${token}`},body:new URLSearchParams({email:e})});loadFriends();}
-    async function loadLeaderboard(){try{const l=await(await fetch(`${API}/leaderboard`,{headers:{Authorization:`Bearer ${token}`}})).json();const m=l.length?Math.max(...l.map(u=>u.completed_count)):1;document.getElementById("leaderboardList").innerHTML=l.map((u,i)=>`<div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 ${i>=5?'hidden more-items':''}"><div class="w-8 h-8 rounded-lg ${i===0?'bg-yellow-100 text-yellow-700':i===1?'bg-slate-200 text-slate-600':i===2?'bg-orange-100 text-orange-700':'bg-white text-slate-400 border'} flex items-center justify-center font-bold text-sm shrink-0">${i+1}</div><img src="${u.avatar_url||`https://ui-avatars.com/api/?name=${u.full_name}`}" class="w-8 h-8 rounded-full bg-slate-200 object-cover"><div class="flex-1 min-w-0"><div class="flex justify-between text-xs mb-1"><span class="font-bold text-slate-700 truncate">${u.full_name}</span><span class="text-slate-400 font-mono">${u.completed_count}</span></div><div class="h-1 bg-slate-200 rounded-full overflow-hidden"><div class="h-full bg-indigo-500 rounded-full" style="width:${(u.completed_count/m)*100}%"></div></div></div></div>`).join("");}catch{}}
+    // Logic Functions
+    async function loadProfile(){ 
+        try{
+            const u = await(await fetch(`${API}/users/me`,{headers:{Authorization:`Bearer ${token}`}})).json();
+            currentUserData = u; 
+            setText("navName", u.nickname || u.full_name || u.email.split('@')[0]); 
+            let avatarUrl = u.avatar_url; if (avatarUrl && !avatarUrl.startsWith('http')) avatarUrl = `${API}${avatarUrl}`;
+            if (!avatarUrl) avatarUrl = `https://ui-avatars.com/api/?name=${u.email}&background=random`;
+            document.getElementById("avatar").src = avatarUrl;
+            setText("fullName", "สวัสดี, " + (u.nickname || u.full_name || "User"));
+            setText("grade", u.grade_level || "-");
+            setText("dek", `DEK${u.dek_code || "-"}`);
+            setText("totalTimeVal", u.total_minutes || 0); 
+            
+            loadBadgesData(); 
+
+            if(u.role==="admin" && !document.getElementById("adminBtn")) { 
+                const btn = document.createElement("a"); btn.id="adminBtn"; btn.href = "./admin_dashboard.html"; 
+                btn.className = "px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full shadow hover:bg-indigo-700 transition ml-2 flex items-center gap-1"; 
+                btn.innerHTML = `⚙️ Admin`; document.querySelector("nav .flex.items-center.gap-4").prepend(btn); 
+            }
+            initChart(); 
+        }catch{logout();}
+    }
+
+    async function loadBadgesData() {
+        try {
+            const res = await fetch(`${API}/users/me/achievements`, { headers: { Authorization: `Bearer ${token}` } });
+            if(res.ok) {
+                allBadges = await res.json();
+                selectedBadges = allBadges.filter(b => b.is_showcased).map(b => b.id);
+                renderShowcaseUI();
+            }
+        } catch (e) { console.error(e); }
+    }
+    function renderShowcaseUI() {
+        const c = document.getElementById("badgeContainer"); c.innerHTML = "";
+        for (let i = 0; i < 3; i++) {
+            const bid = selectedBadges[i]; const bData = allBadges.find(b => b.id === bid);
+            if (bData) {
+                c.innerHTML += `<div class="badge-item relative w-10 h-10 rounded-full flex items-center justify-center text-xl cursor-pointer bg-white shadow-md border border-slate-100 hover:scale-110 transition" onclick="openBadgeModal()">${bData.icon}<div class="badge-tooltip"><div class="glass-dark p-2 rounded-xl border border-white/10 shadow-xl backdrop-blur-md"><div class="font-bold text-yellow-400 text-xs">${bData.name}</div></div></div></div>`;
+            } else {
+                c.innerHTML += `<div class="badge-slot" onclick="openBadgeModal()"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>`;
+            }
+        }
+    }
+    function toggleBadgeSelect(id) {
+        if (selectedBadges.includes(id)) selectedBadges = selectedBadges.filter(x => x !== id);
+        else { if (selectedBadges.length >= 3) selectedBadges.shift(); selectedBadges.push(id); }
+        openBadgeModal(); 
+    }
+    async function saveShowcase() {
+        try {
+            await fetch(`${API}/users/me/achievements/showcase`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(selectedBadges) });
+            renderShowcaseUI(); closeBadgeModal(); showToast("อัปเดต Showcase แล้ว!");
+        } catch { showToast("บันทึกไม่สำเร็จ", true); }
+    }
+
+    async function confirmAddFriend() { const e = document.getElementById('friendEmailInput').value; if(!e) return showToast("กรุณากรอกอีเมล", true); try { const r = await fetch(`${API}/users/me/friends`, { method: "POST", headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ email: e }) }); if(r.ok) { showToast("เพิ่มเพื่อนสำเร็จ!"); closeAddFriendModal(); loadFriends(); } else { showToast("ไม่พบผู้ใช้", true); } } catch { showToast("เกิดข้อผิดพลาด", true); } }
+    function autoUpdateDek() { const g = document.getElementById('editGrade').value; const m = { 'M6': '69', 'M5': '70', 'M4': '71', 'M3': '72', 'M2': '73', 'M1': '74' }; document.getElementById('editDek').value = m[g] || ''; }
+    async function previewImage(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = e => document.getElementById("previewAvatar").src = e.target.result; reader.readAsDataURL(input.files[0]); } }
+    async function saveProfile() {
+        const fileInput = document.getElementById("fileInput");
+        if (fileInput.files.length > 0) { const fd = new FormData(); fd.append("file", fileInput.files[0]); try { const r = await fetch(`${API}/users/me/upload-image`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd }); if(!r.ok) throw new Error(); } catch { showToast("อัปรูปไม่ผ่าน", true); return; } }
+        const body = { full_name: document.getElementById('editFullName').value, nickname: document.getElementById('editNickname').value, grade_level: document.getElementById('editGrade').value, dek_code: document.getElementById('editDek').value };
+        try { await fetch(`${API}/users/me`, { method: "PATCH", headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); showToast("บันทึกแล้ว!"); closeEditProfileModal(); loadProfile(); } catch { showToast("Error", true); }
+    }
+
+    function calculateStreak(data) { if (!data || data.length === 0) return 0; let streak = 0; for (let i = data.length - 1; i >= 0; i--) { if (data[i] > 0) streak++; else break; } return streak; }
+    function updateChartGoal(val) { document.getElementById("goalDisplay").textContent = val; localStorage.setItem("weeklyGoal", val); if (myChart) { myChart.data.datasets[1].data = new Array(7).fill(val * 60); myChart.options.scales.y.max = Math.max(Math.max(...myChart.data.datasets[0].data), val * 60) + 60; myChart.update(); } }
+    async function initChart(){
+        const canvas = document.getElementById("hist"); if(!canvas) return;
+        try {
+            const res = await fetch(`${API}/users/me/study-stats`, { headers: { Authorization: `Bearer ${token}` } });
+            let data = await res.json();
+            if (data.labels && data.labels.length === 7) { const sunLabel = data.labels.pop(); data.labels.unshift(sunLabel); const sunData = data.data.pop(); data.data.unshift(sunData); }
+            setText("streakVal", calculateStreak(data.data)); 
+            const dayColors = ['#f87171', '#facc15', '#f472b6', '#4ade80', '#fb923c', '#60a5fa', '#a78bfa'];
+            const savedGoal = localStorage.getItem("weeklyGoal") || 2;
+            const slider = document.getElementById("goalSlider"); slider.value = savedGoal; document.getElementById("goalDisplay").textContent = savedGoal;
+            slider.addEventListener("input", (e) => updateChartGoal(e.target.value));
+            const targetMinutes = savedGoal * 60; const targetData = new Array(7).fill(targetMinutes);
+            const maxData = Math.max(...data.data); const initialMaxY = Math.max(maxData, targetMinutes) + 60;
+            
+            if(myChart) myChart.destroy();
+            myChart = new Chart(canvas, { type: 'bar', data: { labels: data.labels, datasets: [{ label: 'เวลาเรียน (นาที)', data: data.data, backgroundColor: dayColors, borderRadius: 4, barThickness: 20, order: 2 }, { label: 'เป้าหมาย', data: targetData, type: 'line', borderColor: '#ec4899', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false, order: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, max: initialMaxY }, x: { grid: { display: false } } } } });
+        } catch(e) { console.error(e); }
+    }
+
+    // Settings & Init
+    function setMode(m) { if(m==='dark') document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode'); const el = document.getElementById('themeSwitch'); const opts = el.querySelectorAll('.switch-option'); el.className = `switch-group ${m==='dark'?'pos-1':''}`; opts.forEach(o => o.classList.remove('active')); if(m==='dark') opts[1].classList.add('active'); else opts[0].classList.add('active'); localStorage.setItem('displayMode', m); }
+    
+    // Dynamic Theme Logic
+    function updateColorTheme(hue) {
+        document.documentElement.style.setProperty('--primary-hue', hue);
+        
+        // Convert HSL to RGB for Tailwind utils (Simple helper)
+        const rgb = hslToRgb(hue / 360, 0.85, 0.65); // Sat 85%, Light 65% (Primary)
+        document.documentElement.style.setProperty('--primary-rgb', rgb);
+        
+        // Dynamic Gradients based on Hue
+        const g1 = `hsl(${hue}, 90%, 96%)`;
+        const g2 = `hsl(${hue}, 90%, 93%)`;
+        const g3 = `hsl(${hue}, 80%, 90%)`;
+        const g4 = `hsl(${hue}, 80%, 85%)`;
+        
+        document.documentElement.style.setProperty('--bg-grad-1', g1);
+        document.documentElement.style.setProperty('--bg-grad-2', g2);
+        document.documentElement.style.setProperty('--bg-grad-3', g3);
+        document.documentElement.style.setProperty('--bg-grad-4', g4);
+        
+        document.getElementById('colorPreview').style.backgroundColor = `hsl(${hue}, 85%, 65%)`;
+        localStorage.setItem('themeHue', hue);
+    }
+
+    // Helper: HSL to RGB String
+    function hslToRgb(h, s, l) {
+        let r, g, b;
+        if (s == 0) { r = g = b = l; } else {
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1; if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+        return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`;
+    }
+
+    function setBg(t) { if(t === 'solid') document.body.classList.add('solid-mode'); else document.body.classList.remove('solid-mode'); const el = document.getElementById('bgSwitch'); const opts = el.querySelectorAll('.switch-option'); el.className = `switch-group ${t==='solid'?'pos-1':''}`; opts.forEach(o => o.classList.remove('active')); if(t==='solid') opts[1].classList.add('active'); else opts[0].classList.add('active'); localStorage.setItem('bgMode', t); }
+    function toggleSettings() { document.getElementById("settingsPanel").classList.toggle("open"); }
+    
+    // Init Settings
+    const sm=localStorage.getItem('displayMode'), sb=localStorage.getItem('bgMode'), sh=localStorage.getItem('themeHue'); 
+    if(sm) setMode(sm); 
+    if(sb) setBg(sb);
+    if(sh) {
+        document.getElementById('colorSlider').value = sh;
+        updateColorTheme(sh);
+    } else {
+        updateColorTheme(245); // Default Purple
+    }
+
+    document.addEventListener('mousemove', e => { document.getElementById('spotlight').style.setProperty('--x', e.clientX + 'px'); document.getElementById('spotlight').style.setProperty('--y', e.clientY + 'px'); });
+    
+    const quotesList = ["การเรียนรู้คือสมบัติที่ไม่มีใครขโมยได้ 💎", "อย่ากลัวที่จะล้มเหลว ✌️", "ความพยายามอยู่ที่ไหน ความสำเร็จอยู่ที่นั่น 🚀", "วันนี้คือโอกาสที่ดีที่สุด 🔥", "ลงทุนในการเรียนรู้ ให้ผลตอบแทนดีที่สุด 📈"];
+    function loadQuote() { document.getElementById("quoteText").textContent = quotesList[Math.floor(Math.random() * quotesList.length)]; document.getElementById("quoteCard").classList.remove("hidden"); }
+
+    async function initSettingsData() { 
+        try { 
+            const s = await(await fetch(`${API}/settings`)).json(); 
+            if(s.banner_active==="true") { document.getElementById("sysBanner").classList.remove("hidden"); setText("sysBannerText", s.banner_text); } 
+            if(s.image_banner_active==="true" && s.banner_images) { 
+                let images = s.banner_images; if (typeof images === 'string') { try { images = JSON.parse(images); } catch { images = []; } }
+                if (images.length > 0) { document.getElementById("heroBannerWrapper").innerHTML = images.map(url => { const fullUrl = url.startsWith("http") ? url : `${API}${url}`; return `<div class="swiper-slide w-full h-full"><img src="${fullUrl}" class="w-full h-full object-cover"></div>`; }).join(""); document.getElementById("heroBannerSection").classList.remove("hidden"); new Swiper(".heroSwiper", { loop: true, autoplay: { delay: (parseInt(s.banner_interval) * 1000) || 5000 }, pagination: { clickable: true } }); }
+            } 
+            if(s.countdown_active==="true") { 
+                // Check Audience
+                let showCountdown = true;
+                if (s.countdown_audience && currentUserData.grade_level) {
+                    try {
+                        const allowed = JSON.parse(s.countdown_audience);
+                        if (!allowed.includes(currentUserData.grade_level)) showCountdown = false;
+                    } catch {}
+                }
+
+                if (showCountdown) {
+                    document.getElementById("cdCard").classList.remove("hidden"); 
+                    if(s.countdown_title) setText("cdTitleDisplay", s.countdown_title); 
+                    let target = s.countdown_date ? new Date(s.countdown_date) : new Date(Date.now() + 30*24*60*60*1000); 
+                    setInterval(() => { 
+                        const diff = target - new Date(); if(diff<=0) return; 
+                        setText("cdDays", String(Math.floor(diff/(864e5))).padStart(2,'0')); 
+                        setText("cdHours", String(Math.floor((diff/36e5)%24)).padStart(2,'0')); 
+                        setText("cdMins", String(Math.floor((diff/6e4)%60)).padStart(2,'0')); 
+                    }, 1000); 
+                } else {
+                    document.getElementById("cdCard").classList.add("hidden"); 
+                }
+            } 
+        } catch {} 
+    }
+
+    async function loadMyCourses(){ 
+      try{
+        const res = await fetch(`${API}/users/me/courses`,{headers:{Authorization:`Bearer ${token}`}});
+        if (!res.ok) throw new Error("Failed to fetch enrollments");
+        const l = await res.json();
+        setText("statCourses", l.length);
+        const w = document.getElementById("courseWrapper");
+        if(l.length === 0){ w.innerHTML=`<div class="w-full py-12 text-center opacity-60 font-medium glass rounded-[2rem] border border-dashed border-slate-300">คุณยังไม่ได้ลงทะเบียนคอร์สเรียน <a href="./course.html" class="text-indigo-600 underline font-bold ml-1">ดูคอร์สทั้งหมด</a></div>`; return; }
+        
+        w.innerHTML = ""; let tot = 0;
+        for(const e of l){
+          try {
+              const cRes = await fetch(`${API}/courses/${e.course_id}`, {headers:{Authorization:`Bearer ${token}`}}); 
+              if(!cRes.ok) continue; 
+              const c = await cRes.json(); 
+              let done = 0;
+              try {
+                  const pRes = await fetch(`${API}/courses/${e.course_id}/my-progress`,{headers:{Authorization:`Bearer ${token}`}});
+                  if (pRes.ok) { const p = await pRes.json(); done = (p.completed_ids && Array.isArray(p.completed_ids)) ? p.completed_ids.length : 0; }
+              } catch (err) { console.warn(err); }
+
+              let totalLessons = c.total_lessons || 0;
+              if (totalLessons === 0 && c.chapters) { c.chapters.forEach(ch => { if(ch.lessons) totalLessons += ch.lessons.length; }); }
+              
+              const pct = totalLessons > 0 ? Math.round((done/totalLessons)*100) : 0; tot += done;
+              let thumb = c.thumbnail; if(thumb && !thumb.startsWith('http')) thumb = `${API}${thumb}`;
+
+              w.innerHTML += `<div class="swiper-slide h-auto p-2"><div class="glass rounded-[2rem] overflow-hidden glass-shadow group cursor-pointer border border-white/50 relative h-full flex flex-col transform transition-all" onclick="location.href='./course_content.html?id=${c.id}'"><div class="aspect-video w-full bg-slate-200 relative overflow-hidden">${thumb ? `<img src="${thumb}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">` : `<div class="w-full h-full flex items-center justify-center opacity-50">No Image</div>`}<div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80"></div><div class="absolute bottom-4 left-4 right-4"><div class="flex justify-between items-end mb-2"><span class="text-white text-xs font-bold shadow-sm flex items-center gap-1"><span class="bg-indigo-500 w-2 h-2 rounded-full inline-block animate-pulse"></span> ${pct}% Completed</span></div><div class="w-full h-1.5 bg-white/30 rounded-full overflow-hidden backdrop-blur-md border border-white/20"><div class="h-full bg-gradient-to-r from-indigo-400 to-purple-400 shadow-[0_0_12px_#818cf8]" style="width:${pct}%"></div></div></div></div><div class="p-5 flex-1 flex flex-col bg-white/40 backdrop-blur-md relative z-10"><h3 class="font-bold text-lg text-slate-800 line-clamp-1 mb-2 group-hover:text-indigo-700 transition">${c.title}</h3><div class="text-xs opacity-70 font-bold flex items-center gap-2 bg-white/60 w-fit px-3 py-1.5 rounded-full shadow-sm">📚 ${done} / ${totalLessons} บทเรียน</div></div></div></div>`;
+          } catch (innerErr) { console.error(innerErr); }
+        }
+        setText("statCompleted", tot);
+        new Swiper(".mySwiper", { slidesPerView:1, spaceBetween:20, pagination:{clickable:true}, breakpoints:{640:{slidesPerView:2},1024:{slidesPerView:3}} });
+      }catch(e){ console.error(e); } 
+    }
+
+    async function loadFriends(){ try{const l=await(await fetch(`${API}/users/me/friends`,{headers:{Authorization:`Bearer ${token}`}})).json();const el=document.getElementById("friendList");if(el)el.innerHTML=l.length?l.map(f=>{let avatarUrl=f.avatar_url;if(avatarUrl&&!avatarUrl.startsWith('http'))avatarUrl=`${API}${avatarUrl}`;if(!avatarUrl)avatarUrl=`https://ui-avatars.com/api/?name=${f.full_name||f.email}&background=random`;let r="border-slate-300 grayscale opacity-40",b="Offline";if(f.is_online){if(f.current_activity){r="border-blue-500 ring-2 ring-blue-100";b=`📚 ${f.current_activity}`}else{r="border-indigo-500 ring-2 ring-indigo-100";b="Online"}}return `<div onclick="viewFriend(${f.id})" class="relative group friend-group cursor-pointer flex flex-col items-center gap-1.5 transition hover:-translate-y-1"><div class="w-16 h-16 rounded-full border-2 ${r} p-0.5 bg-white shadow-sm overflow-hidden"><img src="${avatarUrl}" class="w-full h-full rounded-full object-cover"></div><div class="friend-tooltip"><div class="bg-slate-800 text-white px-2 py-1 text-[10px] rounded shadow whitespace-nowrap">${b}</div></div><div class="text-[10px] font-medium opacity-70 w-16 truncate text-center bg-transparent px-1 rounded border-none shadow-none backdrop-blur-none">${f.nickname||f.full_name||f.email.split('@')[0]}</div></div>`}).join(""):`<div class="text-xs opacity-50 pl-2">ยังไม่มีเพื่อน...</div>`;}catch{}}
+    
+    async function loadLeaderboard(){ try { const l = await(await fetch(`${API}/leaderboard`,{headers:{Authorization:`Bearer ${token}`}})).json(); l.sort((a,b) => b.total_minutes - a.total_minutes); const myRank = l.findIndex(u => u.id === currentUserData.id) + 1; /* setText("rankVal", myRank > 0 ? `#${myRank}` : "-"); Rank Removed */ document.getElementById("leaderboardList").innerHTML = l.map((u,i) => { let avatarUrl = u.avatar_url; if (avatarUrl && !avatarUrl.startsWith('http')) avatarUrl = `${API}${avatarUrl}`; if (!avatarUrl) avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.full_name || 'User')}&background=random`; return `<div class="flex items-center gap-4 p-4 bg-white/60 hover:bg-white rounded-2xl border border-white/50 shadow-sm transition ${i>=5?'hidden more-items':''} group"><div class="w-10 h-10 rounded-xl ${i===0?'bg-yellow-100 text-yellow-700 shadow-yellow-100':i===1?'bg-slate-200 text-slate-600':i===2?'bg-orange-100 text-orange-700':'bg-white text-slate-400 border'} flex items-center justify-center font-black text-lg shrink-0 shadow-inner">${i+1}</div><img src="${avatarUrl}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=User&background=random';" class="w-12 h-12 rounded-full bg-slate-200 object-cover border-2 border-white shadow-md group-hover:scale-110 transition"><div class="flex-1 min-w-0"><div class="flex justify-between text-xs mb-1.5"><span class="font-bold text-slate-700 truncate text-sm">${u.nickname||u.full_name}</span><span class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">${u.total_minutes || 0} นาที</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full shadow-[0_0_10px_#818cf8]" style="width:${((u.total_minutes||0)/Math.max(l[0].total_minutes, 1))*100}%"></div></div></div></div>` }).join(""); } catch {} }
     function toggleLeaderboard(){document.querySelectorAll(".more-items").forEach(e=>e.classList.toggle("hidden"));}
-    function initChart(){const c=document.getElementById("hist");if(!c)return;const x=c.getContext("2d");x.fillStyle="#f1f5f9";x.fillRect(0,0,300,150);x.fillStyle="#6366f1";[20,50,30,80,40,90,60].forEach((h,i)=>x.fillRect(20+i*40,150-h,20,h));}
 
-    loadProfile(); loadMyCourses(); loadFriends(); loadLeaderboard(); requestAnimationFrame(initChart); initSettings(); checkContinue();
+    function checkContinue() {
+      const last = localStorage.getItem("last_watched"); if(!last) return; const d = JSON.parse(last);
+      if(Date.now() - d.timestamp > 30*24*60*60*1000) { localStorage.removeItem("last_watched"); return; }
+      const banner = document.getElementById("continueBanner"); banner.classList.remove("hidden");
+      banner.className = "animate-enter glass glass-shadow rounded-[1.5rem] p-4 flex items-center justify-between gap-5 cursor-pointer mb-8 hover:scale-[1.01] transition border border-indigo-100/60 relative overflow-hidden group";
+      banner.onclick = () => location.href = `./learning_room.html?id=${d.courseId}&lesson=${d.lessonIdx}`;
+      banner.innerHTML = `<div class="absolute inset-0 bg-gradient-to-r from-indigo-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition duration-500"></div><div class="flex items-center gap-5 min-w-0 relative z-10"><div class="w-16 h-16 rounded-2xl bg-indigo-100 shrink-0 overflow-hidden relative shadow-md border border-white group-hover:shadow-lg transition">${d.thumbnail?`<img src="${d.thumbnail}" class="w-full h-full object-cover">`:`<div class="flex items-center justify-center h-full text-[8px] text-indigo-400 font-bold">COURSE</div>`}<div class="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px]"><div class="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-lg"><span class="text-indigo-600 text-xs ml-0.5">▶</span></div></div></div><div class="min-w-0 py-1"><div class="flex items-center gap-2 mb-1"><span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span><span class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Continue</span></div><div class="font-bold text-lg text-slate-800 truncate leading-tight mb-0.5">${d.courseTitle}</div><div class="text-xs opacity-70 truncate flex items-center gap-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ${d.lessonTitle}</div></div></div><div class="text-indigo-300 group-hover:text-indigo-600 transition pr-2 relative z-10"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></div>`;
+    }
+
+    loadProfile(); loadMyCourses(); loadFriends(); loadLeaderboard(); initSettingsData(); checkContinue(); loadQuote();
   </script>
 </body>
 </html>

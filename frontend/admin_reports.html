@@ -2,15 +2,11 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <title>Audit Logs — Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รายงานปัญหา — Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style> 
-    body { font-family: 'Prompt', sans-serif; }
-    .diff-added { background-color: #dcfce7; color: #166534; }
-    .diff-removed { background-color: #fee2e2; color: #991b1b; text-decoration: line-through; }
-    .diff-modified { background-color: #fef9c3; color: #854d0e; }
-  </style>
+  <style> body { font-family: 'Prompt', sans-serif; } </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
@@ -39,13 +35,13 @@
         <a href="./admin_coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
             <span class="text-xl">🎟️</span> <span>Coupons</span>
         </a>
-        <a href="./admin_reports.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+        <a href="./admin_reports.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg font-bold transition-all duration-200 transform translate-x-1">
             <span class="text-xl">🚩</span> <span>Reports</span>
         </a>
 
         <div class="border-t border-slate-800 my-2 pt-2">
             <p class="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">System</p>
-            <a href="./admin_audit.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg font-bold transition-all duration-200 transform translate-x-1">
+            <a href="./admin_audit.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
                 <span class="text-xl">🛡️</span> <span>Audit Log</span>
             </a>
             <a href="./admin_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
@@ -62,59 +58,69 @@
     </aside>
 
     <main class="flex-1 ml-64 p-8">
-      <h1 class="text-3xl font-bold text-slate-800 mb-6">บันทึกกิจกรรม (Audit Logs)</h1>
-      <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-        <table class="w-full text-left">
-            <thead class="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase">
-                <tr><th class="p-5">Time</th><th class="p-5">Action</th><th class="p-5">Actor</th><th class="p-5">Target</th><th class="p-5 text-right">Details</th></tr>
+      <h1 class="text-2xl font-bold mb-6">รายงานปัญหาจากผู้ใช้</h1>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
+                <tr>
+                    <th class="p-4">ID</th>
+                    <th class="p-4">User ID</th>
+                    <th class="p-4">ประเภท</th>
+                    <th class="p-4">รายละเอียด</th>
+                    <th class="p-4">สถานะ</th>
+                    <th class="p-4 text-center">จัดการ</th>
+                </tr>
             </thead>
-            <tbody id="logTable" class="text-sm divide-y divide-slate-100"></tbody>
+            <tbody id="reportTable" class="text-sm divide-y divide-slate-100"></tbody>
         </table>
       </div>
     </main>
   </div>
 
-  <dialog id="diffModal" class="p-0 rounded-2xl shadow-2xl backdrop:bg-slate-900/50 w-[600px]">
-      <div class="bg-white p-6 rounded-2xl">
-          <h3 class="font-bold text-xl mb-4">การเปลี่ยนแปลงข้อมูล</h3>
-          <div id="diffContent" class="space-y-2 font-mono text-sm bg-slate-50 p-4 rounded-xl border border-slate-200 h-96 overflow-y-auto"></div>
-          <div class="flex justify-end mt-4"><button onclick="document.getElementById('diffModal').close()" class="px-6 py-2 bg-slate-800 text-white rounded-lg font-bold">ปิด</button></div>
-      </div>
-  </dialog>
-
   <script>
     const API = "https://edtech-api-zigm.onrender.com";
     const token = localStorage.getItem("token");
+    if(!token) location.href = "./login.html";
+    function logout() { localStorage.removeItem("token"); location.href = "./login.html"; }
 
-    async function loadLogs() {
-        const res = await fetch(`${API}/admin/audit`, { headers: { Authorization: `Bearer ${token}` } });
+    async function loadReports() {
+        const res = await fetch(`${API}/admin/reports`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
-        document.getElementById("logTable").innerHTML = data.items.map(l => `
+        const tbody = document.getElementById("reportTable");
+
+        if(data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">ไม่มีรายการแจ้งปัญหา</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.map(r => `
             <tr class="hover:bg-slate-50 transition">
-                <td class="p-5 text-slate-500">${l.created_at_bkk}</td>
-                <td class="p-5 font-bold text-indigo-600">${l.action}</td>
-                <td class="p-5">User #${l.actor_id || '?'}</td>
-                <td class="p-5">ID: ${l.target_id || '-'}</td>
-                <td class="p-5 text-right"><button onclick='showDiff(${JSON.stringify(l.diff).replace(/'/g, "&#39;")})' class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-slate-600 font-bold hover:border-indigo-300 hover:text-indigo-600 transition shadow-sm text-xs">🔍 ดูความเปลี่ยนแปลง</button></td>
+                <td class="p-4 text-slate-400">#${r.id}</td>
+                <td class="p-4">${r.user_id}</td>
+                <td class="p-4"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold text-slate-600 uppercase">${r.target_type}</span></td>
+                <td class="p-4 max-w-xs truncate" title="${r.reason}">${r.reason}</td>
+                <td class="p-4">
+                    <span class="px-2 py-1 rounded text-xs font-bold ${r.status==='resolved'?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700'}">${r.status}</span>
+                </td>
+                <td class="p-4 text-center">
+                    ${r.status === 'pending' ? `<button onclick="resolveReport(${r.id})" class="text-emerald-600 hover:underline font-bold text-xs">ทำเครื่องหมายว่าแก้ไขแล้ว</button>` : '-'}
+                </td>
             </tr>
         `).join("");
     }
 
-    function showDiff(diffs) {
-        const el = document.getElementById("diffContent");
-        if(diffs.length === 0) el.innerHTML = `<div class="text-center text-slate-400">ไม่มีข้อมูลการเปลี่ยนแปลง หรือเป็นการสร้างใหม่</div>`;
-        else el.innerHTML = diffs.map(d => `
-            <div class="p-2 rounded border border-slate-200 bg-white mb-2">
-                <div class="font-bold text-slate-700 mb-1">${d.field}</div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="p-1 bg-red-50 text-red-700 rounded border border-red-100">Old: ${d.before}</div>
-                    <div class="p-1 bg-emerald-50 text-emerald-700 rounded border border-emerald-100">New: ${d.after}</div>
-                </div>
-            </div>
-        `).join("");
-        document.getElementById("diffModal").showModal();
+    async function resolveReport(id) {
+        if(!confirm("ยืนยันว่าปัญหานี้ได้รับการแก้ไขแล้ว?")) return;
+        await fetch(`${API}/admin/reports/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ status: "resolved" })
+        });
+        loadReports();
     }
-    loadLogs();
+
+    loadReports();
   </script>
 </body>
 </html>

@@ -1,56 +1,350 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>จัดการข้อสอบ — Admin</title><script src="https://cdn.tailwindcss.com"></script>
-  <style>.admin-gradient{background:linear-gradient(135deg,#111827 0%,#1e1b4b 100%)}dialog::backdrop{background:rgba(0,0,0,0.5);backdrop-filter:blur(2px)}</style>
+  <meta charset="UTF-8" />
+  <title>จัดการข้อสอบ (Pro) — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <style> 
+    body { font-family: 'Prompt', sans-serif; } 
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    /* ยังคง Z-Index ไว้กันเหนียว แต่ใช้ target จะชัวร์กว่า */
+    .swal2-container { z-index: 2147483647 !important; }
+  </style>
 </head>
-<body class="min-h-screen bg-slate-100 font-sans text-slate-800">
-  <header class="admin-gradient text-white shadow-md sticky top-0 z-50">
-    <nav class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative">
-      <a href="./admin_users.html" class="flex items-center gap-3 group relative z-10"><img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain bg-white/10 rounded p-1"><div class="leading-tight"><div class="font-bold text-lg">ADMIN CONSOLE</div></div></a>
-      <div class="relative bg-white/10 p-1.5 rounded-xl hidden md:flex items-center gap-1">
-        <div id="nav-slider" class="absolute h-[calc(100%-12px)] top-1.5 bg-white/20 rounded-lg transition-all duration-300 ease-out opacity-0 pointer-events-none z-0"></div>
-        <a href="./admin_users.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="users">👥 Users</a>
-        <a href="./admin_courses.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="courses">📚 Courses</a>
-        <a href="./admin_payments.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="payments">💰 Payments</a>
-        <a href="./admin_exams.html" class="nav-link px-4 py-2 rounded-lg text-sm font-bold text-slate-300 hover:text-white relative z-10 transition-colors" data-page="exams">📝 Exams</a>
-        <a href="./admin_audit.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="audit">🛡️ Logs</a>
+<body class="bg-slate-50 text-slate-800">
+
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-20 shadow-2xl transition-all duration-300">
+      <div class="h-16 flex items-center justify-center border-b border-slate-800 text-xl font-bold tracking-wider">
+        <span class="text-indigo-400 mr-2 text-2xl">✦</span> Admin Panel
       </div>
-      <div class="flex items-center gap-4 relative z-10"><a href="./me.html" class="text-xs text-slate-300 hover:text-white border-b border-transparent hover:border-slate-300 transition">กลับหน้าเรียน</a><button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 px-3 py-1.5 rounded transition">Logout</button></div>
-    </nav>
-  </header>
+      
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scroll">
+        <a href="./admin_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">📊</span> <span>Dashboard</span>
+        </a>
+        <a href="./admin_users.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">👥</span> <span>Users</span>
+        </a>
+        <a href="./admin_courses.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">📚</span> <span>Courses</span>
+        </a>
+        <a href="./admin_exams.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg font-bold transition-all duration-200 transform translate-x-1">
+            <span class="text-xl">📝</span> <span>Exams</span>
+        </a>
+        <a href="./admin_payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">💰</span> <span>Payments</span>
+        </a>
+        <a href="./admin_coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">🎟️</span> <span>Coupons</span>
+        </a>
+        <a href="./admin_reports.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <span class="text-xl">🚩</span> <span>Reports</span>
+        </a>
 
-  <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
-    <div class="flex items-center justify-between"><h1 class="text-3xl font-bold text-slate-900">คลังข้อสอบ (Mock Exam)</h1><button onclick="document.getElementById('createExamDlg').showModal()" class="px-4 py-2 bg-black text-white rounded-lg text-sm shadow hover:bg-gray-800">+ สร้างชุดข้อสอบ</button></div>
-    <div id="examList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><div class="col-span-full text-center py-10 text-gray-400">กำลังโหลด...</div></div>
-  </main>
+        <div class="border-t border-slate-800 my-2 pt-2">
+            <p class="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">System</p>
+            <a href="./admin_audit.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+                <span class="text-xl">🛡️</span> <span>Audit Log</span>
+            </a>
+            <a href="./admin_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+                <span class="text-xl">⚙️</span> <span>Settings</span>
+            </a>
+        </div>
+      </nav>
 
-  <dialog id="createExamDlg" class="p-0 rounded-2xl shadow-2xl w-[450px] overflow-hidden"><div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center"><h3 class="font-bold text-lg">สร้างชุดข้อสอบใหม่</h3><button onclick="document.getElementById('createExamDlg').close()" class="text-slate-400 hover:text-white">✕</button></div><form id="createExamForm" class="bg-white p-6 space-y-4"><div><label class="block text-xs font-bold text-slate-500 mb-1">ชื่อชุดข้อสอบ</label><input name="title" required class="w-full border rounded-lg px-3 py-2 text-sm" placeholder="เช่น TGAT1 ชุดที่ 1"></div><div><label class="block text-xs font-bold text-slate-500 mb-1">รายละเอียด</label><textarea name="description" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div><div><label class="block text-xs font-bold text-slate-500 mb-1">เวลาสอบ (นาที)</label><input type="number" name="time_limit" value="60" required class="w-full border rounded-lg px-3 py-2 text-sm"></div><div class="flex justify-end gap-2 pt-2"><button type="submit" class="w-full px-3 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 shadow-lg">สร้างเลย</button></div></form></dialog>
-  <dialog id="questionsDlg" class="p-0 rounded-2xl shadow-2xl w-[800px] h-[90vh] overflow-hidden flex flex-col"><div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center"><h3 class="font-bold text-lg" id="qDlgTitle">จัดการโจทย์</h3><button onclick="document.getElementById('questionsDlg').close()" class="text-slate-400 hover:text-white">✕</button></div><div class="flex-1 overflow-y-auto p-6 space-y-6 bg-white"><div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100"><h4 class="font-bold text-indigo-900 mb-2">เพิ่มข้อใหม่</h4><form id="addQForm" class="space-y-3"><textarea name="text" required class="w-full border rounded p-2 text-sm" rows="2" placeholder="โจทย์คำถาม..."></textarea><div class="grid grid-cols-2 gap-2"><div class="flex gap-2 items-center"><input type="radio" name="correct" value="0" checked><input name="c0" required class="w-full border rounded px-2 py-1 text-sm" placeholder="ก. ตัวเลือก 1"></div><div class="flex gap-2 items-center"><input type="radio" name="correct" value="1"><input name="c1" required class="w-full border rounded px-2 py-1 text-sm" placeholder="ข. ตัวเลือก 2"></div><div class="flex gap-2 items-center"><input type="radio" name="correct" value="2"><input name="c2" required class="w-full border rounded px-2 py-1 text-sm" placeholder="ค. ตัวเลือก 3"></div><div class="flex gap-2 items-center"><input type="radio" name="correct" value="3"><input name="c3" required class="w-full border rounded px-2 py-1 text-sm" placeholder="ง. ตัวเลือก 4"></div></div><button class="w-full bg-indigo-600 text-white rounded py-1.5 text-sm hover:bg-indigo-700 font-bold">บันทึกข้อนี้</button></form></div><div id="qList" class="space-y-4"></div></div></dialog>
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="localStorage.removeItem('token');location.href='./login.html'" class="w-full py-3 bg-slate-800 hover:bg-red-600/90 text-slate-300 hover:text-white rounded-xl transition-all duration-200 font-bold flex items-center justify-center gap-2 group">
+            <span>🚪</span> <span class="group-hover:translate-x-1 transition-transform">Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex-1 ml-64 p-0 h-screen flex flex-col">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
+            <h1 class="text-xl font-bold text-slate-800">ระบบจัดการข้อสอบ (Exam Manager)</h1>
+            <button onclick="openExamModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-indigo-700 transition">+ สร้างชุดข้อสอบ</button>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+            <div class="w-80 bg-slate-50 border-r border-slate-200 flex flex-col shrink-0">
+                <div class="p-4 border-b border-slate-200 bg-white">
+                    <input type="text" id="searchExam" placeholder="ค้นหาชุดข้อสอบ..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div id="examList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scroll">
+                    </div>
+            </div>
+
+            <div class="flex-1 bg-slate-100 relative flex flex-col">
+                <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+                    <div class="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mb-4"><span class="text-4xl">📝</span></div>
+                    <p class="font-medium">เลือกชุดข้อสอบทางซ้ายเพื่อเริ่มจัดการ</p>
+                </div>
+
+                <div id="editorArea" class="hidden flex-1 flex flex-col h-full">
+                    <div class="bg-white px-8 py-6 border-b border-slate-200 shadow-sm shrink-0">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-800" id="currentExamTitle">...</h2>
+                                <p class="text-slate-500 mt-1 text-sm" id="currentExamDesc">...</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <div class="text-xs text-slate-400 uppercase font-bold">Time Limit</div>
+                                    <div class="font-mono font-bold text-indigo-600"><span id="currentTimeLimit">0</span> Mins</div>
+                                </div>
+                                <button onclick="openQuestionModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition flex items-center gap-2">
+                                    <span class="text-lg">+</span> เพิ่มข้อสอบ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="questionList" class="flex-1 overflow-y-auto p-8 space-y-6 custom-scroll">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  </div>
+
+  <dialog id="examModal" class="p-0 rounded-2xl shadow-2xl backdrop:bg-slate-900/50">
+      <form onsubmit="createExam(event)" class="bg-white w-[500px] p-6 rounded-2xl">
+          <h3 class="text-xl font-bold mb-4">สร้างชุดข้อสอบใหม่</h3>
+          <div class="space-y-4">
+              <input type="text" id="newTitle" placeholder="ชื่อชุดข้อสอบ" class="w-full border p-2 rounded-lg" required>
+              <textarea id="newDesc" placeholder="คำอธิบาย" class="w-full border p-2 rounded-lg" rows="3"></textarea>
+              <input type="number" id="newTime" placeholder="เวลาสอบ (นาที)" class="w-full border p-2 rounded-lg">
+          </div>
+          <div class="flex justify-end gap-2 mt-6">
+              <button type="button" onclick="document.getElementById('examModal').close()" class="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-lg">ยกเลิก</button>
+              <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-bold">สร้าง</button>
+          </div>
+      </form>
+  </dialog>
+
+  <dialog id="qModal" class="p-0 rounded-2xl shadow-2xl backdrop:bg-slate-900/50 w-full max-w-3xl h-[90vh]">
+      <div class="bg-white h-full flex flex-col">
+          <div class="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
+              <h3 class="font-bold text-lg">เพิ่มคำถามใหม่</h3>
+              <button onclick="document.getElementById('qModal').close()" class="text-2xl text-slate-400 hover:text-red-500">&times;</button>
+          </div>
+          
+          <div class="flex-1 overflow-y-auto p-6 space-y-6">
+              <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1">โจทย์คำถาม</label>
+                  <textarea id="qText" rows="3" class="w-full border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none text-lg" placeholder="พิมพ์คำถามที่นี่..."></textarea>
+              </div>
+
+              <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-1">รูปประกอบ (Optional)</label>
+                  <div class="flex items-center gap-4">
+                      <input type="file" id="qImageFile" class="hidden" onchange="previewImage(this)">
+                      <button type="button" onclick="document.getElementById('qImageFile').click()" class="px-4 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 text-slate-600">เลือกรูปภาพ...</button>
+                      <div id="imgPreview" class="h-16 w-16 bg-slate-100 rounded-lg border border-dashed border-slate-300 flex items-center justify-center overflow-hidden">
+                          <span class="text-xs text-slate-400">Preview</span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="flex gap-4">
+                  <label class="flex items-center gap-2 cursor-pointer p-3 border rounded-xl w-1/2 hover:bg-indigo-50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50 transition">
+                      <input type="radio" name="qType" value="choice" checked onchange="toggleType()" class="text-indigo-600">
+                      <div><div class="font-bold text-sm">ปรนัย (Multiple Choice)</div><div class="text-xs text-slate-500">เลือกตอบ ก, ข, ค, ง</div></div>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer p-3 border rounded-xl w-1/2 hover:bg-indigo-50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50 transition">
+                      <input type="radio" name="qType" value="text" onchange="toggleType()" class="text-indigo-600">
+                      <div><div class="font-bold text-sm">อัตนัย (Text)</div><div class="text-xs text-slate-500">พิมพ์คำตอบ (ตรวจเอง)</div></div>
+                  </label>
+              </div>
+
+              <div id="choicesArea" class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <div class="flex justify-between items-center mb-3">
+                      <label class="text-sm font-bold text-slate-700">ตัวเลือกคำตอบ</label>
+                      <button type="button" onclick="addChoice()" class="text-xs text-indigo-600 font-bold hover:underline">+ เพิ่มตัวเลือก</button>
+                  </div>
+                  <div id="choiceList" class="space-y-3"></div>
+              </div>
+          </div>
+
+          <div class="p-4 border-t bg-slate-50 flex justify-end gap-3">
+              <button onclick="document.getElementById('qModal').close()" class="px-6 py-2.5 rounded-xl text-slate-500 hover:bg-white font-bold">ยกเลิก</button>
+              <button onclick="saveQuestion()" class="px-8 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition">บันทึกข้อสอบ</button>
+          </div>
+      </div>
+  </dialog>
 
   <script>
-    const page="exams"; const slider=document.getElementById("nav-slider"); const links=document.querySelectorAll(".nav-link"); let activeLink=null;
-    links.forEach(link=>{ if(link.dataset.page===page){activeLink=link;link.classList.add("text-white");moveSlider(link);slider.style.opacity="1";} link.addEventListener("mouseenter",(e)=>{moveSlider(e.target);slider.style.opacity="1";});});
-    document.querySelector(".relative.bg-white\\/10").addEventListener("mouseleave",()=>{if(activeLink)moveSlider(activeLink);else slider.style.opacity="0";});
-    function moveSlider(el){slider.style.width=el.offsetWidth+"px";slider.style.left=el.offsetLeft+"px";}
-
-    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    const API = "https://edtech-api-zigm.onrender.com";
     const token = localStorage.getItem("token");
-    if(!token) location.href="./login.html";
-    function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
-
-    async function loadExams(){ const res = await fetch(`${API}/exams`); const list = await res.json(); renderExams(list); }
-    function renderExams(list){
-      if(list.length===0){ document.getElementById("examList").innerHTML = `<div class="col-span-full text-center text-gray-400">ยังไม่มีข้อสอบ</div>`; return; }
-      document.getElementById("examList").innerHTML = list.map(ex => `<div class="bg-white border rounded-xl p-5 hover:shadow-md transition flex flex-col"><div class="flex justify-between items-start mb-2"><div><h3 class="font-bold text-lg text-slate-800">${ex.title}</h3><p class="text-xs text-slate-500 mt-1">${ex.description||"-"}</p></div><button onclick="openQuestions(${ex.id}, '${ex.title}')" class="px-3 py-1.5 border border-indigo-200 text-indigo-700 rounded text-xs font-bold hover:bg-indigo-50">จัดการโจทย์</button></div><div class="mt-auto pt-3 border-t border-slate-50 flex gap-2 text-xs text-slate-400"><span>⏳ ${ex.time_limit} นาที</span><span>📝 ${ex.questions?ex.questions.length:0} ข้อ</span></div></div>`).join("");
-    }
-    document.getElementById("createExamForm").onsubmit = async (e)=>{ e.preventDefault(); const form = e.target; try { const res = await fetch(`${API}/admin/exams`, { method:"POST", headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` }, body: JSON.stringify({ title: form.title.value, description: form.description.value, time_limit: form.time_limit.value }) }); if(!res.ok) throw new Error("Failed"); form.reset(); document.getElementById("createExamDlg").close(); loadExams(); } catch(err){ alert(err.message); } };
     let currentExamId = null;
-    async function openQuestions(id, title){ currentExamId = id; document.getElementById("qDlgTitle").textContent = `โจทย์: ${title}`; document.getElementById("questionsDlg").showModal(); loadQuestions(id); }
-    async function loadQuestions(id){ const res = await fetch(`${API}/exams/${id}`, { headers:{ Authorization:`Bearer ${token}` } }); const data = await res.json(); renderQuestions(data.questions || []); }
-    function renderQuestions(qs){ qs.sort((a,b)=> a.order - b.order); document.getElementById("qList").innerHTML = qs.map((q, idx) => `<div class="border p-4 rounded-xl bg-slate-50"><div class="font-bold text-sm mb-3 text-slate-700">ข้อ ${idx+1}) ${q.text}</div><div class="grid grid-cols-2 gap-2 text-xs">${q.choices.map(c => `<div class="p-2 border rounded bg-white ${c.is_correct?'border-green-500 text-green-700 font-bold bg-green-50':''}">${c.text}</div>`).join("")}</div></div>`).join(""); }
-    document.getElementById("addQForm").onsubmit = async (e)=>{ e.preventDefault(); const f = e.target; const correctIdx = parseInt(f.correct.value); const choices = [ { text: f.c0.value, is_correct: correctIdx===0 }, { text: f.c1.value, is_correct: correctIdx===1 }, { text: f.c2.value, is_correct: correctIdx===2 }, { text: f.c3.value, is_correct: correctIdx===3 }, ]; const payload = { text: f.text.value, order: document.getElementById("qList").children.length + 1, choices: choices }; try { const res = await fetch(`${API}/admin/exams/${currentExamId}/questions`, { method:"POST", headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` }, body: JSON.stringify(payload) }); if(!res.ok) throw new Error("Failed"); f.reset(); f.correct[0].checked = true; loadQuestions(currentExamId); } catch(err){ alert(err.message); } };
+
+    async function loadExams() {
+        try {
+            const res = await fetch(`${API}/exams`);
+            const data = await res.json();
+            const list = document.getElementById("examList");
+            list.innerHTML = data.map(e => `
+                <div onclick="selectExam(${e.id})" class="p-4 rounded-xl cursor-pointer transition border border-transparent hover:bg-white hover:shadow-sm ${currentExamId===e.id ? 'bg-white border-indigo-200 ring-2 ring-indigo-500/10 shadow-md' : ''}">
+                    <div class="font-bold text-slate-800 text-sm mb-1">${e.title}</div>
+                    <div class="flex justify-between text-xs text-slate-500">
+                        <span>${e.time_limit} นาที</span>
+                        <span>${e.questions ? e.questions.length : 0} ข้อ</span>
+                    </div>
+                </div>
+            `).join("");
+        } catch {}
+    }
+
+    async function selectExam(id) {
+        currentExamId = id;
+        loadExams();
+        const res = await fetch(`${API}/exams/${id}`);
+        const exam = await res.json();
+        
+        document.getElementById("emptyState").classList.add("hidden");
+        document.getElementById("editorArea").classList.remove("hidden");
+        
+        document.getElementById("currentExamTitle").innerText = exam.title;
+        document.getElementById("currentExamDesc").innerText = exam.description || "ไม่มีคำอธิบาย";
+        document.getElementById("currentTimeLimit").innerText = exam.time_limit;
+        
+        renderQuestions(exam.questions || []);
+    }
+
+    function renderQuestions(questions) {
+        const list = document.getElementById("questionList");
+        if(questions.length === 0) {
+            list.innerHTML = `<div class="text-center text-slate-400 py-10">ยังไม่มีข้อสอบในชุดนี้</div>`;
+            return;
+        }
+        
+        list.innerHTML = questions.map((q, idx) => `
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative group hover:border-indigo-200 transition">
+                <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
+                    <button onclick="deleteQuestion(${q.id})" class="text-slate-400 hover:text-red-500 p-2">🗑</button>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-lg font-black text-slate-300">Q${idx+1}</div>
+                    <div class="flex-1">
+                        <div class="font-bold text-lg text-slate-800 mb-2">${q.text}</div>
+                        ${q.image_url ? `<img src="${API}${q.image_url}" class="h-32 rounded-lg border border-slate-100 mb-3 object-cover">` : ''}
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            ${q.choices.map(c => `
+                                <div class="flex items-center gap-2 p-2 rounded-lg border ${c.is_correct ? 'bg-emerald-50 border-emerald-200 text-emerald-700 font-bold' : 'bg-slate-50 border-slate-100 text-slate-600'}">
+                                    <div class="w-4 h-4 rounded-full border flex items-center justify-center ${c.is_correct ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300'}">
+                                        ${c.is_correct ? '<span class="text-white text-[8px]">✓</span>' : ''}
+                                    </div>
+                                    <span class="text-sm">${c.text}</span>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    // Modal & Creation Logic
+    function openExamModal() { document.getElementById("examModal").showModal(); }
+    async function createExam(e) {
+        e.preventDefault();
+        const body = {
+            title: document.getElementById("newTitle").value,
+            description: document.getElementById("newDesc").value,
+            time_limit: parseInt(document.getElementById("newTime").value) || 0
+        };
+        const res = await fetch(`${API}/admin/exams`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(body) });
+        
+        if (res.ok) {
+            document.getElementById("examModal").close(); loadExams();
+        } else {
+            // ✅ FIX: Target examModal
+            Swal.fire({ target: document.getElementById('examModal'), icon: 'error', title: 'Error', text: 'สร้างข้อสอบไม่สำเร็จ' });
+        }
+    }
+
+    // Question Logic
+    function openQuestionModal() {
+        document.getElementById("qText").value = "";
+        document.getElementById("qImageFile").value = "";
+        document.getElementById("imgPreview").innerHTML = '<span class="text-xs text-slate-400">Preview</span>';
+        document.getElementById("choiceList").innerHTML = "";
+        addChoice(); addChoice(); 
+        document.getElementById("qModal").showModal();
+    }
+
+    function toggleType() {
+        const type = document.querySelector('input[name="qType"]:checked').value;
+        document.getElementById("choicesArea").style.display = type === 'choice' ? 'block' : 'none';
+    }
+
+    function addChoice() {
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-2";
+        div.innerHTML = `
+            <input type="radio" name="correctChoice" class="w-5 h-5 text-indigo-600 cursor-pointer">
+            <input type="text" class="choice-input flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-indigo-500" placeholder="ตัวเลือกคำตอบ...">
+            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-red-500">×</button>
+        `;
+        document.getElementById("choiceList").appendChild(div);
+    }
+
+    async function previewImage(input) {
+        if(input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => document.getElementById("imgPreview").innerHTML = `<img src="${e.target.result}" class="h-full w-full object-cover">`;
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    async function saveQuestion() {
+        const text = document.getElementById("qText").value;
+        // ✅ FIX: Target qModal
+        if(!text) return Swal.fire({ target: document.getElementById('qModal'), icon: 'error', title: 'Error', text: 'กรุณาใส่โจทย์' });
+
+        let imageUrl = null;
+        const fileInput = document.getElementById("qImageFile");
+        if(fileInput.files[0]) {
+            const fd = new FormData(); fd.append("file", fileInput.files[0]);
+            const res = await fetch(`${API}/upload/image`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+            if(res.ok) imageUrl = (await res.json()).url;
+        }
+
+        const type = document.querySelector('input[name="qType"]:checked').value;
+        const choices = [];
+        if(type === 'choice') {
+            const inputs = document.querySelectorAll(".choice-input");
+            const radios = document.getElementsByName("correctChoice");
+            inputs.forEach((inp, i) => {
+                if(inp.value.trim()) choices.push({ text: inp.value.trim(), is_correct: radios[i].checked });
+            });
+            // ✅ FIX: Target qModal
+            if(choices.length < 2) return Swal.fire({ target: document.getElementById('qModal'), icon: 'warning', title: 'Error', text: 'ต้องมีอย่างน้อย 2 ตัวเลือก' });
+            if(!choices.some(c => c.is_correct)) return Swal.fire({ target: document.getElementById('qModal'), icon: 'warning', title: 'Error', text: 'กรุณาเลือกข้อที่ถูก' });
+        }
+
+        const body = { text, image_url: imageUrl, question_type: type, choices, order: 99 };
+        const res = await fetch(`${API}/admin/exams/${currentExamId}/questions`, {
+            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(body)
+        });
+
+        if(res.ok) { document.getElementById("qModal").close(); selectExam(currentExamId); }
+    }
+
+    async function deleteQuestion(qid) {
+        // No target needed here as it's on main screen
+        if((await Swal.fire({title:'ลบข้อนี้?',icon:'warning',showCancelButton:true})).isConfirmed){
+            await fetch(`${API}/admin/questions/${qid}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+            selectExam(currentExamId);
+        }
+    }
+
     loadExams();
   </script>
 </body>

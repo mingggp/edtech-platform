@@ -1,175 +1,274 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ตั้งค่าระบบ — Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Settings — Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
-    .admin-gradient { background: linear-gradient(135deg,#111827 0%, #1e1b4b 100%); }
-    .toggle-checkbox:checked { right: 0; border-color: #6366f1; }
-    .toggle-checkbox:checked + .toggle-label { background-color: #6366f1; }
-    .setting-card { transition: all 0.2s; border: 1px solid #e2e8f0; }
-    .setting-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-color: #cbd5e1; }
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style> 
+    body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
+    
+    /* Toggle Switch */
+    .toggle-checkbox:checked { right: 0; border-color: #10b981; }
+    .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
+    .toggle-checkbox { right: auto; left: 0; transition: all 0.3s ease-in-out; }
+    .toggle-label { width: 3rem; height: 1.5rem; transition: background-color 0.3s ease-in-out; }
+    
+    /* Custom Checkbox */
+    .custom-checkbox:checked { background-color: #4f46e5; border-color: #4f46e5; }
+    .custom-checkbox:checked:after { content: '✔'; display: block; text-align: center; color: white; font-size: 10px; line-height: 14px; }
   </style>
 </head>
-<body class="min-h-screen text-slate-800">
+<body class="text-slate-800">
 
-  <header class="admin-gradient text-white shadow-md sticky top-0 z-50">
-    <nav class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative">
-      <a href="./admin_users.html" class="flex items-center gap-3 group relative z-10"><img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain bg-white/10 rounded p-1"><div class="leading-tight"><div class="font-bold text-lg">ADMIN CONSOLE</div></div></a>
-      <div class="relative bg-white/10 p-1.5 rounded-xl hidden md:flex items-center gap-1">
-        <div id="nav-slider" class="absolute h-[calc(100%-12px)] top-1.5 bg-white/20 rounded-lg transition-all duration-300 ease-out opacity-0 pointer-events-none z-0"></div>
-        <a href="./admin_users.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="users">👥 Users</a>
-        <a href="./admin_courses.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="courses">📚 Courses</a>
-        <a href="./admin_payments.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="payments">💰 Payments</a>
-        <a href="./admin_exams.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="exams">📝 Exams</a>
-        <a href="./admin_audit.html" class="nav-link px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white relative z-10 transition-colors" data-page="audit">🛡️ Logs</a>
-        <a href="./admin_settings.html" class="nav-link px-4 py-2 rounded-lg text-sm font-bold text-slate-300 hover:text-white relative z-10 transition-colors" data-page="settings">⚙️ Settings</a>
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-20 shadow-xl">
+      <div class="h-20 flex items-center justify-center border-b border-slate-800">
+        <h1 class="text-2xl font-bold tracking-tighter flex items-center gap-2"><span class="text-indigo-500">❖</span> Admin</h1>
       </div>
-      <div class="flex items-center gap-4 relative z-10"><a href="./me.html" class="text-xs text-slate-300 hover:text-white transition">กลับหน้าเรียน</a><button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 px-3 py-1.5 rounded transition">Logout</button></div>
-    </nav>
-  </header>
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        <a href="./admin_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition group"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard</a>
+        <a href="./admin_users.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition group"><i data-lucide="users" class="w-5 h-5"></i> Users</a>
+        <a href="./admin_courses.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition group"><i data-lucide="book-open" class="w-5 h-5"></i> Courses</a>
+        <a href="./admin_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600/20 text-indigo-400 font-bold border border-indigo-600/30 shadow-sm"><i data-lucide="settings" class="w-5 h-5"></i> System Settings</a>
+      </nav>
+    </aside>
 
-  <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
-    <div class="flex items-center gap-4 mb-2"><div class="p-3 bg-white rounded-xl shadow-sm border border-slate-200"><span class="text-2xl">⚙️</span></div><div><h1 class="text-3xl font-bold text-slate-900">ตั้งค่าระบบ</h1><p class="text-slate-500 text-sm">จัดการแบนเนอร์, วันสอบ, และประกาศต่างๆ</p></div></div>
-
-    <div class="setting-card bg-white rounded-3xl p-6 md:p-8">
-      <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="bg-indigo-100 text-indigo-600 p-1.5 rounded-lg text-sm">🖼️</span> สไลด์รูปภาพ (Image Slider)</h2>
-        <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-slate-500">แสดงผล</span>
-            <div class="relative inline-block w-12 mr-2 align-middle select-none"><input type="checkbox" id="imgBannerActive" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 transition-all duration-300"/><label for="imgBannerActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label></div>
+    <main class="flex-1 ml-64 p-8">
+      <header class="flex justify-between items-end mb-8">
+        <div>
+          <h2 class="text-3xl font-bold text-slate-800 mb-1">System Settings ⚙️</h2>
+          <p class="text-slate-500">จัดการการแสดงผลบนหน้า Dashboard ของนักเรียน</p>
         </div>
-      </div>
-      
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6" id="bannerImageList"></div>
+        <button onclick="saveSettings()" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition flex items-center gap-2 transform hover:-translate-y-0.5">
+          <i data-lucide="save" class="w-4 h-4"></i> บันทึกการตั้งค่า
+        </button>
+      </header>
 
-      <div class="flex flex-col md:flex-row gap-4 items-center bg-slate-50 p-4 rounded-2xl border border-slate-200 border-dashed hover:border-indigo-300 transition group">
-        <div class="flex-1 w-full">
-          <label class="block text-sm font-bold text-slate-700 mb-1">อัปโหลดรูปใหม่ (เลือกได้หลายรูป)</label>
-          <input type="file" id="bannerFile" accept="image/*" multiple class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer bg-white border rounded-lg">
-        </div>
-        <div class="w-32">
-           <label class="block text-xs font-bold text-slate-500 mb-1">เวลาเปลี่ยน (วินาที)</label>
-           <input type="number" id="bannerInterval" class="w-full border rounded-lg px-3 py-2 text-sm text-center font-bold" value="10" min="1">
-        </div>
-        <button onclick="uploadBanner()" id="btnUpload" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition disabled:opacity-50">อัปโหลด</button>
-      </div>
-    </div>
+      <div class="space-y-6 max-w-5xl mx-auto pb-20">
+        
+        <section class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover:shadow-md transition duration-300">
+            <div class="flex justify-between items-center mb-6 relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i data-lucide="megaphone" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-xl text-slate-800">Announcement Banner</h3><p class="text-sm text-slate-500">แถบประกาศข้อความด้านบนสุด</p></div>
+                </div>
+                <div class="relative inline-block w-14 align-middle select-none">
+                    <input type="checkbox" id="bannerActive" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-slate-200 appearance-none cursor-pointer translate-y-[-2px] shadow-sm"/>
+                    <label for="bannerActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-200 cursor-pointer"></label>
+                </div>
+            </div>
+            <div class="relative z-10 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">ข้อความประกาศ</label>
+                <div class="relative">
+                    <input type="text" id="bannerText" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition font-medium text-slate-700" placeholder="เช่น ยินดีต้อนรับสู่เทอมใหม่!">
+                    <i data-lucide="type" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                </div>
+            </div>
+        </section>
 
-    <div class="grid md:grid-cols-2 gap-8">
-      <div class="setting-card bg-white p-6 md:p-8 rounded-3xl flex flex-col h-full">
-        <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="bg-pink-100 text-pink-600 p-1.5 rounded-lg text-sm">📢</span> ข้อความประกาศ</h2><div class="relative inline-block w-12 mr-2 align-middle select-none"><input type="checkbox" id="bannerActive" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 transition-all duration-300"/><label for="bannerActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label></div></div>
-        <form id="bannerForm" class="flex-1 flex flex-col gap-4">
-          <div class="flex-1"><label class="block text-xs font-bold text-slate-500 mb-1 ml-1">ข้อความ</label><textarea id="bannerText" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none transition" placeholder="เช่น แจ้งปิดปรับปรุง..."></textarea></div>
-          <button type="submit" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition shadow-lg mt-auto">บันทึกประกาศ</button>
-        </form>
-      </div>
+        <section class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover:shadow-md transition duration-300">
+            <div class="flex justify-between items-center mb-6 relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center"><i data-lucide="images" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-xl text-slate-800">Hero Image Slider</h3><p class="text-sm text-slate-500">สไลด์รูปภาพขนาดใหญ่หน้าแรก</p></div>
+                </div>
+                <div class="relative inline-block w-14 align-middle select-none">
+                    <input type="checkbox" id="imgBannerActive" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-slate-200 appearance-none cursor-pointer translate-y-[-2px] shadow-sm"/>
+                    <label for="imgBannerActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-200 cursor-pointer"></label>
+                </div>
+            </div>
+            <div class="relative z-10 space-y-6">
+                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">อัปโหลดรูปใหม่</label>
+                        <div class="flex gap-2">
+                            <input type="file" id="bannerFile" class="hidden" onchange="uploadBanner()">
+                            <button onclick="document.getElementById('bannerFile').click()" class="flex-1 border-2 border-dashed border-slate-300 rounded-xl py-2.5 text-sm font-bold text-slate-500 hover:border-pink-400 hover:text-pink-500 hover:bg-pink-50 transition flex items-center justify-center gap-2">
+                                <i data-lucide="upload-cloud" class="w-4 h-4"></i> เลือกไฟล์รูปภาพ
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-px h-12 bg-slate-200"></div>
+                    <div class="w-32">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">ความเร็ว (วินาที)</label>
+                        <input type="number" id="bannerInterval" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-center font-bold text-slate-700 outline-none" value="5">
+                    </div>
+                </div>
+                <div id="bannerList" class="grid grid-cols-4 gap-4"></div>
+            </div>
+        </section>
 
-      <div class="setting-card bg-white p-6 md:p-8 rounded-3xl flex flex-col h-full">
-        <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="bg-orange-100 text-orange-600 p-1.5 rounded-lg text-sm">⏳</span> นับถอยหลัง</h2><div class="relative inline-block w-12 mr-2 align-middle select-none"><input type="checkbox" id="cdActive" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 checked:right-0 transition-all duration-300"/><label for="cdActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label></div></div>
-        <form id="countdownForm" class="flex-1 flex flex-col gap-4">
-          <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-1">หัวข้อ</label><input id="cdTitle" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition" placeholder="เช่น TGAT Exam"></div>
-          <div class="flex-1"><label class="block text-xs font-bold text-slate-500 mb-1 ml-1">วันที่เป้าหมาย</label><input id="cdDate" type="date" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition cursor-pointer"></div>
-          <button type="submit" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition shadow-lg mt-auto">บันทึกการตั้งค่า</button>
-        </form>
+        <section class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover:shadow-md transition duration-300">
+            <div class="flex justify-between items-center mb-6 relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center"><i data-lucide="timer" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-xl text-slate-800">Exam Countdown</h3><p class="text-sm text-slate-500">นับถอยหลังสู่วันสอบสำคัญ</p></div>
+                </div>
+                <div class="relative inline-block w-14 align-middle select-none">
+                    <input type="checkbox" id="cdActive" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-slate-200 appearance-none cursor-pointer translate-y-[-2px] shadow-sm"/>
+                    <label for="cdActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-200 cursor-pointer"></label>
+                </div>
+            </div>
+            
+            <div class="relative z-10 grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">หัวข้อการนับถอยหลัง</label>
+                    <div class="relative">
+                        <input type="text" id="cdTitle" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-orange-500 outline-none transition font-medium text-slate-700" placeholder="เช่น A-Level Exam">
+                        <i data-lucide="type" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">วัน-เวลา เป้าหมาย</label>
+                    <div class="relative">
+                        <input type="datetime-local" id="cdDate" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-orange-500 outline-none transition font-medium text-slate-700">
+                        <i data-lucide="calendar" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 bg-orange-50 p-6 rounded-2xl border border-orange-100">
+                <label class="block text-xs font-bold text-orange-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i data-lucide="users" class="w-3 h-3"></i> แสดงผลเฉพาะระดับชั้น (Audience)
+                </label>
+                <div class="flex flex-wrap gap-4" id="gradeSelection">
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-orange-300 transition shadow-sm select-none">
+                        <input type="checkbox" value="M1" class="custom-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> <span class="text-sm font-bold text-slate-600">ม.1</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-orange-300 transition shadow-sm select-none">
+                        <input type="checkbox" value="M2" class="custom-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> <span class="text-sm font-bold text-slate-600">ม.2</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-orange-300 transition shadow-sm select-none">
+                        <input type="checkbox" value="M3" class="custom-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> <span class="text-sm font-bold text-slate-600">ม.3</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-orange-300 transition shadow-sm select-none">
+                        <input type="checkbox" value="M4" class="custom-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> <span class="text-sm font-bold text-slate-600">ม.4</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-orange-300 transition shadow-sm select-none">
+                        <input type="checkbox" value="M5" class="custom-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> <span class="text-sm font-bold text-slate-600">ม.5</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-orange-300 transition shadow-sm select-none">
+                        <input type="checkbox" value="M6" class="custom-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> <span class="text-sm font-bold text-slate-600">ม.6</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <script>
-    // Navbar Animation
-    const page="settings"; const slider=document.getElementById("nav-slider"); const links=document.querySelectorAll(".nav-link"); let activeLink=null;
-    links.forEach(link=>{ if(link.dataset.page===page){activeLink=link;link.classList.add("text-white");moveSlider(link);slider.style.opacity="1";} link.addEventListener("mouseenter",(e)=>{moveSlider(e.target);slider.style.opacity="1";});});
-    document.querySelector(".relative.bg-white\\/10").addEventListener("mouseleave",()=>{if(activeLink)moveSlider(activeLink);else slider.style.opacity="0";});
-    function moveSlider(el){slider.style.width=el.offsetWidth+"px";slider.style.left=el.offsetLeft+"px";}
-
-    const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+    lucide.createIcons();
+    const API = "https://edtech-api-zigm.onrender.com";
     const token = localStorage.getItem("token");
-    if (!token) location.href = "./login.html";
-    function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
+    if(!token) location.href = "./login.html";
+
+    let currentBanners = [];
 
     async function loadSettings() {
-      try {
-        const res = await fetch(`${API}/settings`, { headers: { Authorization: `Bearer ${token}` } });
-        const s = await res.json();
-        
-        if(s.banner_text) document.getElementById("bannerText").value = s.banner_text;
-        document.getElementById("bannerActive").checked = (s.banner_active === "true");
-        
-        if(s.countdown_title) document.getElementById("cdTitle").value = s.countdown_title;
-        if(s.countdown_date) document.getElementById("cdDate").value = s.countdown_date;
-        document.getElementById("cdActive").checked = (s.countdown_active === "true");
+        try {
+            const res = await fetch(`${API}/settings`);
+            const s = await res.json();
+            
+            document.getElementById("bannerActive").checked = s.banner_active === "true";
+            document.getElementById("bannerText").value = s.banner_text || "";
 
-        document.getElementById("imgBannerActive").checked = (s.image_banner_active === "true");
-        if(s.banner_interval) document.getElementById("bannerInterval").value = s.banner_interval;
+            document.getElementById("imgBannerActive").checked = s.image_banner_active === "true";
+            document.getElementById("bannerInterval").value = s.banner_interval || 5;
+            
+            try { currentBanners = JSON.parse(s.banner_images); } catch { currentBanners = []; }
+            renderBanners();
 
-        renderImages(s.banner_images || []);
-      } catch(e) { console.error(e); }
+            document.getElementById("cdActive").checked = s.countdown_active === "true";
+            document.getElementById("cdTitle").value = s.countdown_title || "";
+            if(s.countdown_date) document.getElementById("cdDate").value = s.countdown_date.substring(0,16);
+
+            // Load Audience
+            let audience = ["M1","M2","M3","M4","M5","M6"];
+            try { if(s.countdown_audience) audience = JSON.parse(s.countdown_audience); } catch {}
+            
+            document.querySelectorAll("#gradeSelection input").forEach(cb => {
+                cb.checked = audience.includes(cb.value);
+            });
+
+        } catch(e) { console.error(e); }
     }
 
-    function renderImages(images) {
-      const el = document.getElementById("bannerImageList");
-      if(images.length === 0) { el.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-xs">ยังไม่มีรูปภาพแบนเนอร์</div>`; return; }
-      el.innerHTML = images.map(url => {
-        const fullUrl = url.startsWith("http") ? url : `${API}${url}`;
-        return `<div class="relative group rounded-xl overflow-hidden border border-slate-200 aspect-video bg-slate-100 shadow-sm hover:shadow-md transition"><img src="${fullUrl}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2"><button onclick="deleteImage('${url}')" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transform scale-90 hover:scale-110 transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></div></div>`;
-      }).join("");
+    function renderBanners() {
+        const list = document.getElementById("bannerList");
+        if(currentBanners.length === 0) {
+            list.innerHTML = `<div class="col-span-4 text-center py-8 text-slate-400 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">ยังไม่มีรูปภาพแบนเนอร์</div>`;
+            return;
+        }
+        list.innerHTML = currentBanners.map(url => `
+            <div class="relative group aspect-video bg-slate-100 rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                <img src="${url.startsWith('http') ? url : API+url}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                    <button onclick="removeBanner('${url}')" class="bg-white/20 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-md transition transform hover:scale-110">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        `).join("");
+        lucide.createIcons();
     }
 
     async function uploadBanner() {
-      const fileInput = document.getElementById("bannerFile");
-      const files = fileInput.files;
-      const interval = document.getElementById("bannerInterval").value;
-      
-      if(files.length === 0) return alert("กรุณาเลือกไฟล์รูปภาพ");
-      const btn = document.getElementById("btnUpload");
-      btn.disabled = true; btn.textContent = "กำลังอัปโหลด...";
-
-      try {
-        // Save interval first
-        await fetch(`${API}/admin/settings`, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ banner_interval: interval }) });
+        const file = document.getElementById("bannerFile").files[0];
+        if(!file) return;
+        const fd = new FormData(); fd.append("file", file);
         
-        // Loop upload files
-        for (const file of files) {
-           const fd = new FormData(); fd.append("file", file);
-           await fetch(`${API}/admin/settings/banner-image`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
-        }
+        Swal.fire({ title: 'กำลังอัปโหลด...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         
-        const res = await fetch(`${API}/settings`);
-        const s = await res.json();
-        renderImages(s.banner_images || []);
-        fileInput.value = "";
-        alert("✅ อัปโหลดเรียบร้อย");
-
-      } catch(e) { alert("❌ อัปโหลดบางไฟล์ไม่สำเร็จ"); }
-      btn.disabled = false; btn.textContent = "อัปโหลด";
+        try {
+            const res = await fetch(`${API}/admin/settings/banner-image`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+            if(res.ok) { 
+                const d = await res.json(); 
+                currentBanners = d.images; 
+                renderBanners(); 
+                Swal.close();
+                Swal.fire({ icon: 'success', title: 'อัปโหลดสำเร็จ', timer: 1500, showConfirmButton: false });
+            } else throw new Error();
+        } catch { Swal.fire("Error", "Upload failed", "error"); }
     }
 
-    async function deleteImage(url) {
-      if(!confirm("ต้องการลบรูปนี้?")) return;
-      try {
-        const res = await fetch(`${API}/admin/settings/banner-image`, { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ url }) });
-        if(!res.ok) throw new Error();
-        const data = await res.json(); renderImages(data.images);
-      } catch { alert("ลบไม่สำเร็จ"); }
+    async function removeBanner(url) {
+        if(!(await Swal.fire({ title: 'ลบรูปภาพ?', icon: 'warning', showCancelButton: true })).isConfirmed) return;
+        
+        try {
+            const res = await fetch(`${API}/admin/settings/banner-image`, { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ url }) });
+            if(res.ok) { const d = await res.json(); currentBanners = d.images; renderBanners(); }
+        } catch { Swal.fire("Error", "Delete failed", "error"); }
     }
 
-    async function save(payload) {
-      try {
-        await fetch(`${API}/admin/settings`, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) });
-        // Feedback animation on button could be added here
-      } catch { alert("Error saving settings"); }
+    async function saveSettings() {
+        // Get selected grades
+        const selectedGrades = Array.from(document.querySelectorAll("#gradeSelection input:checked")).map(cb => cb.value);
+
+        const body = {
+            banner_active: document.getElementById("bannerActive").checked,
+            banner_text: document.getElementById("bannerText").value,
+            image_banner_active: document.getElementById("imgBannerActive").checked,
+            banner_images: currentBanners,
+            banner_interval: parseInt(document.getElementById("bannerInterval").value),
+            
+            countdown_active: document.getElementById("cdActive").checked,
+            countdown_title: document.getElementById("cdTitle").value,
+            countdown_date: document.getElementById("cdDate").value,
+            countdown_audience: JSON.stringify(selectedGrades) // Save as JSON String
+        };
+        
+        try {
+            const res = await fetch(`${API}/admin/settings`, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(body) });
+            if(res.ok) Swal.fire({ icon: 'success', title: 'บันทึกการตั้งค่าเรียบร้อย!', showConfirmButton: false, timer: 1500 });
+            else throw new Error();
+        } catch { Swal.fire("Error", "บันทึกไม่สำเร็จ", "error"); }
     }
-
-    document.getElementById("imgBannerActive").addEventListener("change", (e) => save({ image_banner_active: e.target.checked }));
-    document.getElementById("bannerActive").addEventListener("change", (e) => save({ banner_active: e.target.checked }));
-    document.getElementById("cdActive").addEventListener("change", (e) => save({ countdown_active: e.target.checked }));
-
-    document.getElementById("bannerForm").addEventListener("submit", (e) => { e.preventDefault(); save({ banner_text: document.getElementById("bannerText").value, banner_active: document.getElementById("bannerActive").checked }); alert("บันทึกประกาศแล้ว"); });
-    document.getElementById("countdownForm").addEventListener("submit", (e) => { e.preventDefault(); save({ countdown_title: document.getElementById("cdTitle").value, countdown_date: document.getElementById("cdDate").value, countdown_active: document.getElementById("cdActive").checked }); alert("บันทึก Countdown แล้ว"); });
 
     loadSettings();
   </script>

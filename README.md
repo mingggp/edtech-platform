@@ -8,12 +8,19 @@ A tiny, batteries‑included starter to add **Sign up / Login / Protected APIs**
 - **Dev server:** Uvicorn
 
 ---
+cd backend
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
+python init_data.py
 
 ## 1) Setup (Python 3.10+)
 ```bash
 cd backend
 py -m venv .venv
-Windows: .venv\Scripts\activate
+.venv\Scripts\activate
     #macOS/Linux:
     #source .venv/bin/activate
 
@@ -31,7 +38,7 @@ uvicorn app.main:app --reload
 67) Promote to Admin
 python manage.py promote-admin admin@gmail.com
 
-MAIL_PASSWORD = "vusy xyyo dnlv nkpy" 
+MAIL_PASSWORD = "vu"
 
 ```
 

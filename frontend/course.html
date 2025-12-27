@@ -3,106 +3,91 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>คอร์สเรียนทั้งหมด — MingSmileyFace</title>
+  <title>คอร์สเรียน — MingSmileyFace</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
-    .bg-brand { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
-    .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
-    .course-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-  </style>
+  <style> body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; } </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-800">
-
-  <nav class="fixed w-full z-50 transition-all duration-300 glass">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-        <a href="./me.html" class="flex items-center gap-2 group">
-          <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
-        </a>
-        <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
-          <a href="./me.html" class="hover:text-indigo-600 transition">Dashboard</a>
-          <a href="./course.html" class="text-indigo-600 font-bold relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600">คอร์สทั้งหมด</a>
-          <a href="./mock_exam.html" class="hover:text-indigo-600 transition">คลังข้อสอบ</a>
-        </div>
-        <div class="flex items-center gap-4">
-          <div class="hidden md:block text-right leading-tight">
-            <div id="navName" class="text-sm font-bold text-slate-800">...</div>
-            <div class="text-xs text-slate-500 uppercase">Student</div>
-          </div>
-          <button onclick="logout()" class="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-red-500 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-          </button>
-        </div>
-      </div>
-    </div>
+<body class="bg-slate-50 min-h-screen">
+  <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-6">
+      <div class="font-bold text-xl text-indigo-600">MingSmileyFace</div>
+      <a href="./me.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600">Dashboard</a>
   </nav>
-  <div class="h-20"></div>
 
-  <header class="relative bg-brand text-white overflow-hidden">
-    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
-    <div class="max-w-7xl mx-auto px-4 py-16 relative z-10 text-center">
-      <span class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-xs font-bold tracking-wider mb-4 backdrop-blur-sm">EXPLORE COURSES</span>
-      <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">คอร์สเรียนทั้งหมด</h1>
-      <p class="text-indigo-100 text-lg max-w-2xl mx-auto">เลือกวิชาที่ใช่ ติวเข้มเนื้อหาเน้นๆ เพื่อเป้าหมายของคุณ</p>
-      
-      <div class="mt-8 max-w-lg mx-auto relative">
-        <input type="text" id="searchInput" placeholder="ค้นหาชื่อวิชา..." class="w-full pl-12 pr-4 py-4 rounded-2xl text-slate-800 shadow-xl focus:ring-4 focus:ring-indigo-500/30 outline-none transition border-0">
-        <svg class="w-6 h-6 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 py-12 flex-1">
-    <div id="courseGrid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-      <div class="col-span-full py-20 text-center">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-200 border-t-indigo-600 mb-4"></div>
-        <p class="text-slate-400">กำลังโหลดคอร์สเรียน...</p>
-      </div>
-    </div>
-  </main>
-
-  <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm"><p>© 2025 MingSmileyFace. All rights reserved.</p></div>
-  </footer>
-
-<script>
-const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
-const token = localStorage.getItem("token");
-if (!token) location.href = "./login.html";
-function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
-
-let allCourses = [], myCourseIds = new Set();
-async function init(){
-  try {
-    fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }}).then(r=>r.json()).then(u => { document.getElementById("navName").textContent = u.full_name || u.email.split('@')[0]; });
-    const [resC, resMe] = await Promise.all([ fetch(`${API}/courses`), fetch(`${API}/users/me/courses`, { headers: { Authorization: `Bearer ${token}` }}) ]);
-    allCourses = await resC.json();
-    myCourseIds = new Set((await resMe.json()).map(e => e.course_id));
-    render(allCourses);
-  } catch(e){ document.getElementById("courseGrid").innerHTML = `<div class="col-span-full text-center text-red-400">โหลดข้อมูลไม่สำเร็จ</div>`; }
-}
-document.getElementById("searchInput").addEventListener("input", (e) => {
-  const term = e.target.value.toLowerCase();
-  render(allCourses.filter(c => c.title.toLowerCase().includes(term) || (c.description && c.description.toLowerCase().includes(term))));
-});
-function render(list){
-  const el = document.getElementById("courseGrid");
-  if(list.length === 0){ el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 bg-white rounded-3xl border border-dashed border-slate-300">ไม่พบคอร์สเรียนที่คุณค้นหา</div>`; return; }
-  el.innerHTML = list.map(c => {
-    const isEnrolled = myCourseIds.has(c.id);
-    let btnHtml;
-    if (isEnrolled) btnHtml = `<a href="./learning_room.html?id=${c.id}" class="block w-full py-3 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-sm text-center hover:bg-indigo-100 transition flex items-center justify-center gap-2"><span>ไปที่ห้องเรียน</span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>`;
-    else if (c.price > 0) btnHtml = `<a href="./payment.html?id=${c.id}" class="block w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-sm text-center hover:bg-slate-800 transition shadow-lg shadow-slate-200">ซื้อคอร์ส ฿${c.price.toLocaleString()}</a>`;
-    else btnHtml = `<button onclick="enroll(${c.id})" class="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition shadow-lg shadow-emerald-200">ลงทะเบียนเรียนฟรี</button>`;
+  <div class="max-w-7xl mx-auto px-4 py-24">
     
-    return `<div class="course-card bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm flex flex-col h-full transition-all duration-300"><div class="h-48 bg-slate-100 relative overflow-hidden group">${c.thumbnail ? `<img src="${c.thumbnail}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">` : `<div class="w-full h-full flex flex-col items-center justify-center text-slate-300"><svg class="w-12 h-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span class="text-xs">No Image</span></div>`}<div class="absolute top-3 right-3">${isEnrolled ? `<span class="bg-indigo-600/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-sm">OWNED</span>` : (c.price > 0 ? `<span class="bg-white/90 backdrop-blur text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-sm border border-slate-200">฿${c.price.toLocaleString()}</span>` : `<span class="bg-emerald-500/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-sm">FREE</span>`)}</div></div><div class="p-6 flex-1 flex flex-col"><div class="mb-4"><h3 class="font-bold text-lg text-slate-800 line-clamp-2 leading-tight mb-2" title="${c.title}">${c.title}</h3><p class="text-sm text-slate-500 line-clamp-2 h-10">${c.description || "ไม่มีรายละเอียดเพิ่มเติม"}</p></div><div class="mt-auto"><div class="flex items-center gap-4 text-xs text-slate-400 mb-4 pt-4 border-t border-slate-50"><div class="flex items-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>${c.lessons?c.lessons.length:0} บทเรียน</span></div></div>${btnHtml}</div></div></div>`;
-  }).join("");
-}
-async function enroll(id){ if(!confirm("ลงทะเบียนฟรี?")) return; try { const res = await fetch(`${API}/courses/${id}/enroll`, { method: "POST", headers: { Authorization: `Bearer ${token}` } }); if(!res.ok) throw new Error(); alert("🎉 สำเร็จ!"); location.reload(); } catch { alert("Error"); } }
-init();
-</script>
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <h1 class="text-3xl font-bold text-slate-800">คอร์สเรียนทั้งหมด 📚</h1>
+        
+        <div class="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200 overflow-x-auto max-w-full">
+            <button onclick="filterCourses('All')" class="filter-btn active px-4 py-1.5 rounded-lg text-sm font-bold transition bg-indigo-100 text-indigo-700 whitespace-nowrap" id="btn-All">ทั้งหมด</button>
+            <button onclick="filterCourses('Math')" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition whitespace-nowrap" id="btn-Math">คณิตศาสตร์</button>
+            <button onclick="filterCourses('Physics')" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition whitespace-nowrap" id="btn-Physics">ฟิสิกส์</button>
+            <button onclick="filterCourses('English')" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition whitespace-nowrap" id="btn-English">ภาษาอังกฤษ</button>
+        </div>
+    </div>
+
+    <div id="courseGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+  </div>
+
+  <script>
+    const API = "https://edtech-api-zigm.onrender.com"; 
+    let allCourses = [];
+
+    async function loadCourses(){
+        try {
+            const res = await fetch(`${API}/courses/`);
+            allCourses = await res.json();
+            renderCourses(allCourses);
+        } catch(e) { console.error(e); }
+    }
+
+    function renderCourses(courses){
+        const grid = document.getElementById("courseGrid");
+        if(courses.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center py-20 text-slate-400">ไม่พบคอร์สในหมวดหมู่นี้</div>`;
+            return;
+        }
+
+        grid.innerHTML = courses.map(c => `
+            <a href="./course_detail.html?id=${c.id}" class="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:-translate-y-1">
+                <div class="aspect-video w-full bg-slate-200 relative overflow-hidden">
+                    <img src="${c.thumbnail ? (c.thumbnail.startsWith('http')?c.thumbnail:API+c.thumbnail) : 'https://placehold.co/600x400?text=No+Image'}" 
+                         class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                    
+                    <span class="absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm text-slate-600">
+                        ${c.category || 'General'}
+                    </span>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2 line-clamp-1 group-hover:text-indigo-600 transition">${c.title}</h3>
+                    <p class="text-sm text-slate-500 line-clamp-2 mb-4 h-10">${c.description || '-'}</p>
+                    
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                        <div class="text-indigo-600 font-bold text-lg">฿${c.price.toLocaleString()}</div>
+                        <span class="text-xs font-bold text-white bg-slate-900 px-4 py-2 rounded-lg group-hover:bg-indigo-600 transition">ดูรายละเอียด</span>
+                    </div>
+                </div>
+            </a>
+        `).join("");
+    }
+
+    function filterCourses(category) {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.className = "filter-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition whitespace-nowrap";
+        });
+        document.getElementById(`btn-${category}`).className = "filter-btn active px-4 py-1.5 rounded-lg text-sm font-bold bg-indigo-100 text-indigo-700 transition whitespace-nowrap";
+
+        if (category === 'All') {
+            renderCourses(allCourses);
+        } else {
+            const filtered = allCourses.filter(c => c.category === category);
+            renderCourses(filtered);
+        }
+    }
+
+    loadCourses();
+  </script>
 </body>
 </html>

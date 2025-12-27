@@ -9,10 +9,19 @@
   <style>
     body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
     .bg-brand-dark { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-    .text-gradient { background: linear-gradient(90deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    /* --- แก้ไขตรงนี้ (เพิ่ม background-clip: text;) --- */
+    .text-gradient { 
+        background: linear-gradient(90deg, #818cf8, #c084fc); 
+        -webkit-background-clip: text; 
+        background-clip: text; /* เพิ่มบรรทัดนี้ */
+        -webkit-text-fill-color: transparent; 
+    }
+    /* ----------------------------------------------- */
+
     .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
     .exam-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .exam-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    .exam-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col text-slate-800">
@@ -21,7 +30,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
         <a href="./me.html" class="flex items-center gap-2 group">
-          <img src="http://127.0.0.1:8000/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform group-hover:scale-110 drop-shadow-sm">
+          <img src="https://edtech-api-zigm.onrender.com/static/logo.png" alt="Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-sm">
         </a>
         <div class="hidden md:flex gap-8 font-medium text-slate-600">
           <a href="./me.html" class="hover:text-indigo-600 transition">Dashboard</a>
@@ -45,14 +54,12 @@
   <header class="relative bg-brand-dark text-white overflow-hidden">
     <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-20 -mt-20"></div>
     <div class="absolute bottom-0 left-0 w-72 h-72 bg-purple-600 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -ml-20 -mb-20"></div>
-    
     <div class="max-w-7xl mx-auto px-4 py-16 relative z-10 text-center">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold tracking-wider mb-6 backdrop-blur-sm">
         <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> MOCK EXAM ARENA
       </div>
       <h1 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight">ฝึกฝนกับ <span class="text-gradient">ข้อสอบเสมือนจริง</span></h1>
       <p class="text-slate-300 text-lg max-w-2xl mx-auto mb-8 font-light">จำลองบรรยากาศห้องสอบ จับเวลาจริง พร้อมรู้คะแนนทันที เตรียมตัวให้พร้อมก่อนลงสนามจริง</p>
-      
       <div class="flex justify-center gap-8 text-center border-t border-white/10 pt-6 w-max mx-auto px-10">
         <div><div class="text-3xl font-bold" id="statTotalExams">0</div><div class="text-xs text-slate-400 uppercase tracking-wide">ชุดข้อสอบ</div></div>
         <div class="w-px bg-white/10"></div>
@@ -62,19 +69,11 @@
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-12 flex-1">
-    
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
       <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span class="text-2xl">📚</span> เลือกชุดข้อสอบ</h2>
-      <a href="./exam_history.html" class="px-5 py-2.5 bg-white text-indigo-600 text-sm font-bold rounded-xl border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50 transition shadow-sm flex items-center gap-2">
-        <span>📜 ดูประวัติคะแนนของฉัน</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-      </a>
+      <a href="./exam_history.html" class="px-5 py-2.5 bg-white text-indigo-600 text-sm font-bold rounded-xl border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50 transition shadow-sm flex items-center gap-2"><span>📜 ดูประวัติคะแนนของฉัน</span><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></a>
     </div>
-
-    <div id="examGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="col-span-full py-20 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-200 border-t-indigo-600 mb-4"></div><p class="text-slate-400">กำลังโหลดข้อสอบ...</p></div>
-    </div>
-
+    <div id="examGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><div class="col-span-full py-20 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-200 border-t-indigo-600 mb-4"></div><p class="text-slate-400">กำลังโหลดข้อสอบ...</p></div></div>
   </main>
 
   <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
@@ -82,12 +81,15 @@
   </footer>
 
 <script>
-const API = (window.location.hostname==="127.0.0.1"||window.location.hostname==="localhost")?"http://127.0.0.1:8000":"https://edtech-api-zigm.onrender.com";
+const API = (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")
+  ? "https://edtech-api-zigm.onrender.com" : "https://edtech-api-zigm.onrender.com";
 const token = localStorage.getItem("token");
 if (!token) location.href = "./login.html";
 function logout(){ localStorage.removeItem("token"); location.href="./login.html"; }
 
-fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }}).then(r=>r.json()).then(u => { document.getElementById("navName").textContent = u.full_name || u.email.split('@')[0]; });
+fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` }}).then(r=>r.json()).then(u => {
+  document.getElementById("navName").textContent = u.full_name || u.email.split('@')[0];
+});
 
 async function init(){
   try {
@@ -95,7 +97,9 @@ async function init(){
     const exams = await res.json();
     document.getElementById("statTotalExams").textContent = exams.length;
     render(exams);
-  } catch(e){ document.getElementById("examGrid").innerHTML = `<div class="col-span-full text-center text-red-400">โหลดข้อมูลไม่สำเร็จ</div>`; }
+  } catch(e){
+    document.getElementById("examGrid").innerHTML = `<div class="col-span-full text-center py-10 text-red-400 bg-red-50 rounded-2xl border border-red-100">โหลดข้อมูลไม่สำเร็จ: ${e.message}</div>`;
+  }
 }
 
 function render(list){

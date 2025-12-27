@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coupon Management — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style> 
+    body { font-family: 'Prompt', sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    
+    /* Toggle Switch Animation */
+    .switch-btn { transition: all 0.3s ease; }
+    .switch-active { background-color: white; color: #4f46e5; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); font-weight: 700; }
+    .switch-inactive { background-color: transparent; color: #64748b; font-weight: 500; }
+    .switch-inactive:hover { color: #334155; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-20 shadow-2xl transition-all duration-300">
+      <div class="h-16 flex items-center justify-center border-b border-slate-800 text-xl font-bold tracking-wider">
+        <span class="text-indigo-400 mr-2 text-2xl">✦</span> Admin Panel
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scroll">
+        <a href="./admin_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="./admin_users.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <i data-lucide="users" class="w-5 h-5"></i> <span>Users</span>
+        </a>
+        <a href="./admin_courses.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <i data-lucide="book-open" class="w-5 h-5"></i> <span>Courses</span>
+        </a>
+        <a href="./admin_exams.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <i data-lucide="file-text" class="w-5 h-5"></i> <span>Exams</span>
+        </a>
+        <a href="./admin_payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <i data-lucide="credit-card" class="w-5 h-5"></i> <span>Payments</span>
+        </a>
+        <a href="./admin_coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white shadow-lg font-bold transition-all duration-200 transform translate-x-1">
+            <i data-lucide="ticket" class="w-5 h-5"></i> <span>Coupons</span>
+        </a>
+        <a href="./admin_reports.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+            <i data-lucide="flag" class="w-5 h-5"></i> <span>Reports</span>
+        </a>
+
+        <div class="border-t border-slate-800 my-2 pt-2">
+            <p class="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">System</p>
+            <a href="./admin_audit.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+                <i data-lucide="shield" class="w-5 h-5"></i> <span>Audit Log</span>
+            </a>
+            <a href="./admin_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white hover:translate-x-1 transition-all duration-200">
+                <i data-lucide="settings" class="w-5 h-5"></i> <span>Settings</span>
+            </a>
+        </div>
+      </nav>
+
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="logout()" class="w-full py-3 bg-slate-800 hover:bg-red-600/90 text-slate-300 hover:text-white rounded-xl transition-all duration-200 font-bold flex items-center justify-center gap-2 group">
+            <i data-lucide="log-out" class="w-5 h-5"></i> <span class="group-hover:translate-x-1 transition-transform">Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex-1 ml-64 p-8">
+      <header class="flex justify-between items-end mb-8">
+        <div>
+          <h2 class="text-3xl font-black text-slate-800 tracking-tight mb-1">Coupon Management 🎟️</h2>
+          <p class="text-slate-500">สร้างและจัดการคูปองส่วนลด</p>
+        </div>
+        <button onclick="openCreateModal()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition flex items-center gap-2 transform hover:-translate-y-0.5 border border-indigo-500">
+          <i data-lucide="plus" class="w-5 h-5"></i> สร้างคูปองใหม่
+        </button>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center gap-4 group hover:border-indigo-100 transition">
+          <div class="p-4 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition"><i data-lucide="ticket" class="w-8 h-8"></i></div>
+          <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">คูปองทั้งหมด</p><h4 class="text-3xl font-black text-slate-800" id="totalCoupons">0</h4></div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center gap-4 group hover:border-emerald-100 transition">
+          <div class="p-4 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:scale-110 transition"><i data-lucide="check-circle" class="w-8 h-8"></i></div>
+          <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">ใช้งานแล้ว</p><h4 class="text-3xl font-black text-slate-800" id="totalUsed">0</h4></div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center gap-4 group hover:border-orange-100 transition opacity-60 grayscale hover:grayscale-0 hover:opacity-100">
+            <div class="p-4 bg-orange-50 text-orange-600 rounded-2xl group-hover:scale-110 transition"><i data-lucide="clock" class="w-8 h-8"></i></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">ใกล้หมดอายุ</p><h4 class="text-3xl font-black text-slate-800">-</h4></div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Code</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">ส่วนลด</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">การใช้งาน</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">วันหมดอายุ</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="couponTableBody" class="divide-y divide-slate-100">
+              <tr><td colspan="5" class="px-6 py-12 text-center text-slate-400 animate-pulse">กำลังโหลดข้อมูล...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="createModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 relative border border-slate-100">
+      <button onclick="closeCreateModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+      
+      <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+              <i data-lucide="ticket" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-2xl font-black text-slate-800">สร้างคูปองใหม่ ✨</h3>
+          <p class="text-sm text-slate-500">กำหนดเงื่อนไขส่วนลดสำหรับผู้เรียน</p>
+      </div>
+
+      <form id="createForm" onsubmit="handleCreate(event)" class="space-y-5">
+        <div class="bg-slate-100 p-1.5 rounded-xl flex relative">
+            <input type="hidden" name="discount_type" id="discountTypeInput" value="percent">
+            <button type="button" id="btnPercent" onclick="setDiscountType('percent')" class="switch-btn switch-active flex-1 py-2.5 rounded-lg text-sm flex items-center justify-center gap-2">
+                <i data-lucide="percent" class="w-4 h-4"></i> เปอร์เซ็นต์ (%)
+            </button>
+            <button type="button" id="btnAmount" onclick="setDiscountType('amount')" class="switch-btn switch-inactive flex-1 py-2.5 rounded-lg text-sm flex items-center justify-center gap-2">
+                <span class="font-bold">฿</span> บาท (THB)
+            </button>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">รหัสคูปอง (Code)</label>
+            <div class="relative">
+                <input type="text" name="code" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition font-mono font-bold uppercase placeholder:font-normal placeholder:normal-case text-slate-700" placeholder="เช่น SUMMER2025">
+                <i data-lucide="tag" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">มูลค่าส่วนลด <span id="valLabel" class="text-indigo-500">(%)</span></label>
+            <input type="number" name="discount_value" required min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition text-lg font-bold text-slate-700 placeholder:text-slate-300 placeholder:font-normal" placeholder="0">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">จำนวนสูงสุด</label>
+                <input type="number" name="max_usage" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition text-sm font-medium" placeholder="0 = ไม่จำกัด">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">วันหมดอายุ</label>
+                <input type="date" name="expires_at" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition text-sm font-medium text-slate-600">
+            </div>
+        </div>
+        
+        <div class="pt-2">
+            <button type="submit" class="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                <i data-lucide="check" class="w-5 h-5"></i> สร้างคูปองเลย
+            </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    const API = "https://edtech-api-zigm.onrender.com"; 
+    const token = localStorage.getItem("token");
+    if (!token) location.href = "./login.html";
+
+    function logout() {
+        localStorage.removeItem("token");
+        location.href = "./login.html";
+    }
+
+    // --- UI Logic ---
+    function setDiscountType(type) {
+        document.getElementById('discountTypeInput').value = type;
+        const btnP = document.getElementById('btnPercent');
+        const btnA = document.getElementById('btnAmount');
+        const label = document.getElementById('valLabel');
+        const input = document.querySelector('input[name="discount_value"]');
+
+        if (type === 'percent') {
+            btnP.className = "switch-btn switch-active flex-1 py-2.5 rounded-lg text-sm flex items-center justify-center gap-2";
+            btnA.className = "switch-btn switch-inactive flex-1 py-2.5 rounded-lg text-sm flex items-center justify-center gap-2";
+            label.textContent = "(%)";
+            input.placeholder = "ลดกี่ %";
+            input.max = 100; // Limit percent to 100
+        } else {
+            btnP.className = "switch-btn switch-inactive flex-1 py-2.5 rounded-lg text-sm flex items-center justify-center gap-2";
+            btnA.className = "switch-btn switch-active flex-1 py-2.5 rounded-lg text-sm flex items-center justify-center gap-2";
+            label.textContent = "(บาท)";
+            input.placeholder = "ลดกี่บาท";
+            input.removeAttribute("max");
+        }
+    }
+
+    // Modal Functions
+    function openCreateModal() {
+        const modal = document.getElementById('createModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            modal.firstElementChild.classList.remove('scale-95');
+            modal.firstElementChild.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeCreateModal() {
+        const modal = document.getElementById('createModal');
+        modal.classList.add('opacity-0');
+        modal.firstElementChild.classList.remove('scale-100');
+        modal.firstElementChild.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.getElementById('createForm').reset();
+            setDiscountType('percent'); // Reset UI
+        }, 300);
+    }
+
+    // --- API Logic ---
+    async function loadCoupons() {
+        try {
+            const res = await fetch(`${API}/coupons`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error("Failed to fetch coupons");
+            
+            const rawData = await res.json();
+            const coupons = Array.isArray(rawData) ? rawData : (rawData.coupons || []);
+            
+            renderTable(coupons);
+            updateStats(coupons);
+        } catch (error) {
+            console.error(error);
+            document.getElementById("couponTableBody").innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500 bg-red-50/50 rounded-xl m-4">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
+        }
+    }
+
+    function updateStats(coupons) {
+        document.getElementById("totalCoupons").textContent = coupons.length;
+        const used = coupons.reduce((sum, c) => sum + (c.current_usage || 0), 0);
+        document.getElementById("totalUsed").textContent = used;
+    }
+
+    function renderTable(coupons) {
+        const tbody = document.getElementById("couponTableBody");
+        if (coupons.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400 flex flex-col items-center justify-center"><i data-lucide="ticket" class="w-12 h-12 mb-2 opacity-20"></i><span class="text-sm">ยังไม่มีคูปองในระบบ</span></td></tr>`;
+            lucide.createIcons();
+            return;
+        }
+
+        tbody.innerHTML = coupons.map(c => {
+            const isPercent = c.discount_type === 'percent';
+            const discountDisplay = isPercent ? `${c.discount_value}%` : `฿${c.discount_value.toLocaleString()}`;
+            const discountBadgeColor = isPercent ? "bg-indigo-100 text-indigo-700" : "bg-emerald-100 text-emerald-700";
+            
+            const maxUsage = c.max_usage > 0 ? c.max_usage : '∞';
+            const expiry = c.expires_at ? new Date(c.expires_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : '<span class="text-emerald-500 font-bold text-xs bg-emerald-50 px-2 py-1 rounded-full">ตลอดชีพ</span>';
+            const isExpired = c.expires_at && new Date(c.expires_at) < new Date();
+            const statusClass = isExpired ? 'opacity-50 grayscale bg-slate-50' : 'bg-white hover:bg-slate-50';
+
+            // Calculate usage percentage
+            const usagePercent = c.max_usage > 0 ? Math.min(((c.current_usage || 0) / c.max_usage) * 100, 100) : 0;
+            const progressColor = usagePercent >= 100 ? 'bg-red-500' : 'bg-indigo-500';
+
+            return `
+            <tr class="transition border-b border-slate-100 last:border-0 ${statusClass}">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-mono font-bold text-xs border border-slate-200 shadow-sm">
+                            <i data-lucide="tag" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-mono font-bold text-slate-800 text-base tracking-wide">${c.code}</div>
+                            ${isExpired ? '<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded">EXPIRED</span>' : ''}
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 rounded-full text-sm font-bold ${discountBadgeColor}">${discountDisplay} OFF</span>
+                </td>
+                <td class="px-6 py-4 text-sm">
+                    <div class="w-32">
+                        <div class="flex justify-between mb-1 text-[10px] font-bold text-slate-500">
+                            <span>${c.current_usage || 0} ใช้แล้ว</span>
+                            <span>${maxUsage}</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full ${progressColor} rounded-full transition-all duration-500" style="width: ${usagePercent}%"></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-sm font-medium text-slate-600">${expiry}</td>
+                <td class="px-6 py-4 text-right">
+                    <button onclick="deleteCoupon(${c.id})" class="p-2 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 rounded-lg transition shadow-sm" title="ลบ">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join("");
+        lucide.createIcons();
+    }
+
+    async function handleCreate(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert types
+        data.discount_value = parseFloat(data.discount_value);
+        if (data.max_usage) data.max_usage = parseInt(data.max_usage);
+        else delete data.max_usage; 
+        
+        if (!data.expires_at) delete data.expires_at;
+
+        try {
+            const res = await fetch(`${API}/coupons`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                Swal.fire({ 
+                    icon: 'success', 
+                    title: 'สร้างคูปองสำเร็จ!', 
+                    text: `รหัส ${data.code} พร้อมใช้งานแล้ว`,
+                    showConfirmButton: false, 
+                    timer: 1500 
+                });
+                closeCreateModal();
+                loadCoupons();
+            } else {
+                const err = await res.json();
+                throw new Error(err.detail || "สร้างไม่สำเร็จ");
+            }
+        } catch (err) {
+            Swal.fire('Error', err.message, 'error');
+        }
+    }
+
+    async function deleteCoupon(id) {
+        const result = await Swal.fire({
+            title: 'ยืนยันการลบ?',
+            text: "คุณจะไม่สามารถกู้คืนคูปองนี้ได้",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#e2e8f0',
+            confirmButtonText: 'ใช่ ลบเลย',
+            cancelButtonText: 'ยกเลิก',
+            customClass: {
+                popup: 'rounded-2xl',
+                confirmButton: 'rounded-xl',
+                cancelButton: 'rounded-xl text-slate-600'
+            }
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`${API}/coupons/${id}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'ลบคูปองเรียบร้อย',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    loadCoupons();
+                } else throw new Error();
+            } catch {
+                Swal.fire('Error', 'ไม่สามารถลบได้', 'error');
+            }
+        }
+    }
+
+    // Init
+    loadCoupons();
+  </script>
+</body>
+</html>
