@@ -9,3 +9,4 @@ python-multipart
 python-dotenv
 qrcode
 Pillow
+psycopg2-binary
