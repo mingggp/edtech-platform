@@ -1,0 +1,132 @@
+import time
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
+from sqlalchemy.orm import Session
+from datetime import datetime
+
+from ..database import get_db
+from .. import schemas, crud, models
+from ..auth import get_current_user
+from ..models import User
+from ..schemas import UserUpdateMe
+from ..badges import get_user_badges_status
+from ..config import UPLOAD_DIR
+
+router = APIRouter(prefix="/users", tags=["users"])
+
+@router.get("/me", response_model=schemas.UserRead)
+def read_me(u=Depends(get_current_user)):
+    return u
+
+@router.patch("/me")
+def update_user_me(user_data: UserUpdateMe, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if user_data.full_name is not None: current_user.full_name = user_data.full_name
+    if user_data.nickname is not None: current_user.nickname = user_data.nickname
+    if user_data.grade_level is not None: current_user.grade_level = user_data.grade_level
+    if user_data.dek_code is not None: current_user.dek_code = user_data.dek_code
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+@router.post("/me/upload-image")
+async def upload_user_image(file: UploadFile = File(...), db: Session = Depends(get_db), u=Depends(get_current_user)):
+    ext = file.filename.split(".")[-1]
+    if ext.lower() not in ["jpg", "jpeg", "png", "webp"]:
+        raise HTTPException(400, "อนุญาตเฉพาะไฟล์รูปภาพ (jpg, png, webp)")
+    
+    fname = f"user_{u.id}_{int(time.time())}.{ext}"
+    with open(UPLOAD_DIR / fname, "wb") as f:
+        f.write(await file.read())
+    
+    url = f"/static/uploads/{fname}"
+    
+    # Auto-update user profile
+    u.avatar_url = url
+    db.commit()
+    db.refresh(u)
+    
+    return {"url": url}
+
+@router.post("/me/friends")
+def add_friend_api(email: str = Form(...), db: Session = Depends(get_db), u=Depends(get_current_user)): 
+    if not crud.add_friend(db, u.id, email):
+        raise HTTPException(status_code=400, detail="Cannot add friend")
+    return {"message": "Friend added"}
+
+@router.delete("/me/friends/{friend_id}")
+def remove_friend_api(friend_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    if not crud.remove_friend(db, u.id, friend_id):
+        raise HTTPException(status_code=404, detail="Friend not found")
+    return {"message": "Friend removed"}
+
+@router.get("/me/friends", response_model=List[schemas.FriendRead])
+def my_friends(db: Session = Depends(get_db), u=Depends(get_current_user)):
+    fs = crud.get_friends(db, u.id)
+    now = datetime.utcnow()
+    out = []
+    for f in fs:
+        online = False
+        if f.last_login:
+            online = (now - f.last_login).total_seconds() < 300
+        item = schemas.FriendRead.model_validate(f)
+        item.is_online = online
+        if not online:
+            item.current_activity = None
+        out.append(item)
+    return out
+
+@router.get("/me/achievements")
+def get_my_achievements(db: Session = Depends(get_db), u = Depends(get_current_user)):
+    return get_user_badges_status(db, u)
+
+@router.post("/me/achievements/showcase")
+def update_showcase(badges: List[str] = Depends(lambda: []), db: Session = Depends(get_db), u = Depends(get_current_user)):
+    pass # implementation pending
+
+@router.get("/{user_id}/public", response_model=schemas.UserPublicProfile)
+def get_public_profile_api(user_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    profile = crud.get_public_profile(db, user_id)
+    if not profile:
+        raise HTTPException(404, "User not found")
+    return profile
+
+# --- Course Enrollment & Progress ---
+@router.post("/me/courses")
+def enroll_my_course(course_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    course = crud.get_course(db, course_id)
+    if not course:
+        raise HTTPException(404, "Course not found")
+    # For now, allow free enrollment.
+    crud.enroll_course(db, u.id, course_id)
+    return {"message": "Enrolled successfully"}
+
+@router.get("/me/courses")
+def my_enrolled_courses(db: Session = Depends(get_db), u=Depends(get_current_user)):
+    enrollments = crud.get_enrolled_courses(db, u.id)
+    out = []
+    for e in enrollments:
+        if e.course:
+            # We can calculate simple progress just by fetching complete count.
+            completed = crud.get_course_progress(db, u.id, e.course.id)
+            total = e.course.total_lessons
+            pct = int((len(completed) / total) * 100) if total > 0 else 0
+            
+            out.append({
+                "id": e.course.id,
+                "title": e.course.title,
+                "thumbnail": e.course.thumbnail,
+                "progress": pct,
+                "color": "bg-brand-500",
+                "enrolled_at": e.enrolled_at
+            })
+    return out
+
+@router.get("/me/courses/{course_id}/progress")
+def my_course_progress(course_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    completed = crud.get_course_progress(db, u.id, course_id)
+    return completed
+
+@router.post("/me/progress/{lesson_id}")
+def mark_lesson_complete(lesson_id: int, completed: bool = True, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    p = crud.mark_lesson_complete(db, u.id, lesson_id, completed)
+    return {"success": True, "lesson_id": lesson_id, "completed": p.completed}

@@ -61,12 +61,20 @@ class Course(Base):
     thumbnail = Column(String, nullable=True)
     highlights = Column(String, nullable=True) 
     target_audience = Column(String, nullable=True)
+    # ✅ เพิ่ม is_active
+    is_active = Column(Boolean, default=False)
     # ✅ เพิ่ม created_at
     created_at = Column(DateTime, default=datetime.utcnow)
     
     chapters = relationship("Chapter", back_populates="course", cascade="all, delete-orphan")
     enrollments = relationship("Enrollment", back_populates="course")
 
+    @property
+    def total_lessons(self):
+        if not self.chapters: return 0
+        return sum(len(ch.lessons) for ch in self.chapters)
+    
+    
 class Chapter(Base):
     __tablename__ = "chapters"
     id = Column(Integer, primary_key=True, index=True)

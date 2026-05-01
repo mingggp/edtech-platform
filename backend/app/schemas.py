@@ -5,6 +5,7 @@ from datetime import datetime
 # --- Token ---
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 class TokenData(BaseModel):
@@ -75,6 +76,7 @@ class CourseBase(BaseModel):
     thumbnail: Optional[str] = None
     target_audience: Optional[str] = None
     highlights: Optional[str] = None
+    is_active: bool = False
 
 class CourseCreate(CourseBase):
     pass
@@ -87,6 +89,7 @@ class CourseUpdate(BaseModel):
     thumbnail: Optional[str] = None
     target_audience: Optional[str] = None
     highlights: Optional[str] = None
+    is_active: Optional[bool] = None
 
 class CourseRead(CourseBase):
     id: int
@@ -112,6 +115,10 @@ class ChapterRead(ChapterBase):
     course_id: int
     class Config: from_attributes = True
 
+class ChapterUpdate(BaseModel):
+    title: Optional[str] = None
+    order: Optional[int] = None
+
 class LessonBase(BaseModel):
     title: str
     youtube_id: str
@@ -136,6 +143,10 @@ class LessonRead(LessonBase):
 
 class LessonOut(LessonRead):
     pass
+
+class ChapterWithLessons(ChapterRead):
+    lessons: List[LessonRead] = []
+    class Config: from_attributes = True
 
 # --- Enrollment & Progress ---
 class EnrollmentRead(BaseModel):
@@ -200,7 +211,6 @@ class CouponRead(CouponBase):
 class CouponOut(CouponRead): 
     pass
 
-# --- Payments ---
 class PaymentCreate(BaseModel):
     course_id: int
     amount: float

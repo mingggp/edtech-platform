@@ -140,8 +140,11 @@ def admin_update_user(db: Session, user: models.User, payload: schemas.AdminUser
 #  COURSES & CONTENT
 # ==========================================
 
-def list_courses(db: Session):
-    return db.query(models.Course).order_by(models.Course.id.desc()).all()
+def list_courses(db: Session, skip: int = 0, limit: int = 100, active_only: bool = False):
+    qs = db.query(models.Course)
+    if active_only:
+        qs = qs.filter(models.Course.is_active == True)
+    return qs.order_by(models.Course.id.desc()).offset(skip).limit(limit).all()
 
 def get_course(db: Session, course_id: int):
     return db.query(models.Course).filter(models.Course.id == course_id).first()
@@ -154,7 +157,8 @@ def create_course(db: Session, p: schemas.CourseCreate):
         thumbnail=p.thumbnail,
         category=p.category,
         target_audience=p.target_audience, 
-        highlights=p.highlights
+        highlights=p.highlights,
+        is_active=p.is_active
     )
     db.add(c)
     db.commit()
@@ -174,6 +178,7 @@ def update_course(db: Session, course_id: int, p: schemas.CourseUpdate):
     if p.category is not None: c.category = p.category
     if p.target_audience is not None: c.target_audience = p.target_audience
     if p.highlights is not None: c.highlights = p.highlights
+    if p.is_active is not None: c.is_active = p.is_active
     
     db.commit()
     db.refresh(c)
@@ -190,10 +195,65 @@ def delete_course(db: Session, course_id: int):
         return True
     return False
 
+def get_course_chapters(db: Session, course_id: int):
+    return db.query(models.Chapter).options(joinedload(models.Chapter.lessons)).filter(models.Chapter.course_id == course_id).order_by(models.Chapter.order).all()
+
+def enroll_course(db: Session, user_id: int, course_id: int):
+    # Check if already enrolled
+    existing = db.query(models.Enrollment).filter_by(user_id=user_id, course_id=course_id).first()
+    if existing:
+        return existing
+    e = models.Enrollment(user_id=user_id, course_id=course_id)
+    db.add(e)
+    db.commit()
+    db.refresh(e)
+    return e
+
+def get_enrolled_courses(db: Session, user_id: int):
+    # Returns enrollments with joined Course
+    return db.query(models.Enrollment).options(joinedload(models.Enrollment.course)).filter(models.Enrollment.user_id == user_id).all()
+
+def get_course_progress(db: Session, user_id: int, course_id: int):
+    # returns list of completed lesson IDs
+    completed = db.query(models.Progress).join(models.Lesson).join(models.Chapter).filter(
+        models.Progress.user_id == user_id,
+        models.Chapter.course_id == course_id,
+        models.Progress.completed == True
+    ).all()
+    return [p.lesson_id for p in completed]
+
+def mark_lesson_complete(db: Session, user_id: int, lesson_id: int, completed: bool = True):
+    p = db.query(models.Progress).filter_by(user_id=user_id, lesson_id=lesson_id).first()
+    if not p:
+        p = models.Progress(user_id=user_id, lesson_id=lesson_id, completed=completed)
+        db.add(p)
+    else:
+        p.completed = completed
+    db.commit()
+    db.refresh(p)
+    return p
+
 def create_chapter(db: Session, course_id: int, p: schemas.ChapterCreate):
     c = models.Chapter(course_id=course_id, title=p.title, order=p.order)
     db.add(c); db.commit(); db.refresh(c);
     return c
+
+def update_chapter(db: Session, chapter_id: int, p: schemas.ChapterUpdate):
+    c = db.query(models.Chapter).get(chapter_id)
+    if c:
+        if p.title is not None: c.title = p.title
+        if p.order is not None: c.order = p.order
+        db.commit()
+        db.refresh(c)
+    return c
+
+def delete_chapter(db: Session, chapter_id: int):
+    c = db.query(models.Chapter).get(chapter_id)
+    if c:
+        db.delete(c)
+        db.commit()
+        return True
+    return False
 
 def create_lesson(db: Session, chapter_id: int, p: schemas.LessonCreate):
     l = models.Lesson(
@@ -241,8 +301,8 @@ def get_exam(db: Session, exam_id: int):
         joinedload(models.Exam.questions).joinedload(models.Question.choices)
     ).filter(models.Exam.id == exam_id).first()
 
-def list_exams(db: Session):
-    return db.query(models.Exam).all()
+def list_exams(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Exam).offset(skip).limit(limit).all()
 
 def add_question(db: Session, exam_id: int, p: schemas.QuestionCreate):
     q = models.Question(
@@ -410,10 +470,10 @@ def get_payment_stats(db: Session):
     recent = db.query(models.Payment).filter(models.Payment.status == "approved", models.Payment.created_at >= (datetime.utcnow() - timedelta(days=7))).all()
     return {"total_revenue": total_rev, "pending_count": pending, "top_courses": [{"title": t, "amount": a} for t, a in top], "recent_payments": recent}
 
-def get_payments(db: Session, status: str = None):
+def get_payments(db: Session, status: str = None, skip: int = 0, limit: int = 100):
     q = db.query(models.Payment).order_by(models.Payment.created_at.desc())
     if status: q = q.filter(models.Payment.status == status)
-    return q.all()
+    return q.offset(skip).limit(limit).all()
 
 def approve_payment(db: Session, payment_id: int, action: str):
     p = db.query(models.Payment).get(payment_id)
@@ -447,11 +507,31 @@ def get_my_courses(db: Session, user_id: int):
 
 def add_friend(db: Session, user_id: int, friend_email: str):
     f = get_user_by_email(db, friend_email)
-    if not f or f.id == user_id: return False
+    if not f or f.id == user_id:
+        return False
+    # Check if already friend
+    existing = db.query(models.Friend).filter(models.Friend.user_id == user_id, models.Friend.friend_id == f.id).first()
+    if existing:
+        return False
+    new_f = models.Friend(user_id=user_id, friend_id=f.id)
+    db.add(new_f)
+    db.commit()
     return True
 
+def remove_friend(db: Session, user_id: int, friend_id: int):
+    f = db.query(models.Friend).filter(models.Friend.user_id == user_id, models.Friend.friend_id == friend_id).first()
+    if f:
+        db.delete(f)
+        db.commit()
+        return True
+    return False
+
 def get_friends(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id != user_id).limit(5).all()
+    # Get all users where there exists a friend link from user_id to friend_id
+    friends = db.query(models.User).join(
+        models.Friend, models.Friend.friend_id == models.User.id
+    ).filter(models.Friend.user_id == user_id).all()
+    return friends
 
 def get_leaderboard(db: Session, limit: int = 10):
     # ✅ FIX: ใช้ models.Progress ให้ถูกต้อง (แก้ Error 500 Leaderboard)
@@ -560,10 +640,10 @@ def update_settings(db: Session, p: schemas.SettingsUpdate):
     
     return get_all_settings(db)
 
-def get_all_reports(db, status=None): 
+def get_all_reports(db, status=None, skip: int = 0, limit: int = 100): 
     q = db.query(models.Report).order_by(models.Report.created_at.desc())
     if status: q = q.filter(models.Report.status == status)
-    return q.all()
+    return q.offset(skip).limit(limit).all()
 def create_report(db, uid, p): 
     r = models.Report(user_id=uid, target_type=p.target_type, target_id=p.target_id, reason=p.reason); db.add(r); db.commit(); return r
 def update_report_status(db, rid, st): 

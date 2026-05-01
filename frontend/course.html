@@ -32,7 +32,9 @@
   </div>
 
   <script>
-    const API = "https://edtech-api-zigm.onrender.com"; 
+    const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1") 
+    ? "http://127.0.0.1:8000" 
+    : "https://edtech-api-zigm.onrender.com"; // <-- ใส่ลิงก์ Render ของคุณตรงนี้ 
     let allCourses = [];
 
     async function loadCourses(){

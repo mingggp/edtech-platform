@@ -11,3 +11,9 @@ qrcode
 Pillow
 psycopg2-binary
 email-validator
+alembic
+fastapi-cache2[redis]
+slowapi
+pytest
+pytest-asyncio
+httpx
