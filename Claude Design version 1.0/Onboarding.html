@@ -339,6 +339,20 @@ function fireConfetti(rect) {
   }
   setTimeout(() => c.remove(), 1700);
 }
+/* "ข้ามไปก่อน" — ต้องบันทึกไว้ด้วย ไม่งั้นล็อกอินรอบหน้าจะถูกส่งกลับมาที่นี่อีก
+   (Login Signup.html เช็ค localStorage 'ming-onboard' ว่ามีค่าไหม) */
+(function () {
+  var skip = document.getElementById('skip-all');
+  if (!skip) return;
+  skip.addEventListener('click', function () {
+    try {
+      if (!localStorage.getItem('ming-onboard')) {
+        localStorage.setItem('ming-onboard', JSON.stringify({ onboarded: false, skipped: true }));
+      }
+    } catch (e) {}
+  });
+})();
+
 function finish() {
   try {
     localStorage.setItem('ming-onboard', JSON.stringify({ onboarded: true, goal_exams: state.goal_exams, goal_scores: state.goal_scores, goal_target: state.goal_target, daily_goal_min: state.daily_goal_min, streak_reminder: state.streak_reminder }));

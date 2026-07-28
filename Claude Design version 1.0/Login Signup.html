@@ -150,8 +150,8 @@
       <div class="success-ov" id="signup-success">
         <div class="success-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         <h2>ยินดีต้อนรับสู่ Mingsmileyface! 🎉</h2>
-        <p>สร้างบัญชีสำเร็จแล้ว — กำลังพาคุณไปที่หน้าหลัก</p>
-        <div class="redir"><span class="spin"></span> กำลังเข้าสู่ระบบ...</div>
+        <p>สร้างบัญชีสำเร็จแล้ว — ตั้งค่าเป้าหมายอีกนิดเดียว ใช้เวลาไม่ถึง 1 นาที</p>
+        <div class="redir"><span class="spin"></span> กำลังพาไปตั้งค่า...</div>
       </div>
 
       <div class="steps-ind">
@@ -442,7 +442,11 @@ document.getElementById('login-form').addEventListener('submit', e => {
   const btn = document.getElementById('login-submit');
   document.getElementById('login-err').classList.remove('show');
   btn.classList.add('loading');
-  setTimeout(() => { window.location.href = 'Dashboard.html'; }, 1400);
+  /* คนที่ยังไม่เคยผ่านหน้าตั้งค่า (สมัครไว้แต่ปิดหนีกลางทาง) ให้ไปตั้งค่าก่อน
+     ส่วนคนที่เคยตั้งหรือกด "ข้ามไปก่อน" แล้ว เข้าหน้าหลักได้เลย */
+  let onboarded = false;
+  try { onboarded = !!localStorage.getItem('ming-onboard'); } catch (e) { onboarded = true; }
+  setTimeout(() => { window.location.href = onboarded ? 'Dashboard.html' : 'Onboarding.html'; }, 1400);
 });
 ['login-email','login-pass'].forEach(id => document.getElementById(id).addEventListener('input', e => e.target.closest('.field').classList.remove('invalid')));
 
@@ -514,7 +518,9 @@ document.getElementById('signup-form').addEventListener('submit', e => {
     const ov = document.getElementById('signup-success');
     ov.classList.add('show');
     setTimeout(() => fireConfetti(ov.getBoundingClientRect()), 250);
-    setTimeout(() => { window.location.href = 'Dashboard.html'; }, 2400);
+    /* บัญชีใหม่ต้องผ่านหน้าตั้งค่าเป้าหมายก่อนเสมอ (Onboarding เขียน
+       localStorage 'ming-onboard' แล้วค่อยส่งต่อไป Dashboard เอง) */
+    setTimeout(() => { window.location.href = 'Onboarding.html'; }, 2400);
   }, 1300);
 });
 
