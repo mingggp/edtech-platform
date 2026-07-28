@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, asc, desc, func
 from typing import Optional, Tuple, List, Dict, Any
-from . import models, schemas 
+from . import models, schemas
 import json
+import uuid
 from datetime import datetime, timedelta, date
 
 # ==========================================
@@ -333,13 +334,61 @@ def delete_question(db: Session, qid: int):
     return False
 
 def submit_exam(db: Session, user_id: int, exam_id: int, p: schemas.ExamSubmit):
-    # Simple Mock Submit - In real app, calculate score here
-    return models.ExamResult(
-        user_id=user_id, exam_id=exam_id, score=0, total_score=0, submitted_at=datetime.utcnow()
+    """ตรวจคำตอบ + บันทึกผล. คะแนน 1 ข้อต่อคำถาม.
+
+    answers shape (จาก client): {"<question_id>": <choice_id>}
+    """
+    exam = get_exam(db, exam_id)
+    if not exam:
+        return None
+
+    score = 0
+    total = len(exam.questions)
+    answers_norm: dict[str, int] = {}
+
+    for q in exam.questions:
+        chosen_raw = p.answers.get(str(q.id)) or p.answers.get(q.id)
+        if chosen_raw is None:
+            continue
+        try:
+            chosen_id = int(chosen_raw)
+        except (TypeError, ValueError):
+            continue
+        answers_norm[str(q.id)] = chosen_id
+        # หาว่า choice นี้ถูกหรือไม่
+        choice = next((c for c in q.choices if c.id == chosen_id), None)
+        if choice and choice.is_correct:
+            score += 1
+
+    result = models.ExamResult(
+        user_id=user_id,
+        exam_id=exam_id,
+        score=score,
+        total_score=total,
+        answers=json.dumps(answers_norm),
+        submitted_at=datetime.utcnow(),
     )
+    db.add(result)
+    db.commit()
+    db.refresh(result)
+    return result
+
 
 def get_my_exam_results(db: Session, user_id: int):
-    return db.query(models.ExamResult).filter(models.ExamResult.user_id == user_id).all()
+    return (
+        db.query(models.ExamResult)
+        .filter(models.ExamResult.user_id == user_id)
+        .order_by(models.ExamResult.submitted_at.desc())
+        .all()
+    )
+
+
+def get_exam_result(db: Session, result_id: int, user_id: int | None = None):
+    """ดึงผลสอบ. ถ้าใส่ user_id ด้วย จะกรองให้เฉพาะของ user นั้น (กัน id-guess)."""
+    q = db.query(models.ExamResult).filter(models.ExamResult.id == result_id)
+    if user_id is not None:
+        q = q.filter(models.ExamResult.user_id == user_id)
+    return q.first()
 
 # ==========================================
 #  COUPONS
@@ -397,15 +446,16 @@ def create_comment(db: Session, user_id: int, lesson_id: int, text: str):
     c = models.Comment(user_id=user_id, lesson_id=lesson_id, text=text, created_at=datetime.utcnow())
     db.add(c)
     db.commit()
-    db.refresh(c) # Refresh to get ID and CreatedAt
+    # Re-fetch with user relationship loaded so the response includes profile data
+    c = db.query(models.Comment).options(joinedload(models.Comment.user)).filter(models.Comment.id == c.id).first()
     return c
 
 def set_lesson_rating(db: Session, user_id: int, lesson_id: int, score: int):
-    r = db.query(models.LessonRating).filter_by(user_id=user_id, lesson_id=lesson_id).first()
+    r = db.query(models.Rating).filter_by(user_id=user_id, lesson_id=lesson_id).first()
     if r:
         r.score = score
     else:
-        r = models.LessonRating(user_id=user_id, lesson_id=lesson_id, score=score)
+        r = models.Rating(user_id=user_id, lesson_id=lesson_id, score=score)
         db.add(r)
     db.commit()
     db.refresh(r)
@@ -464,35 +514,133 @@ def list_audit(db: Session, action, actor_id, target_id, d1, d2, page, page_size
     return items, total
 
 def get_payment_stats(db: Session):
-    total_rev = db.query(func.sum(models.Payment.amount)).filter(models.Payment.status == "approved").scalar() or 0.0
-    pending = db.query(models.Payment).filter(models.Payment.status == "pending").count()
-    top = db.query(models.Course.title, func.sum(models.Payment.amount).label("total")).join(models.Payment).filter(models.Payment.status == "approved").group_by(models.Course.id).order_by(desc("total")).limit(5).all()
-    recent = db.query(models.Payment).filter(models.Payment.status == "approved", models.Payment.created_at >= (datetime.utcnow() - timedelta(days=7))).all()
-    return {"total_revenue": total_rev, "pending_count": pending, "top_courses": [{"title": t, "amount": a} for t, a in top], "recent_payments": recent}
+    """สรุปยอดขาย — นับเฉพาะรายการที่เกตเวย์ยืนยันแล้ว (paid)
+
+    expired_count = QR หมดอายุก่อนจ่าย ใช้ดูว่ามีคนกดซื้อแล้วไม่จ่ายเยอะไหม
+    ไม่ใช่คิวรอแอดมินอนุมัติ — ระบบไม่มีขั้นตอนนั้น
+    """
+    total_rev = db.query(func.sum(models.Payment.amount)).filter(models.Payment.status == "paid").scalar() or 0.0
+    expired = db.query(models.Payment).filter(models.Payment.status == "expired").count()
+    top = db.query(models.Course.title, func.sum(models.Payment.amount).label("total")).join(models.Payment).filter(models.Payment.status == "paid").group_by(models.Course.id).order_by(desc("total")).limit(5).all()
+    recent = db.query(models.Payment).filter(models.Payment.status == "paid", models.Payment.created_at >= (datetime.utcnow() - timedelta(days=7))).all()
+    return {"total_revenue": total_rev, "expired_count": expired, "top_courses": [{"title": t, "amount": a} for t, a in top], "recent_payments": recent}
 
 def get_payments(db: Session, status: str = None, skip: int = 0, limit: int = 100):
-    q = db.query(models.Payment).order_by(models.Payment.created_at.desc())
-    if status: q = q.filter(models.Payment.status == status)
-    return q.offset(skip).limit(limit).all()
+    """List payments. Eager-load user + course so PaymentRead can include join fields."""
+    from sqlalchemy.orm import joinedload
+    q = (
+        db.query(models.Payment)
+        .options(
+            joinedload(models.Payment.user),
+            # course relationship อาจไม่มี (ดู models.Payment) — query แยก
+        )
+        .order_by(models.Payment.created_at.desc())
+    )
+    if status:
+        q = q.filter(models.Payment.status == status)
+    else:
+        # ไม่โชว์ awaiting โดยปริยาย — เป็นสถานะชั่วคราวระหว่างรอผู้ใช้สแกน
+        q = q.filter(models.Payment.status.in_(["paid", "expired"]))
+    payments = q.offset(skip).limit(limit).all()
 
-def approve_payment(db: Session, payment_id: int, action: str):
-    p = db.query(models.Payment).get(payment_id)
-    if not p: return None
-    if action == "approve":
-        p.status = "approved"
-        create_enrollment(db, p.user_id, p.course_id)
-    elif action == "reject":
-        p.status = "rejected"
-    db.commit()
-    db.refresh(p)
-    return p
+    # populate join fields ก่อน serialize (Pydantic จะอ่านจาก attribute)
+    course_ids = {p.course_id for p in payments}
+    courses = {
+        c.id: c
+        for c in db.query(models.Course).filter(models.Course.id.in_(course_ids)).all()
+    } if course_ids else {}
+    for p in payments:
+        u = p.user
+        c = courses.get(p.course_id)
+        # set as transient attrs — Pydantic with from_attributes จะอ่านได้
+        p.user_email = u.email if u else None
+        p.user_full_name = u.full_name if u else None
+        p.course_title = c.title if c else None
+    return payments
 
 def get_my_payments(db: Session, user_id: int):
     return db.query(models.Payment).filter(models.Payment.user_id == user_id).order_by(models.Payment.created_at.desc()).all()
 
-def create_payment(db: Session, user_id: int, course_id: int, slip_url: str, amount: float, status: str = "pending"):
-    p = models.Payment(user_id=user_id, course_id=course_id, slip_url=slip_url, amount=amount, status=status)
-    db.add(p); db.commit(); db.refresh(p); return p
+
+# ---------------------------------------------------------------------------
+# การชำระเงิน — ยืนยันอัตโนมัติผ่าน webhook ไม่มีขั้นตอนแอดมินอนุมัติ
+# ---------------------------------------------------------------------------
+
+QR_TTL_MINUTES = 15          # ตรงกับหน้า Checkout ที่นับถอยหลัง 15:00
+
+
+def price_after_coupon(db: Session, price: float, coupon_code: str | None):
+    """คืน (ราคาสุทธิ, coupon object ที่ใช้ได้จริง) — ยังไม่ตัดโควตาคูปอง"""
+    if not coupon_code:
+        return price, None
+    coupon = db.query(models.Coupon).filter(models.Coupon.code == coupon_code.upper()).first()
+    if not coupon:
+        return price, None
+    if coupon.expires_at and coupon.expires_at < datetime.utcnow():
+        return price, None
+    if coupon.max_usage > 0 and coupon.current_usage >= coupon.max_usage:
+        return price, None
+    discount = (price * coupon.discount_value / 100) if coupon.discount_type == "percent" else coupon.discount_value
+    return max(0.0, price - discount), coupon
+
+
+def create_payment_intent(db: Session, user_id: int, course_id: int, amount: float,
+                          coupon_code: str | None = None, ttl_minutes: int = QR_TTL_MINUTES):
+    """สร้างรายการรอชำระ + QR reference ให้ผู้ใช้สแกน"""
+    ref = f"MSF-{user_id}-{course_id}-{uuid.uuid4().hex[:12].upper()}"
+    p = models.Payment(
+        user_id=user_id,
+        course_id=course_id,
+        amount=amount,
+        status="awaiting",
+        provider="promptpay",
+        provider_ref=ref,
+        coupon_code=coupon_code.upper() if coupon_code else None,
+        expires_at=datetime.utcnow() + timedelta(minutes=ttl_minutes),
+    )
+    db.add(p); db.commit(); db.refresh(p)
+    return p
+
+
+def get_payment_by_ref(db: Session, ref: str):
+    return db.query(models.Payment).filter(models.Payment.provider_ref == ref).first()
+
+
+def expire_stale_payments(db: Session):
+    """ปิดรายการที่ QR หมดอายุแล้วแต่ยังค้างสถานะ awaiting"""
+    n = (
+        db.query(models.Payment)
+        .filter(models.Payment.status == "awaiting", models.Payment.expires_at < datetime.utcnow())
+        .update({models.Payment.status: "expired"}, synchronize_session=False)
+    )
+    if n:
+        db.commit()
+    return n
+
+
+def mark_payment_paid(db: Session, ref: str, charge_id: str | None = None, amount: float | None = None):
+    """เกตเวย์ยืนยันว่าจ่ายแล้ว -> เปิดคอร์สให้ทันที
+
+    เรียกซ้ำด้วย ref เดิมได้ (idempotent) เพราะเกตเวย์อาจยิง webhook ซ้ำ
+    """
+    p = get_payment_by_ref(db, ref)
+    if not p:
+        return None
+    if p.status == "paid":
+        return p                                   # ยิงซ้ำ — ไม่ทำอะไรเพิ่ม
+    if amount is not None and abs(float(amount) - float(p.amount)) > 0.01:
+        return False                               # ยอดไม่ตรง ไม่ยอมรับ
+    p.status = "paid"
+    p.paid_at = datetime.utcnow()
+    if charge_id:
+        p.charge_id = charge_id
+    if p.coupon_code:
+        coupon = db.query(models.Coupon).filter(models.Coupon.code == p.coupon_code).first()
+        if coupon:
+            coupon.current_usage += 1
+    create_enrollment(db, p.user_id, p.course_id)
+    db.commit(); db.refresh(p)
+    return p
 
 def get_enrollment(db: Session, user_id: int, course_id: int):
     return db.query(models.Enrollment).filter_by(user_id=user_id, course_id=course_id).first()
@@ -644,27 +792,25 @@ def get_all_reports(db, status=None, skip: int = 0, limit: int = 100):
     q = db.query(models.Report).order_by(models.Report.created_at.desc())
     if status: q = q.filter(models.Report.status == status)
     return q.offset(skip).limit(limit).all()
-def create_report(db, uid, p): 
-    r = models.Report(user_id=uid, target_type=p.target_type, target_id=p.target_id, reason=p.reason); db.add(r); db.commit(); return r
-def update_report_status(db, rid, st): 
+
+def create_report(db, uid, p):
+    r = models.Report(user_id=uid, target_type=p.target_type, target_id=p.target_id, reason=p.reason)
+    db.add(r); db.commit(); return r
+
+def update_report_status(db, rid, st):
     r = db.query(models.Report).get(rid)
-    if r: r.status = st; db.commit(); return r
+    if r:
+        r.status = st; db.commit(); return r
     return None
 
 def get_public_profile(db: Session, user_id: int):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user: return None
-    
-    # นับจำนวนคอร์สที่ลง
     course_count = db.query(models.Enrollment).filter(models.Enrollment.user_id == user_id).count()
-    
-    # นับจำนวนบทเรียนที่เรียนจบ
     completed_count = db.query(models.Progress).filter(
-        models.Progress.user_id == user_id, 
+        models.Progress.user_id == user_id,
         models.Progress.completed == True
     ).count()
-    
-    # สร้าง Dict เพื่อส่งกลับ (ต้องตรงกับ schemas.UserPublicProfile)
     return {
         "id": user.id,
         "full_name": user.full_name,
@@ -675,5 +821,5 @@ def get_public_profile(db: Session, user_id: int):
         "total_minutes": user.total_minutes,
         "showcase_badges": user.showcase_badges,
         "total_courses": course_count,
-        "total_completed": completed_count
+        "total_completed": completed_count,
     }

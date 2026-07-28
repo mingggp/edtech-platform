@@ -1,15 +1,18 @@
 from typing import List, Optional
-import time, io
-from fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile, Body
+import time, io, os, hmac
+from fastapi import APIRouter, Depends, HTTPException, Body, Header
 from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.orm import Session
 from datetime import datetime
 
 from ..database import get_db
 from .. import schemas, crud, models
-from ..auth import get_current_user, get_current_active_user, require_admin
+from ..auth import get_current_user, require_admin
 from ..promptpay import make_qr_image
 from ..config import UPLOAD_DIR, MY_PROMPTPAY_ID
+
+# secret ที่ใช้ตรวจ webhook จากเกตเวย์ — ถ้าไม่ตั้ง endpoint จะปฏิเสธทุก request
+PAYMENT_WEBHOOK_SECRET = os.getenv("PAYMENT_WEBHOOK_SECRET", "")
 
 router = APIRouter(prefix="", tags=["payments"])
 
@@ -21,6 +24,22 @@ def enroll(course_id: int, db: Session = Depends(get_db), u=Depends(get_current_
 @router.get("/users/me/courses", response_model=List[schemas.EnrollmentRead])
 def my_c(db: Session = Depends(get_db), u=Depends(get_current_user)):
     return crud.get_my_courses(db, u.id)
+
+@router.get("/users/me/payments", response_model=List[schemas.PaymentRead])
+def my_payments(db: Session = Depends(get_db), u=Depends(get_current_user)):
+    """ประวัติการชำระเงินของผู้ใช้ปัจจุบัน — รวมข้อมูล course title."""
+    payments = crud.get_my_payments(db, u.id)
+    course_ids = {p.course_id for p in payments}
+    courses = {
+        c.id: c
+        for c in db.query(models.Course).filter(models.Course.id.in_(course_ids)).all()
+    } if course_ids else {}
+    for p in payments:
+        c = courses.get(p.course_id)
+        p.user_email = u.email
+        p.user_full_name = u.full_name
+        p.course_title = c.title if c else None
+    return payments
 
 @router.post("/coupons/validate")
 def validate_coupon(code: str = Body(..., embed=True), db: Session = Depends(get_db)):
@@ -43,57 +62,80 @@ def generate_qr(amount: float):
     buf.seek(0)
     return StreamingResponse(buf, media_type="image/png")
 
-@router.post("/payments/upload", response_model=schemas.PaymentRead)
-async def up_slip(
-    course_id: int = Form(...),
-    file: UploadFile = File(...),
-    coupon_code: Optional[str] = Form(None),
+# ---------------------------------------------------------------------------
+# Checkout — ยืนยันอัตโนมัติ ไม่มีอัปโหลดสลิป ไม่มีแอดมินอนุมัติ (ดู CLAUDE.md)
+#   1) POST /payments/checkout  -> สร้างรายการ awaiting + QR (อายุ 15 นาที)
+#   2) หน้า Checkout poll GET /payments/{ref}
+#   3) เกตเวย์ยิง POST /payments/webhook -> paid -> เปิดคอร์สทันที
+# ---------------------------------------------------------------------------
+
+@router.post("/payments/checkout", response_model=schemas.CheckoutRead)
+def start_checkout(
+    body: schemas.CheckoutCreate,
     db: Session = Depends(get_db),
-    u = Depends(get_current_user)
+    u = Depends(get_current_user),
 ):
-    c = crud.get_course(db, course_id)
+    c = crud.get_course(db, body.course_id)
     if not c:
         raise HTTPException(404, "Course not found")
-    if crud.get_enrollment(db, u.id, course_id):
+    if crud.get_enrollment(db, u.id, body.course_id):
         raise HTTPException(400, "คุณลงทะเบียนคอร์สนี้ไปแล้ว")
-    
-    final_price = c.price
-    if coupon_code:
-        coupon = db.query(models.Coupon).filter(models.Coupon.code == coupon_code.upper()).first()
-        if coupon:
-            valid = True
-            if coupon.expires_at and coupon.expires_at < datetime.utcnow(): valid = False
-            if coupon.max_usage > 0 and coupon.current_usage >= coupon.max_usage: valid = False
-            
-            if valid:
-                discount = (c.price * coupon.discount_value / 100) if coupon.discount_type == "percent" else coupon.discount_value
-                final_price = max(0, c.price - discount)
-                coupon.current_usage += 1
-                db.commit()
 
-    ext = file.filename.split(".")[-1]
-    fname = f"slip_{u.id}_{int(time.time())}.{ext}"
-    with open(UPLOAD_DIR / fname, "wb") as f:
-        f.write(await file.read())
-    
-    return crud.create_payment(db, u.id, course_id, f"/static/uploads/{fname}", final_price)
+    final_price, _coupon = crud.price_after_coupon(db, c.price, body.coupon_code)
+    p = crud.create_payment_intent(db, u.id, body.course_id, final_price, body.coupon_code)
+    return schemas.CheckoutRead(
+        ref=p.provider_ref,
+        amount=p.amount,
+        status=p.status,
+        expires_at=p.expires_at,
+        qr_url=f"/payments/qr?amount={p.amount}&ref={p.provider_ref}",
+    )
 
-# Admin Coupons that were mixed into /coupons
-@router.get("/coupons", response_model=List[schemas.CouponOut])
-def read_coupons(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
-    return crud.get_coupons(db, skip=skip, limit=limit)
 
-@router.post("/coupons", response_model=schemas.CouponOut)
-def create_new_coupon(coupon: schemas.CouponCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
-    if current_user.role != "admin": raise HTTPException(status_code=403, detail="Not authorized")
-    return crud.create_coupon(db=db, coupon=coupon)
+@router.get("/payments/{ref}", response_model=schemas.PaymentRead)
+def payment_status(ref: str, db: Session = Depends(get_db), u = Depends(get_current_user)):
+    """หน้า Checkout เรียกซ้ำๆ เพื่อดูว่าจ่ายสำเร็จหรือ QR หมดอายุแล้ว"""
+    crud.expire_stale_payments(db)
+    p = crud.get_payment_by_ref(db, ref)
+    if not p or p.user_id != u.id:
+        raise HTTPException(404, "ไม่พบรายการชำระเงิน")
+    return p
 
-@router.delete("/coupons/{coupon_id}")
-def delete_coupon(coupon_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
-    if current_user.role != "admin": raise HTTPException(status_code=403, detail="Not authorized")
-    crud.delete_coupon(db, coupon_id)
-    return {"status": "success"}
 
+@router.post("/payments/webhook")
+def payment_webhook(
+    body: schemas.PaymentWebhook,
+    x_signature: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
+):
+    """เกตเวย์ (Opn / 2C2P / GB Prime Pay) เรียกเข้ามาเมื่อผลชำระเปลี่ยน
+
+    ยังไม่ได้ผูกกับเกตเวย์จริง — ตรวจ signature ด้วย secret ที่ตั้งไว้ใน env
+    ถ้ายังไม่ตั้ง PAYMENT_WEBHOOK_SECRET จะปฏิเสธทุก request เพื่อไม่ให้
+    เผลอเปิดคอร์สฟรีบน production
+    """
+    if not PAYMENT_WEBHOOK_SECRET:
+        raise HTTPException(503, "ยังไม่ได้ตั้งค่า PAYMENT_WEBHOOK_SECRET")
+    if not x_signature or not hmac.compare_digest(x_signature, PAYMENT_WEBHOOK_SECRET):
+        raise HTTPException(401, "signature ไม่ถูกต้อง")
+
+    if body.status == "paid":
+        r = crud.mark_payment_paid(db, body.ref, body.charge_id, body.amount)
+        if r is None:
+            raise HTTPException(404, "ไม่พบรายการชำระเงิน")
+        if r is False:
+            raise HTTPException(400, "ยอดเงินไม่ตรงกับรายการ")
+        return {"status": "ok", "payment_status": r.status}
+
+    p = crud.get_payment_by_ref(db, body.ref)
+    if not p:
+        raise HTTPException(404, "ไม่พบรายการชำระเงิน")
+    if p.status == "awaiting":
+        p.status = "expired"
+        db.commit()
+    return {"status": "ok", "payment_status": p.status}
+
+# Coupons admin endpoints (เก่าใช้ /coupons แบบไม่มี gate ที่ถูก — ลบทิ้ง ใช้ /admin/coupons แทน)
 @router.post("/admin/coupons", response_model=schemas.CouponRead)
 def create_coupon_admin(p: schemas.CouponCreate, db: Session = Depends(get_db), _=Depends(require_admin)):
     c = crud.create_coupon(db, p)

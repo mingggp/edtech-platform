@@ -9,6 +9,11 @@ from app.main import app
 from app.database import Base, get_db
 from app import crud
 from app.auth import get_password_hash
+from app.limiter import limiter
+
+# ปิด rate limit ตอนเทสต์ — ไม่งั้นเทสต์ที่ยิงหลาย request ติดกันจะได้ 429
+# แทนที่จะได้ผลลัพธ์จริง (เคยทำให้ test_password.py ตก 7 เคส)
+limiter.enabled = False
 
 # Use SQLite in-memory for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"

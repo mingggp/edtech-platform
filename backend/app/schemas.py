@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, model_validator
 from typing import List, Optional, Any, Dict
 from datetime import datetime
 
@@ -68,15 +68,41 @@ class AdminUserListResponse(BaseModel):
     meta: dict
 
 # --- Course ---
+# 4 วิชาที่สอน — ต้องตรงกับ subjects.js ฝั่งหน้าเว็บ ห้ามเพิ่ม (ดู CLAUDE.md)
+SUBJECTS = ("math", "phys", "tpat3", "tgat2")
+# ระดับ — ใช้ได้เฉพาะ math / phys
+LEVELS = ("m4", "m5", "m6", "alevel")
+# วิชาที่มีระดับย่อยได้
+LEVELABLE = ("math", "phys")
+
+
+def _check_subject_level(subject, level):
+    if subject is not None and subject not in SUBJECTS:
+        raise ValueError(f"subject ต้องเป็นหนึ่งใน {SUBJECTS}")
+    if level is not None:
+        if level not in LEVELS:
+            raise ValueError(f"level ต้องเป็นหนึ่งใน {LEVELS}")
+        if subject is not None and subject not in LEVELABLE:
+            raise ValueError(f"{subject} ไม่มีระดับย่อย (ใช้ได้เฉพาะ {LEVELABLE})")
+
+
 class CourseBase(BaseModel):
     title: str
     description: str
     price: float
+    price_old: Optional[float] = None
+    subject: Optional[str] = None          # math | phys | tpat3 | tgat2
+    level: Optional[str] = None            # m4 | m5 | m6 | alevel (เฉพาะ math/phys)
     category: str
     thumbnail: Optional[str] = None
     target_audience: Optional[str] = None
     highlights: Optional[str] = None
     is_active: bool = False
+
+    @model_validator(mode="after")
+    def _validate(self):
+        _check_subject_level(self.subject, self.level)
+        return self
 
 class CourseCreate(CourseBase):
     pass
@@ -85,11 +111,19 @@ class CourseUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
+    price_old: Optional[float] = None
+    subject: Optional[str] = None
+    level: Optional[str] = None
     category: Optional[str] = None
     thumbnail: Optional[str] = None
     target_audience: Optional[str] = None
     highlights: Optional[str] = None
     is_active: Optional[bool] = None
+
+    @model_validator(mode="after")
+    def _validate(self):
+        _check_subject_level(self.subject, self.level)
+        return self
 
 class CourseRead(CourseBase):
     id: int
@@ -211,19 +245,42 @@ class CouponRead(CouponBase):
 class CouponOut(CouponRead): 
     pass
 
-class PaymentCreate(BaseModel):
+class CheckoutCreate(BaseModel):
+    """ผู้ใช้กดซื้อคอร์ส -> สร้าง QR พร้อมเพย์ให้สแกน"""
     course_id: int
+    coupon_code: Optional[str] = None
+
+class CheckoutRead(BaseModel):
+    """ข้อมูลที่หน้า Checkout ต้องใช้เพื่อโชว์ QR + นับถอยหลัง"""
+    ref: str
     amount: float
-    slip_url: str
+    status: str
+    expires_at: datetime
+    qr_url: str
+
+class PaymentWebhook(BaseModel):
+    """payload ที่เกตเวย์ยิงกลับมาเมื่อผู้ใช้จ่ายสำเร็จ"""
+    ref: str
+    status: str                       # 'paid' | 'expired' | 'failed'
+    charge_id: Optional[str] = None
+    amount: Optional[float] = None
 
 class PaymentRead(BaseModel):
     id: int
     user_id: int
     course_id: int
     amount: float
-    status: str
+    status: str                       # awaiting | paid | expired
     created_at: datetime
-    slip_url: str
+    expires_at: Optional[datetime] = None
+    paid_at: Optional[datetime] = None
+    provider: Optional[str] = None
+    provider_ref: Optional[str] = None
+    coupon_code: Optional[str] = None
+    # join fields — populated by crud (Optional เพื่อ backward compat)
+    user_email: Optional[str] = None
+    user_full_name: Optional[str] = None
+    course_title: Optional[str] = None
     class Config: from_attributes = True
 
 # --- Reports ---
@@ -303,6 +360,19 @@ class ExamRead(ExamBase):
 class ExamSubmit(BaseModel):
     answers: Dict[str, Any]
 
+
+class ExamResultRead(BaseModel):
+    id: int
+    user_id: int
+    exam_id: int
+    score: int
+    total_score: int
+    submitted_at: datetime
+    # join + parsed
+    exam_title: Optional[str] = None
+    answers_dict: Optional[Dict[str, int]] = None
+    class Config: from_attributes = True
+
 # --- Other Features ---
 class LeaderboardItem(BaseModel):
     id: int
@@ -320,6 +390,7 @@ class BadgeOut(BaseModel):
     is_unlocked: bool
     is_showcased: bool
 
+
 class UserPublicProfile(BaseModel):
     id: int
     full_name: Optional[str] = None
@@ -327,9 +398,7 @@ class UserPublicProfile(BaseModel):
     grade_level: Optional[str] = None
     dek_code: Optional[str] = None
     avatar_url: Optional[str] = None
-    total_minutes: int
+    total_minutes: int = 0
     showcase_badges: Optional[str] = None
-    
-    # สถิติเพิ่มเติมที่คำนวณมา
-    total_courses: int
-    total_completed: int
+    total_courses: int = 0
+    total_completed: int = 0

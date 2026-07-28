@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from ..database import get_db
 from .. import schemas, crud, models
 from ..models import User
-from ..auth import require_admin, get_current_active_user, get_current_user
+from ..auth import require_admin, get_current_user
 from ..schemas import SettingsUpdate
 from ..config import UPLOAD_DIR, _bkk_text, _bkk_iso
 
@@ -18,12 +18,10 @@ router = APIRouter(prefix="", tags=["admin-stats-exams"])
 def cr_exam(p: schemas.ExamCreate, db: Session = Depends(get_db), _=Depends(require_admin)):
     return crud.create_exam(db, p)
 
-@router.get("/exams", response_model=List[schemas.ExamRead])
-def l_exam(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.list_exams(db, skip=skip, limit=limit)
-
-@router.get("/exams/{id}", response_model=schemas.ExamRead)
-def g_exam(id: int, db: Session = Depends(get_db)):
+# /exams (GET list, GET by id) ย้ายไป routers/exams.py — สำหรับ user-facing
+# admin จะใช้ /admin/exams/{id} ต่างหาก (ดูทั้ง choice + is_correct ได้)
+@router.get("/admin/exams/{id}", response_model=schemas.ExamRead)
+def g_exam_admin(id: int, db: Session = Depends(get_db), _=Depends(require_admin)):
     e = crud.get_exam(db, id)
     if not e:
         raise HTTPException(404)
@@ -41,11 +39,10 @@ def del_q(id: int, db: Session = Depends(get_db), _=Depends(require_admin)):
 
 @router.post("/upload/image")
 async def upload_generic_image(file: UploadFile = File(...), db: Session = Depends(get_db), _=Depends(require_admin)):
-    ext = file.filename.split(".")[-1]
-    fname = f"img_{int(time.time())}.{ext}"
-    with open(UPLOAD_DIR / fname, "wb") as f:
-        f.write(await file.read())
-    return {"url": f"/static/uploads/{fname}"}
+    from ..uploads import read_validated_image, save_upload
+    data, ext = await read_validated_image(file)
+    url = save_upload(data, ext, prefix="img")
+    return {"url": url}
 
 @router.get("/admin/users", response_model=schemas.AdminUserListResponse)
 def adm_list_users(
@@ -80,12 +77,11 @@ def adm_metrics(db: Session = Depends(get_db), _=Depends(require_admin)):
     return {"total_users": t, "admins": a, "active_users": o, "new_users_today": n}
 
 @router.get("/admin/payment-stats")
-def pay_stats(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
-    if current_user.role != "admin": raise HTTPException(status_code=403, detail="Not authorized")
+def pay_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
     today = datetime.utcnow().date()
     start_date = today - timedelta(days=6)
     pays = db.query(models.Payment).filter(
-        models.Payment.status == "approved",
+        models.Payment.status == "paid",
         models.Payment.created_at >= start_date
     ).all()
     d = defaultdict(float)
@@ -104,11 +100,14 @@ def pay_stats(db: Session = Depends(get_db), current_user: models.User = Depends
 
 @router.get("/admin/payments", response_model=List[schemas.PaymentRead])
 def l_pays(status: str | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db), _=Depends(require_admin)):
-    return crud.get_payments(db, status, skip=skip, limit=limit)
+    """ดูรายการชำระเงิน — อ่านอย่างเดียว
 
-@router.post("/admin/payments/{id}/{act}")
-def proc_pay(id: int, act: str, db: Session = Depends(get_db), _=Depends(require_admin)):
-    return {"status": "ok", "new_status": crud.approve_payment(db, id, act).status}
+    แอดมินอนุมัติ/ปฏิเสธเองไม่ได้ เกตเวย์ตัดสินผลทั้งหมด (ดู CLAUDE.md)
+    ถ้าไม่ระบุ status จะแสดงเฉพาะ paid + expired เพราะ awaiting เป็นสถานะ
+    ชั่วคราวระหว่างรอผู้ใช้สแกน ไม่ใช่คิวให้ตรวจ
+    """
+    crud.expire_stale_payments(db)
+    return crud.get_payments(db, status, skip=skip, limit=limit)
 
 @router.get("/settings")
 def get_set(db: Session = Depends(get_db)):
@@ -120,13 +119,9 @@ def upd_set(p: SettingsUpdate, db: Session = Depends(get_db), _=Depends(require_
 
 @router.post("/admin/settings/banner-image")
 async def upload_banner_image(file: UploadFile = File(...), db: Session = Depends(get_db), _=Depends(require_admin)):
-    if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
-        raise HTTPException(400, "Image only")
-    ext = file.filename.split(".")[-1]
-    fname = f"banner_{int(time.time())}.{ext}"
-    with open(UPLOAD_DIR / fname, "wb") as f:
-        f.write(await file.read())
-    url = f"/static/uploads/{fname}"
+    from ..uploads import read_validated_image, save_upload
+    data, ext = await read_validated_image(file)
+    url = save_upload(data, ext, prefix="banner")
     curr = crud.get_setting(db, "banner_images")
     imgs = json.loads(curr) if curr else []
     imgs.append(url)
@@ -180,6 +175,6 @@ def adm_audit(
             created_at=x.created_at,
             created_at_bkk=_bkk_text(x.created_at),
             created_at_iso_bkk=_bkk_iso(x.created_at),
-            diff=diffs
+            diff=diffs,
         ))
     return {"items": items, "meta": {"page": page, "page_size": page_size, "total": t}}

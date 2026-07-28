@@ -1,72 +1,108 @@
+"""Authentication and authorization utilities.
+
+JWT (HS256) for access and refresh tokens.
+Password hashed with pbkdf2_sha256 (passlib).
+
+Dependencies:
+    get_current_user        -> get user from JWT (raises 401 if invalid)
+    get_current_active_user -> wrapper for checking is_active in the future
+    require_admin           -> checks role == "admin" (raises 403)
+"""
 from datetime import datetime, timedelta, timezone
-from jose import jwt, JWTError
-from passlib.context import CryptContext
+from typing import Optional
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-import os
 
-from .database import get_db
 from . import crud, models
+from .config import settings
+from .database import get_db
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
-REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
+# ---------- Password ---------- #
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
+
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
-    to_encode = {"sub": subject, "iat": datetime.now(tz=timezone.utc)}
-    expire = datetime.now(tz=timezone.utc) + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
 
-def create_refresh_token(subject: str, expires_delta: timedelta | None = None) -> str:
-    to_encode = {"sub": subject, "type": "refresh", "iat": datetime.now(tz=timezone.utc)}
-    expire = datetime.now(tz=timezone.utc) + (expires_delta or timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS))
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+# ---------- Token ---------- #
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)) -> models.User:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+def _encode_token(payload: dict, expires_delta: timedelta) -> str:
+    now = datetime.now(tz=timezone.utc)
+    to_encode = {**payload, "iat": now, "exp": now + expires_delta}
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def create_access_token(subject: str, expires_delta: Optional[timedelta] = None) -> str:
+    return _encode_token(
+        {"sub": subject, "type": "access"},
+        expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
+
+
+def create_refresh_token(subject: str, expires_delta: Optional[timedelta] = None) -> str:
+    return _encode_token(
+        {"sub": subject, "type": "refresh"},
+        expires_delta or timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+    )
+
+
+def decode_token(token: str) -> dict:
+    """Decode JWT, raise JWTError if invalid."""
+    return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+
+# ---------- Dependencies ---------- #
+
+_credentials_exc = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+
+def get_current_user(
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+) -> models.User:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
+        payload = decode_token(token)
+        if payload.get("type") not in (None, "access"):
+            raise _credentials_exc
+        email = payload.get("sub")
+        if not email:
+            raise _credentials_exc
     except JWTError:
-        raise credentials_exception
+        raise _credentials_exc
+
     user = crud.get_user_by_email(db, email=email)
     if user is None:
-        raise credentials_exception
+        raise _credentials_exc
     return user
 
-def require_admin(current_user: models.User = Depends(get_current_user)) -> models.User:
-    if current_user.role != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+
+def get_current_active_user(
+    current_user: models.User = Depends(get_current_user),
+) -> models.User:
     return current_user
 
-async def get_current_active_user(current_user: models.User = Depends(get_current_user)):
-    # สามารถเพิ่ม Logic เช็ค active status ได้ที่นี่ ถ้ามี field is_active
-    return current_user
 
-# ✅ แถมฟังก์ชันนี้ให้ด้วย เผื่อใช้สำหรับ Admin
-async def require_admin(current_user: models.User = Depends(get_current_user)):
+def require_admin(
+    current_user: models.User = Depends(get_current_user),
+) -> models.User:
     if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin privileges required")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required",
+        )
     return current_user

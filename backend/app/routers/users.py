@@ -1,6 +1,6 @@
 import time
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Body
 from sqlalchemy.orm import Session
 from datetime import datetime
 
@@ -30,22 +30,13 @@ def update_user_me(user_data: UserUpdateMe, current_user: User = Depends(get_cur
 
 @router.post("/me/upload-image")
 async def upload_user_image(file: UploadFile = File(...), db: Session = Depends(get_db), u=Depends(get_current_user)):
-    ext = file.filename.split(".")[-1]
-    if ext.lower() not in ["jpg", "jpeg", "png", "webp"]:
-        raise HTTPException(400, "อนุญาตเฉพาะไฟล์รูปภาพ (jpg, png, webp)")
-    
-    fname = f"user_{u.id}_{int(time.time())}.{ext}"
-    with open(UPLOAD_DIR / fname, "wb") as f:
-        f.write(await file.read())
-    
-    url = f"/static/uploads/{fname}"
-    
-    # Auto-update user profile
+    from ..uploads import read_validated_image, save_upload
+    data, ext = await read_validated_image(file)
+    url = save_upload(data, ext, prefix=f"user_{u.id}")
     u.avatar_url = url
     db.commit()
     db.refresh(u)
-    
-    return {"url": url}
+    return {"url": url, "avatar_url": url}
 
 @router.post("/me/friends")
 def add_friend_api(email: str = Form(...), db: Session = Depends(get_db), u=Depends(get_current_user)): 
@@ -80,8 +71,15 @@ def get_my_achievements(db: Session = Depends(get_db), u = Depends(get_current_u
     return get_user_badges_status(db, u)
 
 @router.post("/me/achievements/showcase")
-def update_showcase(badges: List[str] = Depends(lambda: []), db: Session = Depends(get_db), u = Depends(get_current_user)):
-    pass # implementation pending
+def update_showcase(badges: List[str] = Body(default=[]), db: Session = Depends(get_db), u = Depends(get_current_user)):
+    """อัพเดท badges ที่ผู้ใช้เลือกโชว์บนโปรไฟล์ (เก็บเป็น CSV ใน user.showcase_badges)."""
+    # validate ว่า badge id มีอยู่จริง — กันคนยัด string ไม่ valid
+    from ..badges import ALL_BADGES
+    valid_ids = {b["id"] for b in ALL_BADGES}
+    cleaned = [b for b in badges if b in valid_ids][:6]  # จำกัด 6 ตัว
+    u.showcase_badges = ",".join(cleaned)
+    db.commit()
+    return {"showcase_badges": cleaned}
 
 @router.get("/{user_id}/public", response_model=schemas.UserPublicProfile)
 def get_public_profile_api(user_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):

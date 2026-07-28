@@ -57,7 +57,16 @@ class Course(Base):
     title = Column(String, index=True)
     description = Column(String)
     price = Column(Float, default=0.0)
-    category = Column(String, default="General") 
+    price_old = Column(Float, nullable=True)          # ราคาก่อนลด (ขีดฆ่าบนการ์ด)
+
+    # วิชา — ต้องเป็น 1 ใน 4 นี้เท่านั้น ตรงกับ subjects.js ฝั่งหน้าเว็บ
+    #   math | phys | tpat3 | tgat2       (ห้ามเพิ่ม ห้ามใช้ชื่อไทยเป็นคีย์)
+    subject = Column(String, index=True, nullable=True)
+    # ระดับ — ใช้ได้เฉพาะ math / phys เท่านั้น  m4 | m5 | m6 | alevel
+    # tpat3 / tgat2 ต้องเป็น None
+    level = Column(String, index=True, nullable=True)
+
+    category = Column(String, default="General")      # legacy — ใช้ subject แทน
     thumbnail = Column(String, nullable=True)
     highlights = Column(String, nullable=True) 
     target_audience = Column(String, nullable=True)
@@ -123,16 +132,43 @@ class Progress(Base):
     lesson = relationship("Lesson", back_populates="progress")
 
 class Payment(Base):
+    """การชำระเงินผ่าน PromptPay — ยืนยันอัตโนมัติด้วย webhook จากเกตเวย์
+
+    ไม่มีการอัปโหลดสลิป และไม่มีสถานะ "รอแอดมินอนุมัติ" (ดู CLAUDE.md)
+    แอดมินดูรายการได้อย่างเดียว กดอนุมัติเองไม่ได้
+
+    สถานะ:
+      awaiting  สร้าง QR แล้ว รอผู้ใช้จ่ายภายใน expires_at (ชั่วคราว หน้า
+                แอดมินไม่แสดงโดยปริยาย — ไม่ใช่คิวให้ตรวจ)
+      paid      เกตเวย์ยืนยันแล้ว ระบบเปิดคอร์สให้อัตโนมัติ
+      expired   QR หมดอายุก่อนจ่าย ผู้ใช้สร้างใหม่ได้ทันที
+    """
     __tablename__ = "payments"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     course_id = Column(Integer, ForeignKey("courses.id"))
-    slip_url = Column(String)
     amount = Column(Float)
-    status = Column(String, default="pending")
+    status = Column(String, default="awaiting", index=True)
+
+    # เกตเวย์ (Opn / 2C2P / GB Prime Pay)
+    provider = Column(String, default="promptpay")
+    provider_ref = Column(String, unique=True, index=True)   # อ้างอิงที่เราสร้าง ส่งให้เกตเวย์
+    charge_id = Column(String, nullable=True)                # id ฝั่งเกตเวย์ (ได้ตอน webhook)
+    coupon_code = Column(String, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+    expires_at = Column(DateTime, nullable=True)             # QR ใช้ได้ถึงเมื่อไหร่
+    paid_at = Column(DateTime, nullable=True)
+
     user = relationship("User", back_populates="payments")
+
+    @property
+    def is_expired(self):
+        return (
+            self.status == "awaiting"
+            and self.expires_at is not None
+            and self.expires_at < datetime.utcnow()
+        )
 
 class Coupon(Base):
     __tablename__ = "coupons"
@@ -171,6 +207,21 @@ class Choice(Base):
     is_correct = Column(Boolean, default=False)
     question = relationship("Question", back_populates="choices")
 
+
+class ExamResult(Base):
+    """บันทึกผลการสอบของผู้ใช้แต่ละครั้ง — ใช้ดูประวัติ + leaderboard.
+
+    answers JSON shape: {"<question_id>": <choice_id>}  (string keys for JSON compat)
+    """
+    __tablename__ = "exam_results"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    exam_id = Column(Integer, ForeignKey("exams.id"), index=True)
+    score = Column(Integer, default=0)         # คะแนนที่ได้
+    total_score = Column(Integer, default=0)   # คะแนนเต็ม
+    answers = Column(String, nullable=True)    # JSON dump
+    submitted_at = Column(DateTime, default=datetime.utcnow)
+
 class Comment(Base):
     __tablename__ = "comments"
     id = Column(Integer, primary_key=True, index=True)
@@ -200,11 +251,12 @@ class Report(Base):
     status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.utcnow)
 
-# ✅ FIX: ชื่อคลาส Setting (ไม่ต้องใช้ SystemSetting)
+
 class Setting(Base):
     __tablename__ = "settings"
     key = Column(String, primary_key=True, index=True)
     value = Column(String)
+
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
