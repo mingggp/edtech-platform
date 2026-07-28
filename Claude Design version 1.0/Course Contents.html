@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="page-shell.css" />
 <style>
 /* ============== APP SHELL ============== */
 body { overflow: hidden; }
@@ -51,15 +52,13 @@ body { overflow: hidden; }
 .sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
 .sb-user .chev { color: var(--fg-3); }
 
-.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
-.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
-.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); min-width: 0; }
-.crumb b { color: var(--fg-0); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.main-col { position: relative; }
+.topbar { background: oklch(from var(--bg-0) l c h / 0.6); }
+.crumb { min-width: 0; }
+.crumb b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; white-space: nowrap; }
 .crumb a:hover { color: var(--fg-0); }
-.crumb .sep { color: var(--fg-3); }
 
-.top-actions { display: flex; align-items: center; gap: 10px; }
 .search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
 .search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
 .search-trigger svg { color: var(--fg-2); }
@@ -67,17 +66,13 @@ body { overflow: hidden; }
 .search-trigger .label { display: none; }
 @media (min-width: 900px) { .search-trigger .label { display: inline; min-width: 140px; text-align: left; } }
 
-.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
-.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn { position: relative; }
 .icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
 .top-av { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-1); cursor: pointer; }
 .top-av .av { width: 30px; height: 30px; border-radius: 50%; background: var(--grad-cool); font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; display: flex; align-items: center; justify-content: center; }
 .top-av .name { font-size: 13px; font-weight: 500; }
 
-.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
-.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
-.scroll::-webkit-scrollbar-track { background: transparent; }
-.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+.scroll::-webkit-scrollbar { height: 10px; }
 
 /* ============== PAGE ============== */
 .page { padding: 32px 32px 60px; max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; position: relative; }
