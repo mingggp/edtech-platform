@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ภาพรวม — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=9" />
+
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<div class="adm" id="adm" data-screen-label="Admin · ภาพรวม">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>ภาพรวม</b></nav>
+      <div class="adm-top-actions">
+        <button class="adm-search" id="cmdk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="lbl">ค้นหา · คำสั่ง</span><span class="kbd">⌘K</span></button>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+        <a class="adm-ico" href="Landing Page.html" target="_blank" aria-label="เปิดเว็บจริง"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg></a>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <!-- BANNER -->
+        <section class="adm-banner reveal">
+          <div class="bn-l">
+            <div class="greet" id="greet">สวัสดีตอนสายๆ หมิง</div>
+            <div class="bn-sub">รายได้วันนี้ <b id="today-rev">฿6,400</b> · <span class="up">↑ 18%</span> จากเมื่อวาน — มีคำสั่งซื้อสำเร็จ <b>4</b> รายการแล้ววันนี้</div>
+          </div>
+          <div class="bn-r">
+            <a class="btn btn-primary" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>สร้างคอร์สใหม่</a>
+            <a class="btn btn-ghost" href="Admin Payments.html">ดูการเงิน</a>
+          </div>
+        </section>
+
+        <!-- SMART INSIGHTS -->
+        <section class="insight-strip reveal">
+          <div class="insight-lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 4.5L18 9l-4.1 1.5L12 15l-1.9-4.5L6 9l4.1-1.5z"/><path d="M5 17v4M3 19h4M19 17v4M17 19h4"/></svg>สิ่งที่น่าสนใจสัปดาห์นี้</div>
+          <div class="insight-list" id="insight-list"></div>
+        </section>
+
+        <!-- KPI -->
+        <section class="kpi-grid">
+          <div class="kpi violet reveal" data-delay="1" data-metric="revenue">
+            <span class="kpi-accent"></span>
+            <div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span class="kpi-lbl">รายได้เดือนนี้</span></div>
+            <div class="kpi-val"><span class="cur">฿</span>84,200</div>
+            <div class="kpi-foot"><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>12%</span><svg class="spark" data-spark="22,20,24,19,26,28,25,30,29,34,33,38" viewBox="0 0 96 30" preserveAspectRatio="none"></svg></div>
+          </div>
+          <div class="kpi magenta reveal" data-delay="2" data-metric="orders">
+            <span class="kpi-accent"></span>
+            <div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="kpi-lbl">คำสั่งซื้อสำเร็จ</span></div>
+            <div class="kpi-val">47<span class="unit">รายการ</span></div>
+            <div class="kpi-foot"><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>19%</span><svg class="spark" data-spark="3,5,4,6,5,7,6,8,7,9,8,11" viewBox="0 0 96 30" preserveAspectRatio="none"></svg></div>
+          </div>
+          <div class="kpi cyan reveal" data-delay="3" data-metric="students">
+            <span class="kpi-accent"></span>
+            <div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="kpi-lbl">นักเรียนทั้งหมด</span></div>
+            <div class="kpi-val">1,248<span class="unit">คน</span></div>
+            <div class="kpi-foot"><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>8%</span><svg class="spark" data-spark="30,31,33,34,36,37,39,40,42,44,46,48" viewBox="0 0 96 30" preserveAspectRatio="none"></svg></div>
+          </div>
+          <div class="kpi lime reveal" data-delay="4">
+            <span class="kpi-accent"></span>
+            <div class="kpi-top"><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></span><span class="kpi-lbl">กำลังเรียนอยู่ตอนนี้</span><span class="kpi-live"><span class="pulse"></span>สด</span></div>
+            <div class="kpi-val" data-count="86">86<span class="unit">คน</span></div>
+            <div class="kpi-foot"><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>ช่วงพีคค่ำ</span><svg class="spark" data-spark="12,18,15,24,30,42,55,61,58,70,78,86" viewBox="0 0 96 30" preserveAspectRatio="none"></svg></div>
+          </div>
+        </section>
+
+        <!-- REVENUE CHART -->
+        <section class="adm-card chart-card reveal">
+          <div class="chart-head">
+            <div class="ch-summary">
+              <div class="ch-metric-label" id="ch-label">รายได้ · 7 วันล่าสุด</div>
+              <div class="ch-total"><span id="ch-total">—</span><span class="ch-delta up" id="ch-delta">—</span><span class="ch-cmp-note" id="ch-cmp-note"></span></div>
+            </div>
+            <div class="ch-controls">
+              <div class="seg sm" id="ch-metric" role="group" aria-label="ข้อมูล">
+                <button data-v="revenue" aria-pressed="true">รายได้</button>
+                <button data-v="orders" aria-pressed="false">คำสั่งซื้อ</button>
+                <button data-v="students" aria-pressed="false">นักเรียนใหม่</button>
+              </div>
+              <div class="seg sm" id="ch-range" role="group" aria-label="ช่วงเวลา">
+                <button data-v="7" aria-pressed="true">7 วัน</button>
+                <button data-v="30" aria-pressed="false">30 วัน</button>
+                <button data-v="year" aria-pressed="false">ปีนี้</button>
+              </div>
+              <div class="seg sm icon" id="ch-type" role="group" aria-label="ชนิดกราฟ">
+                <button data-v="area" aria-pressed="true" aria-label="พื้นที่"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 5-7 4 4v8H3z"/></svg></button>
+                <button data-v="bar" aria-pressed="false" aria-label="แท่ง"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
+              </div>
+              <button class="ch-cmp" id="ch-cmp" aria-pressed="false"><span class="dot"></span>เทียบช่วงก่อน</button>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <svg class="chart-svg" id="chart" aria-hidden="true"></svg>
+            <div class="chart-tip" id="chart-tip"></div>
+            <div class="chart-peak" id="chart-peak"></div>
+            <div class="chart-x" id="chart-x"></div>
+          </div>
+          <div class="chart-stats">
+            <div><span>รวมในช่วง</span><b id="st-sum">—</b></div>
+            <div><span>เฉลี่ย/วัน</span><b id="st-avg">—</b></div>
+            <div><span>สูงสุด</span><b id="st-max">—</b></div>
+          </div>
+        </section>
+
+        <!-- DONUT INSIGHTS -->
+        <section class="adm-grid-2 reveal">
+          <div class="adm-card donut-card" style="padding:20px 22px">
+            <div class="panel-head"><h2>สัดส่วนรายได้ตามวิชา</h2><span class="h-sub">เดือนนี้</span></div>
+            <div class="donut-row">
+              <div class="donut-wrap"><svg viewBox="0 0 120 120" id="donut-subj"></svg><div class="donut-center"><b>฿84,200</b><span>รวมทั้งหมด</span></div></div>
+              <div class="donut-legend" id="donut-subj-legend"></div>
+            </div>
+          </div>
+          <div class="adm-card donut-card" style="padding:20px 22px">
+            <div class="panel-head"><h2>สถานะการชำระ</h2><span class="h-sub">30 วันล่าสุด</span></div>
+            <div class="donut-row">
+              <div class="donut-wrap"><svg viewBox="0 0 120 120" id="donut-status"></svg><div class="donut-center"><b>96%</b><span>สำเร็จ</span></div></div>
+              <div class="donut-legend" id="donut-status-legend"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMMENTS & RATING PULSE -->
+        <section class="adm-grid-2 reveal">
+          <div class="adm-card" style="padding:20px 22px">
+            <div class="panel-head"><h2>คำถามรอตอบ</h2><a class="link-more" href="Admin Course Editor.html#reviews">จัดการทั้งหมด<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><path d="m9 18 6-6-6-6"/></svg></a></div>
+            <div class="qa-rows">
+              <a class="qa-row" href="Admin Course Editor.html#reviews">
+                <span class="qa-n" style="background:oklch(0.62 0.19 255)">ณบ</span>
+                <span class="qa-t"><b>ณัฐริกา</b> ถามใน <i>สนามแม่เหล็กไฟฟ้า</i> — "อยากให้ขยายวิธีหาทิศทางของแรง..."</span>
+                <span class="qa-when">2 ชม.</span>
+              </a>
+              <a class="qa-row" href="Admin Course Editor.html#reviews">
+                <span class="qa-n" style="background:oklch(0.62 0.22 340)">ธพ</span>
+                <span class="qa-t"><b>ธนกร</b> ถามใน <i>กฎของแก๊สฯ</i> — "ข้อ 3 เฉลยเป็น ข. ไม่ใช่ ค. หรือเปล่าครับ?"</span>
+                <span class="qa-when">5 ชม.</span>
+              </a>
+              <a class="qa-row" href="Admin Course Editor.html#reviews">
+                <span class="qa-n" style="background:oklch(0.72 0.15 80)">ภต</span>
+                <span class="qa-t"><b>ภูริณัฐ</b> แจ้งใน <i>คลื่นกลฯ</i> — "เสียงคลิปนี้เบากว่าคลิปอื่นมาก"</span>
+                <span class="qa-when">2 วัน</span>
+              </a>
+            </div>
+          </div>
+          <div class="adm-card" style="padding:20px 22px">
+            <div class="panel-head"><h2>Rating ต่ำสุดสัปดาห์นี้</h2><span class="h-sub">สัญญาณคลิปมีปัญหา</span></div>
+            <div class="qa-rows">
+              <a class="qa-row" href="Admin Course Editor.html#reviews"><span class="qa-sc">3.6★</span><span class="qa-t"><b>คลื่นกลและสมบัติของคลื่น</b> · ฟิสิกส์ A-Level<i style="display:block;font-style:normal;color:var(--fg-3);font-size:11px">มีรายงานเรื่องเสียงเบา 3 รายการ</i></span></a>
+              <a class="qa-row" href="Admin Course Editor.html#reviews"><span class="qa-sc">4.1★</span><span class="qa-t"><b>กฎของแก๊สและอุณหพลศาสตร์</b> · ฟิสิกส์ A-Level<i style="display:block;font-style:normal;color:var(--fg-3);font-size:11px">มีคำถามเรื่องเฉลยแบบฝึกหัด</i></span></a>
+              <a class="qa-row" href="Admin Course Editor.html#reviews"><span class="qa-sc">4.3★</span><span class="qa-t"><b>ศักย์ไฟฟ้า</b> · ฟิสิกส์ ม.5<i style="display:block;font-style:normal;color:var(--fg-3);font-size:11px">rating ลดลงจาก 4.7 สัปดาห์ก่อน</i></span></a>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOP COURSES + ACTIVITY -->
+        <section class="adm-grid-2">
+          <div class="adm-card reveal">
+            <div class="panel-head"><h2>คอร์สขายดี</h2><a class="link-more" href="#">ดูทั้งหมด<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a></div>
+            <div class="rank-list">
+              <div class="rank-row"><div class="rk">1</div><div class="rk-thumb" style="background:var(--subj-phys-grad)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg></div><div class="rk-info"><b>A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS70</b><div class="meta">31 คำสั่งซื้อ · เดือนนี้</div></div><div class="rk-bar"><i style="width:100%"></i></div><div class="rk-amt">฿55,800</div></div>
+              <div class="rank-row"><div class="rk">2</div><div class="rk-thumb" style="background:var(--subj-math-grad)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 20 9-9M3 11l9-9M3 11v6.5A2.5 2.5 0 0 0 5.5 20H12"/></svg></div><div class="rk-info"><b>A-Level คณิต ประยุกต์ ครบทุกบท</b><div class="meta">24 คำสั่งซื้อ · เดือนนี้</div></div><div class="rk-bar"><i style="width:74%"></i></div><div class="rk-amt">฿43,200</div></div>
+              <div class="rank-row"><div class="rk">3</div><div class="rk-thumb" style="background:var(--subj-tpat-grad)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4"/></svg></div><div class="rk-info"><b>TPAT3 ความถนัด วิทย์–เทคโน–วิศวะ</b><div class="meta">18 คำสั่งซื้อ · เดือนนี้</div></div><div class="rk-bar"><i style="width:55%"></i></div><div class="rk-amt">฿34,200</div></div>
+              <div class="rank-row"><div class="rk">4</div><div class="rk-thumb" style="background:var(--subj-tgat-grad)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="rk-info"><b>TGAT2 การคิดอย่างมีเหตุผล</b><div class="meta">15 คำสั่งซื้อ · เดือนนี้</div></div><div class="rk-bar"><i style="width:46%"></i></div><div class="rk-amt">฿30,000</div></div>
+              <div class="rank-row"><div class="rk">5</div><div class="rk-thumb" style="background:var(--subj-math-grad)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div class="rk-info"><b>คณิต ม.ปลาย เนื้อหาครบทุกเทอม</b><div class="meta">9 คำสั่งซื้อ · เดือนนี้</div></div><div class="rk-bar"><i style="width:28%"></i></div><div class="rk-amt">฿17,100</div></div>
+            </div>
+          </div>
+
+          <div class="adm-card reveal">
+            <div class="panel-head"><h2>กิจกรรมล่าสุด</h2><span class="h-sub">วันนี้</span></div>
+            <div class="feed">
+              <div class="feed-row"><div class="feed-ic buy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="feed-bd"><p><b>ธนกร พงษ์ไพบูลย์</b> ซื้อคอร์ส A-Level ฟิสิกส์ <span class="amt">฿1,800</span></p><div class="t">2 นาทีที่แล้ว · PromptPay</div></div></div>
+              <div class="feed-row"><div class="feed-ic user"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div><div class="feed-bd"><p><b>ปาริชาติ แสงทอง</b> สมัครสมาชิกใหม่ · ม.6</p><div class="t">14 นาทีที่แล้ว</div></div></div>
+              <div class="feed-row"><div class="feed-ic buy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="feed-bd"><p><b>ศุภวิชญ์ ใจเย็น</b> ซื้อคอร์ส TPAT3 <span class="amt">฿1,900</span></p><div class="t">38 นาทีที่แล้ว · PromptPay</div></div></div>
+              <div class="feed-row"><div class="feed-ic exam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg></div><div class="feed-bd"><p><b>ณัฐริกา บุญมี</b> ทำข้อสอบ TGAT2 ชุดที่ 3 ได้ <b>88%</b></p><div class="t">1 ชั่วโมงที่แล้ว</div></div></div>
+              <div class="feed-row"><div class="feed-ic fail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="feed-bd"><p>QR ของ <b>กิตติพงศ์ วัฒนา</b> หมดอายุก่อนชำระ — ไม่มีการตัดเงิน</p><div class="t">1 ชั่วโมงที่แล้ว · A-Level คณิต</div></div></div>
+              <div class="feed-row"><div class="feed-ic buy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="feed-bd"><p><b>อชิรญา โชติกุล</b> ซื้อคอร์ส TGAT2 <span class="amt">฿2,000</span> · โค้ด MING20</p><div class="t">2 ชั่วโมงที่แล้ว · PromptPay</div></div></div>
+              <div class="feed-row"><div class="feed-ic user"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div><div class="feed-bd"><p><b>เมธาสิทธิ์ ทองดี</b> สมัครสมาชิกใหม่ · ม.5</p><div class="t">3 ชั่วโมงที่แล้ว</div></div></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TWEAKS -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp">
+    <div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density">
+      <button data-v="comfortable" aria-pressed="true">สบายตา</button>
+      <button data-v="compact" aria-pressed="false">กระชับ</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Demo · สถานะหน้า</div>
+    <div class="tweak-seg" data-tweak="view">
+      <button data-v="data" aria-pressed="true">มีข้อมูล</button>
+      <button data-v="empty" aria-pressed="false">วันแรก (ว่าง)</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script src="admin-chart.js?v=1"></script>
+<script>
+// ===== Smart insights (data-driven, deterministic) =====
+(function(){
+  var INSIGHTS = [
+    { t:'up',   html: '<b>A-Level ฟิสิกส์</b> ทำยอดสูงสุดเดือนนี้ — ฿55,800 จาก 31 คำสั่งซื้อ' },
+    { t:'up',   html: 'คำสั่งซื้อสำเร็จเพิ่ม <b>19%</b> เทียบเดือนก่อน เร็วกว่ารายได้ที่โต 12%' },
+    { t:'warn', html: '<b>คลื่นกลและสมบัติของคลื่น</b> rating ลดเหลือ 3.6★ — มีรายงานเสียงเบา 3 ครั้ง' },
+    { t:'info', html: 'ช่วงพีคคนเรียนสดคือ <b>19:00–21:00 น.</b> — เหมาะเปิดไลฟ์ติวช่วงนี้' },
+    { t:'up',   html: 'คูปอง <b>MING20</b> ถูกใช้ในคำสั่งซื้อล่าสุด — ช่วยปิดการขาย TGAT2' }
+  ];
+  var wrap = document.getElementById('insight-list');
+  if (wrap) wrap.innerHTML = INSIGHTS.map(function(i){
+    return '<span class="insight-chip ' + i.t + '"><span class="ic"></span>' + i.html + '</span>';
+  }).join('');
+})();
+
+// ===== KPI cards double as chart-metric switches =====
+(function(){
+  var kpis = document.querySelectorAll('.kpi[data-metric]');
+  function sync(active){
+    kpis.forEach(function(k){ k.classList.toggle('active', k.dataset.metric === active); });
+  }
+  kpis.forEach(function(k){
+    k.addEventListener('click', function(){
+      var m = k.dataset.metric;
+      var btn = document.querySelector('#ch-metric button[data-v="' + m + '"]');
+      if (btn) btn.click();
+      sync(m);
+    });
+  });
+  var metricSeg = document.getElementById('ch-metric');
+  if (metricSeg) metricSeg.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (b) sync(b.dataset.v);
+  });
+  sync('revenue');
+})();
+
+// ===== Donut charts (subject revenue split + order status) =====
+function drawDonut(svgId, legendId, segs, centerFmt){
+  const svg = document.getElementById(svgId);
+  const legend = document.getElementById(legendId);
+  if(!svg) return;
+  const R = 50, C = 60, CIRC = 2*Math.PI*R, gap = 3;
+  const total = segs.reduce((a,s)=>a+s.v,0);
+  let offset = 0, paths = '';
+  segs.forEach(s=>{
+    const frac = s.v/total;
+    const len = Math.max(0, frac*CIRC - gap);
+    paths += `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${s.c}" stroke-width="16" stroke-dasharray="${len.toFixed(1)} ${CIRC.toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 ${C} ${C})"/>`;
+    offset += frac*CIRC;
+  });
+  svg.innerHTML = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="var(--line-soft)" stroke-width="16"/>` + paths;
+  if (legend) legend.innerHTML = segs.map(s=>`<div class="dl-row"><span class="dl-dot" style="background:${s.c}"></span><span class="dl-lab">${s.label}</span><span class="dl-val">${Math.round(s.v/total*100)}%</span></div>`).join('');
+}
+drawDonut('donut-subj', 'donut-subj-legend', [
+  { label:'\u0e04\u0e13\u0e34\u0e15',   v:43200+17100, c:'var(--subj-math)' },
+  { label:'\u0e1f\u0e34\u0e2a\u0e34\u0e01\u0e2a\u0e4c', v:55800,       c:'var(--subj-phys)' },
+  { label:'TPAT3', v:34200, c:'var(--subj-tpat)' },
+  { label:'TGAT2', v:30000, c:'var(--subj-tgat)' }
+]);
+drawDonut('donut-status', 'donut-status-legend', [
+  { label:'\u0e0a\u0e33\u0e23\u0e30\u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08', v:96, c:'var(--success)' },
+  { label:'QR \u0e2b\u0e21\u0e14\u0e2d\u0e32\u0e22\u0e38 / \u0e22\u0e01\u0e40\u0e25\u0e34\u0e01', v:4, c:'var(--fg-3)' }
+]);
+
+// ===== Sparklines (colored per KPI accent) =====
+function drawSpark(svg){
+  const pts = svg.dataset.spark.split(',').map(Number);
+  const w = 96, h = 30, max = Math.max(...pts), min = Math.min(...pts), rng = (max-min)||1;
+  const step = w/(pts.length-1);
+  const xy = pts.map((p,i)=>[i*step, h-2 - ((p-min)/rng)*(h-6)]);
+  const line = xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area = line+`L${w} ${h}L0 ${h}Z`;
+  const kpi = svg.closest('.kpi');
+  const colorVar = kpi && kpi.classList.contains('magenta') ? 'var(--brand-magenta)'
+    : kpi && kpi.classList.contains('cyan') ? 'var(--brand-cyan)'
+    : kpi && kpi.classList.contains('lime') ? 'var(--success)'
+    : 'var(--brand-violet)';
+  svg.innerHTML = `<path d="${area}" fill="${colorVar}" opacity="0.12"/><path d="${line}" fill="none" stroke="${colorVar}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+document.querySelectorAll('.spark').forEach(drawSpark);
+
+// ===== KPI count-up (safety-landed, reduced-motion aware) =====
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('.kpi-val').forEach(el => {
+    const node = el.childNodes[0];
+    if (!node || node.nodeType !== 3) return;
+    const raw = node.textContent.trim();
+    const target = parseFloat(raw.replace(/,/g, ''));
+    if (isNaN(target)) return;
+    const hasComma = raw.includes(',');
+    // double rAF: let the browser paint the real value at least once (so a
+    // screenshot/capture taken immediately on load never sees a transient "0")
+    // before the count-up actually starts animating from zero.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const t0 = performance.now(), dur = 900;
+      (function step(t){
+        const p = Math.min(1, (t - t0) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        let v = Math.round(target * e);
+        node.textContent = hasComma ? v.toLocaleString('en-US') : String(v);
+        if (p < 1) requestAnimationFrame(step);
+        else node.textContent = raw;
+      })(performance.now());
+    }));
+  });
+}
+
+// ===== Revenue chart: see admin-chart.js =====
+
+// ===== greeting by time =====
+(function(){ const h=new Date().getHours(); let g='สวัสดีตอนสายๆ';
+  if(h<11) g='สวัสดีตอนเช้า'; else if(h<13) g='สวัสดีตอนเที่ยง'; else if(h<17) g='สวัสดีตอนบ่าย'; else if(h<20) g='สวัสดีตอนเย็น'; else g='สวัสดีตอนค่ำ';
+  document.getElementById('greet').textContent = g+' หมิง';
+})();
+
+// ===== Tweaks: demo empty state =====
+window.__onTweak = function(k,v){
+  if(k==='view'){ document.querySelectorAll('.kpi-grid, .adm-card, .adm-grid-2').forEach(()=>{}); toggleEmpty(v==='empty'); }
+};
+function toggleEmpty(on){
+  let empty = document.getElementById('first-run');
+  const grids = document.querySelectorAll('.kpi-grid, .adm-card.reveal, .adm-grid-2');
+  if(on){
+    document.querySelectorAll('.adm-page > section').forEach(s=>{ if(!s.classList.contains('adm-banner')) s.style.display='none'; });
+    if(!empty){ empty=document.createElement('div'); empty.id='first-run'; empty.className='adm-empty';
+      empty.innerHTML='<div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><h3>ยังไม่มียอดขาย</h3><p>เมื่อมีนักเรียนซื้อคอร์ส รายได้และกิจกรรมจะแสดงที่นี่ — เริ่มจากแชร์คอร์สแรกของคุณ</p><a href="#" class="btn btn-primary" style="margin-top:8px">แชร์คอร์สแรก →</a>';
+      document.querySelector('.adm-page').appendChild(empty);
+    }
+    empty.style.display='flex';
+  } else {
+    document.querySelectorAll('.adm-page > section').forEach(s=>s.style.display='');
+    if(empty) empty.style.display='none';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>อันดับ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="app-shell.css" />
+<link rel="stylesheet" href="leaderboard.css?v=23" />
+<link rel="stylesheet" href="peek.css" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="Leaderboard">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Landing Page.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item active" href="Leaderboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="Achievements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info">
+        <b>น้องปาล์ม</b>
+        <span>LV 14 · 2,840 XP</span>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN COL ============== -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>อันดับ</b>
+      </div>
+      <div class="top-actions">
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page">
+
+      <div class="page-head">
+        <div class="titles">
+          <span class="eyebrow">แข่งกับตัวเอง · เทียบกับเพื่อน</span>
+          <h1><span class="grad">อันดับ</span>นักเรียน</h1>
+        </div>
+      </div>
+
+      <!-- ===== CONTROLS ===== -->
+      <div class="lb-controls">
+        <div class="lb-right">
+          <div class="seg small grade-seg" id="grade-seg" role="tablist">
+            <span class="gl">ชั้น</span>
+            <button data-grade="all" aria-pressed="true">ทุกชั้น</button>
+            <button data-grade="m4" aria-pressed="false">ม.4</button>
+            <button data-grade="m5" aria-pressed="false">ม.5</button>
+            <button data-grade="m6" aria-pressed="false">ม.6</button>
+          </div>
+          <label class="privacy-toggle" id="privacy-toggle">
+            <span class="sw"></span>
+            <span>ซ่อนฉันจากสาธารณะ</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="privacy-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22"/></svg>
+        คุณเลือกซ่อนตัวเองจากสาธารณะ — คนอื่นจะไม่เห็นชื่อในอันดับและเปิดดูโปรไฟล์คุณไม่ได้ แต่คุณยังเห็นอันดับและสถิติตัวเองได้ตามปกติ
+      </div>
+
+      <!-- ===== TWO BOARDS ===== -->
+      <div class="boards">
+
+        <!-- LEFT: DAILY -->
+        <section class="board-card" id="board-day">
+          <div class="bd-head">
+            <div class="bd-ttl">
+              <div class="ttl">วันนี้</div>
+              <div class="sub">รีเซ็ตเที่ยงคืน</div>
+            </div>
+            <span class="bd-live"><span class="pulse"></span>สด</span>
+          </div>
+          <div class="podium" id="podium-day"></div>
+          <div class="rank-list" id="rank-day"></div>
+        </section>
+
+        <!-- RIGHT: WEEK / MONTH / ALL -->
+        <section class="board-card" id="board-period">
+          <div class="bd-head">
+            <div class="bd-ttl">
+              <div class="ttl" id="pd-title">สัปดาห์นี้</div>
+              <div class="sub">เรียงตามเวลาเรียนสะสม</div>
+            </div>
+            <div class="seg small" id="period-seg" role="tablist">
+              <button data-period="week" aria-pressed="true">สัปดาห์</button>
+              <button data-period="month" aria-pressed="false">เดือน</button>
+              <button data-period="all" aria-pressed="false">ตลอดกาล</button>
+            </div>
+          </div>
+          <div class="podium" id="podium-period"></div>
+          <div class="rank-list" id="rank-period"></div>
+        </section>
+      </div>
+
+      <!-- sticky my-rank -->
+      <div class="my-rank" id="my-rank">
+        <div class="mr-num"><b id="mr-rank">#7</b><span>อันดับคุณ</span></div>
+        <div class="mr-name">
+          <div class="av">ปม</div>
+          <div class="info">
+            <b>น้องปาล์ม <span class="tag">คุณ</span></b>
+            <span id="mr-detail">ม.6 · เรียนสัปดาห์นี้ <span class="hl">312 นาที</span></span>
+          </div>
+        </div>
+        <div class="mr-score">
+          <div class="v" id="mr-score">312<span> นาที</span></div>
+          <div class="gap" id="mr-gap">↑ อีก 28 นาที แซงอันดับ 6</div>
+        </div>
+      </div>
+
+      <!-- aside cards → row below -->
+      <div class="lb-aside row3">
+          <div class="aside-card" style="--ac-c:var(--brand-cyan)">
+            <div class="ac-h"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><h4>สถิติส่วนตัว</h4></div>
+            <div class="pb-stat"><span class="n">312</span><span class="u">นาที สัปดาห์นี้</span></div>
+            <div class="pb-delta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> มากกว่าสัปดาห์ก่อน 18%</div>
+            <p style="margin-top:4px">เก่งขึ้นกว่าตัวเองเมื่อสัปดาห์ที่แล้ว — นั่นคือชัยชนะที่แท้จริง</p>
+          </div>
+
+          <div class="aside-card" style="--ac-c:var(--brand-magenta)">
+            <div class="ac-h"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div><h4>สถิติที่ดีที่สุด</h4></div>
+            <p><b>อันดับ 4</b> — อันดับสูงสุดของคุณ ทำได้เมื่อสัปดาห์ที่ 3 ของเดือน เม.ย. ลองไต่กลับขึ้นไปอีกครั้งสิ!</p>
+          </div>
+
+          <div class="aside-card" style="--ac-c:var(--brand-lime)">
+            <div class="ac-h"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12z"/><path d="M12 2v10l8.5-5"/></svg></div><h4>อันดับวัดยังไง</h4></div>
+            <p>นับจาก <b>เวลาเรียนสะสม</b> ที่ตั้งใจดูจริง ไม่ใช่แค่เปิดทิ้งไว้ — รีเซ็ตทุกวันจันทร์สำหรับอันดับรายสัปดาห์</p>
+          </div>
+        </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<script src="people.js"></script>
+<script src="leaderboard.js?v=3"></script>
+<script src="peek.js"></script>
+
+<!-- ============== TWEAKS PANEL ============== -->
+<div id="tweak-root"><span hidden>tweaks</span></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "vibe": "aurora",
+  "selffocus": "compete"
+}/*EDITMODE-END*/;
+function LbTweaks() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(() => { if (window.MingLb) window.MingLb.setTweaks(t); }, [t.vibe, t.selffocus]);
+  return (
+    <TweaksPanel>
+      <TweakSection label="โทนสี" />
+      <TweakColor label="Aurora · Cool · Warm"
+        value={t.vibe === 'cool' ? ['#6E5BD8','#3E8FD0','#52C7DE'] : t.vibe === 'warm' ? ['#E2476B','#E88A3C','#9FD64A'] : ['#7A5AE0','#E04A78','#F0904A']}
+        options={[['#7A5AE0','#E04A78','#F0904A'], ['#6E5BD8','#3E8FD0','#52C7DE'], ['#E2476B','#E88A3C','#9FD64A']]}
+        onChange={(pal) => setTweak('vibe', pal[1] === '#3E8FD0' ? 'cool' : pal[1] === '#E88A3C' ? 'warm' : 'aurora')} />
+      <TweakSection label="โฟกัสของหน้า" hint="เน้นการแข่งขัน (ดันท็อป 3 / คนอื่นเด่น) หรือเน้นความก้าวหน้าของตัวเอง (ดันสถิติส่วนตัวขึ้นนำ)" />
+      <TweakRadio label="มุมมอง" value={t.selffocus}
+        options={[{label:'แข่งขัน', value:'compete'}, {label:'สมดุล', value:'balanced'}, {label:'เน้นตัวเอง', value:'self'}]}
+        onChange={(v) => setTweak('selffocus', v)} />
+    </TweaksPanel>
+  );
+}
+ReactDOM.createRoot(document.getElementById('tweak-root')).render(<LbTweaks />);
+</script>
+</body>
+</html>

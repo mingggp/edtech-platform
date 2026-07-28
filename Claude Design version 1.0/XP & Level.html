@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>เลเวล &amp; XP — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="app-shell.css" />
+<link rel="stylesheet" href="xp.css?v=24" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="XP & Level">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Landing Page.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="Leaderboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="Achievements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+      <a class="sb-item" href="Streak & Daily Goal.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg>
+        <span>สตรีค</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info">
+        <b>น้องปาล์ม</b>
+        <span>LV 14 · 2,840 XP</span>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN COL ============== -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>เลเวล &amp; XP</b>
+      </div>
+      <div class="top-actions">
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page">
+
+      <div class="page-head">
+        <div class="titles">
+          <span class="eyebrow">ความก้าวหน้าของคุณ</span>
+          <h1>เลเวล &amp; <span class="grad">แต้มสะสม</span></h1>
+        </div>
+      </div>
+
+      <!-- ===== HERO: LEVEL BADGE + XP BAR ===== -->
+      <section class="xp-hero">
+        <div class="lvl-badge" style="--tier:var(--tier-gold)">
+          <div class="disc">
+            <span class="lv-sm">LV</span>
+            <span class="lv-n">14</span>
+          </div>
+          <span class="ribbon">ทอง · Gold</span>
+        </div>
+        <div class="xp-meta">
+          <span class="eyebrow">เลเวลปัจจุบัน</span>
+          <h1>นักรบสมการ <span class="grad">· Lv 14</span></h1>
+          <p class="sub">อีก <b>1,160 XP</b> ก็จะถึง <b>Lv 15</b> — เก่งขึ้นทุกวันเลยนะ ไปต่อกัน 💪</p>
+          <div class="xp-bar-wrap">
+            <div class="xp-bar-top">
+              <span class="cur">2,840 <span>/ 4,000 XP</span></span>
+              <span class="nxt">71% ถึง Lv 15</span>
+            </div>
+            <div class="xp-bar"><div class="fill" style="width:71%"><span class="pip">71%</span></div></div>
+          </div>
+          <div class="xp-cta">
+            <span class="xp-today">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+              +120 XP วันนี้
+            </span>
+            <button class="btn btn-secondary btn-sm" id="lvup-demo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+              ดูตัวอย่างเลเวลอัป
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TIER LADDER ===== -->
+      <section>
+        <div class="section-head">
+          <div>
+            <h2>เส้นทางระดับขั้น</h2>
+            <p>สะสม XP เพื่อไต่ขึ้นทีละขั้น — ทุกขั้นปลดล็อกของรางวัลใหม่</p>
+          </div>
+        </div>
+        <div class="ladder">
+          <div class="tier bronze">
+            <div class="gem"></div>
+            <div class="t-name">ทองแดง</div>
+            <div class="t-nick">มือใหม่หัดลุย</div>
+            <div class="t-range">LV 1–5</div>
+          </div>
+          <div class="tier silver">
+            <div class="gem"></div>
+            <div class="t-name">เงิน</div>
+            <div class="t-nick">นักเรียนขยัน</div>
+            <div class="t-range">LV 6–10</div>
+          </div>
+          <div class="tier gold current">
+            <span class="you">คุณอยู่ที่นี่</span>
+            <div class="gem"></div>
+            <div class="t-name">ทอง</div>
+            <div class="t-nick">นักรบสมการ</div>
+            <div class="t-range">LV 11–20</div>
+          </div>
+          <div class="tier plat locked">
+            <div class="gem"></div>
+            <div class="t-name">แพลทินัม</div>
+            <div class="t-nick">เซียนข้อสอบ</div>
+            <div class="t-range">LV 21–35</div>
+          </div>
+          <div class="tier diamond locked">
+            <div class="gem"></div>
+            <div class="t-name">เพชร</div>
+            <div class="t-nick">ตำนานติวเตอร์</div>
+            <div class="t-range">LV 36+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== XP SOURCES + LOG ===== -->
+      <section class="xp-grid">
+        <div class="panel">
+          <div class="ph">
+            <h3>ได้ XP จากอะไรบ้าง</h3>
+          </div>
+          <div class="src-list">
+            <div class="src s1">
+              <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              <div class="sl"><b>ดูวิดีโอเรียน</b><span>สะสมตามเวลาที่ตั้งใจดูจริง</span></div>
+              <div class="sv">+5 / นาที</div>
+            </div>
+            <div class="src s2">
+              <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg></div>
+              <div class="sl"><b>ทำข้อสอบจบ 1 ชุด</b><span>ทำแบบทดสอบหรือข้อสอบครบชุด</span></div>
+              <div class="sv">+60</div>
+            </div>
+            <div class="src s3">
+              <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+              <div class="sl"><b>ทำภารกิจรายวันครบ</b><span>เก็บครบทั้ง 3 ภารกิจในวันเดียว</span></div>
+              <div class="sv bonus">+130 โบนัส</div>
+            </div>
+            <div class="src s5">
+              <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
+              <div class="sl"><b>ปลดล็อกเหรียญ</b><span>โบนัสตามความหายากของเหรียญ</span></div>
+              <div class="sv bonus">+100 โบนัส</div>
+            </div>
+            <div class="src s4">
+              <div class="si"><svg viewBox="0 0 24 24" fill="#currentColor" stroke="currentColor" stroke-width="2"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z" fill="currentColor" stroke="none"/></svg></div>
+              <div class="sl"><b>พิชิตหมุดหมายสตรีค</b><span>ครบ 3 / 7 / 30 / 100 วันต่อเนื่อง</span></div>
+              <div class="sv bonus">+200 โบนัส</div>
+            </div>
+            <div class="src s6">
+              <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+              <div class="sl"><b>เข้าเรียนครั้งแรกของวัน</b><span>โบนัสเล็ก ๆ ให้กับการเริ่มต้น</span></div>
+              <div class="sv">+20</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="ph">
+            <h3>XP ล่าสุด</h3>
+            <p>รายการที่ได้มาในสัปดาห์นี้</p>
+          </div>
+          <div class="log-total">
+            <div class="n"><span class="grad">+1,240</span></div>
+            <div class="lab">XP สัปดาห์นี้</div>
+          </div>
+          <div class="log-list">
+            <div class="log-row">
+              <div class="ld" style="--ld-c:var(--brand-magenta)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7"/></svg></div>
+              <div class="lc"><b>ทำภารกิจ "เรียนครบ 20 นาที"</b><span>วันนี้ · 09:40</span></div>
+              <div class="lv">+30</div>
+            </div>
+            <div class="log-row">
+              <div class="ld" style="--ld-c:var(--brand-violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              <div class="lc"><b>เรียนจบ แคลคูลัส บทที่ 7</b><span>วันนี้ · 09:20</span></div>
+              <div class="lv">+40</div>
+            </div>
+            <div class="log-row">
+              <div class="ld" style="--ld-c:var(--brand-cyan)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+              <div class="lc"><b>ทำข้อสอบ TPAT3 ชุดที่ 3</b><span>เมื่อวาน · 21:10</span></div>
+              <div class="lv">+60</div>
+            </div>
+            <div class="log-row">
+              <div class="ld" style="--ld-c:var(--brand-lime)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
+              <div class="lc"><b>ปลดล็อกเหรียญ "นกฮูก"</b><span>เมื่อวาน · 23:30</span></div>
+              <div class="lv">+100</div>
+            </div>
+            <div class="log-row">
+              <div class="ld" style="--ld-c:var(--brand-coral)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg></div>
+              <div class="lc"><b>เรียนต่อเนื่อง 45 นาที</b><span>2 วันก่อน · 19:05</span></div>
+              <div class="lv">+225</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== LEVEL-UP MODAL ============== -->
+<div class="lvup-back" id="lvup-back" aria-hidden="true">
+  <div class="lvup" role="dialog" aria-modal="true" aria-label="เลเวลอัป">
+    <button class="lvup-close" id="lvup-close" aria-label="ปิด"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <span class="lvup-eyebrow">เลเวลอัป!</span>
+    <div class="transit"><span class="from">Lv 14</span><span class="arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="to">Lv 15</span></div>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="lvupGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="var(--brand-violet)"/>
+            <stop offset="100%" stop-color="var(--brand-magenta)"/>
+          </linearGradient>
+        </defs>
+        <circle class="track" cx="100" cy="100" r="86"/>
+        <circle class="bar" id="lvup-bar" cx="100" cy="100" r="86" stroke-dasharray="540.4" stroke-dashoffset="540.4"/>
+      </svg>
+      <div class="ring-c"><span class="n">15</span><span class="t">นักรบสมการ</span></div>
+    </div>
+    <div class="unlocks">
+      <span class="ul-h">ปลดล็อกใหม่</span>
+      <div class="ul-chips">
+        <div class="ul-chip"><span class="uc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/></svg></span><b>กรอบโปรไฟล์สีทอง</b></div>
+        <div class="ul-chip"><span class="uc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg></span><b>ตัวกันหลุดสตรีก +1</b></div>
+        <div class="ul-chip"><span class="uc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3 8-8M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><b>สิทธิ์โหวตคอร์สใหม่</b></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="lvup-ok" style="width:100%">เยี่ยมไปเลย!</button>
+  </div>
+</div>
+
+<script src="xp.js?v=2"></script>
+
+<!-- ============== TWEAKS PANEL ============== -->
+<div id="tweak-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "vibe": "aurora",
+  "energy": "calm"
+}/*EDITMODE-END*/;
+
+function XPTweaks() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(() => {
+    if (window.MingXP) window.MingXP.setTweaks(t);
+  }, [t.vibe, t.energy]);
+  return (
+    <TweaksPanel>
+      <TweakSection label="โทนสี" />
+      <TweakColor label="Aurora · Cool · Warm"
+        value={t.vibe === 'cool' ? ['#6E5BD8','#3E8FD0','#52C7DE'] : t.vibe === 'warm' ? ['#E2476B','#E88A3C','#9FD64A'] : ['#7A5AE0','#E04A78','#F0904A']}
+        options={[['#7A5AE0','#E04A78','#F0904A'], ['#6E5BD8','#3E8FD0','#52C7DE'], ['#E2476B','#E88A3C','#9FD64A']]}
+        onChange={(pal) => setTweak('vibe', pal[1] === '#3E8FD0' ? 'cool' : pal[1] === '#E88A3C' ? 'warm' : 'aurora')} />
+      <TweakSection label="ความแรงการฉลอง" />
+      <TweakRadio label="พลังงาน" value={t.energy}
+        options={[{label:'สุขุม', value:'calm'}, {label:'สมดุล', value:'balanced'}, {label:'สดใส', value:'vivid'}]}
+        onChange={(v) => setTweak('energy', v)} />
+    </TweaksPanel>
+  );
+}
+ReactDOM.createRoot(document.getElementById('tweak-root')).render(<XPTweaks />);
+</script>
+</body>
+</html>

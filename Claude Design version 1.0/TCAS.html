@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คำนวณ TCAS — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+<style>
+/* ============================================================
+   APP SHELL — identical pattern to Exams / Dashboard
+   ============================================================ */
+body { overflow: hidden; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word,
+.app.collapsed .sb-section .heading,
+.app.collapsed .sb-item span:not(.pill):not(.count),
+.app.collapsed .sb-item .count,
+.app.collapsed .sb-item .pill,
+.app.collapsed .sb-user .info,
+.app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+a { color: var(--brand-magenta); }
+a:hover { color: var(--brand-violet); }
+
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+.page { padding: 32px 32px 96px; max-width: 1380px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; position: relative; }
+
+/* glass surface — house style */
+.glass-surf {
+  background: var(--glass);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+  border: 1px solid var(--glass-line-strong);
+  box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.08) inset, 0 18px 50px -28px oklch(0 0 0 / 0.5);
+}
+
+/* subject token map */
+[data-subj="math"]  { --subj-c: var(--subj-math); --subj-fg: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); }
+[data-subj="phys"]  { --subj-c: var(--subj-phys); --subj-fg: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); }
+[data-subj="tpat"]  { --subj-c: var(--subj-tpat); --subj-fg: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); }
+[data-subj="tgat"]  { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); }
+:root[data-theme="light"] [data-subj], :root[data-theme="petronas-light"] [data-subj] { --subj-ink: oklch(from var(--subj-c) calc(l - 0.10) calc(c + 0.02) h); }
+:root[data-theme="light"] [data-subj="tgat"], :root[data-theme="petronas-light"] [data-subj="tgat"] { --subj-ink: oklch(0.52 0.13 72); }
+[data-subj] { --subj-ink: var(--subj-fg); }
+
+/* ============================================================
+   PAGE HEAD
+   ============================================================ */
+.exhead h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 4vw, 48px); letter-spacing: -0.035em; line-height: 1.02; margin-top: 14px; }
+.exhead .tag { color: var(--fg-1); font-size: 15px; margin-top: 12px; max-width: 62ch; line-height: 1.55; }
+.exhead .tag b { color: var(--fg-0); font-weight: 600; }
+
+/* Disclaimer banner */
+.disclaim { display: flex; gap: 13px; align-items: flex-start; padding: 14px 18px; border-radius: 16px;
+  background: oklch(from var(--warning) l c h / 0.09); border: 1px solid oklch(from var(--warning) l c h / 0.35);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.disclaim svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; color: var(--warning); }
+:root[data-theme="light"] .disclaim svg, :root[data-theme="petronas-light"] .disclaim svg { color: oklch(0.58 0.14 75); }
+.disclaim p { font-size: 13px; line-height: 1.6; color: var(--fg-1); }
+.disclaim p b { color: var(--fg-0); font-weight: 600; }
+.disclaim p a { font-weight: 600; }
+
+/* ============================================================
+   LAYOUT — input left (sticky) · results right
+   ============================================================ */
+.tc-grid { display: grid; grid-template-columns: 396px 1fr; gap: 22px; align-items: start; }
+@media (max-width: 1120px) { .tc-grid { grid-template-columns: 1fr; } .panel { position: static !important; } }
+
+/* ============================================================
+   SCORE INPUT PANEL
+   ============================================================ */
+.panel { position: sticky; top: 0; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 16px; max-height: calc(100vh - 96px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.panel-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.02em; }
+.panel-head .hint { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-3); }
+
+.segment { display: inline-flex; padding: 4px; background: oklch(from var(--bg-1) l c h / 0.5); border: 1px solid var(--line); border-radius: 12px; gap: 2px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.segment button { appearance: none; border: 0; background: transparent; color: var(--fg-2); padding: 8px 13px; border-radius: 8px; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; flex: 1; transition: background .15s, color .15s; }
+.segment button[aria-pressed="true"] { background: var(--bg-3); color: var(--fg-0); box-shadow: var(--shadow-1); }
+.segment button:hover:not([aria-pressed="true"]) { color: var(--fg-0); }
+.segment.full { display: flex; }
+.mode-note { font-size: 12px; color: var(--fg-2); line-height: 1.55; margin-top: -6px; }
+
+.sgroup { border: 1px solid var(--line-soft); border-radius: 16px; background: oklch(from var(--bg-1) l c h / 0.4); overflow: hidden; }
+.sgroup summary { list-style: none; cursor: pointer; padding: 13px 16px; display: flex; align-items: center; gap: 10px; user-select: none; }
+.sgroup summary::-webkit-details-marker { display: none; }
+.sgroup summary .gdot { width: 9px; height: 9px; border-radius: 50%; background: var(--subj-grad, var(--grad-signature)); box-shadow: 0 0 8px -1px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.7); flex-shrink: 0; }
+.sgroup summary b { font-size: 13.5px; font-weight: 600; color: var(--fg-0); }
+.sgroup summary .filled { margin-left: auto; font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); }
+.sgroup summary .chev { color: var(--fg-3); transition: transform .26s cubic-bezier(.2,.8,.2,1); width: 14px; height: 14px; }
+.sgroup[open] summary .chev { transform: rotate(180deg); }
+.sgroup .rows { padding: 2px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.frow { display: grid; grid-template-columns: 1fr 74px auto; gap: 6px 8px; align-items: center; }
+.frow .fmax { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); letter-spacing: 0.04em; white-space: nowrap; min-width: 34px; }
+.frow .flabel { font-size: 13px; color: var(--fg-1); display: flex; align-items: baseline; gap: 7px; }
+.frow .flabel small { font-family: "JetBrains Mono"; font-size: 9.5px; color: var(--fg-3); letter-spacing: 0.06em; }
+.frow input[type="number"] { width: 100%; height: 34px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; color: var(--fg-0); font-family: "JetBrains Mono"; font-size: 13px; text-align: right; transition: border-color .2s; -moz-appearance: textfield; appearance: textfield; }
+.frow input[type="number"]::-webkit-outer-spin-button, .frow input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.frow input[type="number"]:focus { outline: none; border-color: var(--brand-magenta); }
+.frow input[type="number"]::placeholder { color: var(--fg-3); }
+.frow input[type="range"] { grid-column: 1 / -1; width: 100%; height: 18px; cursor: pointer; appearance: none; -webkit-appearance: none; background: transparent; }
+.frow input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 99px;
+  background: linear-gradient(90deg, oklch(from var(--subj-c, var(--brand-magenta)) l c h) calc(var(--p, 0) * 1%), var(--bg-3) 0); }
+.frow input[type="range"]::-moz-range-track { height: 6px; border-radius: 99px; background: var(--bg-3); }
+.frow input[type="range"]::-moz-range-progress { height: 6px; border-radius: 99px; background: oklch(from var(--subj-c, var(--brand-magenta)) l c h); }
+.frow input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; margin-top: -4px;
+  background: oklch(from var(--subj-c, var(--brand-magenta)) l c h); border: 2.5px solid var(--bg-0); box-shadow: 0 1px 6px -1px oklch(0 0 0 / 0.4); }
+.frow input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--bg-0);
+  background: oklch(from var(--subj-c, var(--brand-magenta)) l c h); box-shadow: 0 1px 6px -1px oklch(0 0 0 / 0.4); }
+
+.panel-foot { display: flex; flex-direction: column; gap: 10px; }
+.btn-clear { align-self: flex-start; }
+
+/* ============================================================
+   PROGRAM PICKER
+   ============================================================ */
+.picker { border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 13px; }
+.picker h2 { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.searchwrap { position: relative; }
+.searchwrap svg.mag { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--fg-3); pointer-events: none; }
+.searchwrap input { width: 100%; height: 42px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 12px; padding: 0 14px 0 38px; color: var(--fg-0); font: inherit; font-size: 14px; transition: border-color .2s; }
+.searchwrap input:focus { outline: none; border-color: var(--brand-magenta); }
+.searchwrap input::placeholder { color: var(--fg-3); }
+.search-drop { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 30; background: var(--bg-1); border: 1px solid var(--glass-line-strong); border-radius: 14px; box-shadow: 0 24px 60px -18px oklch(0 0 0 / 0.5); overflow: hidden; display: none; max-height: 300px; overflow-y: auto; }
+.search-drop.open { display: block; }
+.search-drop .sd-item { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; padding: 11px 14px; border: 0; background: transparent; cursor: pointer; font: inherit; color: var(--fg-0); transition: background .12s; }
+.search-drop .sd-item:hover { background: var(--bg-2); }
+.search-drop .sd-item .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--subj-grad, var(--grad-signature)); flex-shrink: 0; }
+.search-drop .sd-item .t { font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.search-drop .sd-item .t small { display: block; font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); font-weight: 400; margin-top: 2px; }
+.search-drop .sd-item .add { margin-left: auto; font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); letter-spacing: 0.08em; }
+.search-drop .sd-empty { padding: 14px; font-size: 13px; color: var(--fg-2); }
+
+.pop-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pop-row .fb-label { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; }
+/* popular programs — orderly 2-col structured grid */
+.pop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 720px) { .pop-grid { grid-template-columns: 1fr; } }
+.pchip { appearance: none; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 13px; border: 1px solid var(--line); background: oklch(from var(--bg-1) l c h / 0.5); color: var(--fg-1); font: inherit; text-align: left; cursor: pointer; transition: border-color .18s, color .18s, transform .15s, opacity .2s; min-width: 0; }
+.pchip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--subj-grad, var(--grad-signature)); flex-shrink: 0; }
+.pchip .pt { flex: 1; min-width: 0; line-height: 1.3; }
+.pchip .pt b { display: block; font-size: 12.5px; font-weight: 600; color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pchip .pt small { font-family: "JetBrains Mono"; font-size: 9.5px; color: var(--fg-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.pchip .plus { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); letter-spacing: 0.06em; flex-shrink: 0; }
+.pchip:hover { transform: translateY(-1px); color: var(--fg-0); border-color: var(--fg-2); }
+.pchip[disabled] { opacity: 0.35; cursor: default; transform: none; }
+.btn-custom { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 99px; border: 1.5px dashed oklch(from var(--brand-cyan) l c h / 0.55); background: oklch(from var(--brand-cyan) l c h / 0.08); color: var(--fg-0); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: background .15s; }
+.btn-custom:hover { background: oklch(from var(--brand-cyan) l c h / 0.16); }
+
+/* custom criteria form */
+.custom-form { border: 1px solid var(--line-soft); border-radius: 16px; padding: 16px; display: none; flex-direction: column; gap: 12px; background: oklch(from var(--bg-1) l c h / 0.4); }
+.custom-form.open { display: flex; animation: lvlIn .26s cubic-bezier(.2,.8,.2,1); }
+@keyframes lvlIn { from { opacity: 0; transform: translateY(-4px); } }
+.custom-form h3 { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; }
+.custom-form .cf-note { font-size: 12px; color: var(--fg-2); line-height: 1.55; margin-top: -6px; }
+.cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cf-grid .full { grid-column: 1 / -1; }
+.cf-field label { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 5px; }
+.cf-field input, .cf-field select { width: 100%; height: 36px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 10px; padding: 0 11px; color: var(--fg-0); font: inherit; font-size: 13px; }
+.cf-field input:focus, .cf-field select:focus { outline: none; border-color: var(--brand-magenta); }
+.cf-crit { display: flex; flex-direction: column; gap: 7px; }
+.cf-crit-row { display: grid; grid-template-columns: 1fr 76px 30px; gap: 7px; align-items: center; }
+.cf-crit-row select, .cf-crit-row input { height: 34px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 9px; padding: 0 9px; color: var(--fg-0); font: inherit; font-size: 12.5px; }
+.cf-crit-row input { font-family: "JetBrains Mono"; text-align: right; }
+.cf-crit-row .rm { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg-3); cursor: pointer; font-size: 15px; line-height: 1; }
+.cf-crit-row .rm:hover { color: var(--danger); border-color: var(--danger); }
+.cf-sum { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-2); }
+.cf-sum b { color: var(--fg-0); }
+.cf-sum.err b { color: var(--danger); }
+.cf-actions { display: flex; gap: 9px; }
+
+/* ============================================================
+   RESULT CARDS
+   ============================================================ */
+.results { display: flex; flex-direction: column; gap: 16px; }
+.res-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+.res-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 21px; letter-spacing: -0.015em; }
+.res-head .cnt { font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-3); letter-spacing: 0.08em; }
+
+.rescard { position: relative; border-radius: 20px; overflow: hidden; padding: 20px;
+  background: var(--glass); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%);
+  border: 1px solid var(--glass-line-strong);
+  box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset, 0 16px 44px -26px oklch(0 0 0 / 0.5);
+  display: flex; flex-direction: column; gap: 15px; transition: border-color .2s, box-shadow .28s; }
+.rescard::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--st-c, var(--grad-signature)); }
+/* card enter/exit animations */
+@media (prefers-reduced-motion: no-preference) {
+  /* การ์ดทยอยขึ้นตอนโหลดหน้าครั้งแรก (stagger · เฉพาะ render แรก) */
+  #res-list:not(.settled) .rescard { animation: cardIn .5s cubic-bezier(.2,.8,.2,1) backwards; }
+  #res-list:not(.settled) .rescard:nth-child(1) { animation-delay: 0s; }
+  #res-list:not(.settled) .rescard:nth-child(2) { animation-delay: .07s; }
+  #res-list:not(.settled) .rescard:nth-child(3) { animation-delay: .14s; }
+  #res-list:not(.settled) .rescard:nth-child(4) { animation-delay: .21s; }
+  #res-list:not(.settled) .rescard:nth-child(5) { animation-delay: .28s; }
+  #res-list:not(.settled) .rescard:nth-child(n+6) { animation-delay: .34s; }
+  #res-list:not(.settled) .rescard::before { transform-origin: left; animation: topIn .6s cubic-bezier(.2,.8,.2,1) backwards; }
+  #res-list:not(.settled) .cbar .fill, #res-list:not(.settled) .btrack i { animation: barGrow .7s cubic-bezier(.2,.8,.2,1) .15s backwards; }
+  /* hover ยกตัวเบาๆ + เงาสีตามสถานะ */
+  .rescard:hover { transform: translateY(-3px); border-color: oklch(from var(--st-c, var(--brand-magenta)) l c h / 0.5);
+    box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset, 0 22px 52px -24px oklch(from var(--st-c, var(--brand-magenta)) l c h / 0.4); }
+  .rescard { transition: border-color .2s, box-shadow .28s, transform .25s cubic-bezier(.2,.8,.2,1); }
+  /* แถบสถานะบนสุดกวาดเข้า */
+  @keyframes topIn { from { transform: scaleX(0); } }
+  /* fill + breakdown bars โตจากศูนย์ตอนโผล่ */
+  .rescard.enter .cbar .fill, .rescard.enter .btrack i { animation: barGrow .7s cubic-bezier(.2,.8,.2,1) .15s backwards; }
+  @keyframes barGrow { from { width: 0; } }
+  /* st-chip เด้งรับตอนสถานะเปลี่ยน/การ์ดโผล่ */
+  .rescard.enter .st-chip { animation: chipIn .45s cubic-bezier(.2,.8,.2,1) .25s backwards; }
+  @keyframes chipIn { from { opacity: 0; transform: scale(0.7); } 70% { transform: scale(1.08); } }
+  .rescard.enter { animation: cardIn .42s cubic-bezier(.2,.8,.2,1); }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+  .rescard.exit { animation: cardOut .32s cubic-bezier(.4,0,.8,.4) forwards; pointer-events: none; }
+  @keyframes cardOut { to { opacity: 0; transform: translateX(26px) scale(0.96); } }
+  .rrow.enter { animation: rowIn .32s cubic-bezier(.2,.8,.2,1); }
+  @keyframes rowIn { from { opacity: 0; transform: translateY(-8px); } }
+  .rrow.exit { animation: rowOut .26s cubic-bezier(.4,0,.8,.4) forwards; pointer-events: none; }
+  @keyframes rowOut { to { opacity: 0; transform: translateX(20px); } }
+  .pchip.added { animation: chipPop .3s cubic-bezier(.2,.8,.2,1); }
+  @keyframes chipPop { 40% { transform: scale(0.94); } }
+}
+.rescard[data-status="safe"] { --st-c: var(--success); --st-ink: var(--success); }
+.rescard[data-status="edge"] { --st-c: var(--warning); --st-ink: var(--warning); }
+.rescard[data-status="far"]  { --st-c: var(--danger);  --st-ink: var(--danger); }
+:root[data-theme="light"] .rescard[data-status="safe"], :root[data-theme="petronas-light"] .rescard[data-status="safe"] { --st-ink: oklch(0.55 0.15 150); }
+:root[data-theme="light"] .rescard[data-status="edge"], :root[data-theme="petronas-light"] .rescard[data-status="edge"] { --st-ink: oklch(0.56 0.14 75); }
+:root[data-theme="light"] .rescard[data-status="far"],  :root[data-theme="petronas-light"] .rescard[data-status="far"]  { --st-ink: oklch(0.55 0.20 25); }
+.rescard[data-status="none"] { --st-c: var(--line); --st-ink: var(--fg-2); }
+
+.rc-top { display: flex; align-items: flex-start; gap: 14px; }
+.rc-title { flex: 1; min-width: 0; }
+.rc-title h3 { font-family: var(--font-display); font-weight: 700; font-size: 17.5px; letter-spacing: -0.015em; line-height: 1.25; }
+.rc-title .uni { font-size: 12.5px; color: var(--fg-2); margin-top: 3px; }
+.rc-title .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 7px; }
+.rc-title .meta span { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.04em; }
+.rc-title .meta span b { color: var(--fg-1); font-weight: 600; }
+.rc-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+.st-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; letter-spacing: 0.01em; color: var(--st-ink); border: 1px solid oklch(from var(--st-c) l c h / 0.45); background: oklch(from var(--st-c) l c h / 0.12); }
+.st-chip:not(:has(.face))::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--st-c); }
+.st-chip .face, .rst .face { width: 15px; height: 15px; flex-shrink: 0; color: var(--st-ink); }
+.rc-remove { appearance: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 10px; border: 1px solid oklch(from var(--danger) l c h / 0.45); background: oklch(from var(--danger) l c h / 0.10); color: var(--danger); cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; transition: background .15s, transform .15s; }
+.rc-remove:hover { background: oklch(from var(--danger) l c h / 0.2); transform: translateY(-1px); }
+:root[data-theme="light"] .rc-remove, :root[data-theme="petronas-light"] .rc-remove { color: oklch(0.52 0.20 25); }
+
+/* chance gauge (tweak-toggled) */
+.gauge { width: 62px; height: 62px; border-radius: 50%; position: relative; flex-shrink: 0;
+  background: conic-gradient(var(--st-c) calc(var(--pc, 0) * 1%), var(--bg-3) 0); }
+.gauge::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--bg-1); }
+.gauge .pcv { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--fg-0); letter-spacing: -0.02em; line-height: 1; }
+.gauge .pcv small { font-family: "JetBrains Mono"; font-size: 7px; letter-spacing: 0.12em; color: var(--fg-3); margin-top: 3px; text-transform: uppercase; }
+:root[data-gauge="off"] .gauge { display: none; }
+
+/* compare bar */
+.cbar-wrap { display: flex; flex-direction: column; gap: 7px; }
+.cbar-lab { display: flex; justify-content: space-between; font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.05em; }
+.cbar-lab b { color: var(--fg-1); font-weight: 600; }
+.cbar { position: relative; height: 14px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--line-soft); overflow: visible; }
+.cbar .fill { position: absolute; inset: 2px auto 2px 2px; width: calc(var(--w) * 1% - 4px); min-width: 6px; border-radius: 99px; background: var(--st-c); opacity: 0.9; transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.cbar .mark { position: absolute; top: -5px; bottom: -5px; left: calc(var(--x) * 1%); width: 2.5px; border-radius: 2px; background: var(--fg-0); box-shadow: 0 0 0 2.5px oklch(from var(--bg-0) l c h / 0.7); }
+.cbar .mark::after { content: attr(data-lab); position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); white-space: nowrap; font-family: "JetBrains Mono"; font-size: 9px; letter-spacing: 0.06em; color: var(--fg-2); }
+.cbar-wrap { padding-bottom: 14px; }
+
+/* gap line */
+.gapline { display: flex; align-items: center; gap: 10px; font-size: 13.5px; line-height: 1.5; color: var(--fg-1); padding: 11px 14px; border-radius: 13px; background: oklch(from var(--st-c) l c h / 0.08); border: 1px solid oklch(from var(--st-c) l c h / 0.22); }
+.gapline svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--st-ink); }
+.gapline b { color: var(--fg-0); font-weight: 600; }
+
+/* breakdown */
+.brk { border-top: 1px solid var(--line-soft); padding-top: 13px; display: flex; flex-direction: column; gap: 8px; }
+.brk .brk-head { display: flex; justify-content: space-between; font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); }
+.brow { display: grid; grid-template-columns: 130px 1fr 74px; gap: 10px; align-items: center; }
+.brow .bn { font-size: 12.5px; color: var(--fg-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brow .bn small { font-family: "JetBrains Mono"; font-size: 9.5px; color: var(--fg-3); margin-left: 5px; }
+.brow .btrack { height: 7px; border-radius: 99px; background: var(--bg-2); overflow: hidden; }
+.brow .btrack i { display: block; height: 100%; border-radius: 99px; background: var(--subj-grad, var(--grad-signature)); width: calc(var(--w) * 1%); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.brow .bv { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-2); text-align: right; }
+.brow .bv b { color: var(--fg-0); font-weight: 600; }
+.brow.missing .bn, .brow.missing .bv { opacity: 0.5; }
+.brow.missing .btrack i { background: var(--bg-3); }
+
+.rc-actions { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+.rc-actions .src { margin-left: auto; font-family: "JetBrains Mono"; font-size: 9.5px; color: var(--fg-3); letter-spacing: 0.06em; }
+.rc-actions .src a { color: var(--fg-2); }
+
+/* ============================================================
+   TARGET MODE PANEL
+   ============================================================ */
+.target-panel { position: relative; border-radius: 20px; padding: 22px; display: none; flex-direction: column; gap: 15px; overflow: hidden;
+  border: 1px solid oklch(from var(--brand-cyan) l c h / 0.45);
+  background: linear-gradient(135deg, oklch(from var(--brand-cyan) l c h / 0.12), oklch(from var(--brand-violet) l c h / 0.10) 55%, transparent), var(--glass);
+  backdrop-filter: blur(28px) saturate(165%); -webkit-backdrop-filter: blur(28px) saturate(165%);
+  box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.08) inset, 0 18px 50px -24px oklch(from var(--brand-cyan) l c h / 0.45); }
+.target-panel::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad-cool); }
+.target-panel.open { display: flex; animation: lvlIn .3s cubic-bezier(.2,.8,.2,1); }
+.tp-head { display: flex; align-items: flex-start; gap: 12px; }
+.tp-head .ico { width: 40px; height: 40px; border-radius: 13px; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; box-shadow: 0 8px 22px -8px oklch(from var(--brand-cyan) l c h / 0.7); }
+.tp-head .ico svg { width: 18px; height: 18px; }
+.tp-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+.tp-head p { font-size: 12.5px; color: var(--fg-2); margin-top: 3px; line-height: 1.5; }
+.tp-head .close { margin-left: auto; }
+.tp-rows { display: flex; flex-direction: column; gap: 9px; }
+.tprow { display: grid; grid-template-columns: 128px 1fr auto auto auto; gap: 14px; align-items: center; padding: 11px 14px; border-radius: 13px; background: oklch(from var(--bg-0) l c h / 0.45); border: 1px solid var(--glass-line-strong); }
+.tprow .tbar { height: 8px; border-radius: 99px; background: var(--bg-2); overflow: hidden; position: relative; }
+.tprow .tbar i { position: absolute; inset: 0 auto 0 0; width: calc(var(--w) * 1%); border-radius: 99px; background: var(--grad-cool); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.tprow.done .tbar i { background: var(--success); }
+.tprow .tn { font-size: 13px; color: var(--fg-0); font-weight: 600; }
+.tprow .now, .tprow .need { font-family: "JetBrains Mono"; font-size: 12px; text-align: right; }
+.tprow .now { color: var(--fg-2); }
+.tprow .now small, .tprow .need small { display: block; font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-3); margin-top: 2px; }
+.tprow .need { color: var(--fg-0); font-weight: 600; }
+.tprow .delta { font-family: "JetBrains Mono"; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
+.tprow .delta.up { color: var(--brand-cyan); background: oklch(from var(--brand-cyan) l c h / 0.12); }
+.tprow .delta.ok { color: var(--success); background: oklch(from var(--success) l c h / 0.12); }
+:root[data-theme="light"] .tprow .delta.up, :root[data-theme="petronas-light"] .tprow .delta.up { color: oklch(0.52 0.13 205); }
+:root[data-theme="light"] .tprow .delta.ok, :root[data-theme="petronas-light"] .tprow .delta.ok { color: oklch(0.55 0.15 150); }
+.tp-note { font-size: 12px; color: var(--fg-2); line-height: 1.55; }
+
+/* ============================================================
+   FOCUS SUMMARY
+   ============================================================ */
+.focus { border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.focus h2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; }
+.focus .fmsg { font-size: 14px; line-height: 1.65; color: var(--fg-1); max-width: 70ch; }
+.focus .fmsg b { color: var(--fg-0); font-weight: 600; }
+.focus-courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.fcourse { display: flex; align-items: center; gap: 13px; padding: 13px 15px; border-radius: 15px; text-decoration: none; border: 1px solid var(--line); background: oklch(from var(--bg-1) l c h / 0.5); transition: transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s; }
+.fcourse:hover { transform: translateY(-2px); border-color: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.5); }
+.fcourse .thumb { width: 42px; height: 42px; border-radius: 12px; background: var(--subj-grad, var(--grad-signature)); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.fcourse .thumb svg { width: 19px; height: 19px; }
+.fcourse .t { flex: 1; min-width: 0; line-height: 1.3; }
+.fcourse .t b { display: block; font-size: 13px; color: var(--fg-0); font-weight: 600; }
+.fcourse .t small { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); }
+.fcourse .arrow { color: var(--fg-3); }
+.focus .est { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); }
+
+/* empty state */
+.res-empty { display: none; flex-direction: column; align-items: center; text-align: center; padding: 56px 32px; gap: 12px; border-radius: 22px; border: 1px dashed var(--line); }
+.res-empty.show { display: flex; }
+.res-empty svg { width: 44px; height: 44px; color: var(--brand-magenta); opacity: 0.65; }
+.res-empty h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; }
+.res-empty p { color: var(--fg-2); font-size: 13.5px; line-height: 1.55; max-width: 42ch; }
+
+/* estimate tag reused */
+.est-tag { display: inline-flex; align-items: center; gap: 5px; padding: 2.5px 8px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg-2); font-family: "JetBrains Mono"; font-size: 8.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-2); }
+
+@media (max-width: 720px) {
+  .page { padding: 20px 16px 96px; }
+  .brow { grid-template-columns: 104px 1fr 66px; }
+  .tprow { grid-template-columns: 1fr auto auto; }
+  .tprow .delta, .tprow .tbar { display: none; }
+  .rc-top { flex-wrap: wrap; }
+}
+
+/* ============================================================
+   10-อันดับ RANKER — เสมือนระบบยื่นจริง
+   ============================================================ */
+.rankbox { border-radius: 20px; padding: 20px; display: none; flex-direction: column; gap: 13px; }
+.rankbox.show { display: flex; }
+@media (prefers-reduced-motion: no-preference) {
+  /* กล่องโผล่ครั้งแรก + แถวทยอยขึ้น (เฉพาะ render แรก) */
+  .rankbox.show:not(.settled) { animation: rankboxIn .45s cubic-bezier(.2,.8,.2,1) backwards; }
+  @keyframes rankboxIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+  .rankbox:not(.settled) .rrow { animation: rowIn .38s cubic-bezier(.2,.8,.2,1) backwards; }
+  .rankbox:not(.settled) .rrow:nth-child(1) { animation-delay: .05s; }
+  .rankbox:not(.settled) .rrow:nth-child(2) { animation-delay: .11s; }
+  .rankbox:not(.settled) .rrow:nth-child(3) { animation-delay: .17s; }
+  .rankbox:not(.settled) .rrow:nth-child(4) { animation-delay: .23s; }
+  .rankbox:not(.settled) .rrow:nth-child(n+5) { animation-delay: .28s; }
+  /* hover — ยกเบาๆ + เส้นขอบสีมหาลัย + โลโก้ชัดขึ้น */
+  .rrow:hover:not(.dragging) { transform: translateX(3px); border-color: oklch(from var(--uni-c, var(--fg-3)) l c h / 0.5); }
+  .rrow:hover .wm { opacity: 0.22; transition: opacity .25s; }
+  /* เลขอันดับเด้งเมื่ออันดับเปลี่ยน (หลังลากสลับ/ลบเท่านั้น) */
+  .rankbox.reorder .rrow .no { animation: noPop .35s cubic-bezier(.2,.8,.2,1); }
+  @keyframes noPop { 45% { transform: scale(1.18); } }
+}
+.rank-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rank-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.rank-head .rk-cnt { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; margin-left: auto; }
+.rank-note { font-size: 12px; color: var(--fg-2); line-height: 1.55; margin-top: -6px; }
+.rank-rows { display: flex; flex-direction: column; gap: 7px; }
+/* แถวอันดับ — สีประจำมหาลัย fade + โลโก้จาง ลากสลับอันดับได้ */
+.rrow { position: relative; overflow: hidden; display: grid; grid-template-columns: 16px 30px 1fr auto auto; gap: 10px; align-items: center; padding: 9px 12px 9px 8px; border-radius: 13px; border: 1px solid var(--line-soft); cursor: grab;
+  background: linear-gradient(90deg, oklch(from var(--uni-c, var(--bg-3)) l c h / 0.16), oklch(from var(--uni-c, var(--bg-3)) l c h / 0.04) 45%, transparent 72%), oklch(from var(--bg-1) l c h / 0.5);
+  transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s, opacity .18s, border-color .18s; }
+.rrow:hover { border-color: oklch(from var(--uni-c, var(--fg-3)) l c h / 0.5); }
+.rrow.dragging { opacity: 0.45; cursor: grabbing; box-shadow: 0 14px 34px -14px oklch(0 0 0 / 0.5); }
+.rrow.dragover { border-color: var(--brand-cyan); box-shadow: 0 0 0 1px var(--brand-cyan) inset; }
+.rrow .wm { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); height: 148%; opacity: 0.14; pointer-events: none; user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask-image: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+:root[data-theme="petronas"] .rrow .wm, :root[data-theme="dark"] .rrow .wm { opacity: 0.2; filter: brightness(1.5); }
+.rrow .grip { color: var(--fg-3); display: flex; align-items: center; justify-content: center; }
+.rrow .grip svg { width: 13px; height: 13px; }
+.rrow .no { width: 30px; height: 30px; border-radius: 10px; background: var(--bg-3); color: var(--fg-1); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 13px; position: relative; z-index: 1; }
+.rrow.top .no { background: oklch(from var(--uni-c, var(--brand-magenta)) l c h); color: #fff; box-shadow: 0 6px 16px -6px oklch(from var(--uni-c, var(--brand-magenta)) l c h / 0.7); }
+.rrow .nm { min-width: 0; line-height: 1.3; }
+.rrow .nm b { display: block; font-size: 13px; font-weight: 600; color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rrow .nm small { font-size: 11px; color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.rrow .rst { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 99px; color: var(--st-ink); border: 1px solid oklch(from var(--st-c) l c h / 0.45); background: oklch(from var(--st-c) l c h / 0.12); white-space: nowrap; }
+.rrow[data-status="safe"] { --st-c: var(--success); --st-ink: var(--success); }
+.rrow[data-status="edge"] { --st-c: var(--warning); --st-ink: var(--warning); }
+.rrow[data-status="far"]  { --st-c: var(--danger);  --st-ink: var(--danger); }
+.rrow[data-status="none"] { --st-c: var(--line); --st-ink: var(--fg-2); }
+:root[data-theme="light"] .rrow[data-status="safe"], :root[data-theme="petronas-light"] .rrow[data-status="safe"] { --st-ink: oklch(0.55 0.15 150); }
+:root[data-theme="light"] .rrow[data-status="edge"], :root[data-theme="petronas-light"] .rrow[data-status="edge"] { --st-ink: oklch(0.56 0.14 75); }
+:root[data-theme="light"] .rrow[data-status="far"],  :root[data-theme="petronas-light"] .rrow[data-status="far"]  { --st-ink: oklch(0.55 0.20 25); }
+.rrow .ops { display: flex; gap: 4px; }
+.rrow .ops button { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg-2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color .15s, border-color .15s, background .15s; }
+.rrow .ops button:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.rrow .ops button.rx:hover { color: var(--danger); border-color: var(--danger); }
+.rrow .ops button[disabled] { opacity: 0.3; cursor: default; }
+.rrow .ops svg { width: 13px; height: 13px; }
+@media (max-width: 720px) { .rrow .rst { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="01 TCAS Chance">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+    </button>
+    <a href="Dashboard.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"></path>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"></path>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M9 13l2 2 4-4"></path></svg>
+        <span>ข้อสอบ</span>
+      </a>
+      <a class="sb-item active" href="TCAS.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+        <span>คำนวณ TCAS</span>
+        <span class="pill">ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"></path><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"></path></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="Leaderboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"></path></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"></circle><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"></path></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="Achievements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"></rect><path d="M2 10h20"></path></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 12 0v1"></path></svg>
+        <span>โปรไฟล์ &amp; ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info"><b>น้องปาล์ม</b><span>LV 14 · 2,840 XP</span></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"></path></svg>
+    </div>
+  </aside>
+
+  <!-- MAIN COL -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>คำนวณ TCAS</b>
+      </div>
+      <div class="top-actions">
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+          <span class="dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="scroll">
+      <div class="page">
+
+        <!-- PAGE HEAD -->
+        <section class="exhead">
+          <div class="t-eyebrow"><span class="dot"></span>เครื่องมือ · TCAS 70</div>
+          <h1>เช็กโอกาสติด — รู้เลยว่า<br>ไปถึงฝันได้แค่ไหน</h1>
+        </section>
+
+        <!-- DISCLAIMER -->
+        <div class="disclaim" data-comment-anchor="tcas-disclaimer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4M12 17h.01"></path></svg>
+          <p><b>ผลนี้เป็นการประเมินจากคะแนนต่ำสุดปี 2568 เท่านั้น</b> — เกณฑ์และคะแนนปีนี้อาจต่างออกไปได้ ตรวจสอบระเบียบการทางการอีกครั้งที่ <a href="https://www.mytcas.com" target="_blank" rel="noopener">mytcas.com</a> ก่อนสมัครจริงเสมอ · ข้อมูลคณะในหน้านี้เป็น<b>ตัวอย่าง</b>สำหรับการออกแบบ</p>
+        </div>
+
+        <div class="tc-grid">
+
+          <!-- LEFT: SCORE INPUT PANEL -->
+          <section class="panel glass-surf" aria-label="กรอกคะแนน">
+            <div class="panel-head">
+              <h2>คะแนนของเรา</h2>
+              <span class="hint" id="filled-hint">0 วิชา</span>
+            </div>
+            <p class="mode-note" id="mode-note">ใส่คะแนนที่คาดหวังได้เลย — กรอกเฉพาะวิชาที่ใช้ก็พอ</p>
+
+            <div id="score-groups"></div>
+
+            <div class="panel-foot">
+              <button class="btn btn-ghost btn-sm btn-clear" id="btn-clear">ล้างคะแนนทั้งหมด</button>
+            </div>
+          </section>
+
+          <!-- RIGHT: PICKER + RESULTS -->
+          <div class="results">
+
+            <!-- PROGRAM PICKER -->
+            <section class="picker glass-surf" aria-label="เลือกคณะ">
+              <h2>เลือกคณะที่จะเทียบ</h2>
+              <div class="searchwrap">
+                <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="text" id="prog-search" placeholder="ค้นหาคณะ / มหาวิทยาลัย / สาขา…" autocomplete="off" />
+                <div class="search-drop" id="search-drop"></div>
+              </div>
+              <div id="pop-chips" style="display:flex;flex-direction:column;gap:8px;">
+                <span class="fb-label">ยอดฮิต · กดเพื่อเพิ่มเข้ารายการเทียบ</span>
+                <div class="pop-grid" id="pop-grid"></div>
+              </div>
+              <div class="pop-row">
+                <button class="btn-custom" id="btn-custom-toggle">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                  ไม่มีคณะในระบบ? กรอกเกณฑ์เอง
+                </button>
+              </div>
+
+              <!-- CUSTOM CRITERIA FORM -->
+              <form class="custom-form" id="custom-form">
+                <h3>กรอกเกณฑ์เอง</h3>
+                <p class="cf-note">ดูองค์ประกอบ % จากระเบียบการของคณะ แล้วใส่ตรงนี้ — ระบบคิดคะแนนถ่วงน้ำหนักให้เหมือนคณะในระบบทุกอย่าง</p>
+                <div class="cf-grid">
+                  <div class="cf-field full"><label>ชื่อคณะ / สาขา</label><input type="text" id="cf-name" placeholder="เช่น วิศวกรรมศาสตร์ (คอมพิวเตอร์)" /></div>
+                  <div class="cf-field"><label>มหาวิทยาลัย</label><input type="text" id="cf-uni" placeholder="เช่น ม.ขอนแก่น" /></div>
+                  <div class="cf-field"><label>คะแนนต่ำสุดปีก่อน (0–100)</label><input type="number" id="cf-min" min="0" max="100" step="0.01" placeholder="เช่น 55.20" /></div>
+                </div>
+                <div class="cf-crit" id="cf-crit"></div>
+                <button type="button" class="btn btn-ghost btn-sm" id="cf-add-row" style="align-self:flex-start;">+ เพิ่มวิชา</button>
+                <div class="cf-sum" id="cf-sum">น้ำหนักรวม <b>0%</b> / 100%</div>
+                <div class="cf-actions">
+                  <button type="submit" class="btn btn-primary btn-sm">เพิ่มเข้ารายการเทียบ</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="cf-cancel">ยกเลิก</button>
+                </div>
+              </form>
+            </section>
+
+            <!-- TARGET MODE PANEL -->
+            <section class="target-panel glass-surf" id="target-panel" aria-label="โหมดเป้าหมาย"></section>
+
+            <!-- 10-อันดับ RANKER -->
+            <section class="rankbox glass-surf" id="rankbox" aria-label="จัดอันดับ"></section>
+
+            <!-- RESULTS -->
+            <div class="res-head">
+              <h2>ผลวิเคราะห์</h2>
+              <span class="cnt" id="res-cnt"></span>
+            </div>
+            <div id="res-list" style="display:flex;flex-direction:column;gap:16px;"></div>
+
+            <div class="res-empty" id="res-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+              <h3>ยังไม่ได้เลือกคณะ</h3>
+              <p>ค้นหาหรือกดชิปคณะยอดฮิตด้านบน เพื่อเริ่มเทียบคะแนนของเรากับคะแนนต่ำสุดปีก่อน</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// Theme toggle (same contract as Exams.html)
+(function(){
+  const root = document.documentElement;
+  const sv0 = localStorage.getItem('ming-theme') || 'petronas-light';
+  const saved = sv0 === 'dark' ? 'petronas' : sv0 === 'light' ? 'petronas-light' : sv0 === 'classic-dark' ? 'dark' : sv0 === 'classic-light' ? 'light' : sv0;
+  root.setAttribute('data-theme', saved);
+  const btns = document.querySelectorAll('.theme-toggle button');
+  function set(t){
+    root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+    localStorage.setItem('ming-theme', t);
+    btns.forEach(b => b.setAttribute('aria-pressed', (b.dataset.set === 'dark' ? (t === 'petronas' || t === 'dark') : (t === 'petronas-light' || t === 'light')) ? 'true' : 'false'));
+  }
+  btns.forEach(b => b.addEventListener('click', () => set(b.dataset.set === 'dark' ? 'petronas' : 'petronas-light')));
+  btns.forEach(b => b.setAttribute('aria-pressed', (b.dataset.set === 'dark' ? (saved === 'petronas' || saved === 'dark') : (saved === 'petronas-light' || saved === 'light')) ? 'true' : 'false'));
+})();
+
+// Sidebar collapse
+(function(){
+  const app = document.querySelector('.app');
+  const saved = localStorage.getItem('ming-sidebar');
+  if (saved === 'collapsed') app.classList.add('collapsed');
+  document.getElementById('sb-toggle')?.addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    localStorage.setItem('ming-sidebar', app.classList.contains('collapsed') ? 'collapsed' : 'expanded');
+  });
+})();
+</script>
+
+<script src="tcas.js?v=1"></script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<div id="tweaks-root"><span hidden>tweaks</span><div id="tweaks-mount"></div></div>
+<script type="text/babel">
+  const TC_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "themeDark": false,
+    "showGauge": true,
+    "mockCount": 8,
+    "copyTone": "encourage"
+  }/*EDITMODE-END*/;
+  function applyTc(t) {
+    document.documentElement.setAttribute('data-gauge', t.showGauge ? 'on' : 'off');
+    window.TCAS && window.TCAS.setTweaks({ copyTone: t.copyTone, mockCount: t.mockCount });
+  }
+  function TcTweaks() {
+    const [t, setTweak] = useTweaks(TC_TWEAK_DEFAULTS);
+    React.useEffect(() => applyTc(t), [t]);
+    React.useEffect(() => {
+      const cur = document.documentElement.getAttribute('data-theme') || '';
+      const isDark = cur === 'petronas' || cur === 'dark';
+      if (t.themeDark !== isDark) {
+        const btn = document.getElementById(t.themeDark ? 'btn-dark' : 'btn-light');
+        if (btn) btn.click();
+      }
+    }, [t.themeDark]);
+    return (
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="คำนวณ TCAS" />
+        <TweakToggle label="โหมดมืด" value={t.themeDark} onChange={(v) => setTweak('themeDark', v)} />
+        <TweakToggle label="เกจ % โอกาส (ประมาณการ)" value={t.showGauge} onChange={(v) => setTweak('showGauge', v)} />
+        <TweakSlider label="จำนวนคณะตัวอย่างเริ่มต้น" min={0} max={8} step={1} value={t.mockCount} onChange={(v) => setTweak('mockCount', v)} />
+        <TweakRadio label="โทนของ copy" value={t.copyTone}
+          options={[{value:'direct',label:'ตรงๆ'},{value:'encourage',label:'ให้กำลังใจ'},{value:'cheer',label:'เชียร์สุดใจ'}]}
+          onChange={(v) => setTweak('copyTone', v)} />
+      </TweaksPanel>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('tweaks-mount')).render(<TcTweaks />);
+</script>
+</body>
+</html>

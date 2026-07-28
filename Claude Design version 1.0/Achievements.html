@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ความสำเร็จ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="app-shell.css" />
+<link rel="stylesheet" href="ach.css?v=25" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="achGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="oklch(0.66 0.23 295)"/><stop offset="100%" stop-color="oklch(0.78 0.20 50)"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="app" data-screen-label="Achievements">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Landing Page.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="Leaderboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item active" href="Achievements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+      <a class="sb-item" href="Streak & Daily Goal.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg>
+        <span>สตรีค</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info">
+        <b>น้องปาล์ม</b>
+        <span>LV 14 · 2,840 XP</span>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN COL ============== -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>ความสำเร็จ</b>
+      </div>
+      <div class="top-actions">
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page ach-page" id="ach-page">
+
+      <div class="page-head">
+        <div class="titles">
+          <span class="eyebrow">เก็บให้ครบทุกใบ</span>
+          <h1>ความ<span class="grad">สำเร็จ</span></h1>
+        </div>
+        <div class="ach-head-meta">
+          <div class="ach-prog-pill">
+            <div class="ring-mini">
+              <svg viewBox="0 0 40 40"><circle class="tk" cx="20" cy="20" r="16"/><circle class="br" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="33.5" transform="rotate(-90 20 20)"/></svg>
+              <b>6/9</b>
+            </div>
+            <div class="pt"><b>67%</b><span>ปลดล็อกแล้ว</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="demo-lab">เดโม</span>
+            <div class="demo-seg" id="demo-seg">
+              <button data-state="full" aria-pressed="true">มีข้อมูล</button>
+              <button data-state="empty" aria-pressed="false">แรกเข้า</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SHOWCASE ===== -->
+      <section class="showcase-card">
+        <div class="sc-head">
+          <div>
+            <h2>เหรียญที่ปักโชว์</h2>
+            <p>เลือกได้สูงสุด 3 ใบ — โชว์บนโปรไฟล์สาธารณะของคุณ</p>
+          </div>
+          <span class="sc-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9 2 12l3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>
+            ลากเพื่อจัดลำดับ
+          </span>
+        </div>
+        <div class="showcase-row" id="showcase-row"></div>
+      </section>
+
+      <!-- ===== NEXT-UP HIGHLIGHT ===== -->
+      <section class="next-up" data-color="coral">
+        <div class="nu-gem">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg>
+          <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        </div>
+        <div class="nu-body">
+          <div class="nu-eyebrow">ใกล้ปลดล็อกที่สุด</div>
+          <h3>เครื่องร้อน</h3>
+          <p>เรียนต่อเนื่องอีก <b>1 วัน</b> ก็จะได้เหรียญนี้ — แค่เปิดบทสั้น ๆ วันนี้ก็พอ</p>
+          <div class="nu-prog">
+            <span class="track"><i style="width:85%"></i></span>
+            <span class="pct">6/7 วัน</span>
+          </div>
+        </div>
+        <div class="nu-cta">
+          <a href="Learn.html" class="btn btn-primary btn-sm">เรียนวันนี้
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== TABS ===== -->
+      <div class="ach-tabs-wrap">
+        <div class="ach-tabs" id="ach-tabs" role="tablist">
+          <button data-filter="all" aria-pressed="true">ทั้งหมด <span class="count">9</span></button>
+          <button data-filter="unlocked" aria-pressed="false">ปลดล็อกแล้ว <span class="count">6</span></button>
+          <button data-filter="locked" aria-pressed="false">ยังไม่ปลดล็อก <span class="count">3</span></button>
+        </div>
+      </div>
+
+      <!-- ===== CATEGORY: ทั่วไป ===== -->
+      <section class="cat-sec" data-cat="general">
+        <div class="cat-h"><h3>ทั่วไป</h3><span class="ct">3</span><span class="rule"></span></div>
+        <div class="ach-grid">
+          <!-- newbie -->
+          <div class="ach" data-badge="newbie" data-color="violet" data-tier="common" data-state="unlocked">
+                        <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg></div>
+              <span class="rar">ธรรมดา</span>
+              <button class="ach-pin pinned" aria-label="ปักโชว์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg></button>
+            </div>
+            <div class="ach-name">ผู้มาใหม่</div>
+            <div class="ach-desc">สมัครสมาชิกและยืนยันอีเมลสำเร็จ</div>
+            <div class="ach-foot"><div class="ach-meta"><span class="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> 1 พ.ค. 69</span><span class="rarity-pct"><b>64%</b> ของนักเรียนมี</span></div></div>
+          </div>
+          <!-- payer -->
+          <div class="ach" data-badge="payer" data-color="coral" data-tier="rare" data-state="unlocked">
+            <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></div>
+              <span class="rar">หายาก</span>
+              <button class="ach-pin pinned" aria-label="ปักโชว์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg></button>
+            </div>
+            <div class="ach-name">ป๋าเปย์</div>
+            <div class="ach-desc">ลงทุนกับตัวเอง — ซื้อคอร์สแรกสำเร็จ</div>
+            <div class="ach-foot"><div class="ach-meta"><span class="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> 3 พ.ค. 69</span><span class="rarity-pct"><b>28%</b> ของนักเรียนมี</span></div></div>
+          </div>
+          <!-- collector (unlocked, not pinned) -->
+          <div class="ach" data-badge="collector" data-color="cyan" data-tier="common" data-state="unlocked">
+                        <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+              <span class="rar">ธรรมดา</span>
+              <button class="ach-pin" aria-label="ปักโชว์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg></button>
+            </div>
+            <div class="ach-name">นักสะสม</div>
+            <div class="ach-desc">บันทึกคอร์สไว้ดูทีหลังครบ 10 คอร์ส</div>
+            <div class="ach-foot"><div class="ach-meta"><span class="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> 20 พ.ค. 69</span><span class="rarity-pct"><b>41%</b> ของนักเรียนมี</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CATEGORY: การเรียน ===== -->
+      <section class="cat-sec" data-cat="study">
+        <div class="cat-h"><h3>การเรียน</h3><span class="ct">4</span><span class="rule"></span></div>
+        <div class="ach-grid">
+          <!-- firststep -->
+          <div class="ach" data-badge="firststep" data-color="violet" data-tier="common" data-state="unlocked">
+                        <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15 12 7l6 8"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/></svg></div>
+              <span class="rar">ธรรมดา</span>
+              <button class="ach-pin pinned" aria-label="ปักโชว์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg></button>
+            </div>
+            <div class="ach-name">ก้าวแรก</div>
+            <div class="ach-desc">เรียนจบบทเรียนแรกของคุณ</div>
+            <div class="ach-foot"><div class="ach-meta"><span class="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> 1 พ.ค. 69</span><span class="rarity-pct"><b>58%</b> ของนักเรียนมี</span></div></div>
+          </div>
+          <!-- hotstreak (locked, 85%) -->
+          <div class="ach locked" data-badge="hotstreak" data-color="coral" data-tier="rare" data-state="locked">
+            <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg><span class="lockbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+              <span class="rar">หายาก</span>
+            </div>
+            <div class="ach-name">เครื่องร้อน</div>
+            <div class="ach-desc">เรียนต่อเนื่อง 7 วันไม่ขาด</div>
+            <div class="ach-foot"><div class="ach-prog"><div class="pl"><span class="left">เรียนอีก 1 วันก็ได้เลย</span><span class="frac">6/7</span></div><div class="track"><i style="width:85%"></i></div></div></div>
+          </div>
+          <!-- nightowl -->
+          <div class="ach" data-badge="nightowl" data-color="violet" data-tier="rare" data-state="unlocked">
+                        <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></div>
+              <span class="rar">หายาก</span>
+              <button class="ach-pin pinned" aria-label="ปักโชว์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg></button>
+            </div>
+            <div class="ach-name">นกฮูก</div>
+            <div class="ach-desc">เรียนหลังเที่ยงคืนครบ 10 ครั้ง</div>
+            <div class="ach-foot"><div class="ach-meta"><span class="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> 14 พ.ค. 69</span><span class="rarity-pct"><b>19%</b> ของนักเรียนมี</span></div></div>
+          </div>
+          <!-- marathon (locked, epic, 64%) -->
+          <div class="ach locked" data-badge="marathon" data-color="magenta" data-tier="epic" data-state="locked">
+            <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg><span class="lockbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+              <span class="rar">เอพิค</span>
+            </div>
+            <div class="ach-name">มาราธอน</div>
+            <div class="ach-desc">เรียนสะสมครบ 100 ชั่วโมง</div>
+            <div class="ach-foot"><div class="ach-prog"><div class="pl"><span class="left">เรียนอีก 36 ชม.</span><span class="frac">64/100</span></div><div class="track"><i style="width:64%"></i></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CATEGORY: ขั้นเทพ ===== -->
+      <section class="cat-sec" data-cat="legendary">
+        <div class="cat-h"><h3>ขั้นเทพ</h3><span class="ct">2</span><span class="rule"></span></div>
+        <div class="ach-grid">
+          <!-- weekend warrior (unlocked, epic) -->
+          <div class="ach" data-badge="weekend" data-color="cyan" data-tier="epic" data-state="unlocked">
+                        <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18m-9 4 2 2 4-4"/></svg></div>
+              <span class="rar">เอพิค</span>
+              <button class="ach-pin pinned" aria-label="ปักโชว์"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg></button>
+            </div>
+            <div class="ach-name">นักรบวันหยุด</div>
+            <div class="ach-desc">เรียนครบทุกเสาร์–อาทิตย์ใน 1 เดือน</div>
+            <div class="ach-foot"><div class="ach-meta"><span class="date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> 25 พ.ค. 69</span><span class="rarity-pct"><b>6%</b> ของนักเรียนมี</span></div></div>
+          </div>
+          <!-- zombie (locked, legend, 12%) -->
+          <div class="ach locked" data-badge="zombie" data-color="gold" data-tier="legend" data-state="locked">
+            <div class="ach-top">
+              <div class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg><span class="lockbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+              <span class="rar">ตำนาน</span>
+            </div>
+            <div class="ach-name">ซอมบี้</div>
+            <div class="ach-desc">เรียนทุกวันไม่ขาดครบ 100 วันต่อเนื่อง</div>
+            <div class="ach-foot"><div class="ach-prog"><div class="pl"><span class="left">เก็บสตรีคต่อไปเรื่อย ๆ</span><span class="frac">12/100</span></div><div class="track"><i style="width:12%"></i></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== EMPTY STATE ===== -->
+      <div class="ach-empty">
+        <div class="illus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div>
+        <h3>ยังไม่มีเหรียญสักใบ</h3>
+        <p>เริ่มเรียนบทแรกวันนี้เพื่อปลดล็อกเหรียญ "ก้าวแรก" — แล้วเหรียญใบอื่น ๆ จะตามมาเอง</p>
+        <a href="Browse Courses.html" class="btn btn-primary">ไปเลือกคอร์สเรียน</a>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<script src="ach.js?v=3"></script>
+
+<!-- ============== TWEAKS PANEL ============== -->
+<div id="tweak-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "vibe": "aurora",
+  "energy": "balanced"
+}/*EDITMODE-END*/;
+function AchTweaks() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(() => { if (window.MingAch) window.MingAch.setTweaks(t); }, [t.vibe, t.energy]);
+  return (
+    <TweaksPanel>
+      <TweakSection label="โทนสี" />
+      <TweakColor label="Aurora · Cool · Warm"
+        value={t.vibe === 'cool' ? ['#6E5BD8','#3E8FD0','#52C7DE'] : t.vibe === 'warm' ? ['#E2476B','#E88A3C','#9FD64A'] : ['#7A5AE0','#E04A78','#F0904A']}
+        options={[['#7A5AE0','#E04A78','#F0904A'], ['#6E5BD8','#3E8FD0','#52C7DE'], ['#E2476B','#E88A3C','#9FD64A']]}
+        onChange={(pal) => setTweak('vibe', pal[1] === '#3E8FD0' ? 'cool' : pal[1] === '#E88A3C' ? 'warm' : 'aurora')} />
+      <TweakSection label="ความมีชีวิตของเหรียญ" />
+      <TweakRadio label="พลังงาน" value={t.energy}
+        options={[{label:'สุขุม', value:'calm'}, {label:'สมดุล', value:'balanced'}, {label:'สดใส', value:'vivid'}]}
+        onChange={(v) => setTweak('energy', v)} />
+    </TweaksPanel>
+  );
+}
+ReactDOM.createRoot(document.getElementById('tweak-root')).render(<AchTweaks />);
+</script>
+</body>
+</html>

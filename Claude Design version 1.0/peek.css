@@ -1,0 +1,65 @@
+/* ==========================================================================
+   Mingsmileyface · Shared profile peek (floating popover)
+   Auto-binds any [data-peek="<id>"] element on the page. Reads MingPeople.
+   Opacity/transform transitions are avoided on this fixed element (preview
+   engine stalls them) — shown via display toggle + a fill-mode keyframe.
+   ========================================================================== */
+:root { --peek-ease: cubic-bezier(.2,.8,.2,1); }
+
+[data-peek] { cursor: pointer; }
+
+.peek-catcher { position: fixed; inset: 0; z-index: 240; display: none; }
+.peek-catcher.open { display: block; }
+
+.peek { position: fixed; z-index: 250; width: 320px; max-width: calc(100vw - 28px);
+  border-radius: 22px; overflow: hidden; display: none;
+  background: oklch(from var(--bg-1) l c h / 0.96); backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid var(--glass-line-strong, oklch(0.99 0.005 285 / 0.14));
+  box-shadow: 0 30px 70px -20px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.05) inset; }
+.peek.open { display: block; opacity: 1; animation: peekIn .18s var(--peek-ease) both; }
+@keyframes peekIn { from { transform: scale(0.97); } to { transform: scale(1); } }
+
+.peek-hero { position: relative; padding: 22px 22px 18px; display: flex; align-items: center; gap: 14px; background: var(--peek-grad, var(--grad-signature)); }
+.peek-hero::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.16) 1px, transparent 1px); background-size: 16px 16px; mask-image: radial-gradient(70% 80% at 80% 0%, #000, transparent 75%); pointer-events: none; }
+.peek-hero > * { position: relative; }
+.peek-hero .pk-av { width: 60px; height: 60px; border-radius: 50%; background: oklch(0.99 0.005 285 / 0.25); backdrop-filter: blur(8px); border: 2px solid oklch(0.99 0.005 285 / 0.5); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 22px; color: #fff; flex-shrink: 0; }
+.peek-hero .pk-id { min-width: 0; }
+.peek-hero .pk-id b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.015em; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.peek-hero .pk-id .meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+.peek-hero .pk-id .chip { font-family: "JetBrains Mono"; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: oklch(0.20 0.03 60); background: oklch(0.99 0.005 285 / 0.55); padding: 2px 8px; border-radius: 6px; }
+.peek-hero .pk-id .chip.empty { display: none; }
+.peek-hero .pk-close { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 8px; border: 1px solid oklch(0.99 0.005 285 / 0.3); background: oklch(0.99 0.005 285 / 0.18); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.peek-hero .pk-close:hover { background: oklch(0.99 0.005 285 / 0.3); }
+.peek-hero .pk-close svg { width: 14px; height: 14px; }
+
+.peek-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
+.pk-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--brand-magenta); font-weight: 500; margin-top: -2px; }
+.pk-status.empty { display: none; }
+.pk-status .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px oklch(0.68 0.25 5 / 0.2); }
+.pk-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pk-stat { border-radius: 13px; border: 1px solid var(--line); background: var(--bg-2); padding: 12px 13px; display: flex; flex-direction: column; gap: 3px; }
+.pk-stat .v { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; color: var(--fg-0); display: flex; align-items: baseline; gap: 4px; }
+.pk-stat .v .u { font-size: 11px; color: var(--fg-3); font-weight: 500; font-family: "IBM Plex Sans Thai"; }
+.pk-stat .l { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--fg-2); }
+.pk-stat .l svg { width: 13px; height: 13px; color: var(--pk-c, var(--brand-magenta)); }
+.pk-subj { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); }
+.pk-subj .lab { font-size: 11.5px; color: var(--fg-2); }
+.pk-subj .val { font-size: 13px; font-weight: 600; color: var(--fg-0); }
+.pk-foot { display: flex; gap: 10px; }
+.pk-foot .btn { flex: 1; }
+
+/* private state */
+.peek.is-private .peek-hero .pk-av { filter: blur(2px); }
+.peek-private { display: none; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 30px 24px 26px; }
+.peek.is-private .peek-body { display: none; }
+.peek.is-private .peek-private { display: flex; }
+.peek-private .lk { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: var(--bg-2); border: 1px solid var(--line); color: var(--fg-3); }
+.peek-private .lk svg { width: 26px; height: 26px; }
+.peek-private h4 { font-family: var(--font-display); font-weight: 600; font-size: 16px; letter-spacing: -0.01em; color: var(--fg-0); }
+.peek-private p { font-size: 12.5px; color: var(--fg-2); line-height: 1.5; max-width: 30ch; }
+.peek-private .tag { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.1em; color: var(--brand-magenta); background: oklch(0.68 0.25 5 / 0.12); border: 1px solid oklch(0.68 0.25 5 / 0.3); padding: 4px 10px; border-radius: 99px; }
+
+/* self peek note */
+.peek-selfnote { display: none; align-items: center; gap: 8px; font-size: 11.5px; color: var(--fg-2); padding: 9px 12px; border-radius: 11px; background: oklch(0.68 0.25 5 / 0.07); border: 1px solid oklch(0.68 0.25 5 / 0.2); }
+.peek-selfnote svg { width: 14px; height: 14px; color: var(--brand-magenta); flex-shrink: 0; }
+.peek.show-selfnote .peek-selfnote { display: flex; }

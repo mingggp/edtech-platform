@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mingsmileyface — Brand Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root[data-theme="dark"]{
+  /* Neutrals — cool, deep */
+  --bg-0: oklch(0.13 0.014 285);
+  --bg-1: oklch(0.17 0.016 285);
+  --bg-2: oklch(0.21 0.018 285);
+  --bg-3: oklch(0.26 0.020 285);
+  --line: oklch(0.30 0.022 285 / 0.7);
+  --line-soft: oklch(0.30 0.022 285 / 0.35);
+  --fg-0: oklch(0.985 0.005 285);
+  --fg-1: oklch(0.78 0.018 285);
+  --fg-2: oklch(0.58 0.022 285);
+  --fg-3: oklch(0.42 0.024 285);
+
+  /* Brand — same chroma family, varied hue */
+  --brand-violet: oklch(0.66 0.23 295);
+  --brand-magenta: oklch(0.68 0.25 5);
+  --brand-coral:  oklch(0.74 0.21 35);
+  --brand-cyan:   oklch(0.80 0.16 205);
+  --brand-lime:   oklch(0.86 0.20 130);
+
+  --grad-signature: linear-gradient(115deg, oklch(0.66 0.23 295) 0%, oklch(0.68 0.25 5) 48%, oklch(0.78 0.20 50) 100%);
+  --grad-cool: linear-gradient(115deg, oklch(0.66 0.23 295) 0%, oklch(0.80 0.16 205) 100%);
+  --grad-glow: radial-gradient(60% 60% at 50% 0%, oklch(0.68 0.25 5 / 0.55), transparent 70%);
+
+  /* Semantic */
+  --success: oklch(0.78 0.18 150);
+  --warning: oklch(0.83 0.17 82);
+  --danger:  oklch(0.66 0.22 25);
+  --info:    oklch(0.74 0.15 235);
+
+  --glass: oklch(0.22 0.018 285 / 0.55);
+  --glass-line: oklch(0.99 0.005 285 / 0.08);
+
+  --shadow-1: 0 1px 0 0 oklch(0.99 0.005 285 / 0.04) inset, 0 1px 2px oklch(0 0 0 / 0.4);
+  --shadow-2: 0 20px 60px -20px oklch(0 0 0 / 0.55), 0 8px 24px -12px oklch(0 0 0 / 0.4);
+  --shadow-glow: 0 0 0 1px oklch(0.99 0.005 285 / 0.06), 0 20px 80px -20px oklch(0.66 0.23 295 / 0.6);
+}
+:root[data-theme="light"] {
+  --bg-0: oklch(0.99 0.004 80);
+  --bg-1: oklch(0.975 0.006 80);
+  --bg-2: oklch(0.955 0.008 80);
+  --bg-3: oklch(0.93 0.010 80);
+  --line: oklch(0.85 0.012 280 / 0.9);
+  --line-soft: oklch(0.85 0.012 280 / 0.55);
+  --fg-0: oklch(0.18 0.014 285);
+  --fg-1: oklch(0.34 0.016 285);
+  --fg-2: oklch(0.52 0.018 285);
+  --fg-3: oklch(0.68 0.018 285);
+
+  --brand-violet: oklch(0.55 0.22 295);
+  --brand-magenta: oklch(0.58 0.24 5);
+  --brand-coral:  oklch(0.66 0.20 35);
+  --brand-cyan:   oklch(0.66 0.15 205);
+  --brand-lime:   oklch(0.78 0.18 130);
+
+  --grad-signature: linear-gradient(115deg, oklch(0.58 0.24 295) 0%, oklch(0.62 0.26 5) 48%, oklch(0.72 0.20 50) 100%);
+  --grad-cool: linear-gradient(115deg, oklch(0.58 0.24 295) 0%, oklch(0.70 0.16 205) 100%);
+  --grad-glow: radial-gradient(60% 60% at 50% 0%, oklch(0.68 0.25 5 / 0.35), transparent 70%);
+
+  --success: oklch(0.62 0.18 150);
+  --warning: oklch(0.74 0.17 82);
+  --danger:  oklch(0.58 0.22 25);
+  --info:    oklch(0.60 0.16 235);
+
+  --glass: oklch(1 0 0 / 0.55);
+  --glass-line: oklch(0.18 0.014 285 / 0.06);
+
+  --shadow-1: 0 1px 0 0 oklch(1 0 0 / 0.9) inset, 0 1px 2px oklch(0.18 0.014 285 / 0.06);
+  --shadow-2: 0 20px 60px -20px oklch(0.18 0.014 285 / 0.18), 0 8px 24px -12px oklch(0.18 0.014 285 / 0.10);
+  --shadow-glow: 0 0 0 1px oklch(0.18 0.014 285 / 0.06), 0 20px 80px -20px oklch(0.58 0.24 295 / 0.45);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+html,body{background:var(--bg-0);color:var(--fg-0);font-family:"IBM Plex Sans Thai","IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-feature-settings:"ss01","cv11";}
+body{overflow-x:hidden;min-height:100vh;line-height:1.6;}
+::selection{background:oklch(0.66 0.23 295 / 0.4)}
+
+.display{font-family:var(--font-display),ui-sans-serif,system-ui,sans-serif;font-optical-sizing:auto;letter-spacing:-0.02em;line-height:1.05}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-feature-settings:"ss01"}
+
+.page{position:relative;max-width:1440px;margin:0 auto;padding:48px 56px 120px}
+
+/* Aurora background */
+.aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.aurora::before,.aurora::after{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:0.55}
+.aurora::before{width:780px;height:780px;left:-120px;top:-220px;background:radial-gradient(circle,oklch(0.66 0.23 295 / 0.8),transparent 60%);animation:float1 18s ease-in-out infinite}
+.aurora::after{width:680px;height:680px;right:-160px;top:200px;background:radial-gradient(circle,oklch(0.68 0.25 5 / 0.7),transparent 60%);animation:float2 22s ease-in-out infinite}
+.aurora .b3{position:absolute;width:560px;height:560px;left:40%;top:560px;background:radial-gradient(circle,oklch(0.80 0.16 205 / 0.6),transparent 60%);filter:blur(120px);opacity:0.5;border-radius:50%;animation:float3 26s ease-in-out infinite}
+:root[data-theme="light"] .aurora::before,
+:root[data-theme="light"] .aurora::after,
+:root[data-theme="light"] .aurora .b3, :root[data-theme="petronas-light"] .aurora .b3 {opacity:0.35;filter:blur(140px)}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,80px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-80px,40px)}}
+@keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-60px)}}
+
+.noise{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.04;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>")}
+
+/* Top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-2);font-weight:500}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--brand-magenta);box-shadow:0 0 0 4px oklch(0.68 0.25 5 / 0.18);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px oklch(0.68 0.25 5 / 0)}}
+
+.theme-toggle{display:flex;background:var(--bg-2);border:1px solid var(--line);border-radius:999px;padding:4px;font-size:13px}
+.theme-toggle button{appearance:none;border:0;background:transparent;color:var(--fg-1);padding:8px 16px;border-radius:999px;cursor:pointer;font:inherit;display:flex;align-items:center;gap:6px}
+.theme-toggle button[aria-pressed="true"]{background:var(--bg-0);color:var(--fg-0);box-shadow:var(--shadow-1)}
+
+/* Hero */
+.hero{position:relative;border-radius:32px;padding:72px 56px 80px;overflow:hidden;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);box-shadow:var(--shadow-2)}
+.hero::before{content:"";position:absolute;inset:0;background:var(--grad-glow);opacity:0.7;pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center}
+
+.hero h1{font-size:clamp(48px,5.8vw,84px);font-weight:700;letter-spacing:-0.035em;line-height:0.98}
+.hero h1 .grad{background:var(--grad-signature);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;padding-right:0.05em}
+.hero p.lede{margin-top:24px;font-size:18px;color:var(--fg-1);max-width:52ch;line-height:1.55}
+
+.hero-meta{display:flex;gap:24px;margin-top:36px;flex-wrap:wrap}
+.hero-meta .item{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--fg-2)}
+.hero-meta .swatch{width:18px;height:18px;border-radius:6px;border:1px solid var(--glass-line)}
+
+/* Logo lockup */
+.logo-card{position:relative;aspect-ratio:1/1;border-radius:28px;background:linear-gradient(135deg,oklch(0.18 0.016 285) 0%,oklch(0.14 0.014 285) 100%);border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center}
+:root[data-theme="light"] .logo-card, :root[data-theme="petronas-light"] .logo-card {background:linear-gradient(135deg,oklch(0.98 0.006 80) 0%,oklch(0.94 0.010 80) 100%)}
+.logo-card::before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 200deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50),oklch(0.80 0.16 205),oklch(0.66 0.23 295));filter:blur(60px);opacity:0.45;animation:spin 22s linear infinite}
+@keyframes spin{to{transform:rotate(1turn)}}
+.logo-card .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px;padding:32px}
+.logo-mark{width:140px;height:140px;border-radius:36px;background:var(--grad-signature);box-shadow:0 30px 80px -20px oklch(0.66 0.23 295 / 0.7),0 0 0 1px oklch(0.99 0.005 285 / 0.12) inset;display:flex;align-items:center;justify-content:center;position:relative}
+.logo-mark svg{width:78%;height:78%}
+.logo-word{font-family:var(--font-display);font-weight:700;font-size:34px;letter-spacing:-0.035em;color:var(--fg-0);display:flex;align-items:baseline;gap:2px}
+.logo-word .dot-i{color:transparent;background:var(--grad-signature);-webkit-background-clip:text;background-clip:text}
+.logo-caption{font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--fg-2);margin-top:4px}
+
+/* Section */
+section{margin-top:96px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:32px}
+.section-head .title{font-family:var(--font-display);font-weight:600;font-size:34px;letter-spacing:-0.025em;line-height:1.1}
+.section-head .num{font-family:"JetBrains Mono";font-size:12px;color:var(--fg-3);letter-spacing:0.1em}
+.section-head .sub{color:var(--fg-2);font-size:14px;max-width:48ch;line-height:1.55}
+
+/* Color system */
+.color-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:20px}
+.signature-card{border-radius:24px;padding:28px;background:var(--grad-signature);position:relative;overflow:hidden;color:#fff;min-height:280px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-glow)}
+.signature-card::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 0% 100%,oklch(0.99 0.005 285 / 0.18),transparent 60%);pointer-events:none}
+.signature-card .label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.85}
+.signature-card .name{font-family:var(--font-display);font-weight:700;font-size:34px;letter-spacing:-0.025em;line-height:1.05;margin-top:10px}
+.signature-card .stops{display:flex;gap:8px;margin-top:auto}
+.signature-card .stop{flex:1;background:oklch(0.99 0.005 285 / 0.12);border-radius:12px;padding:10px 12px;font-family:"JetBrains Mono";font-size:11px;backdrop-filter:blur(8px)}
+.signature-card .stop b{display:block;font-family:inherit;font-weight:600;font-size:12px;margin-bottom:2px}
+
+.swatch-card{border-radius:24px;padding:22px;border:1px solid var(--line);background:var(--bg-1);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;min-height:280px}
+.swatch-card .chip{height:88px;border-radius:16px;border:1px solid var(--glass-line);position:relative;overflow:hidden}
+.swatch-card .meta{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.swatch-card .name{font-family:var(--font-display);font-weight:600;font-size:20px;letter-spacing:-0.01em}
+.swatch-card .tok{font-family:"JetBrains Mono";font-size:11px;color:var(--fg-2);text-align:right;line-height:1.35}
+.swatch-card .scale{display:flex;gap:4px;margin-top:auto}
+.swatch-card .scale > div{flex:1;height:24px;border-radius:6px}
+
+.semantics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.sem{border-radius:18px;padding:18px;border:1px solid var(--line);background:var(--bg-1);display:flex;flex-direction:column;gap:10px}
+.sem .icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff}
+.sem .name{font-weight:600;font-size:15px}
+.sem .tok{font-family:"JetBrains Mono";font-size:11px;color:var(--fg-2)}
+
+/* Neutrals scale */
+.neutrals{margin-top:24px;border-radius:24px;border:1px solid var(--line);background:var(--bg-1);overflow:hidden}
+.neutrals-row{display:grid;grid-template-columns:160px repeat(8,1fr);align-items:stretch;border-bottom:1px solid var(--line-soft)}
+.neutrals-row:last-child{border-bottom:0}
+.neutrals-row .label{padding:18px 20px;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-2);font-weight:500;border-right:1px solid var(--line-soft);display:flex;align-items:center}
+.neutrals-row .cell{padding:18px 14px;font-family:"JetBrains Mono";font-size:10.5px;color:var(--fg-1);display:flex;flex-direction:column;justify-content:space-between;min-height:90px;border-right:1px solid var(--line-soft)}
+.neutrals-row .cell:last-child{border-right:0}
+.neutrals-row .cell .num{color:var(--fg-2);font-size:10px;letter-spacing:0.08em}
+
+/* Typography */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.type-panel{border-radius:24px;border:1px solid var(--line);background:var(--bg-1);padding:32px}
+.type-row{display:grid;grid-template-columns:88px 1fr;gap:24px;align-items:baseline;padding:18px 0;border-bottom:1px solid var(--line-soft)}
+.type-row:last-child{border-bottom:0}
+.type-row .tag{font-family:"JetBrains Mono";font-size:11px;color:var(--fg-2);align-self:start;margin-top:10px}
+.type-row .specimen{color:var(--fg-0)}
+.t-display{font-family:var(--font-display);font-weight:700;font-size:64px;letter-spacing:-0.035em;line-height:1}
+.t-h1{font-family:var(--font-display);font-weight:700;font-size:44px;letter-spacing:-0.028em;line-height:1.08}
+.t-h2{font-family:var(--font-display);font-weight:600;font-size:30px;letter-spacing:-0.02em;line-height:1.15}
+.t-h3{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-0.015em;line-height:1.25}
+.t-body-lg{font-size:17px;line-height:1.65;color:var(--fg-1)}
+.t-body{font-size:15px;line-height:1.65;color:var(--fg-1)}
+.t-caption{font-size:12.5px;color:var(--fg-2);letter-spacing:0.01em}
+.t-overline{font-family:"JetBrains Mono";font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-2)}
+
+.type-info{display:flex;flex-direction:column;gap:18px}
+.tinfo-card{border-radius:24px;border:1px solid var(--line);background:var(--bg-1);padding:28px}
+.tinfo-card h4{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:10px;letter-spacing:-0.01em}
+.tinfo-card .specimen{font-size:48px;font-weight:600;letter-spacing:-0.02em;color:var(--fg-0);margin:10px 0 14px}
+.tinfo-card .specimen.brico{font-family:var(--font-display)}
+.tinfo-card .specimen.plex{font-family:"IBM Plex Sans Thai"}
+.tinfo-card .specimen.mono{font-family:"JetBrains Mono"}
+.tinfo-card .meta{display:flex;gap:18px;flex-wrap:wrap;font-family:"JetBrains Mono";font-size:11px;color:var(--fg-2)}
+.tinfo-card .meta b{color:var(--fg-1);font-weight:500}
+
+/* Buttons */
+.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.btn-card{border-radius:24px;border:1px solid var(--line);background:var(--bg-1);padding:28px;display:flex;flex-direction:column;gap:18px;min-height:300px}
+.btn-card .title{font-family:var(--font-display);font-weight:600;font-size:16px;letter-spacing:-0.01em}
+.btn-card .tag{font-family:"JetBrains Mono";font-size:11px;color:var(--fg-2)}
+.btn-card .stack{display:flex;flex-direction:column;gap:12px;margin-top:auto}
+.btn{appearance:none;border:0;font-family:inherit;font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 22px;height:44px;border-radius:12px;cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .2s,opacity .2s;letter-spacing:-0.005em;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 2px var(--bg-0),0 0 0 4px var(--brand-magenta)}
+.btn-primary{background:var(--grad-signature);color:#fff;box-shadow:0 8px 24px -8px oklch(0.66 0.23 295 / 0.6),0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset}
+.btn-primary:hover{box-shadow:0 12px 32px -8px oklch(0.66 0.23 295 / 0.8),0 0 0 1px oklch(0.99 0.005 285 / 0.16) inset}
+.btn-secondary{background:var(--bg-3);color:var(--fg-0);box-shadow:0 1px 0 oklch(0.99 0.005 285 / 0.06) inset,0 1px 2px oklch(0 0 0 / 0.3)}
+:root[data-theme="light"] .btn-secondary, :root[data-theme="petronas-light"] .btn-secondary {background:var(--bg-2);box-shadow:0 1px 0 oklch(1 0 0 / 0.9) inset,0 1px 2px oklch(0.18 0.014 285 / 0.06)}
+.btn-secondary:hover{background:oklch(0.30 0.022 285)}
+:root[data-theme="light"] .btn-secondary:hover, :root[data-theme="petronas-light"] .btn-secondary:hover {background:var(--bg-3)}
+.btn-ghost{background:transparent;color:var(--fg-1);border:1px solid var(--line)}
+.btn-ghost:hover{color:var(--fg-0);border-color:var(--fg-2);background:var(--bg-2)}
+.btn-glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--fg-0);border:1px solid var(--glass-line)}
+.btn-glass:hover{background:oklch(0.99 0.005 285 / 0.1)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-success{background:var(--success);color:oklch(0.12 0.06 150)}
+.btn[disabled]{opacity:0.4;cursor:not-allowed;transform:none!important;box-shadow:none}
+.btn-icon{width:44px;padding:0}
+.btn-lg{height:52px;padding:0 28px;font-size:15px;border-radius:14px}
+.btn-sm{height:34px;padding:0 14px;font-size:13px;border-radius:10px}
+
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.demo-card{border-radius:24px;border:1px solid var(--line);background:var(--bg-1);overflow:hidden;display:flex;flex-direction:column;min-height:380px;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.demo-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-2)}
+.demo-card .thumb{aspect-ratio:16/9;position:relative;overflow:hidden}
+.demo-card .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,oklch(0 0 0 / 0.5))}
+.demo-card .thumb .tag{position:absolute;top:14px;left:14px;background:oklch(0.99 0.005 285 / 0.18);backdrop-filter:blur(20px);border:1px solid oklch(0.99 0.005 285 / 0.2);color:#fff;font-size:11px;letter-spacing:0.06em;font-weight:600;padding:6px 10px;border-radius:8px;text-transform:uppercase;z-index:1}
+.demo-card .thumb .meta{position:absolute;bottom:14px;left:14px;right:14px;color:#fff;z-index:1;display:flex;justify-content:space-between;align-items:end;gap:10px}
+.demo-card .thumb .meta .title{font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:-0.015em;line-height:1.15}
+.demo-card .thumb .meta .by{font-size:12px;opacity:0.85;margin-top:4px}
+.demo-card .body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
+.demo-card .progress-line{display:flex;justify-content:space-between;font-size:12px;color:var(--fg-2)}
+.demo-card .progress-bar{height:6px;border-radius:99px;background:var(--bg-3);overflow:hidden}
+.demo-card .progress-bar > div{height:100%;border-radius:99px;background:var(--grad-signature)}
+.demo-card .body .next{font-size:13.5px;color:var(--fg-1)}
+.demo-card .body .actions{margin-top:auto;display:flex;gap:8px;justify-content:space-between;align-items:center}
+.demo-card .chiprow{display:flex;gap:6px;flex-wrap:wrap}
+
+.thumb-math{background:linear-gradient(135deg,oklch(0.45 0.20 295),oklch(0.50 0.22 320),oklch(0.55 0.24 5));position:relative}
+.thumb-phys{background:linear-gradient(135deg,oklch(0.40 0.16 240),oklch(0.50 0.18 205),oklch(0.55 0.15 180));position:relative}
+.thumb-tpat{background:linear-gradient(135deg,oklch(0.50 0.20 40),oklch(0.60 0.22 50),oklch(0.70 0.18 80));position:relative}
+.thumb-math::before,.thumb-phys::before,.thumb-tpat::before{content:"";position:absolute;inset:0;background-image:radial-gradient(oklch(0.99 0.005 285 / 0.15) 1px,transparent 1px);background-size:24px 24px;mask-image:radial-gradient(80% 80% at 70% 30%,#000,transparent);opacity:0.6}
+.thumb-glyph{position:absolute;font-family:var(--font-display);font-weight:800;font-size:96px;color:oklch(0.99 0.005 285 / 0.18);right:-8px;top:-12px;letter-spacing:-0.04em}
+
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:0.02em;border:1px solid var(--line)}
+.badge.hot{background:oklch(0.68 0.25 5 / 0.14);color:var(--brand-magenta);border-color:oklch(0.68 0.25 5 / 0.3)}
+.badge.new{background:oklch(0.78 0.18 150 / 0.14);color:var(--success);border-color:oklch(0.78 0.18 150 / 0.3)}
+.badge.rec{background:oklch(0.80 0.16 205 / 0.14);color:var(--brand-cyan);border-color:oklch(0.80 0.16 205 / 0.3)}
+.badge.locked{background:var(--bg-3);color:var(--fg-2)}
+
+/* Signature elements */
+.sig-grid{display:grid;grid-template-columns:1.1fr 1fr 1.1fr;gap:20px}
+.sig-card{border-radius:24px;border:1px solid var(--line);background:var(--bg-1);padding:28px;display:flex;flex-direction:column;gap:18px;min-height:360px;position:relative;overflow:hidden}
+.sig-card h4{font-family:var(--font-display);font-size:18px;font-weight:600;letter-spacing:-0.01em}
+.sig-card .desc{font-size:13px;color:var(--fg-2);line-height:1.55}
+
+/* Streak */
+.streak-display{display:flex;align-items:center;gap:18px;padding:18px;border-radius:18px;background:linear-gradient(135deg,oklch(0.68 0.25 5 / 0.18),oklch(0.74 0.21 35 / 0.18));border:1px solid oklch(0.68 0.25 5 / 0.3)}
+.flame{width:64px;height:64px;border-radius:18px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center;box-shadow:0 0 32px oklch(0.68 0.25 5 / 0.5);animation:flame 2.4s ease-in-out infinite}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.06) rotate(2deg)}}
+.streak-display .num{font-family:var(--font-display);font-size:48px;font-weight:700;letter-spacing:-0.035em;line-height:1;background:var(--grad-signature);-webkit-background-clip:text;background-clip:text;color:transparent}
+.streak-display .label{font-size:13px;color:var(--fg-1)}
+.streak-display .label b{font-size:15px;color:var(--fg-0);display:block;font-weight:600}
+.streak-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:auto}
+.streak-week .day{aspect-ratio:1/1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;font-family:"JetBrains Mono"}
+.streak-week .day.done{background:var(--grad-signature);color:#fff;box-shadow:0 4px 12px -4px oklch(0.66 0.23 295 / 0.5)}
+.streak-week .day.miss{background:var(--bg-3);color:var(--fg-3)}
+.streak-week .day.today{background:var(--bg-2);color:var(--fg-0);border:1.5px solid var(--brand-magenta)}
+
+/* Progress ring */
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;margin:auto 0}
+.ring{position:relative;width:200px;height:200px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bg{fill:none;stroke:var(--bg-3);stroke-width:14}
+.ring .fg{fill:none;stroke:url(#ringgrad);stroke-width:14;stroke-linecap:round;filter:drop-shadow(0 0 12px oklch(0.66 0.23 295 / 0.5))}
+.ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring .center .pct{font-family:var(--font-display);font-weight:700;font-size:48px;letter-spacing:-0.035em;background:var(--grad-signature);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.ring .center .lab{font-size:11px;color:var(--fg-2);margin-top:6px;letter-spacing:0.06em;text-transform:uppercase}
+
+/* EXP bar */
+.exp{display:flex;flex-direction:column;gap:10px}
+.exp-meta{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--fg-1)}
+.exp-meta .lvl{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-0.015em;color:var(--fg-0)}
+.exp-meta .lvl span{color:transparent;background:var(--grad-signature);-webkit-background-clip:text;background-clip:text}
+.exp-bar{height:14px;border-radius:99px;background:var(--bg-3);overflow:hidden;position:relative;border:1px solid var(--line-soft)}
+.exp-bar > div{height:100%;border-radius:99px;background:var(--grad-signature);position:relative;overflow:hidden}
+.exp-bar > div::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,oklch(0.99 0.005 285 / 0.4),transparent);animation:shine 2.4s ease-in-out infinite}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.exp-meta .xp{font-family:"JetBrains Mono";font-size:12px;color:var(--fg-2)}
+
+/* Badges (collectibles) */
+.badge-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:16px;margin-top:24px}
+.collectible{aspect-ratio:1/1.1;border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;position:relative;overflow:hidden;border:1px solid var(--line);background:var(--bg-1)}
+.collectible.unlocked{background:linear-gradient(160deg,var(--bg-2),var(--bg-1))}
+.collectible.unlocked::before{content:"";position:absolute;inset:0;background:radial-gradient(80% 60% at 50% 0%,var(--badge-glow,oklch(0.66 0.23 295 / 0.3)),transparent 60%);pointer-events:none}
+.collectible.locked{opacity:0.5}
+.collectible.locked .gem{filter:grayscale(1) brightness(0.6)}
+.collectible .gem{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;background:var(--badge-bg);box-shadow:0 8px 24px -8px var(--badge-glow,oklch(0.66 0.23 295 / 0.5)),0 0 0 1px oklch(0.99 0.005 285 / 0.12) inset}
+.collectible .gem svg{width:60%;height:60%}
+.collectible .name{font-size:11px;font-weight:600;color:var(--fg-0);letter-spacing:-0.005em;line-height:1.2;z-index:1}
+.collectible .tier{font-family:"JetBrains Mono";font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-2);z-index:1}
+
+/* Voice */
+.voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px}
+.voice-card{border-radius:24px;border:1px solid var(--line);background:var(--bg-1);padding:28px}
+.voice-card h4{font-family:var(--font-display);font-weight:600;font-size:18px;margin-bottom:14px;letter-spacing:-0.01em;display:flex;align-items:center;gap:10px}
+.voice-card.do h4::before{content:"✓";width:24px;height:24px;border-radius:50%;background:oklch(0.78 0.18 150 / 0.18);color:var(--success);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.voice-card.dont h4::before{content:"×";width:24px;height:24px;border-radius:50%;background:oklch(0.66 0.22 25 / 0.18);color:var(--danger);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.voice-card ul{list-style:none;display:flex;flex-direction:column;gap:14px}
+.voice-card li{font-size:14px;line-height:1.5;color:var(--fg-1);padding-left:14px;position:relative}
+.voice-card li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--fg-3)}
+.voice-card li b{color:var(--fg-0);font-weight:600}
+.voice-card.dont li{text-decoration:line-through;text-decoration-color:var(--fg-3);color:var(--fg-2)}
+
+/* Toast preview */
+.toast-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+.toast{border-radius:14px;padding:14px 14px 14px 14px;display:flex;gap:12px;align-items:start;border:1px solid var(--line);background:var(--bg-2);position:relative;overflow:hidden}
+.toast::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.toast.success{--accent:var(--success)}
+.toast.error{--accent:var(--danger)}
+.toast.info{--accent:var(--info)}
+.toast.achv{--accent:transparent;background:linear-gradient(135deg,oklch(0.66 0.23 295 / 0.15),oklch(0.68 0.25 5 / 0.15));border-color:oklch(0.66 0.23 295 / 0.3)}
+.toast .ico{width:32px;height:32px;border-radius:10px;flex-shrink:0;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.toast.achv .ico{background:var(--grad-signature)}
+.toast .text{font-size:13px;line-height:1.4}
+.toast .text b{display:block;color:var(--fg-0);font-weight:600;font-size:13.5px;margin-bottom:2px}
+.toast .text span{color:var(--fg-2)}
+
+/* Footer note */
+.footnote{margin-top:96px;display:flex;justify-content:space-between;align-items:center;gap:24px;padding-top:32px;border-top:1px solid var(--line-soft);font-family:"JetBrains Mono";font-size:11.5px;color:var(--fg-3);letter-spacing:0.02em;flex-wrap:wrap}
+
+/* Misc tokens panel */
+.tokens{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+.token-card{border-radius:18px;border:1px solid var(--line);background:var(--bg-1);padding:20px;display:flex;flex-direction:column;gap:12px}
+.token-card h5{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.005em}
+.token-card .demo{flex:1;min-height:96px;border-radius:12px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;background:var(--bg-2)}
+.token-card .vals{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-family:"JetBrains Mono";font-size:10.5px;color:var(--fg-2)}
+.token-card .vals b{color:var(--fg-1);font-weight:500}
+.radius-demo{width:64px;height:64px;background:var(--grad-signature)}
+.shadow-demo{width:80px;height:80px;border-radius:16px;background:var(--bg-1);box-shadow:var(--shadow-2)}
+.glow-demo{width:80px;height:80px;border-radius:16px;background:var(--bg-1);box-shadow:var(--shadow-glow)}
+
+@media (max-width:1100px){
+  .page{padding:32px 24px 80px}
+  .hero{padding:48px 32px 56px}
+  .hero-grid{grid-template-columns:1fr}
+  .color-grid{grid-template-columns:1fr 1fr}
+  .signature-card{grid-column:1 / -1}
+  .sig-grid{grid-template-columns:1fr 1fr}
+  .card-grid{grid-template-columns:1fr 1fr}
+  .badge-grid{grid-template-columns:repeat(4,1fr)}
+  .tokens{grid-template-columns:1fr 1fr}
+  .toast-grid{grid-template-columns:1fr 1fr}
+  .voice-grid{grid-template-columns:1fr}
+  .type-grid{grid-template-columns:1fr}
+  .neutrals-row{grid-template-columns:120px repeat(4,1fr)}
+  .neutrals-row .cell:nth-child(n+6){display:none}
+  .semantics{grid-template-columns:1fr 1fr}
+  .btn-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringgrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="oklch(0.66 0.23 295)"/>
+      <stop offset="50%" stop-color="oklch(0.68 0.25 5)"/>
+      <stop offset="100%" stop-color="oklch(0.78 0.20 50)"/>
+    </linearGradient>
+    <linearGradient id="badgeViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.72 0.18 295)"/><stop offset="100%" stop-color="oklch(0.55 0.22 320)"/></linearGradient>
+    <linearGradient id="badgeMag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.72 0.22 5)"/><stop offset="100%" stop-color="oklch(0.55 0.24 25)"/></linearGradient>
+    <linearGradient id="badgeCoral" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.80 0.18 50)"/><stop offset="100%" stop-color="oklch(0.62 0.20 35)"/></linearGradient>
+    <linearGradient id="badgeCyan" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.84 0.14 205)"/><stop offset="100%" stop-color="oklch(0.62 0.16 220)"/></linearGradient>
+    <linearGradient id="badgeLime" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.88 0.18 130)"/><stop offset="100%" stop-color="oklch(0.70 0.20 145)"/></linearGradient>
+    <linearGradient id="badgeGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.90 0.16 90)"/><stop offset="100%" stop-color="oklch(0.70 0.18 70)"/></linearGradient>
+    <linearGradient id="badgePlat" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="oklch(0.92 0.04 250)"/><stop offset="100%" stop-color="oklch(0.62 0.05 270)"/></linearGradient>
+  </defs>
+</svg>
+
+<div class="page">
+
+  <!-- TOP -->
+  <div class="topbar">
+    <div class="eyebrow"><span class="dot"></span><span>Brand System v0.1 · Apr 2026</span></div>
+    <div class="theme-toggle" role="tablist" aria-label="Theme">
+      <button data-set="light" aria-pressed="false" id="btn-light">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        Light
+      </button>
+      <button data-set="dark" aria-pressed="true" id="btn-dark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        Dark
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow" style="margin-bottom:24px"><span class="dot"></span><span>Premium Pop · EdTech</span></div>
+        <h1 class="display">
+          เรียนให้ <span class="grad">ปังกว่าเดิม</span>.<br/>
+          ติวกับ <span class="grad">หมิง</span> ตัวต่อตัว.
+        </h1>
+        <p class="lede">Mingsmileyface คือสนามซ้อมพรีเมียมสำหรับเด็ก ม.ปลาย — คณิต · ฟิสิกส์ · TGAT2 · TPAT3 ที่เตรียมเข้า TCAS, A-Level. ออกแบบให้รู้สึก dark, cinematic, motion-rich — ไม่ใช่เครื่องมือ edu จืดๆ.</p>
+        <div class="hero-meta">
+          <div class="item"><span class="swatch" style="background:var(--grad-signature)"></span><span class="mono">Signature gradient</span></div>
+          <div class="item"><span class="swatch" style="background:var(--brand-cyan)"></span><span class="mono">Electric cyan</span></div>
+          <div class="item"><span class="swatch" style="background:var(--bg-0);box-shadow:0 0 0 1px var(--line)"></span><span class="mono">Onyx surface</span></div>
+          <div class="item"><span class="mono" style="color:var(--fg-1)">Bricolage · IBM Plex Thai · JetBrains Mono</span></div>
+        </div>
+      </div>
+      <div class="logo-card">
+        <div class="inner">
+          <div class="logo-mark" aria-label="Mingsmileyface mark">
+            <!-- Smiley made from negative space, original geometry -->
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="6" y="6" width="108" height="108" rx="30" fill="none" stroke="oklch(0.99 0.005 285 / 0.0)"/>
+              <!-- eyes -->
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <!-- smile -->
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+              <!-- spark -->
+              <circle cx="98" cy="28" r="6" fill="#fff"/>
+              <circle cx="98" cy="28" r="10" fill="none" stroke="#fff" stroke-width="2" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="logo-word">
+            m<span class="dot-i">i</span>ngsm<span class="dot-i">i</span>leyface
+          </div>
+          <div class="logo-caption">PREMIUM TUTORING · EST. 2026</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- COLOR -->
+  <section id="color">
+    <div class="section-head">
+      <div>
+        <div class="num">01 — FOUNDATION</div>
+        <div class="title" style="margin-top:6px">สีของระบบ</div>
+      </div>
+      <div class="sub">โทนหลักเย็น/มืดเป็นฐาน. Brand hues ทั้งหมดใช้ chroma ใกล้กัน (~0.23) เพื่อให้ palette เข้ากันเสมอ. โทเค็นทั้งหมดเป็น <span class="mono">OKLCH</span> พร้อมพอร์ตเข้า Tailwind 4 ผ่าน <span class="mono">@theme</span>.</div>
+    </div>
+
+    <div class="color-grid">
+      <div class="signature-card">
+        <div>
+          <div class="label">Signature Gradient</div>
+          <div class="name">Aurora Rush</div>
+        </div>
+        <div style="font-size:13px;opacity:0.92;max-width:34ch;line-height:1.5">ไล่จาก Violet → Magenta → Coral. ใช้กับ hero, CTA หลัก, progress, achievement, streak — สิ่งที่ต้อง <em>ปัง</em>.</div>
+        <div class="stops">
+          <div class="stop"><b>VIOLET 65</b>0.66 / 0.23 / 295</div>
+          <div class="stop"><b>MAGENTA 68</b>0.68 / 0.25 / 5</div>
+          <div class="stop"><b>CORAL 74</b>0.74 / 0.21 / 35</div>
+        </div>
+      </div>
+
+      <div class="swatch-card">
+        <div class="meta">
+          <div>
+            <div class="name">Electric Cyan</div>
+            <div style="font-size:12px;color:var(--fg-2);margin-top:4px">Counter-accent · info · live</div>
+          </div>
+          <div class="tok">--brand-cyan<br/>oklch(.80 .16 205)</div>
+        </div>
+        <div class="chip" style="background:var(--brand-cyan)"></div>
+        <div class="scale">
+          <div style="background:oklch(0.95 0.05 205)"></div>
+          <div style="background:oklch(0.88 0.10 205)"></div>
+          <div style="background:oklch(0.80 0.16 205)"></div>
+          <div style="background:oklch(0.66 0.16 215)"></div>
+          <div style="background:oklch(0.48 0.14 225)"></div>
+        </div>
+      </div>
+
+      <div class="swatch-card">
+        <div class="meta">
+          <div>
+            <div class="name">Plasma Lime</div>
+            <div style="font-size:12px;color:var(--fg-2);margin-top:4px">Reward · level-up · easter egg</div>
+          </div>
+          <div class="tok">--brand-lime<br/>oklch(.86 .20 130)</div>
+        </div>
+        <div class="chip" style="background:var(--brand-lime)"></div>
+        <div class="scale">
+          <div style="background:oklch(0.96 0.06 130)"></div>
+          <div style="background:oklch(0.92 0.12 130)"></div>
+          <div style="background:oklch(0.86 0.20 130)"></div>
+          <div style="background:oklch(0.72 0.20 140)"></div>
+          <div style="background:oklch(0.55 0.18 150)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Semantics -->
+    <div class="semantics">
+      <div class="sem">
+        <div class="icon" style="background:var(--success)">✓</div>
+        <div>
+          <div class="name">Success</div>
+          <div class="tok">oklch(.78 .18 150)</div>
+        </div>
+      </div>
+      <div class="sem">
+        <div class="icon" style="background:var(--warning)">!</div>
+        <div>
+          <div class="name">Warning</div>
+          <div class="tok">oklch(.83 .17 82)</div>
+        </div>
+      </div>
+      <div class="sem">
+        <div class="icon" style="background:var(--danger)">×</div>
+        <div>
+          <div class="name">Danger</div>
+          <div class="tok">oklch(.66 .22 25)</div>
+        </div>
+      </div>
+      <div class="sem">
+        <div class="icon" style="background:var(--info)">i</div>
+        <div>
+          <div class="name">Info</div>
+          <div class="tok">oklch(.74 .15 235)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Neutrals scale -->
+    <div class="neutrals">
+      <div class="neutrals-row">
+        <div class="label">Surface · Dark</div>
+        <div class="cell" style="background:oklch(0.13 0.014 285);color:#fff"><div class="num">bg-0</div><div>.13 / 285</div></div>
+        <div class="cell" style="background:oklch(0.17 0.016 285);color:#fff"><div class="num">bg-1</div><div>.17 / 285</div></div>
+        <div class="cell" style="background:oklch(0.21 0.018 285);color:#fff"><div class="num">bg-2</div><div>.21 / 285</div></div>
+        <div class="cell" style="background:oklch(0.26 0.020 285);color:#fff"><div class="num">bg-3</div><div>.26 / 285</div></div>
+        <div class="cell" style="background:oklch(0.42 0.024 285);color:#fff"><div class="num">fg-3</div><div>.42 / 285</div></div>
+        <div class="cell" style="background:oklch(0.58 0.022 285);color:#fff"><div class="num">fg-2</div><div>.58 / 285</div></div>
+        <div class="cell" style="background:oklch(0.78 0.018 285);color:#000"><div class="num">fg-1</div><div>.78 / 285</div></div>
+        <div class="cell" style="background:oklch(0.985 0.005 285);color:#000"><div class="num">fg-0</div><div>.985 / 285</div></div>
+      </div>
+      <div class="neutrals-row">
+        <div class="label">Surface · Light</div>
+        <div class="cell" style="background:oklch(0.99 0.004 80);color:#000"><div class="num">bg-0</div><div>.99 / 80</div></div>
+        <div class="cell" style="background:oklch(0.975 0.006 80);color:#000"><div class="num">bg-1</div><div>.975 / 80</div></div>
+        <div class="cell" style="background:oklch(0.955 0.008 80);color:#000"><div class="num">bg-2</div><div>.955 / 80</div></div>
+        <div class="cell" style="background:oklch(0.93 0.010 80);color:#000"><div class="num">bg-3</div><div>.93 / 80</div></div>
+        <div class="cell" style="background:oklch(0.68 0.018 285);color:#fff"><div class="num">fg-3</div><div>.68 / 285</div></div>
+        <div class="cell" style="background:oklch(0.52 0.018 285);color:#fff"><div class="num">fg-2</div><div>.52 / 285</div></div>
+        <div class="cell" style="background:oklch(0.34 0.016 285);color:#fff"><div class="num">fg-1</div><div>.34 / 285</div></div>
+        <div class="cell" style="background:oklch(0.18 0.014 285);color:#fff"><div class="num">fg-0</div><div>.18 / 285</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section id="type">
+    <div class="section-head">
+      <div>
+        <div class="num">02 — TYPE SYSTEM</div>
+        <div class="title" style="margin-top:6px">ระบบตัวอักษร</div>
+      </div>
+      <div class="sub">Display ใช้ <span class="mono">Bricolage Grotesque</span> (optical sizing เปิด) — มี personality, premium-pop. Body ใช้ <span class="mono">IBM Plex Sans Thai</span> รองรับวรรณยุกต์ครบ + Latin คู่กัน. Mono สำหรับ token / chip.</div>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-panel">
+        <div class="type-row">
+          <div class="tag">display</div>
+          <div class="specimen t-display">เรียน คณิต ฟิสิกส์ TPAT3</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">h1</div>
+          <div class="specimen t-h1">เปิดคอร์สใหม่ — แคลคูลัสฉบับเข้าใจ</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">h2</div>
+          <div class="specimen t-h2">บทที่ 3 · กฎของนิวตัน</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">h3</div>
+          <div class="specimen t-h3">สรุปสูตรกรด-เบส แบบไม่ต้องท่อง</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">body-lg</div>
+          <div class="specimen t-body-lg">เราออกแบบให้น้องได้ฝึกซ้อมจริง ไม่ใช่แค่ดูคลิป — มีโจทย์ที่ปรับตามความสามารถ และมีฟีดแบ็กทุกข้อแบบเข้าใจง่าย.</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">body</div>
+          <div class="specimen t-body">น้องจะได้เริ่มจากพื้นฐาน ไล่ขึ้นไประดับยากแบบไม่หลุดจังหวะ ระบบจะคอยจับจังหวะให้เอง ไม่กดดัน.</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">caption</div>
+          <div class="specimen t-caption">อัปเดตล่าสุด · 12 พฤษภาคม 2026 · 14:32 น.</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">overline</div>
+          <div class="specimen t-overline">UPGRADE · A-LEVEL MATH 2</div>
+        </div>
+      </div>
+
+      <div class="type-info">
+        <div class="tinfo-card">
+          <h4>Display · Bricolage Grotesque</h4>
+          <div class="specimen brico">Aa เก่งขึ้นทุกวัน</div>
+          <p style="font-size:13px;color:var(--fg-2);line-height:1.55">ตัวอักษร display ที่มีบุคลิก. ใช้กับ hero headline, score reveal, milestone moment เท่านั้น. หลีกเลี่ยงในย่อหน้ายาว.</p>
+          <div class="meta">
+            <span><b>Weights</b> 400 / 500 / 600 / 700 / 800</span>
+            <span><b>Tracking</b> −0.025 → −0.04em</span>
+            <span><b>Optical</b> auto</span>
+          </div>
+        </div>
+        <div class="tinfo-card">
+          <h4>Body · IBM Plex Sans Thai</h4>
+          <div class="specimen plex">Aa เริ่มเลย ลุยกันต่อ</div>
+          <p style="font-size:13px;color:var(--fg-2);line-height:1.55">รองรับวรรณยุกต์ภาษาไทยและละตินคู่กันได้ดี. line-height ≥ 1.6 สำหรับวรรณยุกต์ที่สูงและต่ำ.</p>
+          <div class="meta">
+            <span><b>Weights</b> 300 / 400 / 500 / 600 / 700</span>
+            <span><b>Line-height</b> 1.55 – 1.7</span>
+            <span><b>Min size</b> 13px</span>
+          </div>
+        </div>
+        <div class="tinfo-card">
+          <h4>Mono · JetBrains Mono</h4>
+          <div class="specimen mono">→ 0.66 / 0.23 / 295</div>
+          <p style="font-size:13px;color:var(--fg-2);line-height:1.55">ใช้กับ tokens, chips, timestamps, code, score breakdown. ห้ามใช้เป็นข้อความยาว.</p>
+          <div class="meta">
+            <span><b>Weights</b> 400 / 500 / 600</span>
+            <span><b>Use</b> labels / numerics</span>
+            <span><b>Feature</b> ss01</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUTTONS -->
+  <section id="buttons">
+    <div class="section-head">
+      <div>
+        <div class="num">03 — INTERACTION</div>
+        <div class="title" style="margin-top:6px">ปุ่ม &amp; การกระทำ</div>
+      </div>
+      <div class="sub">Primary = signature gradient + soft glow. Secondary = onyx surface. Ghost = outline. Glass = ใช้บน hero/video. Sizes: sm 34 · md 44 · lg 52.</div>
+    </div>
+
+    <div class="btn-grid">
+      <div class="btn-card">
+        <div>
+          <div class="title">Primary · Aurora</div>
+          <div class="tag" style="margin-top:4px">CTA หลัก · ไม่ควรเกิน 1 ตัว/ส่วน</div>
+        </div>
+        <div class="stack">
+          <button class="btn btn-primary btn-lg">เริ่มเรียนเลย <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <button class="btn btn-primary">สมัครคอร์ส</button>
+          <button class="btn btn-primary btn-sm">ลุยต่อ</button>
+          <button class="btn btn-primary" disabled>กำลังประมวลผล…</button>
+        </div>
+      </div>
+
+      <div class="btn-card">
+        <div>
+          <div class="title">Secondary · Onyx</div>
+          <div class="tag" style="margin-top:4px">ทางเลือกรอง · neutral action</div>
+        </div>
+        <div class="stack">
+          <button class="btn btn-secondary btn-lg">ดูตัวอย่างฟรี</button>
+          <button class="btn btn-secondary">บันทึก</button>
+          <button class="btn btn-ghost">ยกเลิก</button>
+          <div class="row">
+            <button class="btn btn-secondary btn-icon" aria-label="more">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </button>
+            <button class="btn btn-secondary btn-icon" aria-label="bookmark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-sm">เพิ่มเติม</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-card" style="background:linear-gradient(135deg,oklch(0.20 0.02 285),oklch(0.16 0.018 285));border-color:var(--glass-line);position:relative;overflow:hidden">
+        <div style="position:absolute;inset:-30%;background:var(--grad-glow);opacity:0.35;pointer-events:none"></div>
+        <div style="position:relative">
+          <div class="title" style="color:var(--fg-0)">Glass &amp; Status</div>
+          <div class="tag" style="margin-top:4px">ใช้บนภาพ/วิดีโอ · semantic states</div>
+        </div>
+        <div class="stack" style="position:relative">
+          <button class="btn btn-glass btn-lg">▶︎ ดูตัวอย่างคอร์ส</button>
+          <div class="row">
+            <button class="btn btn-success btn-sm">บันทึกแล้ว ✓</button>
+            <button class="btn btn-danger btn-sm">ลบคอร์ส</button>
+          </div>
+          <div class="row">
+            <span class="badge hot">🔥 HOT</span>
+            <span class="badge new">NEW</span>
+            <span class="badge rec">RECOMMENDED</span>
+            <span class="badge locked">LOCKED</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section id="cards">
+    <div class="section-head">
+      <div>
+        <div class="num">04 — SURFACES</div>
+        <div class="title" style="margin-top:6px">การ์ดคอร์ส</div>
+      </div>
+      <div class="sub">การ์ดเป็น object หลักของ dashboard. ใช้ thumbnail gradient ตามวิชา · มี glyph ตัวอักษรใหญ่เป็น mark · progress bar ใช้ signature gradient · hover ยก 4px.</div>
+    </div>
+    <div class="card-grid">
+      <article class="demo-card">
+        <div class="thumb thumb-math">
+          <span class="tag">คณิต A-LEVEL</span>
+          <span class="thumb-glyph">∫</span>
+          <div class="meta">
+            <div>
+              <div class="title">แคลคูลัส · ขั้นเทพ</div>
+              <div class="by">โดย พี่หมิง · 24 บท</div>
+            </div>
+            <span class="badge hot" style="background:oklch(0.99 0.005 285 / 0.18);color:#fff;border-color:oklch(0.99 0.005 285 / 0.3)">🔥 HOT</span>
+          </div>
+        </div>
+        <div class="body">
+          <div class="progress-line"><span>เรียนต่อบทที่ 7</span><span class="mono">42%</span></div>
+          <div class="progress-bar"><div style="width:42%"></div></div>
+          <div class="next">ต่อ → ลิมิตของฟังก์ชันที่ซับซ้อน</div>
+          <div class="actions">
+            <div class="chiprow"><span class="badge">3.5 ชม. เหลือ</span></div>
+            <button class="btn btn-primary btn-sm">เรียนต่อ →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="demo-card">
+        <div class="thumb thumb-phys">
+          <span class="tag">ฟิสิกส์ TPAT</span>
+          <span class="thumb-glyph">⌇</span>
+          <div class="meta">
+            <div>
+              <div class="title">กลศาสตร์ของไหล</div>
+              <div class="by">โดย พี่หมิง · 18 บท</div>
+            </div>
+            <span class="badge new" style="background:oklch(0.99 0.005 285 / 0.18);color:#fff;border-color:oklch(0.99 0.005 285 / 0.3)">NEW</span>
+          </div>
+        </div>
+        <div class="body">
+          <div class="progress-line"><span>เริ่มบทที่ 1</span><span class="mono">0%</span></div>
+          <div class="progress-bar"><div style="width:6%"></div></div>
+          <div class="next">เริ่ม → ความดันและแรงพยุง</div>
+          <div class="actions">
+            <div class="chiprow"><span class="badge">12 ชม.</span></div>
+            <button class="btn btn-secondary btn-sm">เริ่มเลย</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="demo-card">
+        <div class="thumb thumb-tpat">
+          <span class="tag">TPAT3</span>
+          <span class="thumb-glyph">⚙</span>
+          <div class="meta">
+            <div>
+              <div class="title">ความถนัดสายงาน ฉบับเข้าใจ</div>
+              <div class="by">โดย พี่หมิง · 12 บท</div>
+            </div>
+            <span class="badge rec" style="background:oklch(0.99 0.005 285 / 0.18);color:#fff;border-color:oklch(0.99 0.005 285 / 0.3)">RECOMMEND</span>
+          </div>
+        </div>
+        <div class="body">
+          <div class="progress-line"><span>เกือบจบแล้ว!</span><span class="mono">88%</span></div>
+          <div class="progress-bar"><div style="width:88%"></div></div>
+          <div class="next">ต่อ → สรุปและทดสอบบทที่ 11</div>
+          <div class="actions">
+            <div class="chiprow"><span class="badge">45 นาทีเหลือ</span></div>
+            <button class="btn btn-primary btn-sm">เรียนต่อ →</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SIGNATURE ELEMENTS -->
+  <section id="signature">
+    <div class="section-head">
+      <div>
+        <div class="num">05 — SIGNATURE</div>
+        <div class="title" style="margin-top:6px">องค์ประกอบประจำตัว</div>
+      </div>
+      <div class="sub">Streak · Progress Ring · EXP — สามอันนี้ผู้ใช้เห็นทุกวัน. ออกแบบให้รู้สึก "เก็บแต้ม" + "อยากกลับมา" โดยไม่เด็กจนเกินไป.</div>
+    </div>
+    <div class="sig-grid">
+      <div class="sig-card">
+        <h4>Streak Counter</h4>
+        <p class="desc">นับวันต่อเนื่อง. เปลวไฟใช้ signature gradient · เต้นเบาๆ · สัปดาห์แสดงเป็น 7 ช่อง.</p>
+        <div class="streak-display">
+          <div class="flame">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff"><path d="M12 2c1 4 5 5 5 10a5 5 0 1 1-10 0c0-3 2-4 2-7 0 2 1 3 3 3-1-2-1-4 0-6z"/></svg>
+          </div>
+          <div>
+            <div class="num">7</div>
+            <div class="label"><b>วันต่อเนื่อง</b>ไฟแรงมาก อย่าหยุด!</div>
+          </div>
+        </div>
+        <div class="streak-week" aria-label="7-day streak">
+          <div class="day done">จ</div>
+          <div class="day done">อ</div>
+          <div class="day done">พ</div>
+          <div class="day done">พฤ</div>
+          <div class="day done">ศ</div>
+          <div class="day done">ส</div>
+          <div class="day today">อา</div>
+        </div>
+      </div>
+
+      <div class="sig-card" style="align-items:center">
+        <h4 style="align-self:flex-start">Progress Ring</h4>
+        <div class="ring-wrap">
+          <div class="ring">
+            <svg viewBox="0 0 200 200">
+              <circle class="bg" cx="100" cy="100" r="86"/>
+              <circle class="fg" cx="100" cy="100" r="86" stroke-dasharray="540" stroke-dashoffset="151"/>
+            </svg>
+            <div class="center">
+              <div class="pct">72%</div>
+              <div class="lab">บทที่จบ</div>
+            </div>
+          </div>
+        </div>
+        <p class="desc" style="text-align:center">ใช้กับ course detail · daily goal · exam result.</p>
+      </div>
+
+      <div class="sig-card">
+        <h4>EXP &amp; Rank</h4>
+        <p class="desc">เลเวลและ XP แสดงทั้ง dashboard และ public profile. แท่ง XP มี shine animation วิ่ง.</p>
+        <div class="exp">
+          <div class="exp-meta">
+            <div class="lvl">LV <span>14</span></div>
+            <div class="xp">2,840 / 4,000 XP</div>
+          </div>
+          <div class="exp-bar"><div style="width:71%"></div></div>
+          <div class="exp-meta">
+            <div style="font-size:12px;color:var(--fg-2)">เหลืออีก 1,160 XP สู่ LV 15</div>
+            <div class="xp" style="color:var(--brand-magenta)">+ 120 XP วันนี้</div>
+          </div>
+        </div>
+        <div style="margin-top:auto;display:flex;gap:10px;align-items:center;padding-top:12px;border-top:1px solid var(--line-soft)">
+          <div style="width:42px;height:42px;border-radius:12px;background:var(--grad-cool);display:flex;align-items:center;justify-content:center;font-family:Bricolage Grotesque;font-weight:700;color:#fff">#47</div>
+          <div>
+            <div style="font-size:13px;color:var(--fg-1)">อันดับสัปดาห์นี้</div>
+            <div style="font-family:JetBrains Mono;font-size:11px;color:var(--fg-2)">จาก 1,247 คน · ↑ 12 อันดับ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collectible badges -->
+    <div style="margin-top:32px">
+      <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:12px">
+        <div>
+          <h4 style="font-family:Bricolage Grotesque;font-size:18px;font-weight:600;letter-spacing:-0.01em">Collectible Badges</h4>
+          <p style="font-size:13px;color:var(--fg-2);margin-top:4px">7 ตัวเริ่มต้น · สไตล์ premium TCG · placeholder geometry ยังต้อง refine กับ illustrator</p>
+        </div>
+        <div class="mono" style="font-size:11px;color:var(--fg-3)">3 / 7 unlocked</div>
+      </div>
+      <div class="badge-grid">
+        <!-- 1 First Step -->
+        <div class="collectible unlocked" style="--badge-bg:linear-gradient(160deg,oklch(0.72 0.18 295),oklch(0.55 0.22 320));--badge-glow:oklch(0.66 0.23 295 / 0.5)">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M8 28 L20 12 L32 28"/><circle cx="20" cy="32" r="2.5" fill="#fff"/></svg></div>
+          <div class="name">ก้าวแรก</div>
+          <div class="tier">COMMON</div>
+        </div>
+        <!-- 2 Time Lord -->
+        <div class="collectible unlocked" style="--badge-bg:linear-gradient(160deg,oklch(0.84 0.14 205),oklch(0.62 0.16 220));--badge-glow:oklch(0.80 0.16 205 / 0.5)">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="20" cy="20" r="12"/><path d="M20 14 V20 L24 24"/></svg></div>
+          <div class="name">นักล่าเวลา</div>
+          <div class="tier">RARE</div>
+        </div>
+        <!-- 3 Gem -->
+        <div class="collectible unlocked" style="--badge-bg:linear-gradient(160deg,oklch(0.72 0.22 5),oklch(0.55 0.24 25));--badge-glow:oklch(0.68 0.25 5 / 0.5)">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"><path d="M10 16 L20 6 L30 16 L20 34 Z"/><path d="M10 16 L30 16 M20 6 L20 34 M14 16 L20 26 L26 16"/></svg></div>
+          <div class="name">นักสะสม</div>
+          <div class="tier">EPIC</div>
+        </div>
+        <!-- 4 Owl -->
+        <div class="collectible locked" style="--badge-bg:linear-gradient(160deg,oklch(0.88 0.18 130),oklch(0.70 0.20 145))">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="14" cy="18" r="4"/><circle cx="26" cy="18" r="4"/><circle cx="14" cy="18" r="1.5" fill="#fff"/><circle cx="26" cy="18" r="1.5" fill="#fff"/><path d="M16 26 Q20 30 24 26"/></svg></div>
+          <div class="name">นกฮูกดึก</div>
+          <div class="tier">RARE</div>
+        </div>
+        <!-- 5 Comeback -->
+        <div class="collectible locked" style="--badge-bg:linear-gradient(160deg,oklch(0.80 0.18 50),oklch(0.62 0.20 35))">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20 a12 12 0 1 1 4 8"/><path d="M8 14 V20 H14"/></svg></div>
+          <div class="name">กลับมาแล้ว</div>
+          <div class="tier">COMMON</div>
+        </div>
+        <!-- 6 Beach -->
+        <div class="collectible locked" style="--badge-bg:linear-gradient(160deg,oklch(0.90 0.16 90),oklch(0.70 0.18 70))">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><circle cx="20" cy="14" r="6"/><path d="M14 14 H6 M26 14 H34 M20 8 V2 M20 20 V26 M15 9 L11 5 M25 9 L29 5"/></svg></div>
+          <div class="name">นักเรียนนอกคอก</div>
+          <div class="tier">EPIC</div>
+        </div>
+        <!-- 7 Crown -->
+        <div class="collectible locked" style="--badge-bg:linear-gradient(160deg,oklch(0.92 0.04 250),oklch(0.62 0.05 270))">
+          <div class="gem"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="2.8" stroke-linejoin="round"><path d="M8 28 L8 16 L14 22 L20 12 L26 22 L32 16 L32 28 Z"/><path d="M8 30 H32"/></svg></div>
+          <div class="name">มงกุฎ</div>
+          <div class="tier">LEGEND</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENS — radii / shadows / motion -->
+  <section id="tokens">
+    <div class="section-head">
+      <div>
+        <div class="num">06 — TOKENS</div>
+        <div class="title" style="margin-top:6px">Radii · Shadow · Motion</div>
+      </div>
+      <div class="sub">โครงการใช้ radii ใหญ่กว่ามาตรฐาน (16–32) ให้รู้สึก premium-pop. Shadow แบ่งเป็น lift / glow.</div>
+    </div>
+    <div class="tokens">
+      <div class="token-card">
+        <h5>Radius scale</h5>
+        <div class="demo" style="gap:10px;flex-direction:row">
+          <div class="radius-demo" style="border-radius:8px;width:44px;height:44px"></div>
+          <div class="radius-demo" style="border-radius:14px;width:44px;height:44px"></div>
+          <div class="radius-demo" style="border-radius:20px;width:44px;height:44px"></div>
+          <div class="radius-demo" style="border-radius:28px;width:44px;height:44px"></div>
+        </div>
+        <div class="vals"><b>sm</b>8<b>md</b>14<b>lg</b>20<b>xl</b>28<b>2xl</b>32</div>
+      </div>
+      <div class="token-card">
+        <h5>Lift shadow</h5>
+        <div class="demo"><div class="shadow-demo"></div></div>
+        <div class="vals"><b>shadow-2</b>20px 60px / -20px<b>opacity</b>.55</div>
+      </div>
+      <div class="token-card">
+        <h5>Glow shadow</h5>
+        <div class="demo"><div class="glow-demo"></div></div>
+        <div class="vals"><b>shadow-glow</b>brand-violet @ 0.6<b>blur</b>80px</div>
+      </div>
+      <div class="token-card">
+        <h5>Motion · Spring</h5>
+        <div class="demo" style="overflow:hidden">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);animation:bob 2.4s cubic-bezier(.2,.8,.2,1) infinite"></div>
+        </div>
+        <div class="vals"><b>ease</b>cubic-bezier(.2,.8,.2,1)<b>fast</b>180ms<b>norm</b>240ms<b>slow</b>420ms</div>
+      </div>
+    </div>
+    <style>@keyframes bob{0%,100%{transform:translateY(-12px)}50%{transform:translateY(12px)}}</style>
+  </section>
+
+  <!-- TOASTS -->
+  <section id="feedback">
+    <div class="section-head">
+      <div>
+        <div class="num">07 — FEEDBACK</div>
+        <div class="title" style="margin-top:6px">Toast &amp; Achievement</div>
+      </div>
+      <div class="sub">Four variants: success · error · info · achievement-unlocked. Achievement toast ใช้ signature gradient เป็น border tint.</div>
+    </div>
+    <div class="toast-grid">
+      <div class="toast success">
+        <div class="ico">✓</div>
+        <div class="text"><b>บันทึกแล้ว</b><span>ความคืบหน้าของน้องถูกซิงค์เรียบร้อย.</span></div>
+      </div>
+      <div class="toast error">
+        <div class="ico">×</div>
+        <div class="text"><b>หมดเวลาทำข้อสอบ</b><span>ส่งคำตอบให้แล้ว — ลองดูเฉลยกันเลย.</span></div>
+      </div>
+      <div class="toast info">
+        <div class="ico">i</div>
+        <div class="text"><b>คอร์สใหม่มาแล้ว</b><span>ฟิสิกส์คลื่นและเสียง · เปิดวันนี้.</span></div>
+      </div>
+      <div class="toast achv">
+        <div class="ico">★</div>
+        <div class="text"><b>ปลดล็อก: นักล่าเวลา</b><span>เรียน 5 ชั่วโมงในวันเดียว — ของจริง!</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOICE -->
+  <section id="voice">
+    <div class="section-head">
+      <div>
+        <div class="num">08 — VOICE</div>
+        <div class="title" style="margin-top:6px">น้ำเสียง &amp; คำที่ใช้</div>
+      </div>
+      <div class="sub">เป็นกันเองแบบพี่ที่เก่งและสนิท — ไม่ใช่ราชการ ไม่ใช่เด็กเกินไป.</div>
+    </div>
+    <div class="voice-grid">
+      <div class="voice-card do">
+        <h4>ใช้ได้</h4>
+        <ul>
+          <li><b>"ลุยเลย"</b> · "เริ่มเลย" · "ไปต่อ" · "ปังมาก" · "ไม่ยอมแพ้นะ"</li>
+          <li><b>เก่งมาก! ทำได้ดีกว่าครั้งที่แล้ว 8 คะแนน</b> — feedback เฉพาะเจาะจง บอกตัวเลข</li>
+          <li>เรียก <b>"เรา"</b> ไม่ใช่ "ทางสถาบัน" — ทำให้รู้สึกใกล้ชิด</li>
+          <li>ขึ้นต้นด้วย verb เสมอ: <b>"เริ่ม → ลิมิตของฟังก์ชัน"</b></li>
+          <li>ใช้ตัวเลขจริง: "เหลือ 1,160 XP", "อันดับ 47 จาก 1,247"</li>
+        </ul>
+      </div>
+      <div class="voice-card dont">
+        <h4>เลี่ยง</h4>
+        <ul>
+          <li>กรุณาดำเนินการสมัครคอร์สภายในระยะเวลาที่กำหนด</li>
+          <li>555 น้องๆๆ จ้าาา งับ ฮะ — childish</li>
+          <li>"ปลดปล่อยศักยภาพในตัวคุณ" — corporate filler</li>
+          <li>"Click here to continue" — generic, ไม่บอกอะไร</li>
+          <li>Emoji กระจาย: 🚀✨🎉🌟 — ใช้ 1 ตัวพอ ถ้าจำเป็น</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="footnote">
+    <div>Mingsmileyface · Brand System v0.1 · For Next.js 15 + Tailwind 4 + shadcn/ui</div>
+    <div>OKLCH · WCAG AA · 1440 / 1024 / 375</div>
+  </div>
+
+</div>
+
+<script>
+const root = document.documentElement;
+const btnDark = document.getElementById('btn-dark');
+const btnLight = document.getElementById('btn-light');
+function setTheme(t){
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', (t === 'petronas' || t === 'classic-dark' || t === 'dark'));
+  btnLight.setAttribute('aria-pressed', (t === 'petronas-light' || t === 'classic-light' || t === 'light'));
+  try{ localStorage.setItem('ming-theme', t); }catch(e){}
+}
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try{
+  const saved = localStorage.getItem('ming-theme');
+  setTheme(saved === 'dark' ? 'petronas' : saved === 'light' ? 'petronas-light' : (saved || 'petronas-light'));
+}catch(e){}
+</script>
+</body>
+</html>

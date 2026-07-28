@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คูปอง — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-data.css?v=1" />
+<style>
+  /* premium polish */
+  @media (prefers-reduced-motion: no-preference){
+    .coupon-row { animation: admReveal .45s cubic-bezier(.2,.8,.2,1) both; }
+    .coupon-row:nth-child(2){animation-delay:.04s}.coupon-row:nth-child(3){animation-delay:.08s}
+    .coupon-row:nth-child(4){animation-delay:.12s}.coupon-row:nth-child(5){animation-delay:.16s}
+    .coupon-row:nth-child(6){animation-delay:.20s}.coupon-row:nth-child(7){animation-delay:.24s}
+  }
+  .coupon-row { transition:background .15s, box-shadow .2s; }
+  .coupon-row:hover { box-shadow: inset 3px 0 0 var(--brand-magenta); }
+  .coupon-row .coupon-code code { transition:color .15s; }
+  .coupon-row:hover .coupon-code code { color:var(--brand-magenta); }
+  .usage .bar i { transition: width .9s cubic-bezier(.2,.8,.2,1); }
+  :root[data-theme="petronas"] .usage .bar i, :root[data-theme="dark"] .usage .bar i { box-shadow:0 0 8px -1px oklch(0.66 0.23 295 / 0.7); }
+  .copy { transition: transform .15s, color .15s; }
+  .copy:active { transform:scale(.88); }
+  .row-acts { display:flex; align-items:center; justify-content:flex-end; gap:6px; }
+  .actions-cell { white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='coupons';</script>
+<div class="adm" id="adm" data-screen-label="Admin · คูปอง">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>คูปอง</b></nav>
+      <div class="adm-top-actions">
+        <button class="adm-search" id="cmdk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="lbl">ค้นหา · คำสั่ง</span><span class="kbd">⌘K</span></button>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow">PEOPLE · คูปอง</div>
+            <h1>คู<span class="grad">ปอง</span></h1>
+            <div class="sub">สร้างและจัดการโค้ดส่วนลด · ใช้ตอน checkout</div>
+          </div>
+          <div class="adm-head-actions">
+            <button class="btn btn-primary btn-sm" id="open-create"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>สร้างคูปอง</button>
+          </div>
+        </section>
+
+        <section class="sum-strip reveal" data-delay="1">
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--success)"></span>ใช้งานได้</div><div class="sv" id="s-active">3<span class="unit">โค้ด</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-violet)"></span>ใช้ไปทั้งหมด</div><div class="sv">218<span class="unit">ครั้ง</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-magenta)"></span>ส่วนลดรวม</div><div class="sv"><span class="cur">฿</span>71,400</div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--danger)"></span>หมดอายุ/เต็ม</div><div class="sv" id="s-dead">2<span class="unit">โค้ด</span></div></div>
+        </section>
+
+        <section class="adm-toolbar reveal" data-delay="2">
+          <div class="tb-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="search" placeholder="ค้นหาโค้ด..." /></div>
+          <select class="tb-select" id="f-status">
+            <option value="all">ทุกสถานะ</option>
+            <option value="active">ใช้งานได้</option>
+            <option value="full">เต็มสิทธิ์</option>
+            <option value="expired">หมดอายุ</option>
+          </select>
+        </section>
+
+        <section class="dt-wrap reveal" data-delay="3">
+          <div class="dt-scroll">
+            <table class="dtable" id="table">
+              <thead><tr>
+                <th>โค้ด</th>
+                <th>ส่วนลด</th>
+                <th>ใช้ไป</th>
+                <th>หมดอายุ</th>
+                <th>สถานะ</th>
+                <th class="right">จัดการ</th>
+              </tr></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </section>
+        <div id="no-result" style="display:none"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE COUPON MODAL -->
+<div class="modal-scrim" id="create-modal">
+  <div class="modal modal-wide">
+    <div class="modal-head"><h3>สร้างคูปองใหม่</h3></div>
+    <div class="modal-body">
+      <div class="field">
+        <label>โค้ดคูปอง</label>
+        <div class="code-gen">
+          <input class="inp" id="c-code" placeholder="MING20" autocomplete="off" />
+          <button class="gen-btn" id="c-gen">สุ่มโค้ด</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>ชนิดส่วนลด</label>
+        <div class="seg-field" id="c-type">
+          <button data-v="percent" aria-pressed="true">เปอร์เซ็นต์ (%)</button>
+          <button data-v="baht" aria-pressed="false">จำนวนเงิน (฿)</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>มูลค่า</label>
+          <div class="inp-prefix"><span class="pfx" id="c-val-pfx">%</span><input class="inp" id="c-value" value="20" inputmode="numeric" style="padding-left:30px" /></div>
+        </div>
+        <div class="field">
+          <label>จำกัดสิทธิ์ <span class="opt">ครั้ง</span></label>
+          <input class="inp" id="c-max" value="100" inputmode="numeric" />
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>วันหมดอายุ</label>
+        <input class="inp" id="c-expiry" type="date" value="2026-08-31" />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" id="c-cancel">ยกเลิก</button>
+      <button class="btn btn-primary btn-sm" id="c-save">สร้างคูปอง</button>
+    </div>
+  </div>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">แถบสลับสีในตาราง</div>
+    <div class="tweak-seg" data-tweak="zebra"><button data-v="on" aria-pressed="true">เปิด</button><button data-v="off" aria-pressed="false">ปิด</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">Demo · สถานะหน้า</div>
+    <div class="tweak-seg" data-tweak="view"><button data-v="data" aria-pressed="true">มีข้อมูล</button><button data-v="empty" aria-pressed="false">ว่างเปล่า</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable', zebra:'on', view:'data' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script src="admin-coupons.js?v=3"></script>
+</body>
+</html>

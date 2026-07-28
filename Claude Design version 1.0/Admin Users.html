@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>นักเรียน — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-data.css?v=11" />
+<style>
+  @media (prefers-reduced-motion: no-preference){
+    #tbody tr { animation: admReveal .4s cubic-bezier(.2,.8,.2,1) both; }
+    #tbody tr:nth-child(2){animation-delay:.03s}#tbody tr:nth-child(3){animation-delay:.06s}
+    #tbody tr:nth-child(4){animation-delay:.09s}#tbody tr:nth-child(5){animation-delay:.12s}
+    #tbody tr:nth-child(6){animation-delay:.15s}#tbody tr:nth-child(7){animation-delay:.18s}
+    #tbody tr:nth-child(8){animation-delay:.21s}#tbody tr:nth-child(9){animation-delay:.24s}
+    #tbody tr:nth-child(10){animation-delay:.27s}
+    .live-card { animation: admReveal .45s cubic-bezier(.2,.8,.2,1) both; }
+    .live-card:nth-child(2){animation-delay:.06s}.live-card:nth-child(3){animation-delay:.12s}
+    .live-card:nth-child(4){animation-delay:.18s}.live-card:nth-child(5){animation-delay:.24s}
+  }
+  #tbody tr.dt-row-click { transition: background .15s, box-shadow .2s; }
+  #tbody tr.dt-row-click:hover { box-shadow: inset 3px 0 0 var(--brand-magenta); }
+  /* live status pills */
+  .lc-timer { display:inline-flex; align-items:center; gap:6px; margin-left:auto; font-family:"JetBrains Mono"; font-size:10.5px; font-weight:600; color:var(--sc,var(--success)); background:oklch(from var(--sc,var(--success)) l c h / 0.12); border:1px solid oklch(from var(--sc,var(--success)) l c h / 0.3); padding:3px 9px; border-radius:99px; white-space:nowrap; }
+  .lc-timer .pulse { width:6px; height:6px; border-radius:50%; background:var(--sc,var(--success)); }
+  .livepill { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--sc,var(--success)); }
+  .livepill .d { width:7px; height:7px; border-radius:50%; background:var(--sc,var(--success)); box-shadow:0 0 0 3px oklch(from var(--sc,var(--success)) l c h / 0.18); }
+  .live-more { grid-column:1/-1; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:11px; border-radius:13px; border:1px dashed var(--line); background:var(--bg-1); color:var(--fg-1); font:inherit; font-size:12.5px; font-weight:600; cursor:pointer; transition:color .15s,border-color .15s,background .15s; }
+  .live-more:hover { color:var(--fg-0); border-color:var(--fg-3); background:var(--bg-2); }
+  .live-more svg { width:15px; height:15px; }
+  /* row-acts alignment fix */
+  #tbody .row-acts { display:flex; align-items:center; justify-content:flex-end; gap:6px; }
+  #tbody td.right { white-space:nowrap; }
+  /* sum breakdown sub-line */
+  .sv-sub { font-size:11px; color:var(--fg-3); margin-top:3px; display:flex; gap:8px; }
+  .sv-sub b { font-family:"JetBrains Mono"; font-weight:600; }
+  .sv-sub .learn b { color:var(--success); }
+  .sv-sub .afk b { color:var(--warning); }
+  /* filter dropdowns must sit above the table */
+  .filterbar { position:relative; z-index:60; }
+  .fdrop { position:relative; }
+  .fdrop-menu { z-index:120; }
+  /* DEK รุ่น tag */
+  .dek-tag { font-family:"JetBrains Mono"; font-size:11px; font-weight:600; color:var(--brand-violet); background:oklch(from var(--brand-violet) l c h / 0.12); border:1px solid oklch(from var(--brand-violet) l c h / 0.28); padding:2px 8px; border-radius:99px; }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='users';</script>
+<div class="adm" id="adm" data-screen-label="Admin · นักเรียน">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>นักเรียน</b></nav>
+      <div class="adm-top-actions">
+        <button class="adm-search" id="cmdk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="lbl">ค้นหา · คำสั่ง</span><span class="kbd">⌘K</span></button>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow">PEOPLE · นักเรียน</div>
+            <h1>นัก<span class="grad">เรียน</span></h1>
+            <div class="sub">ค้นหา กรอง และจัดการบัญชีนักเรียนทั้งหมด</div>
+          </div>
+          <div class="adm-head-actions">
+            <button class="btn btn-ghost btn-sm"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>ส่งออก CSV</button>
+          </div>
+        </section>
+
+        <section class="sum-strip reveal" data-delay="1">
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-cyan)"></span>นักเรียนทั้งหมด</div><div class="sv">1,248<span class="unit">คน</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--success)"></span>ออนไลน์ตอนนี้</div><div class="sv">37<span class="unit">คน</span></div><div class="sv-sub" id="online-breakdown"></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-violet)"></span>สมัครเดือนนี้</div><div class="sv">96<span class="unit">คน</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-magenta)"></span>ผู้ดูแล</div><div class="sv">2<span class="unit">คน</span></div></div>
+        </section>
+
+        <!-- LIVE NOW -->
+        <section class="livenow reveal" data-delay="2">
+          <div class="livenow-head">
+            <div class="ln-title"><span class="live-pip"></span>กำลังเรียนอยู่ตอนนี้<span class="ln-count"><b id="live-count">0</b> คนออนไลน์</span></div>
+            <span class="ln-hint">คลิกการ์ดเพื่อดูกิจกรรมเต็ม</span>
+          </div>
+          <div class="live-grid" id="live-grid"></div>
+        </section>
+
+        <!-- FILTER BAR -->
+        <section class="filterbar reveal" data-delay="2">
+          <div class="tb-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="search" placeholder="ค้นหาชื่อ หรืออีเมล..." /></div>
+          <div class="fdrop" data-filter="role">
+            <button class="chip-filter" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>บทบาท</button>
+            <div class="fdrop-menu">
+              <button data-v="all" class="sel">ทั้งหมด<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="student">นักเรียน<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="admin">ผู้ดูแล<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+            </div>
+          </div>
+          <div class="fdrop" data-filter="grade">
+            <button class="chip-filter" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg>ระดับชั้น</button>
+            <div class="fdrop-menu">
+              <button data-v="all" class="sel">ทั้งหมด<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="ม.4">ม.4<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="ม.5">ม.5<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="ม.6">ม.6<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+            </div>
+          </div>
+          <div class="fdrop" data-filter="online">
+            <button class="chip-filter" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>สถานะ</button>
+            <div class="fdrop-menu">
+              <button data-v="all" class="sel">ทั้งหมด<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="online">ออนไลน์<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              <button data-v="offline">ออฟไลน์<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+            </div>
+          </div>
+          <div class="grow"></div>
+          <div class="active-filters" id="active-filters"></div>
+        </section>
+
+        <!-- DATA TABLE -->
+        <section class="dt-wrap reveal" data-delay="3">
+          <div class="dt-scroll">
+            <table class="dtable" id="table">
+              <thead><tr>
+                <th class="sortable" data-sort="name">นักเรียน</th>
+                <th class="sortable" data-sort="role">บทบาท</th>
+                <th class="sortable" data-sort="grade">ระดับชั้น</th>
+                <th class="sortable" data-sort="dek">รุ่น</th>
+                <th>กำลังเรียน</th>
+                <th class="sortable" data-sort="joined">สมัครเมื่อ <span class="sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></span></th>
+                <th class="sortable" data-sort="seen">ออนไลน์ล่าสุด</th>
+                <th class="right">จัดการ</th>
+              </tr></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+          <div class="dt-foot">
+            <div class="page-size">แสดง
+              <select id="page-size"><option>10</option><option>25</option><option>50</option></select>
+              ต่อหน้า
+            </div>
+            <div class="info" id="range-info"></div>
+            <div class="pager" id="pager"></div>
+          </div>
+        </section>
+        <div id="no-result" style="display:none"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT ACTIVITY DRAWER -->
+<div class="drawer-ov" id="drawer-ov"></div>
+<aside class="drawer" id="drawer" aria-label="กิจกรรมนักเรียน">
+  <header class="dw-head">
+    <b>กิจกรรมนักเรียน</b>
+    <button class="x" id="dw-close" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </header>
+  <div class="dw-body"></div>
+</aside>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">แถบสลับสีในตาราง</div>
+    <div class="tweak-seg" data-tweak="zebra"><button data-v="on" aria-pressed="true">เปิด</button><button data-v="off" aria-pressed="false">ปิด</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">Demo · สถานะหน้า</div>
+    <div class="tweak-seg" data-tweak="view"><button data-v="data" aria-pressed="true">มีข้อมูล</button><button data-v="empty" aria-pressed="false">ไม่พบผล</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable', zebra:'on', view:'data' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script src="admin-users.js?v=7"></script>
+<script>
+// count-up summary numbers (safety-landed)
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.sum-strip .sv').forEach(el=>{
+    const node=[...el.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());
+    if(!node) return; const raw=node.textContent.trim(); const target=parseFloat(raw.replace(/,/g,''));
+    if(isNaN(target)) return; const comma=raw.includes(','); let start=null; const dur=850;
+    function step(t){ if(start===null)start=t; const p=Math.min(1,(t-start)/dur); const e=1-Math.pow(1-p,3);
+      const v=Math.round(target*e); node.textContent=comma?v.toLocaleString('en-US'):String(v);
+      if(p<1) requestAnimationFrame(step); else node.textContent=raw; }
+    requestAnimationFrame(step); setTimeout(()=>{node.textContent=raw;},dur+400);
+  });
+}
+</script>
+</body>
+</html>

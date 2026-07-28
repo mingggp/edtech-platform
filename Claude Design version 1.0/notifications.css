@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Mingsmileyface · Batch 7 · Cluster B — Notifications styles
+   Loads after brand.css (+ app-shell.css on the full page).
+   Panel is a fixed popover → shown via display-toggle + transform-only
+   keyframe (opacity solid), matching peek.css (engine stalls opacity here).
+   ========================================================================== */
+:root { --nt-ease: cubic-bezier(.2,.8,.2,1); }
+
+/* bell badge → count pill */
+.icon-btn .dot.count { top: 4px; right: 4px; width: auto; min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: 99px; background: var(--brand-magenta); color: #fff; font-family: "JetBrains Mono";
+  font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  line-height: 1; box-shadow: 0 0 0 2px var(--bg-0); }
+
+/* ---- shared row (panel + page) ---------------------------------------- */
+.nt-row { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 13px;
+  padding: 14px 16px; border-radius: 14px; text-decoration: none; color: inherit; position: relative;
+  transition: background .15s; }
+.nt-row:hover { background: var(--bg-2); }
+.nt-row .nt-ico { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; color: var(--nt-c, var(--brand-magenta)); background: var(--nt-bg, oklch(0.68 0.25 5 / 0.13)); }
+.nt-row .nt-ico svg { width: 20px; height: 20px; }
+.nt-row .nt-av { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; }
+/* per-type accent */
+.nt-ico.t-lesson      { --nt-c: oklch(0.74 0.15 235); --nt-bg: oklch(0.74 0.15 235 / 0.14); }
+.nt-ico.t-exam        { --nt-c: oklch(0.70 0.20 295); --nt-bg: oklch(0.66 0.23 295 / 0.15); }
+.nt-ico.t-payment     { --nt-c: oklch(0.78 0.18 150); --nt-bg: oklch(0.78 0.18 150 / 0.14); }
+.nt-ico.t-streak      { --nt-c: oklch(0.78 0.20 45);  --nt-bg: oklch(0.78 0.20 45 / 0.15); }
+.nt-ico.t-achievement { --nt-c: oklch(0.84 0.16 85);  --nt-bg: oklch(0.84 0.16 85 / 0.16); }
+.nt-ico.t-social      { --nt-c: oklch(0.72 0.22 5);   --nt-bg: oklch(0.68 0.25 5 / 0.14); }
+.nt-ico.t-system      { --nt-c: var(--fg-1);           --nt-bg: var(--bg-3); }
+
+.nt-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.nt-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nt-top b { font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: -0.01em;
+  color: var(--fg-0); line-height: 1.4; }
+.nt-body { font-size: 12.5px; color: var(--fg-2); line-height: 1.45; overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.nt-time { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); margin-top: 2px; letter-spacing: 0.02em; }
+.nt-time .nt-type { color: var(--fg-2); }
+.nt-tag { font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
+.nt-tag.ok    { color: oklch(0.45 0.16 150); background: oklch(0.78 0.18 150 / 0.18); }
+.nt-tag.warn  { color: oklch(0.62 0.18 55);  background: oklch(0.78 0.18 60 / 0.18); }
+.nt-tag.score { color: oklch(0.62 0.22 295); background: oklch(0.66 0.23 295 / 0.16); }
+:root[data-theme="light"] .nt-tag.ok, :root[data-theme="petronas-light"] .nt-tag.ok { color: oklch(0.40 0.16 150); }
+
+.nt-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); flex-shrink: 0;
+  margin-top: 16px; opacity: 0; }
+.nt-row.unread .nt-dot { opacity: 1; }
+.nt-row.unread { background: oklch(0.68 0.25 5 / 0.05); }
+.nt-row.unread:hover { background: oklch(0.68 0.25 5 / 0.09); }
+.nt-row.unread .nt-top b { color: var(--fg-0); }
+
+/* ---- dropdown panel ---------------------------------------------------- */
+.nt-catcher { position: fixed; inset: 0; z-index: 240; display: none; }
+.nt-catcher.open { display: block; }
+.nt-panel { position: fixed; z-index: 250; width: 388px; max-width: calc(100vw - 24px);
+  max-height: min(560px, 78vh); display: none; flex-direction: column; overflow: hidden; border-radius: 20px;
+  background: oklch(from var(--bg-1) l c h / 0.97); backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%); border: 1px solid var(--glass-line-strong);
+  box-shadow: 0 30px 70px -20px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.05) inset; }
+.nt-panel.open { display: flex; animation: ntPop .18s var(--nt-ease) both; }
+@keyframes ntPop { from { transform: translateY(-8px) scale(.98); } to { transform: translateY(0) scale(1); } }
+
+.nt-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--line-soft); flex-shrink: 0; }
+.nt-h-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.02em;
+  color: var(--fg-0); display: flex; align-items: center; gap: 9px; }
+.nt-count { font-family: "JetBrains Mono"; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; color: #fff;
+  background: var(--grad-signature); padding: 3px 8px; border-radius: 99px; }
+.nt-readall { appearance: none; border: 0; background: none; font: inherit; font-size: 12.5px; font-weight: 600;
+  color: var(--brand-magenta); cursor: pointer; padding: 6px 8px; border-radius: 8px; transition: background .15s; white-space: nowrap; }
+.nt-readall:hover { background: oklch(0.68 0.25 5 / 0.1); }
+.nt-list { overflow-y: auto; padding: 6px; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.nt-list::-webkit-scrollbar { width: 8px; }
+.nt-list::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+.nt-empty-mini { padding: 38px 16px; text-align: center; font-size: 13px; color: var(--fg-3); }
+.nt-foot { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 13px;
+  border-top: 1px solid var(--line-soft); font-size: 13px; font-weight: 600; color: var(--brand-magenta);
+  text-decoration: none; transition: background .15s; }
+.nt-foot:hover { background: oklch(0.68 0.25 5 / 0.08); }
+.nt-foot svg { width: 14px; height: 14px; transition: transform .18s var(--nt-ease); }
+.nt-foot:hover svg { transform: translateX(3px); }
+.nt-panel .nt-row { border-radius: 12px; }
+
+/* ===== FULL PAGE (/notifications) ====================================== */
+.nt-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between; }
+.nt-filters { display: flex; gap: 6px; padding: 4px; background: var(--bg-1); border: 1px solid var(--line);
+  border-radius: 12px; overflow-x: auto; scrollbar-width: none; }
+.nt-filters::-webkit-scrollbar { display: none; }
+.nt-filters button { appearance: none; border: 0; background: transparent; font: inherit; font-size: 13px;
+  font-weight: 500; color: var(--fg-2); padding: 8px 14px; border-radius: 9px; cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px; transition: all .15s; }
+.nt-filters button .fc { font-family: "JetBrains Mono"; font-size: 10.5px; padding: 1px 6px; border-radius: 99px;
+  background: var(--bg-3); color: var(--fg-2); }
+.nt-filters button[aria-pressed="true"] { background: var(--bg-3); color: var(--fg-0); box-shadow: var(--shadow-1); }
+.nt-filters button[aria-pressed="true"] .fc { background: var(--brand-magenta); color: #fff; }
+
+.nt-actions { display: flex; align-items: center; gap: 10px; }
+.nt-readall-btn { display: inline-flex; align-items: center; gap: 8px; appearance: none; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--bg-1); color: var(--fg-1); transition: all .15s; white-space: nowrap; }
+.nt-readall-btn:hover { border-color: var(--fg-2); color: var(--fg-0); background: var(--bg-2); }
+.nt-readall-btn svg { width: 15px; height: 15px; }
+.nt-readall-btn:disabled { opacity: .45; cursor: default; }
+.nt-settings { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1);
+  color: var(--fg-1); display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+.nt-settings:hover { border-color: var(--fg-2); color: var(--fg-0); background: var(--bg-2); }
+.nt-settings svg { width: 17px; height: 17px; }
+
+.nt-group { display: flex; flex-direction: column; gap: 4px; }
+.nt-group + .nt-group { margin-top: 22px; }
+.nt-group-h { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--fg-3); font-weight: 600; padding: 0 4px 8px; display: flex; align-items: center; gap: 10px; }
+.nt-group-h::after { content: ""; flex: 1; height: 1px; background: var(--line-soft); }
+.nt-page-list { display: flex; flex-direction: column; }
+.nt-page-list .nt-row { padding: 16px 16px; border-radius: 16px; }
+.nt-page-list .nt-row + .nt-row { box-shadow: 0 -1px 0 var(--line-soft); }
+.nt-page-list .nt-row .nt-body { -webkit-line-clamp: 3; }
+
+/* empty state */
+.nt-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
+  padding: 70px 32px; }
+.nt-empty .em-ic { width: 96px; height: 96px; border-radius: 28px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; border: 1px solid var(--line);
+  background: linear-gradient(160deg, oklch(0.24 0.04 285), oklch(0.16 0.02 285)); }
+:root[data-theme="light"] .nt-empty .em-ic, :root[data-theme="petronas-light"] .nt-empty .em-ic { background: linear-gradient(160deg, oklch(0.94 0.02 285), oklch(0.9 0.015 285)); }
+.nt-empty .em-ic::before { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 30%, oklch(0.66 0.23 295 / 0.3), transparent 62%); }
+.nt-empty .em-ic svg { width: 40px; height: 40px; color: var(--brand-magenta); opacity: 0.9; position: relative; }
+.nt-empty h3 { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: -0.01em; color: var(--fg-0); }
+.nt-empty p { font-size: 13.5px; color: var(--fg-2); line-height: 1.55; max-width: 38ch; }
+
+@media (max-width: 560px) {
+  .nt-panel { width: calc(100vw - 24px); }
+  .nt-bar { gap: 10px; }
+}

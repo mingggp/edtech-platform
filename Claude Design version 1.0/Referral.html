@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ชวนเพื่อน รับ ฿200 — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<style>
+/* ============== REFERRAL — page specific ============== */
+
+/* hero split: pitch + share widget */
+.ref-hero-inner { display: grid; grid-template-columns: 1fr 0.92fr; gap: 56px; align-items: center; }
+.ref-hero-copy h1 { max-width: 15ch; }
+.ref-hero-copy .lede { max-width: 50ch; }
+
+/* big reward pills in hero */
+.reward-pills { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 30px; }
+.rpill { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 18px; border: 1px solid var(--line); background: var(--bg-1); }
+.rpill .amt { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; line-height: 1; background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rpill .who { font-size: 12px; color: var(--fg-2); line-height: 1.35; }
+.rpill .who b { color: var(--fg-0); font-weight: 600; font-size: 13px; display: block; }
+
+/* share widget */
+.share-card { position: relative; border-radius: 28px; border: 1px solid var(--glass-line-strong); background: var(--glass); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); padding: 30px; box-shadow: var(--shadow-2); overflow: hidden; }
+.share-card::before { content: ""; position: absolute; inset: 0; background: var(--grad-glow); opacity: 0.5; pointer-events: none; }
+.share-card > * { position: relative; z-index: 1; }
+.share-card .sc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.share-card .sc-av { width: 42px; height: 42px; border-radius: 50%; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 16px; }
+.share-card .sc-head .t { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-3); }
+.share-card .sc-head .n { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--fg-0); }
+
+.field-lab { font-size: 12px; color: var(--fg-2); margin-bottom: 7px; font-weight: 500; }
+.code-box { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 18px; border-radius: 14px; border: 1px dashed var(--line); background: var(--bg-0); margin-bottom: 16px; }
+:root[data-theme="light"] .code-box, :root[data-theme="petronas-light"] .code-box { background: var(--bg-2); }
+.code-box .code { font-family: "JetBrains Mono"; font-weight: 600; font-size: 20px; letter-spacing: 0.06em; color: var(--fg-0); flex: 1; }
+.code-box .copy-btn, .link-box .copy-btn { flex-shrink: 0; }
+
+.link-box { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg-0); margin-bottom: 18px; }
+:root[data-theme="light"] .link-box, :root[data-theme="petronas-light"] .link-box { background: var(--bg-2); }
+.link-box .lk { font-size: 13px; color: var(--fg-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: "JetBrains Mono"; }
+.copy-btn { display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; border-radius: 11px; border: 0; font-family: inherit; font-weight: 600; font-size: 13.5px; cursor: pointer; background: var(--bg-3); color: var(--fg-0); transition: background .2s, transform .15s; white-space: nowrap; }
+.copy-btn:hover { transform: translateY(-1px); }
+.copy-btn.done { background: oklch(0.78 0.18 150 / 0.18); color: var(--success); }
+.copy-btn svg { width: 15px; height: 15px; }
+
+.share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.share-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 46px; border-radius: 13px; font-family: inherit; font-weight: 600; font-size: 14px; text-decoration: none; cursor: pointer; border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-0); transition: transform .15s, box-shadow .2s, background .2s; }
+.share-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-1); }
+.share-btn.line { background: linear-gradient(135deg, oklch(0.60 0.17 150), oklch(0.68 0.17 150)); color: #fff; border-color: transparent; }
+.share-btn svg { width: 18px; height: 18px; }
+
+/* steps */
+.rstep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.rstep { position: relative; padding: 30px; border-radius: 24px; border: 1px solid var(--line); background: var(--bg-1); display: flex; flex-direction: column; gap: 16px; min-height: 220px; }
+.rstep .sn { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; background: var(--bg-3); color: var(--fg-1); }
+.rstep.on .sn { background: var(--grad-signature); color: #fff; box-shadow: 0 6px 18px -6px oklch(0.66 0.23 295 / 0.6); }
+.rstep .ico { width: 30px; height: 30px; color: var(--brand-magenta); }
+.rstep h3 { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: -0.015em; color: var(--fg-0); }
+.rstep p { font-size: 14.5px; line-height: 1.6; color: var(--fg-1); }
+.rstep .arrow { position: absolute; top: 42px; right: -22px; width: 24px; height: 24px; color: var(--fg-3); z-index: 2; }
+.rstep:last-child .arrow { display: none; }
+
+/* reward detail cards */
+.reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.rcard { position: relative; border-radius: 24px; padding: 32px; overflow: hidden; border: 1px solid var(--line); background: var(--bg-1); }
+.rcard.you { color: #fff; border-color: transparent; background: linear-gradient(145deg, oklch(0.42 0.20 295), oklch(0.52 0.22 330) 60%, oklch(0.58 0.22 5)); }
+.rcard.you::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.12) 1px, transparent 1px); background-size: 24px 24px; mask-image: radial-gradient(60% 60% at 100% 0%, #000, transparent); }
+.rcard.you > * { position: relative; z-index: 1; }
+.rcard .tag { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-3); }
+.rcard.you .tag { color: oklch(0.99 0.005 285 / 0.75); }
+.rcard .amt { font-family: var(--font-display); font-weight: 700; font-size: 60px; line-height: 1; letter-spacing: -0.03em; margin: 12px 0 8px; }
+.rcard:not(.you) .amt { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rcard .amt .cur { font-size: 30px; vertical-align: 0.35em; margin-right: 2px; }
+.rcard h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--fg-0); }
+.rcard.you h3 { color: #fff; }
+.rcard p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--fg-1); }
+.rcard.you p { color: oklch(0.99 0.005 285 / 0.88); }
+
+/* tracker */
+.tracker { background: var(--bg-1); border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+:root[data-theme="dark"] .tracker { background: linear-gradient(180deg, transparent, oklch(0.16 0.016 285) 16%, oklch(0.16 0.016 285) 84%, transparent); border: 0; }
+.track-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.tstat { padding: 24px 26px; border-radius: 20px; border: 1px solid var(--line); background: var(--bg-0); }
+:root[data-theme="light"] .tstat, :root[data-theme="petronas-light"] .tstat { background: var(--bg-1); }
+.tstat .n { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; letter-spacing: -0.02em; color: var(--fg-0); }
+.tstat .n .grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tstat .l { margin-top: 8px; font-size: 13px; color: var(--fg-2); }
+
+.friends { border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--bg-0); }
+:root[data-theme="light"] .friends, :root[data-theme="petronas-light"] .friends { background: var(--bg-1); }
+.friend-row { display: grid; grid-template-columns: auto 1fr auto auto; gap: 16px; align-items: center; padding: 16px 22px; border-bottom: 1px solid var(--line-soft); }
+.friend-row:last-child { border-bottom: 0; }
+.friend-row .av { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 14px; }
+.friend-row .nm { line-height: 1.3; }
+.friend-row .nm b { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--fg-0); display: block; }
+.friend-row .nm span { font-size: 12.5px; color: var(--fg-3); }
+.friend-row .st { font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 99px; white-space: nowrap; }
+.st.rewarded { background: oklch(0.78 0.18 150 / 0.14); color: var(--success); border: 1px solid oklch(0.78 0.18 150 / 0.3); }
+.st.joined { background: oklch(0.80 0.16 205 / 0.14); color: var(--brand-cyan); border: 1px solid oklch(0.80 0.16 205 / 0.3); }
+.st.invited { background: var(--bg-3); color: var(--fg-2); border: 1px solid var(--line); }
+.friend-row .earn { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--fg-0); min-width: 56px; text-align: right; }
+.friend-row .earn.muted { color: var(--fg-3); font-weight: 500; font-size: 13px; }
+
+.terms { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 32px; }
+.terms li { list-style: none; display: flex; gap: 12px; font-size: 13.5px; line-height: 1.55; color: var(--fg-2); }
+.terms li svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--brand-cyan); }
+
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px); background: var(--fg-0); color: var(--bg-0); font-weight: 600; font-size: 14px; padding: 12px 22px; border-radius: 99px; box-shadow: var(--shadow-2); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 200; display: flex; align-items: center; gap: 9px; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast svg { width: 16px; height: 16px; }
+
+@media (max-width: 1000px) {
+  .ref-hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .rstep-grid { grid-template-columns: 1fr; }
+  .rstep .arrow { display: none; }
+  .reward-grid { grid-template-columns: 1fr; }
+  .track-stats { grid-template-columns: 1fr; }
+  .terms { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .share-row { grid-template-columns: 1fr; }
+  .friend-row { grid-template-columns: auto 1fr auto; }
+  .friend-row .earn { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Courses.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO + SHARE WIDGET ============== -->
+<section class="page-hero" data-screen-label="01 Referral Hero">
+  <div class="container-wide">
+    <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+      <a href="Landing Page.html">หน้าหลัก</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>ชวนเพื่อน</span>
+    </div>
+    <div class="soon-banner reveal">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="tx"><b>ฟีเจอร์นี้ยังไม่เปิดใช้งาน</b><span>โปรแกรมชวนเพื่อนกำลังอยู่ระหว่างพัฒนา เร็วๆ นี้</span></div>
+      <a href="Landing Page.html" class="btn btn-ghost btn-sm">กลับหน้าหลัก</a>
+    </div>
+    <div class="ref-hero-inner">
+      <div class="ref-hero-copy">
+        <div class="t-eyebrow reveal"><span class="dot"></span><span>ชวนเพื่อนมาติว</span></div>
+        <h1 class="reveal" data-delay="1" style="margin-top:18px">ชวนเพื่อน <span class="grad">ได้กันทั้งคู่</span></h1>
+        <p class="lede reveal" data-delay="2">ส่งลิงก์ให้เพื่อน — <b>เพื่อนได้ส่วนลด 10%</b> สำหรับคอร์สแรก และ <b>คุณได้เครดิต ฿200</b> ทุกครั้งที่เพื่อนสมัครเรียน. ชวนได้ไม่จำกัดจำนวน.</p>
+        <div class="reward-pills reveal" data-delay="3">
+          <div class="rpill"><span class="amt">฿200</span><span class="who"><b>คุณได้</b>เครดิตต่อเพื่อน 1 คน</span></div>
+          <div class="rpill"><span class="amt">10%</span><span class="who"><b>เพื่อนได้</b>ส่วนลดคอร์สแรก</span></div>
+        </div>
+      </div>
+
+      <div class="share-card reveal" data-delay="2">
+        <div class="sc-head">
+          <div class="sc-av">ปา</div>
+          <div>
+            <div class="t">ลิงก์ชวนเพื่อนของคุณ</div>
+            <div class="n">น้องปาล์ม · พร้อมแชร์แล้ว</div>
+          </div>
+        </div>
+
+        <div class="field-lab">โค้ดชวนเพื่อน</div>
+        <div class="code-box">
+          <span class="code" id="ref-code">MING-PALM24</span>
+          <button class="copy-btn" id="copy-code" data-copy="MING-PALM24">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            คัดลอกโค้ด
+          </button>
+        </div>
+
+        <div class="field-lab">หรือส่งลิงก์นี้ให้เพื่อน</div>
+        <div class="link-box">
+          <span class="lk" id="ref-link">mingsmileyface.com/r/MING-PALM24</span>
+          <button class="copy-btn" id="copy-link" data-copy="https://mingsmileyface.com/r/MING-PALM24">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+            คัดลอก
+          </button>
+        </div>
+
+        <div class="share-row">
+          <button class="share-btn line" id="share-line">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2z"/></svg>
+            แชร์ผ่าน Line
+          </button>
+          <button class="share-btn" id="share-more">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+            แชร์อื่นๆ
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section data-screen-label="02 How it works">
+  <div class="container-wide">
+    <div class="section-head center">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>ทำงานยังไง</span></div>
+      <h2 class="reveal" data-delay="1">ชวนเพื่อนใน <span class="grad">3 ขั้นตอน</span></h2>
+    </div>
+    <div class="rstep-grid">
+      <div class="rstep on reveal" data-delay="1">
+        <div class="sn">1</div>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg>
+        <h3>ส่งลิงก์ให้เพื่อน</h3>
+        <p>คัดลอกโค้ดหรือลิงก์ชวนเพื่อนของคุณ ส่งทาง Line, IG หรือช่องทางไหนก็ได้.</p>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="rstep on reveal" data-delay="2">
+        <div class="sn">2</div>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg>
+        <h3>เพื่อนสมัคร + ซื้อคอร์ส</h3>
+        <p>เพื่อนกรอกโค้ดตอนสมัคร รับส่วนลด <b style="color:var(--fg-0)">10%</b> สำหรับคอร์สแรกทันที.</p>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="rstep on reveal" data-delay="3">
+        <div class="sn">3</div>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0 3-3m-3 3L9 5"/><rect width="18" height="12" x="3" y="10" rx="2"/></svg>
+        <h3>คุณรับเครดิต ฿200</h3>
+        <p>เครดิต <b style="color:var(--fg-0)">฿200</b> เข้าบัญชีคุณอัตโนมัติ ใช้เป็นส่วนลดคอร์สถัดไปได้เลย.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== REWARD DETAIL ============== -->
+<section class="tight" style="padding-top:0" data-screen-label="03 Rewards">
+  <div class="container-wide">
+    <div class="reward-grid">
+      <div class="rcard you reveal" data-delay="1">
+        <div class="tag">สำหรับผู้ชวน · คุณ</div>
+        <div class="amt"><span class="cur">฿</span>200</div>
+        <h3>เครดิตต่อเพื่อน 1 คน</h3>
+        <p>ทุกครั้งที่เพื่อนสมัครและซื้อคอร์ส คุณได้เครดิต ฿200 เข้าบัญชี — ชวนได้ไม่จำกัด ยิ่งชวนยิ่งได้. ใช้เครดิตเป็นส่วนลดคอร์สถัดไปได้เต็มจำนวน.</p>
+      </div>
+      <div class="rcard reveal" data-delay="2">
+        <div class="tag">สำหรับเพื่อนที่ถูกชวน</div>
+        <div class="amt">10%</div>
+        <h3>ส่วนลดคอร์สแรก</h3>
+        <p>เพื่อนที่สมัครด้วยโค้ดของคุณ รับส่วนลด 10% สำหรับคอร์สหรือแพ็กเกจแรกทันที — ใช้ร่วมกับโปรเปิดเทอมได้ในบางช่วง.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TRACKER ============== -->
+<section class="tracker" data-screen-label="04 Tracker">
+  <div class="container-wide">
+    <div class="section-head">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>ความคืบหน้าของคุณ</span></div>
+      <h2 class="reveal" data-delay="1">เพื่อนที่คุณ <span class="grad">ชวนมาแล้ว</span></h2>
+    </div>
+
+    <div class="track-stats reveal" data-delay="1">
+      <div class="tstat"><div class="n">5</div><div class="l">เพื่อนที่ชวนทั้งหมด</div></div>
+      <div class="tstat"><div class="n">3</div><div class="l">สมัคร + ซื้อคอร์สแล้ว</div></div>
+      <div class="tstat"><div class="n"><span class="grad">฿600</span></div><div class="l">เครดิตที่ได้รับรวม</div></div>
+    </div>
+
+    <div class="friends reveal" data-delay="2">
+      <div class="friend-row">
+        <span class="av" style="background:linear-gradient(135deg,oklch(0.55 0.22 295),oklch(0.68 0.25 5))">นก</span>
+        <span class="nm"><b>น้องนก</b><span>สมัครเมื่อ 12 พ.ค. · TGAT2</span></span>
+        <span class="st rewarded">ได้รางวัลแล้ว</span>
+        <span class="earn">+฿200</span>
+      </div>
+      <div class="friend-row">
+        <span class="av" style="background:linear-gradient(135deg,oklch(0.74 0.21 35),oklch(0.86 0.20 130))">ตน</span>
+        <span class="nm"><b>น้องตูน</b><span>สมัครเมื่อ 8 พ.ค. · A-Level ฟิสิกส์</span></span>
+        <span class="st rewarded">ได้รางวัลแล้ว</span>
+        <span class="earn">+฿200</span>
+      </div>
+      <div class="friend-row">
+        <span class="av" style="background:linear-gradient(135deg,oklch(0.80 0.16 205),oklch(0.55 0.22 295))">มด</span>
+        <span class="nm"><b>น้องมด</b><span>สมัครเมื่อ 3 พ.ค. · แพ็กเกจ TCAS</span></span>
+        <span class="st rewarded">ได้รางวัลแล้ว</span>
+        <span class="earn">+฿200</span>
+      </div>
+      <div class="friend-row">
+        <span class="av" style="background:linear-gradient(135deg,oklch(0.78 0.20 50),oklch(0.86 0.20 130))">บี</span>
+        <span class="nm"><b>น้องบี</b><span>สมัครแล้ว · ยังไม่ซื้อคอร์ส</span></span>
+        <span class="st joined">รอซื้อคอร์ส</span>
+        <span class="earn muted">รอ</span>
+      </div>
+      <div class="friend-row">
+        <span class="av" style="background:linear-gradient(135deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))">เจ</span>
+        <span class="nm"><b>น้องเจน</b><span>กดลิงก์แล้ว · ยังไม่สมัคร</span></span>
+        <span class="st invited">เชิญแล้ว</span>
+        <span class="earn muted">รอ</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TERMS ============== -->
+<section class="tight" data-screen-label="05 Terms">
+  <div class="container-wide">
+    <div class="section-head">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>เงื่อนไข</span></div>
+      <h2 class="reveal" data-delay="1">กติกาสั้นๆ <span class="grad">ตรงไปตรงมา</span></h2>
+    </div>
+    <ul class="terms reveal" data-delay="1">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>เครดิต ฿200 จะเข้าบัญชีเมื่อเพื่อนสมัครและชำระเงินคอร์สแรกสำเร็จเท่านั้น.</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>เพื่อนต้องเป็นผู้ใช้ใหม่ และกรอกโค้ดตอนสมัครหรือเปิดผ่านลิงก์ของคุณ.</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>ส่วนลด 10% ใช้กับคอร์สหรือแพ็กเกจแรกของเพื่อน 1 ครั้ง.</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>เครดิตใช้เป็นส่วนลดคอร์สถัดไปได้ ไม่สามารถถอนเป็นเงินสด.</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>ชวนเพื่อนได้ไม่จำกัดจำนวน — ไม่มีเพดานเครดิต.</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Mingsmileyface ขอสงวนสิทธิ์ระงับรางวัลกรณีพบการใช้งานผิดเงื่อนไข.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta" data-screen-label="06 CTA">
+  <div class="container">
+    <div class="final-cta-card reveal">
+      <div class="eyebrow"><span class="dot"></span><span>ยิ่งชวน ยิ่งได้</span></div>
+      <h2>ชวนเพื่อนคนแรก<br/>วันนี้เลย.</h2>
+      <p>คัดลอกลิงก์ ส่งให้เพื่อนที่กำลังเตรียมสอบเหมือนกัน — ได้กันทั้งคู่.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary btn-lg" id="cta-copy">คัดลอกลิงก์ชวนเพื่อน
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+        </button>
+        <a href="Courses.html" class="btn btn-glass btn-lg">ดูคอร์สทั้งหมด</a>
+      </div>
+      <div class="micro">เครดิตเข้าทันทีเมื่อเพื่อนชำระเงินสำเร็จ · ผ่าน PromptPay ยืนยันอัตโนมัติ</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Referral.html">ชวนเพื่อน</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="FAQ.html">FAQ</a></li>
+          <li><a href="FAQ.html">วิธีชำระเงิน</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span id="toast-msg">คัดลอกแล้ว</span></div>
+
+<script>
+/* ---- copy / share interactions ---- */
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toast-msg');
+let toastT;
+function showToast(msg){
+  toastMsg.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+function copyText(text){
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return Promise.resolve(fallbackCopy(text));
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(ta);
+}
+function wireCopy(btn, label){
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    copyText(btn.dataset.copy);
+    const orig = btn.innerHTML;
+    btn.classList.add('done');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> คัดลอกแล้ว';
+    showToast(label);
+    setTimeout(() => { btn.classList.remove('done'); btn.innerHTML = orig; }, 1800);
+  });
+}
+wireCopy(document.getElementById('copy-code'), 'คัดลอกโค้ดแล้ว');
+wireCopy(document.getElementById('copy-link'), 'คัดลอกลิงก์แล้ว');
+
+document.getElementById('cta-copy').addEventListener('click', () => {
+  copyText('https://mingsmileyface.com/r/MING-PALM24');
+  showToast('คัดลอกลิงก์ชวนเพื่อนแล้ว');
+});
+const LINE_URL = 'https://line.me/R/msg/text/?' + encodeURIComponent('มาติวกับพี่หมิงกัน! ใช้โค้ด MING-PALM24 รับส่วนลด 10% https://mingsmileyface.com/r/MING-PALM24');
+document.getElementById('share-line').addEventListener('click', () => {
+  window.open(LINE_URL, '_blank', 'noopener');
+});
+document.getElementById('share-more').addEventListener('click', async () => {
+  const data = { title: 'Mingsmileyface', text: 'มาติวกับพี่หมิงกัน! ใช้โค้ด MING-PALM24 รับส่วนลด 10%', url: 'https://mingsmileyface.com/r/MING-PALM24' };
+  if (navigator.share){ try { await navigator.share(data); } catch(e){} }
+  else { copyText(data.url); showToast('คัดลอกลิงก์แล้ว'); }
+});
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+</body>
+</html>

@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ข้อสอบ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* ============================================================
+   APP SHELL — identical pattern to Courses / Dashboard
+   ============================================================ */
+body { overflow: hidden; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word,
+.app.collapsed .sb-section .heading,
+.app.collapsed .sb-item span:not(.pill):not(.count),
+.app.collapsed .sb-item .count,
+.app.collapsed .sb-item .pill,
+.app.collapsed .sb-user .info,
+.app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+.search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
+.search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.search-trigger .kbd { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.search-trigger .label { display: none; }
+@media (min-width: 900px) { .search-trigger .label { display: inline; min-width: 140px; text-align: left; } }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+.page { padding: 32px 32px 96px; max-width: 1380px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; position: relative; }
+
+/* ============================================================
+   SUBJECT CAROUSEL ROWS — คณิต → ฟิสิกส์ → TPAT3 → TGAT2
+   ============================================================ */
+.subj-row { display: flex; flex-direction: column; gap: 13px; }
+.sr-head { display: flex; align-items: baseline; gap: 11px; }
+.sr-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--subj-grad, var(--grad-signature)); box-shadow: 0 0 10px -1px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.75); align-self: center; }
+.sr-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--subj-ink, var(--fg-0)); }
+.sr-head .sr-sub { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.1em; color: var(--fg-3); text-transform: uppercase; }
+.sr-head .sr-ct { margin-left: auto; font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); }
+.sr-levels { display: flex; gap: 5px; align-self: center; margin-left: 6px; }
+.sr-levels .lv { appearance: none; border: 1px solid var(--line); background: oklch(from var(--bg-1) l c h / 0.5); color: var(--fg-2); font: inherit; font-size: 11.5px; font-weight: 600; padding: 4px 11px; border-radius: 99px; cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+.sr-levels .lv:hover { color: var(--fg-0); }
+.sr-levels .lv[aria-pressed="true"] { color: var(--subj-ink, var(--fg-0)); border-color: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.55); background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.12); }
+@media (max-width: 860px) { .sr-levels { display: none; } }
+.sr-track .exam.lv-hide { display: none; }
+.sr-track { display: grid; grid-auto-flow: column; grid-auto-columns: 312px; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 4px 2px 10px; margin: -4px -2px -6px; }
+.sr-track::-webkit-scrollbar { display: none; }
+.sr-track { cursor: grab; }
+.sr-track:active { cursor: grabbing; }
+.sr-track .exam { scroll-snap-align: start; }
+/* subject accent on cards inside a row */
+.subj-row .exam { border-top: 3px solid oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.65); }
+@media (prefers-reduced-motion: no-preference) {
+  .subj-row { animation: srIn .55s cubic-bezier(.2,.8,.2,1) backwards; }
+  .subj-row[data-subj="math"] { animation-delay: .05s; }
+  .subj-row[data-subj="phys"] { animation-delay: .15s; }
+  .subj-row[data-subj="tpat"] { animation-delay: .25s; }
+  .subj-row[data-subj="tgat"] { animation-delay: .35s; }
+  @keyframes srIn { from { opacity: 0; transform: translateY(16px); } }
+  .sr-track .exam { animation: srCard .5s cubic-bezier(.2,.8,.2,1) backwards; }
+  .sr-track .exam:nth-child(1) { animation-delay: .18s; }
+  .sr-track .exam:nth-child(2) { animation-delay: .26s; }
+  .sr-track .exam:nth-child(3) { animation-delay: .34s; }
+  .sr-track .exam:nth-child(n+4) { animation-delay: .42s; }
+  @keyframes srCard { from { opacity: 0; transform: translateX(26px); } }
+  .sr-dot { animation: srDot .5s var(--ease-spring, cubic-bezier(.34,1.56,.64,1)) backwards; }
+  @keyframes srDot { from { transform: scale(0); } }
+}
+
+/* ============================================================
+   PAGE HEAD — slim hero
+   ============================================================ */
+.exhead { display: grid; grid-template-columns: 1.5fr auto; gap: 32px; align-items: end; padding-bottom: 2px; }
+.exhead h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(38px, 4.2vw, 52px); letter-spacing: -0.035em; line-height: 1.0; margin-top: 14px; }
+.exhead .tag { color: var(--fg-1); font-size: 15px; margin-top: 14px; max-width: 50ch; line-height: 1.5; }
+.exhead .tag b { color: var(--fg-0); font-weight: 600; }
+.exhead .stats { display: flex; gap: 22px; padding: 4px 0 0 0; }
+.exhead .stat { text-align: right; }
+.exhead .stat .n { font-family: var(--font-display); font-weight: 700; font-size: 28px; letter-spacing: -0.025em; line-height: 1; }
+.exhead .stat .l { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); margin-top: 6px; }
+.exhead .stat .n.grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (max-width: 980px) { .exhead { grid-template-columns: 1fr; } .exhead .stats { justify-content: flex-start; } .exhead .stat { text-align: left; } }
+
+/* ============================================================
+   GLASSMORPHISM SURFACE — house style for this app
+   (translucent fill + heavy backdrop blur + light hairline +
+    inner top highlight). Aurora blobs sit behind to give it life.
+   ============================================================ */
+.glass-surf {
+  background: var(--glass);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+  border: 1px solid var(--glass-line-strong);
+  box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.08) inset, 0 18px 50px -28px oklch(0 0 0 / 0.5);
+}
+
+/* ============================================================
+   FEATURED EXAM STRIP — dark glass cover, subject-tinted aura
+   ============================================================ */
+.featured { position: relative; border-radius: 26px; overflow: hidden; display: grid; grid-template-columns: 1.05fr 1.45fr; min-height: 264px; border: 1px solid var(--glass-line-strong); --feat: var(--subj-tgat); --feat-grad: var(--subj-tgat-grad); }
+.featured .cover { position: relative; color: #fff; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background: linear-gradient(150deg, oklch(0.20 0.03 285), oklch(0.13 0.02 285)); }
+.featured .cover::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.14) 1px, transparent 1px); background-size: 22px 22px; mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent); pointer-events: none; }
+.featured .cover::after { content: ""; position: absolute; right: -100px; top: -100px; width: 340px; height: 340px; border-radius: 50%; background: var(--feat-grad); opacity: 0.5; filter: blur(40px); }
+.featured .cover .row { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+.featured .cover .row .live { display: inline-flex; align-items: center; gap: 8px; background: oklch(0.99 0.005 285 / 0.14); border: 1px solid oklch(0.99 0.005 285 / 0.24); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 6px 12px; border-radius: 99px; font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.featured .cover .row .live .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--feat); box-shadow: 0 0 0 0 var(--feat); animation: livepulse 2s ease-out infinite; }
+@keyframes livepulse { 0% { box-shadow: 0 0 0 0 oklch(from var(--feat) l c h / 0.6); } 70% { box-shadow: 0 0 0 12px oklch(from var(--feat) l c h / 0); } 100% { box-shadow: 0 0 0 0 oklch(from var(--feat) l c h / 0); } }
+.featured .cover .row .subj-tag { font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(from var(--feat) calc(l + 0.08) c h); }
+.featured .cover .big { font-family: var(--font-display); font-weight: 700; font-size: 56px; line-height: 0.96; letter-spacing: -0.035em; position: relative; z-index: 1; text-shadow: 0 4px 30px oklch(0 0 0 / 0.3); }
+.featured .cover .big small { display: block; font-family: "JetBrains Mono"; font-weight: 500; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 12px; opacity: 0.66; }
+.featured .body { padding: 30px; background: var(--bg-1); display: flex; flex-direction: column; gap: 16px; }
+.featured .body h2 { font-family: var(--font-display); font-weight: 700; font-size: 25px; letter-spacing: -0.025em; line-height: 1.15; max-width: 30ch; }
+.featured .body .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 2px; }
+.featured .body .meta span { display: inline-flex; align-items: center; gap: 7px; font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-2); }
+.featured .body .meta span svg { width: 14px; height: 14px; color: var(--fg-3); }
+.featured .body .cta { display: flex; gap: 10px; align-items: center; margin-top: auto; flex-wrap: wrap; }
+.featured .body .closes { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 6px; }
+.featured .body .closes svg { width: 12px; height: 12px; }
+@media (max-width: 980px) { .featured { grid-template-columns: 1fr; min-height: 0; } .featured .cover { min-height: 190px; } .featured .cover .big { font-size: 40px; } }
+
+/* ============================================================
+   SUBJECT TOKEN MAP — single source: brand.css --subj-*
+   ============================================================ */
+[data-subj="math"]  { --subj-c: var(--subj-math); --subj-fg: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); }
+[data-subj="phys"]  { --subj-c: var(--subj-phys); --subj-fg: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); }
+[data-subj="tpat"]  { --subj-c: var(--subj-tpat); --subj-fg: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); }
+[data-subj="tgat"]  { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); }
+/* subject ink = readable label color on glass in every theme */
+:root[data-theme="light"] [data-subj], :root[data-theme="petronas-light"] [data-subj] { --subj-ink: oklch(from var(--subj-c) calc(l - 0.10) calc(c + 0.02) h); }
+:root[data-theme="light"] [data-subj="tgat"], :root[data-theme="petronas-light"] [data-subj="tgat"] { --subj-ink: oklch(0.52 0.13 72); }
+[data-subj] { --subj-ink: var(--subj-fg); }
+
+/* ============================================================
+   FILTER — compact glass toolbar
+   ============================================================ */
+.filterbar { display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 20px; }
+.fb-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.fb-row .fb-label { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; margin-right: 2px; }
+.subj-chips { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+.schip { appearance: none; display: inline-flex; align-items: center; gap: 9px; padding: 9px 15px; border-radius: 99px; border: 1px solid var(--line); background: oklch(from var(--bg-1) l c h / 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--fg-1); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: border-color .18s, background .18s, color .18s, transform .15s, box-shadow .18s; }
+.schip:hover { transform: translateY(-1px); color: var(--fg-0); border-color: var(--fg-2); }
+.schip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--subj-grad, var(--grad-signature)); box-shadow: 0 0 0 3px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.16); flex-shrink: 0; }
+.schip .ct { font-family: "JetBrains Mono"; font-size: 11px; font-weight: 700; color: var(--fg-3); }
+.schip[aria-pressed="true"] { color: var(--subj-ink, var(--fg-0)); border-color: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.55); background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.12); box-shadow: 0 6px 22px -10px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.6); }
+.schip[aria-pressed="true"] .ct { color: var(--subj-ink, var(--fg-1)); opacity: 0.85; }
+.schip.all { --subj-grad: var(--grad-signature); }
+.schip.all[aria-pressed="true"] { color: var(--brand-magenta); border-color: oklch(0.68 0.25 5 / 0.5); background: oklch(0.68 0.25 5 / 0.12); box-shadow: 0 6px 22px -10px oklch(0.66 0.23 295 / 0.6); }
+.schip.all[aria-pressed="true"] .ct { color: var(--brand-magenta); opacity: 0.85; }
+
+/* level subfilter — only shown for math/phys */
+.levelbar { display: none; align-items: center; gap: 10px; padding-top: 4px; border-top: 1px solid var(--line-soft); animation: lvlIn .26s cubic-bezier(.2,.8,.2,1); }
+.levelbar.show { display: flex; flex-wrap: wrap; }
+@keyframes lvlIn { from { opacity: 0; transform: translateY(-4px); } }
+.levelbar .fb-label { color: var(--subj-ink, var(--fg-3)); }
+.lchip { appearance: none; padding: 6px 13px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--fg-2); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.lchip:hover { color: var(--fg-0); border-color: var(--fg-2); }
+.lchip[aria-pressed="true"] { background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.14); color: var(--subj-ink, var(--fg-0)); border-color: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.4); }
+
+.fb-divider { width: 100%; height: 1px; background: var(--line-soft); }
+.fb-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.segment { display: inline-flex; padding: 4px; background: oklch(from var(--bg-1) l c h / 0.5); border: 1px solid var(--line); border-radius: 12px; gap: 2px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.segment button { appearance: none; border: 0; background: transparent; color: var(--fg-2); padding: 7px 13px; border-radius: 8px; font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: background .15s, color .15s; }
+.segment button .ct { font-family: "JetBrains Mono"; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; background: var(--bg-3); color: var(--fg-2); }
+.segment button[aria-pressed="true"] { background: var(--bg-3); color: var(--fg-0); box-shadow: var(--shadow-1); }
+.segment button[aria-pressed="true"] .ct { background: oklch(0.68 0.25 5 / 0.18); color: var(--brand-magenta); }
+.segment button:hover:not([aria-pressed="true"]) { color: var(--fg-0); }
+.sort-btn { display: inline-flex; align-items: center; gap: 8px; background: oklch(from var(--bg-1) l c h / 0.5); border: 1px solid var(--line); color: var(--fg-1); padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 500; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.sort-btn:hover { color: var(--fg-0); border-color: var(--fg-2); }
+.sort-btn svg { width: 14px; height: 14px; color: var(--fg-3); }
+
+/* ============================================================
+   GRID HEAD
+   ============================================================ */
+.grid-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+.grid-head h2 { font-family: var(--font-display); font-weight: 700; font-size: 21px; letter-spacing: -0.015em; }
+.grid-head .cnt { font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-3); letter-spacing: 0.08em; }
+.grid-head .cnt b { color: var(--fg-1); font-weight: 600; }
+
+.exam-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+@media (max-width: 1180px) { .exam-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) { .exam-grid { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   EXAM CARD — glassmorphism, no description, calmer density
+   ============================================================ */
+.exam { position: relative; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
+  background: var(--glass); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%);
+  border: 1px solid var(--glass-line-strong);
+  box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset, 0 16px 44px -26px oklch(0 0 0 / 0.5);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .2s; }
+.exam::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--subj-grad, var(--grad-signature)); z-index: 2; }
+.exam::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(120% 80% at 100% 0%, oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.10), transparent 55%); opacity: 0.9; }
+.exam:hover { transform: translateY(-4px); border-color: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.4); box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.08) inset, 0 24px 60px -22px oklch(0 0 0 / 0.55), 0 0 50px -18px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.5); }
+:root[data-theme="light"] .exam:hover, :root[data-theme="petronas-light"] .exam:hover { box-shadow: 0 1px 0 oklch(1 0 0 / 0.9) inset, 0 24px 60px -24px oklch(0.18 0.014 285 / 0.22), 0 0 50px -20px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.4); }
+
+.exam .body { padding: 20px 20px 0; display: flex; flex-direction: column; gap: 13px; flex: 1; position: relative; z-index: 1; }
+.exam .meta-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.exam .subj-chip { display: inline-flex; align-items: center; gap: 8px; font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subj-ink, var(--fg-1)); }
+.exam .subj-chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--subj-grad); box-shadow: 0 0 8px -1px oklch(from var(--subj-c) l c h / 0.7); }
+.exam .diff { padding: 4px 10px; border-radius: 99px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; border: 1px solid currentColor; background: oklch(from currentColor l c h / 0.12); display: inline-flex; align-items: center; }
+.exam .diff.lv-1 { color: var(--success); }
+.exam .diff.lv-2 { color: var(--warning); }
+.exam .diff.lv-3 { color: oklch(0.72 0.20 50); }
+.exam .diff.lv-4 { color: var(--danger); }
+:root[data-theme="light"] .exam .diff.lv-3, :root[data-theme="petronas-light"] .exam .diff.lv-3 { color: oklch(0.60 0.18 50); }
+:root[data-theme="light"] .exam .diff.lv-2, :root[data-theme="petronas-light"] .exam .diff.lv-2 { color: oklch(0.62 0.15 75); }
+
+.exam h3 { font-family: var(--font-display); font-weight: 700; font-size: 18.5px; letter-spacing: -0.015em; line-height: 1.22; }
+
+.exam .stats { display: flex; gap: 4px 16px; flex-wrap: wrap; padding: 13px 0 0; margin-top: auto; border-top: 1px solid var(--line-soft); }
+.exam .stats span { display: inline-flex; align-items: center; gap: 7px; font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-2); }
+.exam .stats span svg { width: 13px; height: 13px; color: var(--fg-3); }
+.exam .stats span b { color: var(--fg-1); font-weight: 600; }
+
+.exam .foot { padding: 16px 20px 20px; display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+.exam .foot .btn { flex: 1; }
+
+/* subject-unlock lock state */
+.exam.locked .body { opacity: 0.6; }
+.btn-unlock { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px dashed oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.5); background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.08); color: var(--fg-0); font-weight: 600; }
+.btn-unlock:hover { background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.15); transform: translateY(-1px); }
+
+.exam .best { display: flex; align-items: center; gap: 12px; }
+.exam .ringmini { width: 44px; height: 44px; flex-shrink: 0; position: relative; }
+.exam .ringmini svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.exam .ringmini .pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 11.5px; color: var(--fg-0); letter-spacing: -0.02em; }
+.exam .best .meta-best { line-height: 1.25; }
+.exam .best .meta-best b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 12.5px; color: var(--fg-0); }
+.exam .best .meta-best small { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); letter-spacing: 0.06em; }
+
+/* status flags */
+.exam .flag { position: absolute; top: 16px; right: 18px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 99px; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: oklch(0.18 0.014 285 / 0.5); color: #fff; z-index: 3; border: 1px solid oklch(0.99 0.005 285 / 0.18); }
+:root[data-theme="light"] .exam .flag, :root[data-theme="petronas-light"] .exam .flag { background: oklch(0.99 0.005 285 / 0.8); color: var(--fg-0); border-color: var(--line); }
+.exam .flag.new { color: var(--brand-coral); }
+.exam .flag.passed { color: var(--success); }
+
+/* difficulty pill helper */
+.diff-glyph { display: inline-flex; gap: 2px; align-items: center; margin-right: 5px; }
+.diff-glyph i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.35; }
+.diff-glyph i.on { opacity: 1; }
+
+.exam[hidden] { display: none; }
+
+.grid-end { text-align: center; padding: 32px 0; color: var(--fg-3); font-family: "JetBrains Mono"; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; }
+.grid-end::before, .grid-end::after { content: " — — — "; opacity: 0.5; margin: 0 8px; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="01 Exams">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Dashboard.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+        <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item active" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 4z"/><path d="M9 4V2h6v2"/></svg>
+        <span>คอร์สที่บันทึก</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+        <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info"><b>น้องปาล์ม</b><span>LV 14 · 2,840 XP</span></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- MAIN COL -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>ข้อสอบ</b>
+      </div>
+      <div class="top-actions">
+        <button class="search-trigger" aria-label="ค้นหา (⌘K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="label">ค้นหาข้อสอบ...</span>
+          <span class="kbd">⌘K</span>
+        </button>
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="scroll">
+      <div class="page">
+
+        <!-- PAGE HEAD -->
+        <section class="exhead">
+          <div>
+            <div class="t-eyebrow"><span class="dot"></span>ข้อสอบ · TCAS 70</div>
+            <h1>ข้อสอบ</h1>
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="n grad">42</div><div class="l">ข้อสอบทั้งหมด</div></div>
+            <div class="stat"><div class="n">18</div><div class="l">ทำแล้ว</div></div>
+          </div>
+        </section>
+
+        <!-- PINNED BY ADMIN -->
+        <section class="featured" id="featured" aria-label="ข้อสอบที่แอดมินปักหมุด" data-subj="tgat">
+          <div class="cover">
+            <div class="row">
+              <span class="live"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(45deg);"><path d="M16 3a1 1 0 0 1 .707 1.707L15 6.414V13l3.293 3.293A1 1 0 0 1 17.586 18H13v3a1 1 0 1 1-2 0v-3H6.414a1 1 0 0 1-.707-1.707L9 13V6.414L7.293 4.707A1 1 0 0 1 8 3h8z"/></svg>แอดมินปักหมุด</span>
+              <span class="subj-tag">TGAT2 · ฉบับล่าสุด</span>
+            </div>
+            <div class="big"><small>Mock #04</small>การคิด<br>อย่างมีเหตุผล</div>
+          </div>
+          <div class="body">
+            <h2>TGAT2 รอบ mock ฉบับใหม่ — ปล่อยสด 27 พ.ค.</h2>
+            <div class="meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>60 นาที</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>30 ข้อ</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M16 11h6M19 8v6"/></svg>1,284 คนทำแล้ว</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>เฉลี่ย 18 / 30</span>
+            </div>
+            <div class="cta">
+              <a class="btn btn-primary btn-lg" href="Exam Detail.html">
+                เริ่มทำเลย
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <a class="btn btn-ghost btn-lg" href="#">ดูเฉลยตัวอย่าง</a>
+              <span class="closes">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                ปิดรับ 02 มิ.ย. 23:59
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROW · คณิต -->
+        <section class="subj-row" data-subj="math" data-screen-label="ข้อสอบ คณิต">
+          <div class="sr-head">
+            <span class="sr-dot"></span>
+            <h2>คณิต</h2>
+            <span class="sr-sub">ม.4 · ม.5 · ม.6 · A-Level</span>
+            <span class="sr-ct">9 ชุด</span>
+                        <div class="sr-levels" role="tablist" aria-label="ระดับ">
+              <button class="lv" aria-pressed="true" data-level="all">ทั้งหมด</button>
+              <button class="lv" aria-pressed="false" data-level="m4">ม.4</button>
+              <button class="lv" aria-pressed="false" data-level="m5">ม.5</button>
+              <button class="lv" aria-pressed="false" data-level="m6">ม.6</button>
+              <button class="lv" aria-pressed="false" data-level="alevel">A-Level</button>
+            </div>
+          </div>
+          <div class="sr-track">
+            <article class="exam" data-subj="math" data-level="m6" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.6</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>แคลคูลัส Quick Quiz</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>30</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>20</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>เคยทำ <b>3</b>&nbsp;ครั้ง</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--success)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:12;"/>
+                  </svg>
+                  <div class="pct" style="color:var(--success);">88%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 88%</b><small>สถิติส่วนตัว</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="m4" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.4</span>
+                <span class="diff lv-1"><span class="diff-glyph"><i class="on"></i><i></i><i></i><i></i></span>ง่าย</span>
+              </div>
+              <h3>ตรีโกณมิติ ฝึกพื้นฐาน</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>20</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>15</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>เคยทำ <b>1</b>&nbsp;ครั้ง</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:22;"/>
+                  </svg>
+                  <div class="pct">78%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 78%</b><small>ทำได้ดี</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="alevel" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · A-Level</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>A-Level Math 1 — Full Mock</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>90</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>208</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="m5" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.5</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>ลำดับและอนุกรม ชุดเข้ม</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>35</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>20</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>418</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="m5" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.5</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>เอกซ์โพเนนเชียล-ลอการิทึม</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>45</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>25</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>356</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:26;"/>
+                  </svg>
+                  <div class="pct">74%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 74%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="m4" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.4</span>
+                <span class="diff lv-1"><span class="diff-glyph"><i class="on"></i><i></i><i></i><i></i></span>ง่าย</span>
+              </div>
+              <h3>เซตและตรรกศาสตร์ พื้นฐาน</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>20</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>15</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>642</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:15;"/>
+                  </svg>
+                  <div class="pct">85%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 85%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="m6" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.6</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>ความน่าจะเป็น ขั้นสูง</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>40</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>20</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>289</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="alevel" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · A-Level</span>
+                <span class="diff lv-4"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>โหด</span>
+              </div>
+              <h3>A-Level Math 1 Mock #2</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>90</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>174</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="math" data-level="m6" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">คณิต · ม.6</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>เวกเตอร์และเมทริกซ์</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>35</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>20</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>331</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:31;"/>
+                  </svg>
+                  <div class="pct">69%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 69%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+          </div>
+        </section>
+
+        <!-- ROW · ฟิสิกส์ -->
+        <section class="subj-row" data-subj="phys" data-screen-label="ข้อสอบ ฟิสิกส์">
+          <div class="sr-head">
+            <span class="sr-dot"></span>
+            <h2>ฟิสิกส์</h2>
+            <span class="sr-sub">ม.4 · ม.5 · ม.6 · A-Level</span>
+            <span class="sr-ct">8 ชุด</span>
+                        <div class="sr-levels" role="tablist" aria-label="ระดับ">
+              <button class="lv" aria-pressed="true" data-level="all">ทั้งหมด</button>
+              <button class="lv" aria-pressed="false" data-level="m4">ม.4</button>
+              <button class="lv" aria-pressed="false" data-level="m5">ม.5</button>
+              <button class="lv" aria-pressed="false" data-level="m6">ม.6</button>
+              <button class="lv" aria-pressed="false" data-level="alevel">A-Level</button>
+            </div>
+          </div>
+          <div class="sr-track">
+            <article class="exam" data-subj="phys" data-level="alevel" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · A-Level</span>
+                <span class="diff lv-4"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>โหด</span>
+              </div>
+              <h3>A-Level Physics Final Round</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>90</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>347</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="m5" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · ม.5</span>
+                <span class="diff lv-1"><span class="diff-glyph"><i class="on"></i><i></i><i></i><i></i></span>ง่าย</span>
+              </div>
+              <h3>กลศาสตร์ — แรงและการเคลื่อนที่</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>25</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>15</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>เคยทำ <b>2</b>&nbsp;ครั้ง</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--success)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:8;"/>
+                  </svg>
+                  <div class="pct" style="color:var(--success);">92%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 92%</b><small>เก่งเรื่องนี้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="m6" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · ม.6</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>คลื่นและแสง — สอบเก็บคะแนน</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>40</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>25</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>612</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="m4" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · ม.4</span>
+                <span class="diff lv-1"><span class="diff-glyph"><i class="on"></i><i></i><i></i><i></i></span>ง่าย</span>
+              </div>
+              <h3>การเคลื่อนที่แนวตรง</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>25</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>15</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>523</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:19;"/>
+                  </svg>
+                  <div class="pct">81%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 81%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="m5" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · ม.5</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>ไฟฟ้าสถิต-ไฟฟ้ากระแส</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>40</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>25</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>447</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="alevel" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · A-Level</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>A-Level Physics Mock #2</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>90</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>216</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="m6" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · ม.6</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>ฟิสิกส์อะตอม-นิวเคลียร์</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>45</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>25</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>198</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="phys" data-level="m4" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">ฟิสิกส์ · ม.4</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>งานและพลังงาน</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>30</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>20</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>389</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:23;"/>
+                  </svg>
+                  <div class="pct">77%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 77%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+          </div>
+        </section>
+
+        <!-- ROW · TPAT3 -->
+        <section class="subj-row" data-subj="tpat" data-screen-label="ข้อสอบ TPAT3">
+          <div class="sr-head">
+            <span class="sr-dot"></span>
+            <h2>TPAT3</h2>
+            <span class="sr-sub">วิศวะฯ-วิทย์</span>
+            <span class="sr-ct">4 ชุด</span>
+          </div>
+          <div class="sr-track">
+            <article class="exam" data-subj="tpat" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TPAT3</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>TPAT3 เชาว์วิศวฯ Set 02</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>75</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>40</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>89</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="tpat" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TPAT3</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>TPAT3 เชาว์วิศวฯ Set 03</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>75</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>40</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>134</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="tpat" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TPAT3</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>TPAT3 ความถนัดวิทย์ Set 01</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>60</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>35</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>286</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="tpat" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TPAT3</span>
+                <span class="diff lv-4"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>โหด</span>
+              </div>
+              <h3>TPAT3 Full Mock รอบจับเวลา</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>90</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>45</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>97</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+          </div>
+        </section>
+
+        <!-- ROW · TGAT2 -->
+        <section class="subj-row" data-subj="tgat" data-screen-label="ข้อสอบ TGAT2">
+          <div class="sr-head">
+            <span class="sr-dot"></span>
+            <h2>TGAT2</h2>
+            <span class="sr-sub">การคิดอย่างมีเหตุผล</span>
+            <span class="sr-ct">5 ชุด</span>
+          </div>
+          <div class="sr-track">
+            <article class="exam" data-subj="tgat" data-status="redo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TGAT2</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>TGAT2 คณิต-เชาว์ Mock #3</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>60</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>เคยทำ <b>2</b>&nbsp;ครั้ง</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:35;"/>
+                  </svg>
+                  <div class="pct">65%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 65%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="tgat" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TGAT2</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>TGAT2 การคิดอย่างมีเหตุผล</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>60</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>เคยทำ <b>1</b>&nbsp;ครั้ง</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:29;"/>
+                  </svg>
+                  <div class="pct">71%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 71%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="tgat" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TGAT2</span>
+                <span class="diff lv-2"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i></i><i></i></span>กลาง</span>
+              </div>
+              <h3>TGAT2 อุปมาอุปไมย Mock #1</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>45</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>25</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>764</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:18;"/>
+                  </svg>
+                  <div class="pct">82%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 82%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+            <article class="exam" data-subj="tgat" data-status="todo">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TGAT2</span>
+                <span class="diff lv-3"><span class="diff-glyph"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>ยาก</span>
+              </div>
+              <h3>TGAT2 มิติสัมพันธ์ ชุดเข้ม</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>60</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>30</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>512</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <a class="btn btn-primary" href="Exam Take.html" style="flex:1;">เริ่มทำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </article>
+            <article class="exam" data-subj="tgat" data-status="done">
+            <div class="body">
+              <div class="meta-top">
+                <span class="subj-chip">TGAT2</span>
+                <span class="diff lv-1"><span class="diff-glyph"><i class="on"></i><i></i><i></i><i></i></span>ง่าย</span>
+              </div>
+              <h3>TGAT2 วอร์มอัพ 15 ข้อ</h3>
+              <div class="stats">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>20</b>&nbsp;นาที</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><b>15</b>&nbsp;ข้อ</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><b>1,058</b>&nbsp;คนทำ</span>
+              </div>
+            </div>
+            <div class="foot">
+              <div class="best">
+                <div class="ringmini">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg-3)" stroke-width="4"/>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="var(--subj-c)" stroke-width="4" stroke-linecap="round" pathLength="100" style="stroke-dasharray:100;stroke-dashoffset:7;"/>
+                  </svg>
+                  <div class="pct">93%</div>
+                </div>
+                <div class="meta-best"><b>เคยได้ 93%</b><small>ทำซ้ำได้</small></div>
+              </div>
+              <button class="btn btn-secondary">ทำซ้ำ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+              </button>
+            </div>
+          </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+// Theme toggle
+(function(){
+  const root = document.documentElement;
+  const sv0 = localStorage.getItem('ming-theme') || 'petronas-light';
+  const saved = sv0 === 'dark' ? 'petronas' : sv0 === 'light' ? 'petronas-light' : sv0 === 'classic-dark' ? 'dark' : sv0 === 'classic-light' ? 'light' : sv0;
+  root.setAttribute('data-theme', saved);
+  const btns = document.querySelectorAll('.theme-toggle button');
+  function set(t){
+    root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+    localStorage.setItem('ming-theme', t);
+    btns.forEach(b => b.setAttribute('aria-pressed', (b.dataset.set === 'dark' ? (t === 'petronas' || t === 'dark') : (t === 'petronas-light' || t === 'light')) ? 'true' : 'false'));
+  }
+  btns.forEach(b => b.addEventListener('click', () => set(b.dataset.set === 'dark' ? 'petronas' : 'petronas-light')));
+  btns.forEach(b => b.setAttribute('aria-pressed', (b.dataset.set === 'dark' ? (saved === 'petronas' || saved === 'dark') : (saved === 'petronas-light' || saved === 'light')) ? 'true' : 'false'));
+})();
+
+// Featured = ข้อสอบที่แอดมินปักหมุด (ตั้งจาก Admin Exams · localStorage 'ming-pinned-exam')
+(function(){
+  let p = null;
+  try { p = JSON.parse(localStorage.getItem('ming-pinned-exam') || 'null'); } catch(e){}
+  if (!p || !p.id || p.id === 'e4') return;   // ไม่ปัก/ยกเลิก/ค่าเริ่มต้น = TGAT2 Mock #04 (markup เดิม)
+  const feat = document.getElementById('featured');
+  if (!feat) return;
+  feat.setAttribute('data-subj', p.subj || 'tgat');
+  const st = feat.querySelector('.subj-tag'); if (st) st.textContent = p.tag || '';
+  const big = feat.querySelector('.cover .big'); if (big) big.innerHTML = '<small>' + (p.small || '') + '</small>' + (p.big || p.name);
+  const h2 = feat.querySelector('.body h2'); if (h2) h2.textContent = p.name;
+  const meta = feat.querySelectorAll('.body .meta span');
+  if (meta[0]) meta[0].innerHTML = meta[0].querySelector('svg').outerHTML + (p.mins || 60) + ' นาที';
+  if (meta[1]) meta[1].innerHTML = meta[1].querySelector('svg').outerHTML + (p.questions || '-') + ' ข้อ';
+  if (meta[2]) meta[2].innerHTML = meta[2].querySelector('svg').outerHTML + Number(p.attempts || 0).toLocaleString() + ' คนทำแล้ว';
+  if (meta[3]) meta[3].innerHTML = meta[3].querySelector('svg').outerHTML + (p.avg ? 'เฉลี่ย ' + p.avg : '');
+})();
+
+// Sidebar collapse
+(function(){
+  const app = document.querySelector('.app');
+  const saved = localStorage.getItem('ming-sidebar');
+  if (saved === 'collapsed') app.classList.add('collapsed');
+  document.getElementById('sb-toggle')?.addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    localStorage.setItem('ming-sidebar', app.classList.contains('collapsed') ? 'collapsed' : 'expanded');
+  });
+})();
+
+// ============================================================
+// SUBJECT ROWS — arrows + lock + routing (ไม่มีตัวกรองแล้ว)
+// ============================================================
+(function(){
+  // carousel arrows + drag-to-scroll ด้วยเมาส์
+  document.querySelectorAll('.subj-row').forEach(row => {
+    const track = row.querySelector('.sr-track');
+    /* ลากเลื่อนด้วยเมาส์ (นอกเหนือจาก trackpad/ล้อ) */
+    let down = false, moved = false, sx = 0, sl = 0;
+    track.addEventListener('mousedown', e => {
+      down = true; moved = false; sx = e.pageX; sl = track.scrollLeft;
+      track.style.scrollSnapType = 'none';
+    });
+    window.addEventListener('mousemove', e => {
+      if (!down) return;
+      const dx = e.pageX - sx;
+      if (Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = sl - dx;
+    });
+    window.addEventListener('mouseup', () => {
+      if (!down) return;
+      down = false;
+      track.style.scrollSnapType = '';
+      if (moved) track.__justDragged = Date.now();
+    });
+    /* กันคลิกเปิดการ์ดหลังลาก */
+    track.addEventListener('click', e => {
+      if (track.__justDragged && Date.now() - track.__justDragged < 250){ e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
+    /* level filter (เฉพาะคณิต/ฟิสิกส์) */
+    const lvs = row.querySelectorAll('.sr-levels .lv');
+    lvs.forEach(b => b.addEventListener('click', () => {
+      lvs.forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      const lv = b.dataset.level;
+      let shown = 0;
+      track.querySelectorAll('.exam').forEach(c => {
+        const hide = lv !== 'all' && c.dataset.level !== lv;
+        c.classList.toggle('lv-hide', hide);
+        if (!hide) shown++;
+      });
+      const ct = row.querySelector('.sr-ct');
+      if (ct) ct.textContent = shown + ' ชุด';
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+    }));
+  });
+
+  // ===== subject-unlock access model =====
+  // ซื้อคอร์สวิชาใดก็ตาม 1 คอร์ส = ทำข้อสอบวิชานั้นได้ทั้งหมด (ตาม My Courses: คณิต+ฟิสิกส์+TGAT2)
+  const OWNED_SUBJ = ['math','phys','tgat'];
+  const SUBJ_TH = { math:'คณิต', phys:'ฟิสิกส์', tpat:' TPAT3', tgat:' TGAT2' };
+  document.querySelectorAll('.sr-track .exam').forEach(card => {
+    const subj = card.dataset.subj;
+    if (OWNED_SUBJ.includes(subj) || card.hasAttribute('data-free')) return;
+    card.classList.add('locked');
+    const foot = card.querySelector('.foot');
+    if (foot) foot.innerHTML = '<a class="btn btn-unlock" href="Browse Courses.html" style="flex:1">'
+      + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>'
+      + 'ปลดล็อกเมื่อซื้อคอร์ส' + SUBJ_TH[subj] + '</a>';
+  });
+
+  // route every card CTA (เริ่มทำ / ทำซ้ำ) to the prep page, carrying subject
+  document.querySelectorAll('.sr-track .exam').forEach(card => {
+    const subj = card.dataset.subj;
+    const locked = card.classList.contains('locked');
+    const href = locked ? 'Browse Courses.html' : ('Exam Detail.html' + (subj && subj !== 'tgat' ? ('?subj=' + subj) : ''));
+    card.querySelectorAll('.foot .btn').forEach(btn => {
+      if (btn.tagName === 'A') { btn.setAttribute('href', href); }
+      else { btn.addEventListener('click', () => { location.href = href; }); btn.style.cursor = 'pointer'; }
+    });
+    card.addEventListener('click', e => { if (!e.target.closest('.btn')) location.href = href; });
+  });
+})();
+</script>
+</body>
+</html>

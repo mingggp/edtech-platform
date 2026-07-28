@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คอร์สเรียนทั้งหมด — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<style>
+/* ============== COURSES (marketing) — page specific ============== */
+
+/* filter bar (shared look with Results/Testimonials) */
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 30px; }
+.filter-chip {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 99px; font-size: 13.5px; font-weight: 500;
+  border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-1);
+  transition: color .2s, border-color .2s, background .2s, transform .15s;
+}
+.filter-chip:hover { color: var(--fg-0); border-color: var(--fg-3); transform: translateY(-1px); }
+.filter-chip .ct { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.filter-chip[aria-pressed="true"] { color: #fff; border-color: transparent; background: var(--grad-signature); box-shadow: 0 8px 22px -8px oklch(0.66 0.23 295 / 0.6); }
+.filter-chip[aria-pressed="true"] .ct { color: oklch(0.99 0.005 285 / 0.8); }
+/* per-subject colors on filter chips */
+.filter-chip .cdot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.filter-chip[data-subj="math"] .cdot  { background: var(--subj-math-grad); }
+.filter-chip[data-subj="phys"] .cdot  { background: var(--subj-phys-grad); }
+.filter-chip[data-subj="tpat3"] .cdot { background: var(--subj-tpat-grad); }
+.filter-chip[data-subj="tgat2"] .cdot { background: var(--subj-tgat-grad); }
+.filter-chip[aria-pressed="true"] .cdot { background: oklch(1 0 0 / 0.92); }
+.filter-chip[aria-pressed="true"][data-subj="math"]  { background: var(--subj-math-grad); box-shadow: 0 8px 22px -8px var(--subj-math); }
+.filter-chip[aria-pressed="true"][data-subj="phys"]  { background: var(--subj-phys-grad); box-shadow: 0 8px 22px -8px var(--subj-phys); }
+.filter-chip[aria-pressed="true"][data-subj="tpat3"] { background: var(--subj-tpat-grad); box-shadow: 0 8px 22px -8px var(--subj-tpat); }
+.filter-chip[aria-pressed="true"][data-subj="tgat2"] { background: var(--subj-tgat-grad); box-shadow: 0 8px 22px -8px var(--subj-tgat); }
+
+/* level sub-filter — appears only for คณิต / ฟิสิกส์ */
+.level-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: -16px 0 30px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line-soft); background: var(--bg-1); }
+.level-bar[hidden] { display: none; }
+.level-bar .lv-label { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-3); margin-right: 4px; }
+.level-chip {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 500;
+  color: var(--fg-2); background: var(--bg-2); border: 1px solid var(--line);
+  transition: color .2s, border-color .2s, background .2s;
+}
+.level-chip:hover { color: var(--fg-0); border-color: var(--fg-3); }
+.level-chip .ct { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); }
+.level-chip[aria-pressed="true"] { color: var(--fg-0); border-color: transparent; background: var(--bg-3); box-shadow: inset 0 0 0 1px var(--glass-line-strong); }
+.level-chip[aria-pressed="true"] .ct { color: var(--fg-2); }
+
+/* course grid */
+.course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+/* catalog toolbar: filter (left) + sort (right) */
+.catalog-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px 22px; flex-wrap: wrap; margin-bottom: 22px; }
+.catalog-toolbar .filter-bar { margin-bottom: 0; }
+.sort-wrap { display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.sort-wrap > .lb { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-3); white-space: nowrap; }
+.sort-sel { appearance: none; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--fg-1); cursor: pointer; padding: 10px 36px 10px 14px; border-radius: 11px; border: 1px solid var(--line); background-color: var(--bg-1); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 14px; transition: border-color .2s, color .2s; }
+.sort-sel:hover { color: var(--fg-0); border-color: var(--fg-3); }
+.sort-sel:focus-visible { outline: 2px solid var(--brand-magenta); outline-offset: 2px; }
+.result-count { font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-3); margin: -8px 0 18px; }
+.result-count b { color: var(--fg-1); font-weight: 600; }
+
+/* 2-column course list — horizontal rows (cover image space on the left) */
+.course-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.clx { display: flex; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--bg-1); text-decoration: none; transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .28s; animation: ccIn .5s cubic-bezier(.2,.8,.2,1) both; }
+.clx:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+@keyframes ccIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.clx-thumb { position: relative; flex: 0 0 120px; overflow: hidden; color: #fff; }
+.clx-thumb::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.16) 1px, transparent 1px); background-size: 18px 18px; mask-image: radial-gradient(95% 80% at 65% 12%, #000, transparent); opacity: 0.5; }
+.clx-thumb .glyph { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); font-family: var(--font-display); font-weight: 800; font-size: 70px; line-height: 0.8; color: oklch(0.99 0.005 285 / 0.95); }
+.clx-thumb .ribbon { position: absolute; top: 10px; left: 10px; z-index: 2; font-family: "JetBrains Mono"; font-size: 9px; letter-spacing: 0.06em; font-weight: 700; padding: 4px 8px; border-radius: 7px; color: #fff; }
+.clx-thumb .ribbon.hot { background: linear-gradient(115deg, oklch(0.68 0.25 5), oklch(0.78 0.20 50)); }
+.clx-thumb .ribbon.new { background: var(--brand-cyan); color: oklch(0.20 0.05 220); }
+.clx-thumb .ribbon.rec { background: oklch(0.99 0.005 285 / 0.2); backdrop-filter: blur(10px); border: 1px solid oklch(0.99 0.005 285 / 0.3); }
+.clx-thumb .ribbon.free { background: linear-gradient(115deg, oklch(0.78 0.20 50), oklch(0.86 0.20 130)); color: oklch(0.20 0.06 50); }
+.clx-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; padding: 14px 16px; }
+.clx-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.clx-tag { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--fg-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clx-rate { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--brand-coral); white-space: nowrap; flex-shrink: 0; }
+.clx-rate b { color: var(--fg-0); font-family: var(--font-display); font-weight: 600; }
+.clx-rate .count { color: var(--fg-3); font-family: "JetBrains Mono"; font-size: 11px; }
+.clx-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.2; color: var(--fg-0); }
+.clx-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11.5px; color: var(--fg-2); }
+.clx-meta .item { display: flex; align-items: center; gap: 5px; }
+.clx-meta .item svg { width: 13px; height: 13px; opacity: 0.7; }
+.clx-foot { margin-top: auto; padding-top: 11px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line-soft); }
+.clx-price { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--fg-0); display: flex; align-items: baseline; gap: 7px; }
+.clx-price .strike { font-size: 12px; color: var(--fg-3); text-decoration: line-through; font-weight: 500; }
+.clx-price.free { color: var(--success); }
+.clx-disc { font-family: "JetBrains Mono"; font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 6px; background: oklch(0.68 0.25 5 / 0.14); color: var(--brand-magenta); border: 1px solid oklch(0.68 0.25 5 / 0.26); }
+.clx-go { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--fg-1); white-space: nowrap; }
+.clx-go svg { width: 15px; height: 15px; transition: transform .2s; }
+.clx:hover .clx-go { color: var(--brand-magenta); }
+.clx:hover .clx-go svg { transform: translateX(3px); }
+
+/* Tweak: cover-on-top stacked card layout */
+:root[data-course-card="stack"] .clx { flex-direction: column; }
+:root[data-course-card="stack"] .clx-thumb { flex: 0 0 138px; width: 100%; }
+:root[data-course-card="stack"] .clx-thumb .glyph { font-size: 96px; top: 50%; left: auto; right: -8px; transform: translateY(-50%); }
+:root[data-course-card="stack"] .clx-body { gap: 8px; }
+/* stack column count (Tweak: คอลัมน์) — default 3 */
+:root[data-course-card="stack"] .course-list { grid-template-columns: repeat(3, 1fr); }
+:root[data-course-card="stack"][data-course-cols="2"] .course-list { grid-template-columns: repeat(2, 1fr); }
+:root[data-course-card="stack"][data-course-cols="4"] .course-list { grid-template-columns: repeat(4, 1fr); }
+:root[data-course-card="stack"][data-course-cols="4"] .clx-thumb { flex-basis: 120px; }
+:root[data-course-card="stack"][data-course-cols="4"] .clx-thumb .glyph { font-size: 76px; }
+.cc {
+  display: flex; flex-direction: column; border-radius: 22px; overflow: hidden;
+  border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s;
+  animation: ccIn .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.cc:hover { transform: translateY(-5px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+@keyframes ccIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.cc-thumb { position: relative; height: 132px; overflow: hidden; color: #fff; }
+.cc-thumb::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.14) 1px, transparent 1px); background-size: 20px 20px; mask-image: radial-gradient(80% 80% at 80% 10%, #000, transparent); opacity: 0.5; }
+.cc-thumb .glyph { position: absolute; right: -6px; bottom: -34px; font-family: var(--font-display); font-weight: 800; font-size: 150px; line-height: 0.8; color: oklch(0.99 0.005 285 / 0.16); }
+.cc-thumb .tag { position: absolute; top: 14px; left: 14px; z-index: 2; font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 5px 10px; border-radius: 8px; background: oklch(0.18 0.016 285 / 0.4); backdrop-filter: blur(10px); border: 1px solid oklch(0.99 0.005 285 / 0.2); }
+.cc-thumb .ribbon { position: absolute; top: 14px; right: 14px; z-index: 2; font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.06em; font-weight: 700; padding: 5px 10px; border-radius: 8px; color: #fff; }
+.cc-thumb .ribbon.hot { background: linear-gradient(115deg, oklch(0.68 0.25 5), oklch(0.78 0.20 50)); }
+.cc-thumb .ribbon.new { background: var(--brand-cyan); color: oklch(0.20 0.05 220); }
+.cc-thumb .ribbon.rec { background: oklch(0.99 0.005 285 / 0.18); backdrop-filter: blur(10px); border: 1px solid oklch(0.99 0.005 285 / 0.28); }
+.cc-thumb .ribbon.free { background: linear-gradient(115deg, oklch(0.78 0.20 50), oklch(0.86 0.20 130)); color: oklch(0.20 0.06 50); }
+.cc-thumb .name { position: absolute; left: 16px; bottom: 14px; right: 16px; z-index: 2; font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.015em; line-height: 1.1; }
+
+.cc-body { display: flex; flex-direction: column; gap: 12px; padding: 18px; flex: 1; }
+.cc-body .sub { font-size: 12.5px; color: var(--fg-3); }
+.cc-body .stars { font-size: 13px; color: var(--brand-coral); display: flex; align-items: center; gap: 7px; }
+.cc-body .stars b { color: var(--fg-0); font-family: var(--font-display); font-weight: 600; }
+.cc-body .stars .count { color: var(--fg-3); font-family: "JetBrains Mono"; font-size: 11.5px; }
+.cc-body .stats { display: flex; gap: 14px; padding: 12px 0; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+.cc-body .stats .item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-2); }
+.cc-body .stats .item svg { width: 14px; height: 14px; opacity: 0.7; }
+.cc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cc-foot .price { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--fg-0); display: flex; align-items: baseline; gap: 8px; }
+.cc-foot .price .strike { font-size: 13px; color: var(--fg-3); text-decoration: line-through; font-weight: 500; }
+.cc-foot .price.free { color: var(--success); }
+.cc-foot .discount { font-family: "JetBrains Mono"; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: oklch(0.68 0.25 5 / 0.14); color: var(--brand-magenta); border: 1px solid oklch(0.68 0.25 5 / 0.26); }
+.cc-foot .go { width: 34px; height: 34px; border-radius: 10px; background: var(--bg-3); color: var(--fg-1); display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
+.cc:hover .cc-foot .go { background: var(--grad-signature); color: #fff; }
+.cc-foot .go svg { width: 16px; height: 16px; }
+
+/* subject thumb gradients — canonical subject brand colors */
+.t-tgat2 { background: var(--subj-tgat-grad); }
+.t-tpat3 { background: var(--subj-tpat-grad); }
+.t-math  { background: var(--subj-math-grad); }
+.t-phys  { background: var(--subj-phys-grad); }
+
+.bundle-strip { margin-top: 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 22px 28px; border-radius: 20px; border: 1px dashed var(--line); background: var(--bg-1); }
+.bundle-strip .bs-left { display: flex; align-items: center; gap: 16px; }
+.bundle-strip .bs-ico { width: 44px; height: 44px; border-radius: 13px; background: var(--bg-3); display: flex; align-items: center; justify-content: center; color: var(--brand-magenta); flex-shrink: 0; }
+.bundle-strip .bs-ico svg { width: 22px; height: 22px; }
+.bundle-strip b { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--fg-0); }
+.bundle-strip span { font-size: 13.5px; color: var(--fg-2); }
+
+.course-empty { grid-column: 1 / -1; text-align: center; padding: 50px 0; color: var(--fg-2); }
+
+@media (max-width: 920px) { .course-list { grid-template-columns: 1fr; } }
+@media (max-width: 440px) { .clx-thumb { flex-basis: 92px; } .clx-thumb .glyph { font-size: 52px; } }
+/* stack-mode responsive (higher specificity must be re-stated inside queries) */
+@media (max-width: 1120px) and (min-width: 681px) {
+  :root[data-course-card="stack"] .course-list,
+  :root[data-course-card="stack"][data-course-cols="2"] .course-list,
+  :root[data-course-card="stack"][data-course-cols="3"] .course-list,
+  :root[data-course-card="stack"][data-course-cols="4"] .course-list { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+  :root[data-course-card="stack"] .course-list,
+  :root[data-course-card="stack"][data-course-cols="2"] .course-list,
+  :root[data-course-card="stack"][data-course-cols="3"] .course-list,
+  :root[data-course-card="stack"][data-course-cols="4"] .course-list { grid-template-columns: 1fr; }
+}
+
+/* ============== BUNDLES (packages) ============== */
+#bundles { padding-top: 12px; }
+.bundle-note { display: flex; gap: 14px; align-items: flex-start; padding: 18px 22px; border-radius: 16px; border: 1px solid oklch(0.78 0.18 150 / 0.3); background: oklch(0.78 0.18 150 / 0.07); margin-bottom: 26px; }
+.bundle-note .bn-ico { width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: oklch(0.78 0.18 150 / 0.16); color: var(--success); }
+.bundle-note .bn-ico svg { width: 19px; height: 19px; }
+.bundle-note b { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; color: var(--fg-0); display: block; }
+.bundle-note span { font-size: 13.5px; color: var(--fg-1); line-height: 1.55; margin-top: 3px; display: block; }
+/* tiered bundle layout: row1 = ระดับชั้น (3) · row2 = วิชา (4) · row3 = เหมารวม (1, กว้าง) */
+.bundle-grid { display: flex; flex-direction: column; gap: 18px; }
+.bundle-tier { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+:root[data-bundle-align="left"] .bundle-tier { justify-content: flex-start; }
+.bundle-tier > .bcard { flex: 0 0 276px; width: 276px; }
+.bundle-tier.tier-all > .bcard { flex: 0 0 auto; width: 100%; max-width: 570px; }
+.bcard { position: relative; display: flex; flex-direction: column; gap: 13px; border-radius: 22px; border: 1px solid var(--line); background: var(--bg-1); padding: 26px 24px; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s; }
+.bcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.bcard.featured { border-color: transparent; color: #fff; overflow: hidden; background: linear-gradient(150deg, oklch(0.42 0.20 295), oklch(0.50 0.22 330) 55%, oklch(0.58 0.22 5)); box-shadow: var(--shadow-glow); }
+.bcard.featured::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.12) 1px, transparent 1px); background-size: 22px 22px; mask-image: radial-gradient(70% 60% at 100% 0%, #000, transparent); z-index: 0; }
+.bcard.featured > * { position: relative; z-index: 1; }
+.bc-pop { position: absolute; top: 18px; right: 18px; font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: oklch(0.99 0.005 285 / 0.18); border: 1px solid oklch(0.99 0.005 285 / 0.28); }
+.bcard.featured .bc-pop { position: absolute; top: 18px; right: 18px; left: auto; width: auto; z-index: 2; }
+.bc-tier { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); }
+.bcard.featured .bc-tier { color: oklch(0.99 0.005 285 / 0.78); padding-right: 96px; }
+.bc-name { font-family: var(--font-display); font-weight: 700; font-size: 21px; letter-spacing: -0.02em; color: var(--fg-0); margin-top: -4px; }
+.bcard.featured .bc-name { color: #fff; }
+.bc-desc { font-size: 12.5px; color: var(--fg-2); line-height: 1.45; margin-top: -6px; }
+.bcard.featured .bc-desc { color: oklch(0.99 0.005 285 / 0.82); }
+.bc-count { font-size: 13px; color: var(--fg-1); }
+.bc-count b { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--fg-0); }
+.bcard.featured .bc-count, .bcard.featured .bc-count b { color: #fff; }
+.bc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bchip { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 7px; background: var(--bg-3); color: var(--fg-1); }
+.bcard.featured .bchip { background: oklch(0.99 0.005 285 / 0.16); color: #fff; }
+.bc-info { display: flex; flex-direction: column; gap: 11px; }
+.bc-buy { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.bc-price { padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.bcard.featured .bc-price { border-color: oklch(0.99 0.005 285 / 0.2); }
+.bc-price .now { font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: 1; letter-spacing: -0.02em; color: var(--fg-0); }
+.bcard.featured .bc-price .now { color: #fff; }
+.bc-price .now .cur { font-size: 18px; vertical-align: 0.3em; margin-right: 1px; opacity: 0.7; }
+.bc-price .sub { margin-top: 7px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.bc-price .strike { font-size: 13px; color: var(--fg-3); text-decoration: line-through; }
+.bcard.featured .bc-price .strike { color: oklch(0.99 0.005 285 / 0.6); }
+.bc-price .save { font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: oklch(0.80 0.16 80 / 0.16); color: oklch(0.58 0.13 68); border: 1px solid oklch(0.80 0.16 80 / 0.32); }
+.bcard.featured .bc-price .save { background: oklch(0.99 0.005 285 / 0.18); color: #fff; border-color: oklch(0.99 0.005 285 / 0.3); }
+.bc-price .once { margin-top: 7px; font-size: 11.5px; color: var(--fg-3); }
+.bcard.featured .bc-price .once { color: oklch(0.99 0.005 285 / 0.7); }
+.bcard .btn { width: 100%; }
+/* wide combined card (row 3) goes horizontal: info | price */
+.bundle-tier.tier-all > .bcard.featured { flex-direction: row; align-items: stretch; gap: 30px; padding: 28px 30px; }
+.bundle-tier.tier-all > .bcard.featured .bc-info { flex: 1; justify-content: center; }
+.bundle-tier.tier-all > .bcard.featured .bc-buy { flex: 0 0 220px; margin-top: 0; justify-content: center; padding-left: 30px; border-left: 1px solid oklch(0.99 0.005 285 / 0.22); }
+.bundle-tier.tier-all > .bcard.featured .bc-price { padding-top: 0; border-top: none; }
+@media (max-width: 600px) {
+  .bundle-tier.tier-all > .bcard.featured { flex-direction: column; gap: 16px; }
+  .bundle-tier.tier-all > .bcard.featured .bc-buy { flex-basis: auto; padding-left: 0; border-left: 0; padding-top: 16px; border-top: 1px solid oklch(0.99 0.005 285 / 0.22); }
+}
+/* per-subject accent on subject bundle cards (data-subj sets --accent) */
+.bcard[data-subj] { overflow: hidden; }
+.bcard[data-subj]::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent-grad, var(--accent)); z-index: 2; }
+.bcard[data-subj="math"]  { --accent-grad: var(--subj-math-grad); --accent: var(--subj-math); }
+.bcard[data-subj="phys"]  { --accent-grad: var(--subj-phys-grad); --accent: var(--subj-phys); }
+.bcard[data-subj="tpat3"] { --accent-grad: var(--subj-tpat-grad); --accent: var(--subj-tpat); }
+.bcard[data-subj="tgat2"] { --accent-grad: var(--subj-tgat-grad); --accent: var(--subj-tgat); }
+.bcard[data-subj] .bc-tier { color: var(--accent); }
+.bcard[data-subj] .bc-count b { color: var(--accent); }
+.bcard[data-subj] .btn-secondary { background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); border-color: color-mix(in oklab, var(--accent) 32%, transparent); }
+.bcard[data-subj] .btn-secondary:hover { background: color-mix(in oklab, var(--accent) 20%, transparent); border-color: var(--accent); }
+.bcard.featured .btn-primary { background: #fff; color: oklch(0.34 0.18 300); }
+.bcard.featured .btn-primary:hover { background: oklch(0.97 0.01 300); }
+/* perks the buyer always gets (clear, organized grid) */
+.perk-row { margin-top: 22px; padding: 22px 24px; border-radius: 18px; border: 1px solid var(--line); background: var(--bg-1); }
+.perk-row .pr-title { font-family: var(--font-display); font-weight: 700; font-size: 15.5px; color: var(--fg-0); margin-bottom: 4px; display: flex; align-items: center; gap: 9px; }
+.perk-row .pr-title svg { width: 19px; height: 19px; color: #fff; background: var(--success); border-radius: 50%; padding: 3.5px; flex-shrink: 0; }
+.perk-row .pr-sub { font-size: 12.5px; color: var(--fg-2); margin: 0 0 16px 28px; line-height: 1.5; }
+.perk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px 28px; }
+.perk-row .perk { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--fg-1); }
+.perk-row .perk svg { width: 17px; height: 17px; color: var(--success); flex-shrink: 0; }
+@media (max-width: 760px) { .perk-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 460px) { .perk-grid { grid-template-columns: 1fr; } .perk-row .pr-sub { margin-left: 0; } }
+@media (max-width: 620px) { .bundle-tier > .bcard { flex-basis: 100%; width: 100%; } }
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html" class="current">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Login Signup.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO ============== -->
+<section class="page-hero" data-screen-label="01 Courses Hero" style="padding-bottom:24px">
+  <div class="container-wide">
+    <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+      <a href="Landing Page.html">หน้าหลัก</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>คอร์ส</span>
+    </div>
+    <div class="t-eyebrow reveal"><span class="dot"></span><span>คอร์สเรียนทั้งหมด</span></div>
+    <h1 class="reveal" data-delay="1" style="margin-top:18px;max-width:20ch">คอร์สไหนใช่ <span class="grad">เลือกเลย</span></h1>
+  </div>
+</section>
+
+<!-- ============== COURSE GRID ============== -->
+<section style="padding-top:8px" data-screen-label="02 Courses">
+  <div class="container-wide">
+    <div class="catalog-toolbar reveal">
+      <div class="filter-bar" id="filter-bar" role="group" aria-label="กรองตามวิชา"></div>
+      <div class="sort-wrap">
+        <span class="lb">เรียงตาม</span>
+        <select class="sort-sel" id="sort-sel" aria-label="เรียงลำดับ"></select>
+      </div>
+    </div>
+    <div class="level-bar reveal" id="level-bar" role="group" aria-label="กรองตามระดับ" hidden></div>
+    <div class="result-count" id="result-count"></div>
+    <div class="course-list" id="course-grid"></div>
+  </div>
+</section>
+
+<!-- ============== BUNDLES (packages) ============== -->
+<section id="bundles" class="tight" data-screen-label="03 Bundles">
+  <div class="container-wide">
+    <div class="section-head center">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>แพ็กเกจรวม</span></div>
+      <h2 class="reveal" data-delay="1" style="margin-top:14px">เรียนหลายคอร์ส? <span class="grad">เหมาเป็นแพ็กคุ้มกว่า</span></h2>
+    </div>
+
+    <div class="bundle-grid" id="bundle-grid"></div>
+
+    <div class="perk-row reveal">
+      <div class="pr-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>ซื้อคอร์สเดียวก็ได้สิทธิเต็มทุกอย่าง</div>
+      <p class="pr-sub">แพ็กเกจมีไว้ช่วยเหมาหลายคอร์สในราคาถูกลง — <b style="color:var(--fg-0)">ไม่ได้ปลดล็อกสิทธิเพิ่ม</b> ทุกสิทธิด้านล่างได้ครบตั้งแต่ซื้อคอร์สเดียว.</p>
+      <div class="perk-grid">
+        <span class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>feedback พี่หมิง ตอบใน 12 ชม.</span>
+        <span class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>คลังข้อสอบจริง A-Level · TGAT · TPAT</span>
+        <span class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>dashboard + streak รายวัน</span>
+        <span class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>เรียนซ้ำไม่จำกัด</span>
+        <span class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>อัปเดตฟรีตลอดปี</span>
+        <span class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>เรียนฟรี 7 วันแรก</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Referral.html">ชวนเพื่อน</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="FAQ.html">FAQ</a></li>
+          <li><a href="Contact.html">ติดต่อ</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- subjects: exactly 4 (math/physics each cover every level) ---- */
+const SUBJECTS = [
+  { key:'all',   label:'ทั้งหมด' },
+  { key:'math',  label:'คณิต' },
+  { key:'phys',  label:'ฟิสิกส์' },
+  { key:'tpat3', label:'TPAT3' },
+  { key:'tgat2', label:'TGAT2' }
+];
+/* level dimension lives INSIDE คณิต / ฟิสิกส์ only */
+const LEVELABLE = ['math','phys'];
+const LEVELS = [
+  { key:'all',    label:'ทุกระดับ' },
+  { key:'m4',     label:'ม.4' },
+  { key:'m5',     label:'ม.5' },
+  { key:'m6',     label:'ม.6' },
+  { key:'alevel', label:'A-Level' }
+];
+const SUBJLABEL = { tgat2:'TGAT2', tpat3:'TPAT3', math:'คณิต', phys:'ฟิสิกส์' };
+const LEVELTAG = { m4:'ม.4', m5:'ม.5', m6:'ม.6', alevel:'A-LEVEL' };
+const GLYPH = { tgat2:'∑', tpat3:'∂', math:'∫', phys:'Φ' };
+/* sort options */
+const SORTS = [
+  { key:'rec',       label:'แนะนำ' },
+  { key:'popular',   label:'ยอดนิยม' },
+  { key:'rating',    label:'คะแนนรีวิว' },
+  { key:'priceasc',  label:'ราคาน้อย→มาก' },
+  { key:'pricedesc', label:'ราคามาก→น้อย' }
+];
+function tagFor(c){
+  return LEVELABLE.includes(c.subj)
+    ? SUBJLABEL[c.subj] + ' · ' + (LEVELTAG[c.level] || '')
+    : SUBJLABEL[c.subj];
+}
+
+/* ---- course data (sourced from the in-app catalog) ---- */
+const COURSES = [
+  { id:'amath-calculus', subj:'math', level:'alevel', name:'แคลคูลัส · ขั้นเทพ', meta:'24 บท · ม.6 · พี่หมิง', rating:4.9, reviews:412, hours:'18 ชม.', lessons:'24 บท', students:'1,820', now:2490, old:3990, ribbon:'hot' },
+  { id:'amath-alevel1', subj:'math', level:'alevel', name:'A-Level คณิต 1 · ฉบับเก็บคะแนน', meta:'22 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:564, hours:'20 ชม.', lessons:'22 บท', students:'1,640', now:1990, old:2990, ribbon:'rec' },
+  { id:'math-trig', subj:'math', level:'m5', name:'ตรีโกณมิติ ม.5 เทอม 1', meta:'10 บท · ม.5 · พี่หมิง', rating:5.0, reviews:682, hours:'7 ชม.', lessons:'10 บท', students:'3,140', free:true, ribbon:'free' },
+  { id:'math-func', subj:'math', level:'m4', name:'ฟังก์ชัน & ลอการิทึม', meta:'12 บท · ม.4 · พี่หมิง', rating:4.9, reviews:204, hours:'9 ชม.', lessons:'12 บท', students:'1,360', now:1190, ribbon:'rec' },
+  { id:'math-stats', subj:'math', level:'m6', name:'ความน่าจะเป็นและสถิติ', meta:'14 บท · ม.6 · พี่หมิง', rating:4.8, reviews:312, hours:'11 ชม.', lessons:'14 บท', students:'1,124', now:1790 },
+  { id:'aphys-full', subj:'phys', level:'alevel', name:'A-Level ฟิสิกส์ · ครบสนามสอบ', meta:'24 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:498, hours:'21 ชม.', lessons:'24 บท', students:'1,510', now:2290, old:3490, ribbon:'hot' },
+  { id:'aphys-mechanics', subj:'phys', level:'alevel', name:'กลศาสตร์ & โมเมนตัม · A-Level', meta:'18 บท · เตรียมสอบ · พี่หมิง', rating:4.8, reviews:276, hours:'15 ชม.', lessons:'18 บท', students:'928', now:1990 },
+  { id:'phys-kinematics', subj:'phys', level:'m4', name:'จลนศาสตร์เบื้องต้น', meta:'12 บท · ม.4 · พี่หมิง', rating:4.8, reviews:168, hours:'9 ชม.', lessons:'12 บท', students:'742', now:1290, ribbon:'rec' },
+  { id:'phys-electric', subj:'phys', level:'m5', name:'ไฟฟ้าสถิตและกระแส', meta:'16 บท · ม.5 · พี่หมิง', rating:4.7, reviews:238, hours:'12 ชม.', lessons:'16 บท', students:'962', now:1790, old:2490 },
+  { id:'phys-wave', subj:'phys', level:'m6', name:'คลื่นและเสียง · เต็มรูป', meta:'14 บท · ม.6 · พี่หมิง', rating:4.8, reviews:204, hours:'12 ชม.', lessons:'14 บท', students:'786', now:1890 },
+  { id:'tpat3-latest', subj:'tpat3', name:'ตะลุย TPAT3 ปีล่าสุด', meta:'20 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:722, hours:'22 ชม.', lessons:'20 บท', students:'2,180', now:2290, old:3490, ribbon:'hot' },
+  { id:'tpat3-logic', subj:'tpat3', name:'TPAT3 · ตรรกะวิศวกร', meta:'14 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:388, hours:'12 ชม.', lessons:'14 บท', students:'1,420', now:1890 },
+  { id:'tpat3-mock', subj:'tpat3', name:'ข้อสอบจำลอง TPAT3 · 5 ชุด', meta:'5 ชุด · เตรียมสอบ · พี่หมิง', rating:4.8, reviews:212, hours:'16 ชม.', lessons:'5 ชุด', students:'684', now:1490, ribbon:'new' },
+  { id:'tgat2-logic', subj:'tgat2', name:'TGAT2 · การคิดอย่างมีเหตุผล', meta:'20 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:528, hours:'16 ชม.', lessons:'20 บท', students:'1,580', now:1990, old:2890, ribbon:'rec' }
+];
+
+let activeSubj = 'all', activeLevel = 'all', activeSort = 'rec';
+function filtered(){
+  return COURSES.filter(c => {
+    if (activeSubj !== 'all' && c.subj !== activeSubj) return false;
+    if (LEVELABLE.includes(activeSubj) && activeLevel !== 'all' && c.level !== activeLevel) return false;
+    return true;
+  });
+}
+function baht(n){ return '฿' + n.toLocaleString('en-US'); }
+function priceVal(c){ return c.free ? 0 : c.now; }
+function popVal(c){ return parseInt(String(c.students).replace(/[^0-9]/g,''), 10) || 0; }
+function sortList(list){
+  const a = list.slice();
+  if (activeSort === 'popular')   a.sort((x,y) => popVal(y) - popVal(x));
+  else if (activeSort === 'rating')    a.sort((x,y) => (y.rating - x.rating) || (y.reviews - x.reviews));
+  else if (activeSort === 'priceasc')  a.sort((x,y) => priceVal(x) - priceVal(y));
+  else if (activeSort === 'pricedesc') a.sort((x,y) => priceVal(y) - priceVal(x));
+  return a; // 'rec' = curated array order (คณิต → ฟิสิกส์ → TPAT3 → TGAT2)
+}
+function ribbonHTML(r){
+  if (r === 'hot') return '<span class="ribbon hot">🔥 HOT</span>';
+  if (r === 'new') return '<span class="ribbon new">NEW</span>';
+  if (r === 'rec') return '<span class="ribbon rec">แนะนำ</span>';
+  if (r === 'free') return '<span class="ribbon free">ฟรี</span>';
+  return '';
+}
+
+function renderFilters(){
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = SUBJECTS.map(s => {
+    const ct = s.key === 'all' ? COURSES.length : COURSES.filter(c => c.subj === s.key).length;
+    return `<button class="filter-chip" role="radio" aria-pressed="${s.key===activeSubj}" data-subj="${s.key}">${s.key!=='all' ? '<span class="cdot"></span>' : ''}${s.label} <span class="ct">${ct}</span></button>`;
+  }).join('');
+  bar.querySelectorAll('.filter-chip').forEach(b => b.addEventListener('click', () => {
+    activeSubj = b.dataset.subj; activeLevel = 'all';
+    renderFilters(); renderLevels(); renderGrid();
+  }));
+}
+
+function renderLevels(){
+  const bar = document.getElementById('level-bar');
+  if (!LEVELABLE.includes(activeSubj)){ bar.hidden = true; bar.innerHTML = ''; return; }
+  bar.hidden = false;
+  const inSubj = COURSES.filter(c => c.subj === activeSubj);
+  const chips = LEVELS.map(l => {
+    const ct = l.key === 'all' ? inSubj.length : inSubj.filter(c => c.level === l.key).length;
+    return `<button class="level-chip" role="radio" aria-pressed="${l.key===activeLevel}" data-level="${l.key}">${l.label} <span class="ct">${ct}</span></button>`;
+  }).join('');
+  bar.innerHTML = `<span class="lv-label">ระดับ</span>${chips}`;
+  bar.querySelectorAll('.level-chip').forEach(b => b.addEventListener('click', () => {
+    activeLevel = b.dataset.level; renderLevels(); renderGrid();
+  }));
+}
+
+function renderSort(){
+  const sel = document.getElementById('sort-sel');
+  if (!sel) return;
+  sel.innerHTML = SORTS.map(s => `<option value="${s.key}"${s.key===activeSort?' selected':''}>${s.label}</option>`).join('');
+  sel.onchange = () => { activeSort = sel.value; renderGrid(); };
+}
+
+/* ---- bundles (computed from the live course catalog) ---- */
+const BUNDLE_DEFS = {
+  m4:    { tier:'ม.4',        name:'ม.4 ครบชุด',     desc:'รวมทุกวิชาเนื้อหาระดับ ม.4', match:(c)=>c.level==='m4', off:0.20 },
+  m5:    { tier:'ม.5',        name:'ม.5 ครบชุด',     desc:'รวมทุกวิชาเนื้อหาระดับ ม.5', match:(c)=>c.level==='m5', off:0.20 },
+  m6:    { tier:'ม.6',        name:'ม.6 ครบชุด',     desc:'รวมทุกวิชาเนื้อหาระดับ ม.6', match:(c)=>c.level==='m6', off:0.22 },
+  math:  { tier:'คณิต',      name:'คณิต ครบทุกระดับ', desc:'คณิต ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='math', off:0.25, subj:'math' },
+  phys:  { tier:'ฟิสิกส์',    name:'ฟิสิกส์ ครบทุกระดับ', desc:'ฟิสิกส์ ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='phys', off:0.25, subj:'phys' },
+  tpat3: { tier:'TPAT3',      name:'TPAT3 ครบชุด',   desc:'ตะลุย TPAT3 ครบทุกคอร์ส', match:(c)=>c.subj==='tpat3', off:0.22, subj:'tpat3' },
+  tgat2: { tier:'TGAT2',      name:'TGAT2 ครบชุด',   desc:'TGAT2 ครบทุกคอร์ส', match:(c)=>c.subj==='tgat2', off:0.15, subj:'tgat2' },
+  all:   { tier:'ALL ACCESS', name:'เหมาหมด ทุกคอร์ส', desc:'ทุกคอร์สที่มีตอนนี้ + ที่จะเพิ่มตลอดปี', match:(c)=>true, off:0.35, featured:true }
+};
+const BUNDLE_TIERS = [
+  { cls:'tier-level',   keys:['m4','m5','m6'] },
+  { cls:'tier-subject', keys:['math','phys','tpat3','tgat2'] },
+  { cls:'tier-all',     keys:['all'] }
+];
+const BSUBJORDER = { math:0, phys:1, tpat3:2, tgat2:3 };
+function bundleCardHTML(key){
+  const b = BUNDLE_DEFS[key];
+  const items = COURSES.filter(b.match);
+  const list = items.reduce((s,c) => s + (c.free ? 0 : (c.now || 0)), 0);
+  const price = Math.round(list * (1 - b.off) / 10) * 10;
+  const save = list > price ? Math.round((1 - price/list) * 100) : 0;
+  const subjs = [...new Set(items.map(c => c.subj))].sort((a,z) => BSUBJORDER[a]-BSUBJORDER[z]);
+  const chips = subjs.map(s => `<span class="bchip">${SUBJLABEL[s]}</span>`).join('');
+  const priceSub = (list > price)
+    ? `<div class="sub"><span class="strike">${baht(list)}</span><span class="save">ประหยัด ${save}%</span></div>`
+    : '';
+  const accent = b.subj ? ` data-subj="${b.subj}"` : '';
+  return `<div class="bcard${b.featured ? ' featured' : ''} reveal"${accent}>
+      ${b.featured ? '<div class="bc-pop">★ คุ้มที่สุด</div>' : ''}
+      <div class="bc-info">
+        <div class="bc-tier">${b.tier}</div>
+        <h3 class="bc-name">${b.name}</h3>
+        <p class="bc-desc">${b.desc}</p>
+        <div class="bc-count">รวม <b>${items.length}</b> คอร์ส</div>
+        <div class="bc-chips">${chips}</div>
+      </div>
+      <div class="bc-buy">
+        <div class="bc-price">
+          <div class="now"><span class="cur">฿</span>${price.toLocaleString('en-US')}</div>
+          ${priceSub}
+          <div class="once">จ่ายครั้งเดียว · เรียนได้ถึงสนามสอบ</div>
+        </div>
+        <a href="Checkout.html?pkg=${key}" class="btn ${b.featured ? 'btn-primary' : 'btn-secondary'} btn-lg">เลือกแพ็กนี้</a>
+      </div>
+    </div>`;
+}
+function renderBundles(){
+  const grid = document.getElementById('bundle-grid');
+  if (!grid) return;
+  grid.innerHTML = BUNDLE_TIERS.map(t =>
+    `<div class="bundle-tier ${t.cls}">${t.keys.map(bundleCardHTML).join('')}</div>`
+  ).join('');
+  grid.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+}
+
+function renderGrid(){
+  const grid = document.getElementById('course-grid');
+  const list = sortList(filtered());
+  const rc = document.getElementById('result-count');
+  if (rc) rc.innerHTML = list.length ? `พบ <b>${list.length}</b> คอร์ส` : '';
+  if (!list.length){ grid.innerHTML = '<div class="course-empty">ยังไม่มีคอร์สในวิชานี้ — เร็วๆ นี้</div>'; return; }
+  grid.innerHTML = list.map((c, i) => {
+    const priceHTML = c.free
+      ? '<div class="clx-price free">ฟรี</div>'
+      : `<div class="clx-price">${c.old ? '<span class="strike">'+baht(c.old)+'</span>' : ''}${baht(c.now)}</div>`;
+    const disc = (!c.free && c.old) ? `<span class="clx-disc">-${Math.round((1 - c.now/c.old)*100)}%</span>` : '';
+    return `<a href="Course Detail.html?c=${c.id}" class="clx" data-subj="${c.subj}" style="animation-delay:${Math.min(i,9)*35}ms">
+      <div class="clx-thumb t-${c.subj}">
+        <span class="glyph">${GLYPH[c.subj]}</span>
+        ${ribbonHTML(c.ribbon)}
+      </div>
+      <div class="clx-body">
+        <div class="clx-top">
+          <span class="clx-tag">${tagFor(c)}</span>
+          <span class="clx-rate">★ <b>${c.rating.toFixed(1)}</b> <span class="count">(${c.reviews})</span></span>
+        </div>
+        <h3 class="clx-name">${c.name}</h3>
+        <div class="clx-meta">
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${c.hours}</span>
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>${c.lessons}</span>
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg>${c.students}</span>
+        </div>
+        <div class="clx-foot">
+          <div style="display:flex;align-items:center;gap:9px">${priceHTML}${disc}</div>
+          <span class="clx-go">ดูคอร์ส <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+renderFilters();
+renderLevels();
+renderSort();
+renderGrid();
+renderBundles();
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+/* ==========================================================================
+   Mingsmileyface · Admin · Exams (list + question authoring)
+   Loads after admin.css + admin-content.css
+   ========================================================================== */
+
+/* ===== Exam list table =================================================== */
+.exam-table-wrap { background: var(--bg-1); border: 1px solid var(--line-soft); border-radius: 16px; overflow: hidden; }
+.exam-table { width: 100%; border-collapse: collapse; }
+.exam-table thead th { font-size: 11px; font-weight: 600; color: var(--fg-3); text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--line-soft); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; user-select: none; }
+.exam-table thead th .sort { display: inline-flex; vertical-align: middle; margin-left: 5px; opacity: .4; }
+.exam-table thead th.sorted .sort { opacity: 1; color: var(--brand-magenta); }
+.exam-table thead th .sort svg { width: 12px; height: 12px; }
+.exam-table tbody td { padding: 14px 16px; border-bottom: 1px solid var(--line-soft); font-size: 13.5px; color: var(--fg-1); vertical-align: middle; }
+.exam-table tbody tr:last-child td { border-bottom: 0; }
+.exam-table tbody tr { transition: background .12s; cursor: pointer; }
+:root[data-zebra="on"] .exam-table tbody tr:nth-child(even) { background: oklch(from var(--bg-1) calc(l + 0.012) c h); }
+.exam-table tbody tr:hover { background: var(--bg-2); }
+.ex-name { display: flex; align-items: center; gap: 12px; }
+.ex-name .ic { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.ex-name .ic svg { width: 18px; height: 18px; }
+.ex-name b { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--fg-0); display: block; letter-spacing: -0.01em; }
+.ex-name span { font-size: 11.5px; color: var(--fg-3); font-family: "JetBrains Mono"; }
+.subj-chip { display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+.num-cell { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--fg-0); }
+.linked { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--fg-1); }
+.linked svg { width: 13px; height: 13px; color: var(--fg-3); }
+.linked.none { color: var(--fg-3); font-style: italic; }
+.row-acts { display: flex; gap: 4px; justify-content: flex-end; }
+
+/* ===== Question authoring (master-detail) =============================== */
+.qa { display: grid; grid-template-columns: 340px 1fr; gap: 14px; align-items: start; }
+.qa-list { background: var(--bg-1); border: 1px solid var(--line-soft); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; max-height: calc(100vh - 210px); }
+.qa-list-head { padding: 13px 14px; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.qa-list-head b { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--fg-0); }
+.qa-list-head .c { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.qa-rows { overflow-y: auto; flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 4px; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.qa-rows::-webkit-scrollbar { width: 8px; }
+.qa-rows::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 8px; border: 2px solid var(--bg-1); }
+.qa-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 11px; border-radius: 11px; cursor: pointer; transition: background .12s; position: relative; border: 1px solid transparent; }
+.qa-row:hover { background: var(--bg-2); }
+.qa-row.sel { background: var(--bg-2); border-color: var(--line); }
+.qa-row.sel::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--grad-signature); }
+.qa-row .qnum { width: 24px; height: 24px; border-radius: 7px; background: var(--bg-3); color: var(--fg-2); font-family: "JetBrains Mono"; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.qa-row.sel .qnum { background: var(--grad-signature); color: #fff; }
+.qa-row .qtext { flex: 1; min-width: 0; font-size: 12.5px; color: var(--fg-1); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.qa-row .qflags { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
+.qa-row .qok { width: 16px; height: 16px; border-radius: 50%; background: oklch(0.78 0.18 150 / 0.16); color: var(--success); display: flex; align-items: center; justify-content: center; }
+.qa-row .qok svg { width: 11px; height: 11px; }
+.qa-row .qwarn { width: 16px; height: 16px; border-radius: 50%; background: oklch(0.80 0.13 85 / 0.16); color: oklch(0.78 0.14 85); display: flex; align-items: center; justify-content: center; }
+.qa-row .qwarn svg { width: 11px; height: 11px; }
+.qa-row .qimg { color: var(--fg-3); }
+.qa-row .qimg svg { width: 13px; height: 13px; }
+
+/* editor pane */
+.qe { background: var(--bg-1); border: 1px solid var(--line-soft); border-radius: 16px; overflow: hidden; }
+.qe-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line-soft); }
+.qe-head .qe-title { display: flex; align-items: center; gap: 10px; }
+.qe-head .qe-title .num { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--fg-0); }
+.qe-head .qe-title .of { font-size: 12px; color: var(--fg-3); font-family: "JetBrains Mono"; }
+.qe-body { padding: 20px 18px; }
+.qe-img { border: 1.5px dashed var(--line); border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 13px; cursor: pointer; transition: border-color .15s, background .15s; margin-top: 8px; }
+.qe-img:hover { border-color: var(--brand-magenta); background: oklch(0.68 0.25 5 / 0.04); }
+.qe-img .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; color: var(--fg-2); flex-shrink: 0; }
+.qe-img .ic svg { width: 19px; height: 19px; }
+.qe-img .tx b { font-size: 12.5px; color: var(--fg-1); display: block; }
+.qe-img .tx span { font-size: 11px; color: var(--fg-3); }
+
+/* choices editor */
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choice { display: flex; align-items: center; gap: 12px; padding: 4px; border: 1.5px solid var(--line); border-radius: 13px; transition: border-color .15s, background .15s; background: var(--bg-1); }
+.choice.correct { border-color: oklch(0.78 0.18 150 / 0.5); background: oklch(0.78 0.18 150 / 0.05); }
+.choice .pick { width: 38px; height: 38px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg-2); color: var(--fg-2); font-family: var(--font-display); font-weight: 700; font-size: 15px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; margin-left: 4px; }
+.choice.correct .pick { border-color: var(--success); background: oklch(0.78 0.18 150 / 0.2); color: var(--success); }
+.choice .c-inp { flex: 1; background: transparent; border: 0; outline: 0; color: var(--fg-0); font: inherit; font-size: 14px; padding: 11px 4px; min-width: 0; }
+.choice .c-mark { font-size: 11px; font-weight: 600; color: var(--success); white-space: nowrap; opacity: 0; transition: opacity .15s; display: flex; align-items: center; gap: 5px; }
+.choice.correct .c-mark { opacity: 1; }
+.choice .c-mark svg { width: 13px; height: 13px; }
+.choice .c-del { margin-right: 8px; }
+
+/* preview mode */
+.qe.preview .qe-edit { display: none; }
+.qe-preview { display: none; padding: 4px 0 0; }
+.qe.preview .qe-preview { display: block; }
+.pv-q { font-family: var(--font-display); font-weight: 600; font-size: 18px; line-height: 1.5; color: var(--fg-0); margin-bottom: 18px; text-wrap: pretty; }
+.pv-img { border-radius: 12px; overflow: hidden; margin-bottom: 18px; border: 1px solid var(--line-soft); aspect-ratio: 2/1; position: relative; }
+.pv-choices { display: flex; flex-direction: column; gap: 11px; }
+.pv-choice { display: flex; align-items: center; gap: 14px; padding: 15px 16px; border: 1.5px solid var(--line); border-radius: 14px; cursor: pointer; transition: all .15s; background: var(--bg-1); }
+.pv-choice:hover { border-color: var(--fg-2); }
+.pv-choice .radio { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); flex-shrink: 0; position: relative; transition: all .15s; display: flex; align-items: center; justify-content: center; }
+.pv-choice .letter { font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--fg-2); width: 22px; flex-shrink: 0; }
+.pv-choice .txt { font-size: 15px; color: var(--fg-1); }
+.pv-choice.reveal-correct { border-color: var(--success); background: oklch(0.78 0.18 150 / 0.08); }
+.pv-choice.reveal-correct .radio { border-color: var(--success); background: var(--success); }
+.pv-choice.reveal-correct .radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+.pv-explain { margin-top: 18px; padding: 16px; border-radius: 13px; background: oklch(0.80 0.16 205 / 0.07); border: 1px solid oklch(0.80 0.16 205 / 0.22); }
+.pv-explain .pe-head { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--brand-cyan); margin-bottom: 8px; }
+.pv-explain .pe-head svg { width: 15px; height: 15px; }
+.pv-explain p { font-size: 13.5px; color: var(--fg-1); line-height: 1.6; }
+
+/* footer nav in editor */
+.qe-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line-soft); background: var(--bg-0); }
+.qe-foot .nav-q { display: flex; gap: 8px; }
+
+@media (max-width: 1080px){ .qa { grid-template-columns: 1fr; } .qa-list { max-height: 320px; } }

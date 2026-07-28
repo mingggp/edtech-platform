@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คำถามที่พบบ่อย — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<style>
+/* ============== FAQ — page specific ============== */
+.faq-layout { display: grid; grid-template-columns: 280px 1fr; gap: 48px; align-items: start; }
+
+/* sticky category rail */
+.faq-rail { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 6px; }
+.faq-rail .rail-lab { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 10px; }
+.cat-btn {
+  appearance: none; font-family: inherit; cursor: pointer; text-align: left;
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 12px 14px; border-radius: 13px; font-size: 14.5px; font-weight: 500;
+  border: 1px solid transparent; background: transparent; color: var(--fg-1);
+  transition: background .2s, color .2s, border-color .2s;
+}
+.cat-btn .ci { width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-2); color: var(--fg-2); }
+.cat-btn .ci svg { width: 16px; height: 16px; }
+.cat-btn .cc { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cat-btn:hover { background: var(--bg-1); color: var(--fg-0); }
+.cat-btn[aria-pressed="true"] { background: var(--bg-1); border-color: var(--line); color: var(--fg-0); }
+.cat-btn[aria-pressed="true"] .ci { background: var(--grad-signature); color: #fff; }
+
+/* search */
+.faq-search { position: relative; margin-bottom: 22px; }
+.faq-search input {
+  width: 100%; height: 50px; padding: 0 18px 0 48px; font: inherit; font-size: 15px;
+  border-radius: 14px; border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-0);
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.faq-search input::placeholder { color: var(--fg-3); }
+.faq-search input:focus { border-color: var(--brand-violet); box-shadow: 0 0 0 3px oklch(0.66 0.23 295 / 0.16); }
+.faq-search svg { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--fg-3); }
+
+/* accordion */
+.faq-list { display: flex; flex-direction: column; gap: 12px; }
+details.qa {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg-1); overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+details.qa[open] { border-color: var(--glass-line-strong); box-shadow: var(--shadow-2); }
+details.qa summary {
+  list-style: none; cursor: pointer; padding: 20px 22px; display: flex; align-items: center; gap: 16px;
+  font-family: var(--font-display); font-weight: 600; font-size: 16.5px; letter-spacing: -0.01em; color: var(--fg-0);
+}
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa summary .qcat { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); padding: 3px 8px; border-radius: 6px; background: var(--bg-3); flex-shrink: 0; }
+details.qa summary .chev { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--fg-2); transition: transform .25s; }
+details.qa[open] summary .chev { transform: rotate(180deg); color: var(--brand-magenta); }
+details.qa summary .chev svg { width: 18px; height: 18px; }
+details.qa .ans { padding: 0 22px 22px 22px; }
+details.qa .ans-inner { padding-top: 4px; border-top: 1px solid var(--line-soft); margin-top: 2px; padding-top: 18px; font-size: 15px; line-height: 1.65; color: var(--fg-1); }
+details.qa .ans-inner b { color: var(--fg-0); font-weight: 600; }
+details.qa .ans-inner .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 4px 10px; border-radius: 99px; margin: 2px 4px 2px 0; }
+details.qa .ans-inner .pill.ok { background: oklch(0.78 0.18 150 / 0.14); color: var(--success); border: 1px solid oklch(0.78 0.18 150 / 0.3); }
+details.qa .ans-inner .pill.warn { background: oklch(0.83 0.17 82 / 0.14); color: var(--warning); border: 1px solid oklch(0.83 0.17 82 / 0.3); }
+details.qa .ans-inner a { color: var(--brand-violet); text-decoration: none; font-weight: 600; }
+details.qa .ans-inner a:hover { text-decoration: underline; }
+
+.faq-empty { text-align: center; padding: 50px 0; color: var(--fg-2); }
+.cat-head { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--fg-0); margin: 6px 0 4px; }
+
+/* contact */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.contact-card { display: flex; align-items: center; gap: 16px; padding: 24px 26px; border-radius: 20px; border: 1px solid var(--line); background: var(--bg-1); text-decoration: none; transition: transform .25s, box-shadow .25s, border-color .25s; }
+.contact-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.contact-card .ico { width: 50px; height: 50px; border-radius: 15px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.contact-card .ico svg { width: 26px; height: 26px; }
+.contact-card.line .ico { background: linear-gradient(135deg, oklch(0.62 0.18 150), oklch(0.70 0.18 150)); }
+.contact-card.mail .ico { background: var(--grad-cool); }
+.contact-card b { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--fg-0); display: block; }
+.contact-card span { font-size: 13.5px; color: var(--fg-2); }
+.contact-card .go { margin-left: auto; color: var(--fg-3); }
+
+@media (max-width: 900px) {
+  .faq-layout { grid-template-columns: 1fr; gap: 24px; }
+  .faq-rail { position: static; flex-direction: row; flex-wrap: wrap; }
+  .faq-rail .rail-lab { width: 100%; }
+  .cat-btn { width: auto; }
+  .cat-btn .cc { display: none; }
+  .contact-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html" class="current">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Courses.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO ============== -->
+<section class="page-hero" data-screen-label="01 FAQ Hero" style="padding-bottom:32px">
+  <div class="container-wide">
+    <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+      <a href="Landing Page.html">หน้าหลัก</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>FAQ</span>
+    </div>
+    <div class="soon-banner reveal">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="tx"><b>ฟีเจอร์นี้ยังไม่เปิดใช้งาน</b><span>ศูนย์ช่วยเหลือกำลังอยู่ระหว่างพัฒนา เร็วๆ นี้</span></div>
+      <a href="Landing Page.html" class="btn btn-ghost btn-sm">กลับหน้าหลัก</a>
+    </div>
+    <div class="t-eyebrow reveal"><span class="dot"></span><span>ศูนย์ช่วยเหลือ</span></div>
+    <h1 class="reveal" data-delay="1" style="margin-top:18px;max-width:20ch">คำถาม<span class="grad">ที่พบบ่อย</span></h1>
+    <p class="lede reveal" data-delay="2">รวมทุกเรื่องที่น้องๆ และผู้ปกครองถามบ่อย — การสมัคร การชำระเงิน เนื้อหา และการคืนเงิน. หาไม่เจอ ทักไลน์พี่หมิงได้เลย.</p>
+  </div>
+</section>
+
+<!-- ============== FAQ BODY ============== -->
+<section style="padding-top:8px" data-screen-label="02 FAQ">
+  <div class="container-wide">
+    <div class="faq-layout">
+      <aside class="faq-rail reveal">
+        <div class="rail-lab">หมวดหมู่</div>
+        <button class="cat-btn" data-cat="all" aria-pressed="true">
+          <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/></svg></span>
+          ทั้งหมด <span class="cc" data-cc="all"></span>
+        </button>
+        <button class="cat-btn" data-cat="start" aria-pressed="false">
+          <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+          การสมัคร &amp; เริ่มเรียน <span class="cc" data-cc="start"></span>
+        </button>
+        <button class="cat-btn" data-cat="pay" aria-pressed="false">
+          <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></span>
+          การชำระเงิน <span class="cc" data-cc="pay"></span>
+        </button>
+        <button class="cat-btn" data-cat="course" aria-pressed="false">
+          <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+          คอร์ส &amp; เนื้อหา <span class="cc" data-cc="course"></span>
+        </button>
+        <button class="cat-btn" data-cat="account" aria-pressed="false">
+          <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          บัญชี &amp; การคืนเงิน <span class="cc" data-cc="account"></span>
+        </button>
+      </aside>
+
+      <div>
+        <div class="faq-search reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="faq-q" placeholder="ค้นหาคำถาม เช่น “จ่ายเงิน”, “คืนเงิน”, “เรียนซ้ำ”…" />
+        </div>
+        <div class="faq-list" id="faq-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CONTACT ============== -->
+<section class="tight" data-screen-label="03 Contact" id="pay">
+  <div class="container">
+    <div class="section-head center">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>ยังหาคำตอบไม่เจอ?</span></div>
+      <h2 class="reveal" data-delay="1">ถามพี่หมิง<span class="grad">ตรงๆ ได้เลย</span></h2>
+      <p class="reveal" data-delay="2">ทักมาได้ทุกเรื่อง — พี่หมิงตอบเอง ไม่ใช่บอท. ปกติตอบกลับภายในไม่กี่ชั่วโมง.</p>
+    </div>
+    <div class="contact-grid reveal" style="max-width:760px;margin:0 auto">
+      <a href="#" class="contact-card line">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></div>
+        <div><b>แชทผ่าน Line</b><span>@mingsmileyface · ตอบไวที่สุด</span></div>
+        <span class="go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a href="#" class="contact-card mail">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+        <div><b>อีเมล</b><span>hello@mingsmileyface.com</span></div>
+        <span class="go"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta" style="padding-top:40px" data-screen-label="04 CTA">
+  <div class="container">
+    <div class="final-cta-card reveal">
+      <div class="eyebrow"><span class="dot"></span><span>พร้อมเริ่มแล้ว?</span></div>
+      <h2>เริ่มเรียนฟรี 7 วัน<br/>วันนี้.</h2>
+      <p>ไม่ต้องผูกบัตร · จ่ายผ่าน PromptPay ยืนยันอัตโนมัติ · เริ่มเรียนได้ทันที.</p>
+      <div class="cta-row">
+        <a href="Courses.html" class="btn btn-primary btn-lg">เลือกคอร์ส
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="Courses.html#bundles" class="btn btn-glass btn-lg">ดูราคา &amp; แพ็กเกจ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Courses.html#bundles">ราคา</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="FAQ.html">FAQ</a></li>
+          <li><a href="FAQ.html">วิธีชำระเงิน</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- FAQ data ------------------------------------------------------------ */
+const CAT_LABEL = { start:'การสมัคร', pay:'การชำระเงิน', course:'คอร์ส', account:'บัญชี' };
+const FAQS = [
+  { cat:'start', q:'เริ่มเรียนยังไง ต้องเตรียมอะไรบ้าง?', a:'แค่สมัครบัญชีด้วยเบอร์โทรหรืออีเมล แล้วเลือกคอร์สหรือแพ็กเกจที่ต้องการ. เรียนผ่านเว็บได้เลยทั้งบนคอมและมือถือ ไม่ต้องลงโปรแกรมเพิ่ม.' },
+  { cat:'start', q:'มีคอร์สทดลองเรียนฟรีไหม?', a:'มีครับ — <b>เรียนฟรี 7 วันแรก</b> ทุกแพ็กเกจ และมีคอร์สตัวอย่างให้ลองก่อนตัดสินใจ. ถ้าไม่ใช่ทาง ขอคืนเงินได้ภายใน 7 วัน.' },
+  { cat:'start', q:'เหมาะกับน้องระดับชั้นไหน?', a:'ออกแบบสำหรับ <b>ม.ปลาย (ม.4–ม.6)</b> ทั้งปูพื้นในเทอมและเตรียมสอบเข้ามหา\u2019ลัย. น้อง ม.3 ที่อยากเตรียมตัวล่วงหน้าก็เรียนได้.' },
+  { cat:'start', q:'เรียนสดหรือเรียนคลิป?', a:'มีทั้งคู่ — คลิปบทเรียนดูย้อนหลังได้ตลอด เรียนซ้ำกี่รอบก็ได้ และมีช่วงถาม-ตอบที่พี่หมิงตอบเอง. ติดข้อไหนทักได้ทันที.' },
+
+  { cat:'pay', q:'จ่ายเงินยังไง?', a:'จ่ายผ่าน <b>PromptPay</b> ด้วยการสแกน QR. ระบบ<b>ยืนยันการชำระเงินอัตโนมัติ</b>ผ่านเกตเวย์ธนาคาร — จ่ายเสร็จเข้าเรียนได้ทันที.' },
+  { cat:'pay', q:'ต้องแนบสลิปไหม? ต้องรอแอดมินตรวจหรือเปล่า?', a:'<b>ไม่ต้องแนบสลิป และไม่ต้องรอตรวจสอบ</b>. ระบบ PromptPay ยืนยันยอดให้อัตโนมัติ ไม่มีขั้นตอน “รอแอดมินอนุมัติ” ใดๆ.' },
+  { cat:'pay', q:'จ่ายแล้วกี่นาทีถึงเข้าเรียนได้?', a:'ปกติ<b>ภายในไม่กี่วินาที</b>หลังโอนสำเร็จ. เมื่อระบบขึ้นสถานะ “สำเร็จ” คอร์สจะปลดล็อกให้เรียนทันที.' },
+  { cat:'pay', q:'สถานะการชำระเงินมีอะไรบ้าง?', a:'มีแค่ 2 สถานะ: <span class="pill ok">✓ สำเร็จ — เข้าเรียนได้ทันที</span> และ <span class="pill warn">หมดอายุ / ยกเลิก — สแกนใหม่ได้</span>. ไม่มีสถานะ “รอตรวจสอบ”.' },
+  { cat:'pay', q:'QR หมดอายุ หรือจ่ายไม่สำเร็จ ทำยังไง?', a:'กดสร้าง QR ใหม่ได้เลยจากหน้าชำระเงิน แล้วสแกนจ่ายอีกครั้ง. ยอดเดิมที่หมดอายุจะไม่ถูกตัดเงิน.' },
+  { cat:'pay', q:'ออกใบเสร็จ / ใบกำกับภาษีได้ไหม?', a:'ได้ครับ — แจ้งขอใบเสร็จได้หลังชำระเงิน ทักไลน์ <a href="#">@mingsmileyface</a> พร้อมข้อมูลที่ต้องการให้ออก.' },
+
+  { cat:'course', q:'พี่หมิงสอนวิชาอะไรบ้าง?', a:'โฟกัส 4 วิชา: <b>TGAT2 · TPAT3 · คณิต · ฟิสิกส์</b> — โดยคณิตและฟิสิกส์ครอบคลุมทุกระดับ ตั้งแต่เนื้อหาแต่ละระดับมัธยม (ในเทอม) ไปจนถึง A-Level สำหรับสอบเข้ามหา\u2019ลัย.' },
+  { cat:'course', q:'ซื้อแยกรายคอร์ส หรือต้องซื้อเป็นแพ็กเกจ?', a:'เลือกได้ทั้งคู่. ซื้อแยกเริ่มต้น <b>฿1,490/คอร์ส</b> หรือเลือกแพ็กเกจรวมเพื่อความคุ้ม. ดูตัวเลือกทั้งหมดที่หน้า <a href="Courses.html#bundles">ราคา</a>.' },
+  { cat:'course', q:'มีข้อสอบจริงให้ฝึกไหม?', a:'มี — <b>คลังข้อสอบจริง</b> A-Level · TGAT · TPAT ปีล่าสุด พร้อมเฉลยรายข้อและวิธีคิดของพี่หมิง รวมถึง mock exam จับเวลาในแพ็กเกจ A-Level และ TCAS.' },
+  { cat:'course', q:'เรียนจบแล้วยังกลับมาดูซ้ำได้ไหม?', a:'ได้ตลอดปีการศึกษา — <b>เรียนซ้ำไม่จำกัด</b> และมีอัปเดตเนื้อหา/ข้อสอบใหม่ฟรีโดยไม่ต้องจ่ายเพิ่ม.' },
+  { cat:'course', q:'ถามการบ้านได้จริงไหม ใครเป็นคนตอบ?', a:'<b>พี่หมิงตอบเอง</b> ไม่ใช่ทีมงานหรือบอท — ปกติภายใน 12 ชั่วโมง พร้อมเฉลยแบบลายมือให้เห็นวิธีคิดทีละขั้น.' },
+
+  { cat:'account', q:'ขอคืนเงินได้ไหม?', a:'ได้ — ถ้าไม่พอใจ <b>ขอคืนเงินเต็มจำนวนภายใน 7 วันแรก</b>หลังเริ่มเรียน. ทักไลน์แจ้งได้เลย ไม่มีคำถามจุกจิก.' },
+  { cat:'account', q:'ใช้เรียนได้กี่เครื่อง?', a:'ล็อกอินบัญชีเดียวใช้ได้ทั้งคอมและมือถือ. เพื่อความปลอดภัยของบัญชี ระบบจำกัดการใช้งานพร้อมกันหลายเครื่องผิดปกติ.' },
+  { cat:'account', q:'ลืมรหัสผ่านทำยังไง?', a:'กด “ลืมรหัสผ่าน” ที่หน้า <a href="Login Signup.html">เข้าสู่ระบบ</a> แล้วทำตามขั้นตอนรีเซ็ตผ่านอีเมล/เบอร์ที่ลงทะเบียนไว้.' },
+  { cat:'account', q:'ผู้ปกครองดูความก้าวหน้าได้ไหม?', a:'ได้ — น้องสามารถแชร์สรุป dashboard (ชั่วโมงเรียน · streak · ความก้าวหน้า) ให้ผู้ปกครองดูได้ เพื่อช่วยติดตามอย่างใกล้ชิด.' }
+];
+
+/* ---- render -------------------------------------------------------------- */
+let activeCat = 'all';
+let query = '';
+function matches(f){
+  const okCat = activeCat === 'all' || f.cat === activeCat;
+  const okQ = !query || (f.q + ' ' + f.a).toLowerCase().includes(query);
+  return okCat && okQ;
+}
+function render(){
+  const list = document.getElementById('faq-list');
+  const items = FAQS.filter(matches);
+  if (!items.length){ list.innerHTML = '<div class="faq-empty">ไม่พบคำถามที่ตรงกับการค้นหา — ลองคำอื่น หรือทักไลน์พี่หมิงได้เลย</div>'; return; }
+  list.innerHTML = items.map(f => `
+    <details class="qa" data-cat="${f.cat}">
+      <summary>
+        <span class="qcat">${CAT_LABEL[f.cat]}</span>
+        ${f.q}
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+      </summary>
+      <div class="ans"><div class="ans-inner">${f.a}</div></div>
+    </details>`).join('');
+}
+function renderCounts(){
+  document.querySelector('[data-cc="all"]').textContent = FAQS.length;
+  ['start','pay','course','account'].forEach(c => {
+    const el = document.querySelector('[data-cc="'+c+'"]');
+    if (el) el.textContent = FAQS.filter(f => f.cat === c).length;
+  });
+}
+document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => {
+  activeCat = b.dataset.cat;
+  document.querySelectorAll('.cat-btn').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  render();
+}));
+document.getElementById('faq-q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); render(); });
+renderCounts();
+render();
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+</body>
+</html>

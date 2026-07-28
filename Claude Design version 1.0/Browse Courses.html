@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คอร์สทั้งหมด — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* ============== APP SHELL ============== */
+body { overflow: hidden; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word, .app.collapsed .sb-section .heading, .app.collapsed .sb-item span:not(.pill):not(.count), .app.collapsed .sb-item .count, .app.collapsed .sb-item .pill, .app.collapsed .sb-user .info, .app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
+.search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.search-trigger svg { color: var(--fg-2); }
+.search-trigger .kbd { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.search-trigger .label { display: none; }
+@media (min-width: 900px) { .search-trigger .label { display: inline; min-width: 140px; text-align: left; } }
+
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+.top-av { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-1); cursor: pointer; }
+.top-av .av { width: 30px; height: 30px; border-radius: 50%; background: var(--grad-cool); font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.top-av .name { font-size: 13px; font-weight: 500; }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+/* ============== PAGE ============== */
+.page { padding: 32px 32px 80px; max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; position: relative; --bleed-from: oklch(0.66 0.23 295); transition: background .6s ease; }
+.page::before { content: ""; position: absolute; inset: 0 -32px 64% -32px; background: linear-gradient(180deg, oklch(from var(--bleed-from) l c h / 0.06), transparent 80%); z-index: -1; pointer-events: none; transition: background .6s ease; }
+
+/* ============== PAGE HEAD ============== */
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.page-head .titles { display: flex; flex-direction: column; gap: 8px; }
+.page-head .eyebrow { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); display: flex; align-items: center; gap: 10px; }
+.page-head .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-magenta); box-shadow: 0 0 0 4px oklch(0.68 0.25 5 / 0.18); }
+.page-head h1 { font-family: var(--vibe-disp, var(--font-display)); font-weight: 700; font-size: clamp(28px, 2.8vw, 38px); letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0); }
+.page-head h1 .grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.page-head .meta { display: flex; gap: 20px; font-size: 13px; color: var(--fg-2); }
+.page-head .meta b { color: var(--fg-0); font-weight: 600; font-family: var(--font-display); font-size: 15px; letter-spacing: -0.005em; margin-right: 4px; }
+
+/* ============== SECTION TITLE ============== */
+.section-title { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.section-title h2 { font-family: var(--font-display); font-weight: 600; font-size: 20px; letter-spacing: -0.015em; color: var(--fg-0); display: flex; align-items: center; gap: 12px; }
+.section-title h2 .num { font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-3); font-weight: 500; letter-spacing: 0.1em; padding: 4px 10px; background: var(--bg-2); border: 1px solid var(--line-soft); border-radius: 99px; }
+.section-title .hint { font-size: 12.5px; color: var(--fg-2); }
+
+/* ============== ZONE DIVIDER (courses | packages) ============== */
+.zone-head { margin-bottom: 22px; }
+.zone-head .ze { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-magenta); font-weight: 600; display: inline-flex; align-items: center; gap: 9px; }
+.zone-head .ze::before { content: ""; width: 18px; height: 2px; border-radius: 2px; background: var(--grad-signature); }
+.zone-head h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 2.8vw, 38px); letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0); margin-top: 12px; }
+.zone-head h2 .grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.zone-head .hint { font-size: 14px; color: var(--fg-2); margin-top: 8px; }
+
+/* ============== SUBJECT TILES (canonical subject colors) — compact ============== */
+.subject-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.subj { position: relative; aspect-ratio: auto; min-height: 86px; border-radius: 15px; padding: 13px 15px; border: 1px solid var(--glass-line-strong); background: var(--subj-grad, var(--bg-2)); color: #fff; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; text-align: left; font: inherit; transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .2s; }
+.subj::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.16) 1px, transparent 1px); background-size: 18px 18px; mask-image: radial-gradient(70% 60% at 80% 20%, #000, transparent); opacity: 0.55; }
+.subj::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, oklch(0 0 0 / 0.35)); opacity: 0.4; pointer-events: none; }
+.subj > * { position: relative; z-index: 1; }
+.subj:hover { transform: translateY(-3px); box-shadow: 0 16px 40px -12px var(--subj-shadow, oklch(0.66 0.23 295 / 0.45)); }
+.subj:hover .subj-ico { transform: translate(3px, -3px); }
+.subj .subj-ico { width: 28px; height: 28px; border-radius: 8px; background: oklch(0.99 0.005 285 / 0.18); backdrop-filter: blur(20px); border: 1px solid oklch(0.99 0.005 285 / 0.22); display: flex; align-items: center; justify-content: center; transition: transform .28s cubic-bezier(.2,.8,.2,1); }
+.subj .subj-ico svg { width: 16px; height: 16px; color: #fff; }
+.subj .subj-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.05; }
+.subj .subj-meta { font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.06em; opacity: 0.86; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; margin-top: 3px; }
+.subj .subj-meta .count { background: oklch(0.99 0.005 285 / 0.16); border: 1px solid oklch(0.99 0.005 285 / 0.22); padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+.subj[aria-pressed="true"] { outline: 2px solid var(--fg-0); outline-offset: 3px; transform: scale(1.02); box-shadow: 0 16px 40px -12px var(--subj-shadow, oklch(0.66 0.23 295 / 0.55)), 0 0 0 1px oklch(0.99 0.005 285 / 0.2) inset; }
+.subj .check { position: absolute; top: 11px; right: 11px; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: oklch(0.30 0.18 295); display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.5); transition: opacity .2s, transform .25s cubic-bezier(.2,.8,.2,1); z-index: 2; }
+.subj[aria-pressed="true"] .check { opacity: 1; transform: scale(1); }
+.subj[aria-pressed="true"] .subj-ico { display: none; }
+.subj.all { background: linear-gradient(135deg, var(--bg-2), var(--bg-1)); color: var(--fg-0); border-color: var(--line); --subj-shadow: oklch(0 0 0 / 0.35); }
+.subj.all::before { opacity: 0.18; }
+.subj.all .subj-ico { background: var(--bg-3); border-color: var(--line); color: var(--fg-1); }
+.subj.all .subj-ico svg { color: var(--fg-1); }
+.subj.all[aria-pressed="true"] .check { background: var(--fg-0); color: var(--bg-0); }
+/* canonical subject color recipes */
+.subj.math  { --subj-grad: var(--subj-math-grad); --subj-shadow: oklch(from var(--subj-math) l c h / 0.5); }
+.subj.phys  { --subj-grad: var(--subj-phys-grad); --subj-shadow: oklch(from var(--subj-phys) l c h / 0.5); }
+.subj.tpat3 { --subj-grad: var(--subj-tpat-grad); --subj-shadow: oklch(from var(--subj-tpat) l c h / 0.5); }
+.subj.tgat2 { --subj-grad: var(--subj-tgat-grad); --subj-shadow: oklch(from var(--subj-tgat) l c h / 0.5); }
+
+/* ============== LEVEL SUB-FILTER (math/phys only) ============== */
+.level-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--line-soft); background: var(--bg-1); }
+.level-bar[hidden] { display: none; }
+.level-bar .lv-label { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-3); margin-right: 4px; }
+.level-chip { appearance: none; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; color: var(--fg-2); background: var(--bg-2); border: 1px solid var(--line); transition: color .15s, border-color .15s, background .15s; }
+.level-chip:hover { color: var(--fg-0); border-color: var(--fg-3); }
+.level-chip .ct { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-3); }
+.level-chip[aria-pressed="true"] { color: var(--fg-0); border-color: transparent; background: var(--bg-3); box-shadow: inset 0 0 0 1px var(--glass-line-strong); }
+
+/* ============== TOOLBAR (result + sort) ============== */
+.catalog-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.result-meta { font-size: 13.5px; color: var(--fg-2); }
+.result-meta b { color: var(--fg-0); font-weight: 600; }
+.sort-select { appearance: none; -webkit-appearance: none; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); padding: 9px 34px 9px 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2.4'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; transition: color .15s, border-color .15s; }
+.sort-select:hover { color: var(--fg-0); border-color: var(--fg-2); }
+
+/* ============== FEATURED (moderately wide, centered — not full bleed) ============== */
+.featured { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 28px; overflow: hidden; border: 1px solid var(--line); min-height: 300px; position: relative; max-width: 1000px; width: 100%; margin-inline: auto; }
+.featured-thumb { position: relative; overflow: hidden; }
+.featured-thumb::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.15) 1px, transparent 1px); background-size: 26px 26px; mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent); opacity: 0.5; }
+.featured-thumb .glyph { position: absolute; right: -30px; top: -50px; font-family: var(--font-display); font-weight: 800; font-size: 360px; color: oklch(0.99 0.005 285 / 0.18); letter-spacing: -0.05em; line-height: 0.8; user-select: none; }
+.featured-thumb .ribbons { position: absolute; top: 20px; left: 20px; display: flex; gap: 6px; z-index: 1; }
+.featured-thumb .ribbon { background: oklch(0.99 0.005 285 / 0.18); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid oklch(0.99 0.005 285 / 0.24); color: #fff; font-size: 10.5px; letter-spacing: 0.08em; font-weight: 600; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; }
+.featured-thumb .ribbon.hot { background: linear-gradient(115deg, oklch(0.68 0.25 5), oklch(0.78 0.20 50)); border-color: transparent; box-shadow: 0 6px 16px -4px oklch(0.66 0.23 295 / 0.5); }
+.featured-body { padding: 36px 40px; background: var(--bg-1); display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+.featured-body .cat { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brand-magenta); font-weight: 600; }
+.featured-body h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.4vw, 36px); letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0); }
+.featured-body p { font-size: 15px; color: var(--fg-1); line-height: 1.55; max-width: 50ch; }
+.featured-body .stats { display: flex; gap: 22px; flex-wrap: wrap; font-size: 13px; color: var(--fg-2); padding-top: 4px; align-items: center; }
+.featured-body .stats .item { display: flex; align-items: center; gap: 6px; }
+.featured-body .stats svg { width: 14px; height: 14px; color: var(--fg-2); }
+.featured-body .stats b { color: var(--fg-0); font-weight: 600; }
+.featured-body .stars { display: flex; align-items: center; gap: 6px; color: var(--brand-coral); font-size: 13px; }
+.featured-body .stars b { color: var(--fg-0); font-weight: 600; }
+.featured-body .stars span { color: var(--fg-2); }
+.featured-body .price-row { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
+.featured-body .price { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; color: var(--fg-0); line-height: 1; }
+.featured-body .price .strike { color: var(--fg-3); font-weight: 500; font-size: 17px; text-decoration: line-through; margin-right: 8px; }
+.featured-body .discount { background: oklch(0.86 0.18 80 / 0.14); color: oklch(0.62 0.14 70); border: 1px solid oklch(0.86 0.18 80 / 0.3); padding: 4px 10px; border-radius: 8px; font-family: "JetBrains Mono"; font-size: 12px; font-weight: 700; }
+.featured-body .cta-row { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+
+/* ============== COURSE GRID ============== */
+.course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.cc { border-radius: 20px; border: 1px solid var(--line); background: var(--bg-1); overflow: hidden; display: flex; flex-direction: column; transition: transform .26s cubic-bezier(.2,.8,.2,1), box-shadow .26s, border-color .2s; text-decoration: none; color: inherit; animation: ccIn .5s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ccIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.cc:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.cc:hover .cc-thumb-inner { transform: scale(1.04); }
+.cc-thumb { aspect-ratio: 16/10; position: relative; overflow: hidden; }
+.cc-thumb-inner { position: absolute; inset: 0; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.cc-thumb-inner::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.15) 1px, transparent 1px); background-size: 22px 22px; mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent); opacity: 0.5; }
+.cc-thumb-inner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, oklch(0 0 0 / 0.55)); }
+.cc-thumb .glyph { position: absolute; right: -10px; top: -22px; font-family: var(--font-display); font-weight: 800; font-size: 160px; color: oklch(0.99 0.005 285 / 0.16); letter-spacing: -0.05em; line-height: 0.8; }
+.cc-thumb .tag { position: absolute; top: 14px; left: 14px; background: oklch(0.18 0.016 285 / 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid oklch(0.99 0.005 285 / 0.2); color: #fff; font-size: 10.5px; letter-spacing: 0.08em; font-weight: 600; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; z-index: 1; }
+.cc-thumb .ribbon { position: absolute; top: 14px; right: 14px; background: var(--grad-signature); color: #fff; font-size: 10.5px; letter-spacing: 0.06em; font-weight: 700; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; z-index: 1; box-shadow: 0 6px 16px -4px oklch(0.66 0.23 295 / 0.6); }
+.cc-thumb .ribbon.hot { background: linear-gradient(115deg, oklch(0.68 0.25 5), oklch(0.78 0.20 50)); }
+.cc-thumb .ribbon.free { background: linear-gradient(115deg, oklch(0.78 0.20 50), oklch(0.86 0.20 130)); color: oklch(0.20 0.06 50); }
+.cc-thumb .ribbon.new { background: var(--brand-cyan); color: oklch(0.20 0.05 220); }
+.cc-thumb .ribbon.rec { background: oklch(0.99 0.005 285 / 0.18); backdrop-filter: blur(10px); border: 1px solid oklch(0.99 0.005 285 / 0.28); }
+.cc-thumb .meta { position: absolute; bottom: 16px; left: 16px; right: 16px; color: #fff; z-index: 1; }
+.cc-thumb .meta .name { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.18; }
+.cc-thumb .meta .sub { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+.cc-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.cc-body .stars { color: var(--brand-coral); font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
+.cc-body .stars b { color: var(--fg-0); font-weight: 600; }
+.cc-body .stars .count { color: var(--fg-2); }
+.cc-body .stats { display: flex; gap: 14px; font-size: 12px; color: var(--fg-2); }
+.cc-body .stats .item { display: flex; align-items: center; gap: 5px; }
+.cc-body .stats svg { width: 13px; height: 13px; }
+.cc-foot { display: flex; align-items: end; justify-content: space-between; margin-top: 4px; gap: 8px; }
+.cc-foot .price { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; color: var(--fg-0); line-height: 1; }
+.cc-foot .price .strike { color: var(--fg-3); font-weight: 500; font-size: 13.5px; text-decoration: line-through; margin-right: 6px; }
+.cc-foot .price.free { color: var(--success); }
+.cc-foot .discount { background: oklch(0.86 0.18 80 / 0.14); color: oklch(0.62 0.14 70); border: 1px solid oklch(0.86 0.18 80 / 0.3); padding: 4px 8px; border-radius: 6px; font-family: "JetBrains Mono"; font-size: 11px; font-weight: 700; }
+.course-empty { grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--fg-2); }
+
+/* canonical subject thumbs */
+.t-math  { background: var(--subj-math-grad); }
+.t-phys  { background: var(--subj-phys-grad); }
+.t-tpat3 { background: var(--subj-tpat-grad); }
+.t-tgat2 { background: var(--subj-tgat-grad); }
+
+/* ============== BUNDLES ZONE ============== */
+#bundles { margin-top: 16px; padding-top: 38px; border-top: 1px solid var(--line); }
+.bundle-note { display: flex; gap: 14px; align-items: flex-start; padding: 18px 22px; border-radius: 16px; border: 1px solid oklch(0.78 0.18 150 / 0.3); background: oklch(0.78 0.18 150 / 0.07); margin-bottom: 24px; }
+.bundle-note .bn-ico { width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: oklch(0.78 0.18 150 / 0.16); color: var(--success); }
+.bundle-note .bn-ico svg { width: 19px; height: 19px; }
+.bundle-note b { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; color: var(--fg-0); display: block; }
+.bundle-note span { font-size: 13.5px; color: var(--fg-1); line-height: 1.55; margin-top: 3px; display: block; }
+.bundle-grid { display: flex; flex-direction: column; gap: 18px; }
+.bundle-tier { display: flex; gap: 18px; flex-wrap: wrap; }
+.bundle-tier.tier-all { justify-content: center; }
+.bundle-tier > .bcard { flex: 1 1 240px; }
+.bundle-tier.tier-all > .bcard { flex: 0 1 720px; max-width: 720px; }
+.bcard { position: relative; display: flex; flex-direction: column; gap: 13px; border-radius: 22px; border: 1px solid var(--line); background: var(--bg-1); padding: 26px 24px; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s; overflow: hidden; }
+.bcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.bcard.featured { border-color: transparent; color: #fff; background: linear-gradient(150deg, oklch(0.42 0.20 295), oklch(0.50 0.22 330) 55%, oklch(0.58 0.22 5)); box-shadow: var(--shadow-glow); }
+.bcard.featured::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.12) 1px, transparent 1px); background-size: 22px 22px; mask-image: radial-gradient(70% 60% at 100% 0%, #000, transparent); z-index: 0; }
+.bcard.featured > * { position: relative; z-index: 1; }
+.bc-pop { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; width: auto; font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 4px 11px; border-radius: 99px; background: oklch(0.99 0.005 285 / 0.18); border: 1px solid oklch(0.99 0.005 285 / 0.3); color: #fff; }
+.bc-tier { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); }
+.bcard.featured .bc-tier { color: oklch(0.99 0.005 285 / 0.78); }
+.bc-name { font-family: var(--font-display); font-weight: 700; font-size: 21px; letter-spacing: -0.02em; color: var(--fg-0); margin-top: -4px; }
+.bcard.featured .bc-name { color: #fff; }
+.bc-desc { font-size: 12.5px; color: var(--fg-2); line-height: 1.45; margin-top: -6px; }
+.bcard.featured .bc-desc { color: oklch(0.99 0.005 285 / 0.82); }
+.bc-count { font-size: 13px; color: var(--fg-1); }
+.bc-count b { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--fg-0); }
+.bcard.featured .bc-count, .bcard.featured .bc-count b { color: #fff; }
+.bc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bchip { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 7px; background: var(--bg-3); color: var(--fg-1); }
+.bcard.featured .bchip { background: oklch(0.99 0.005 285 / 0.16); color: #fff; }
+.bc-info { display: flex; flex-direction: column; gap: 11px; align-items: flex-start; }
+.bc-buy { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.bc-price { padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.bcard.featured .bc-price { border-color: oklch(0.99 0.005 285 / 0.2); }
+.bc-price .now { font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: -0.02em; color: var(--fg-0); }
+.bcard.featured .bc-price .now { color: #fff; }
+.bc-price .now .cur { font-size: 17px; vertical-align: 0.3em; margin-right: 1px; opacity: 0.7; }
+.bc-price .sub { margin-top: 7px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.bc-price .strike { font-size: 13px; color: var(--fg-3); text-decoration: line-through; }
+.bcard.featured .bc-price .strike { color: oklch(0.99 0.005 285 / 0.6); }
+.bc-price .save { font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: oklch(0.80 0.16 80 / 0.16); color: oklch(0.58 0.13 68); border: 1px solid oklch(0.80 0.16 80 / 0.32); }
+.bcard.featured .bc-price .save { background: oklch(0.99 0.005 285 / 0.18); color: #fff; border-color: oklch(0.99 0.005 285 / 0.3); }
+.bc-price .once { margin-top: 7px; font-size: 11.5px; color: var(--fg-3); }
+.bcard.featured .bc-price .once { color: oklch(0.99 0.005 285 / 0.7); }
+.bcard .btn { width: 100%; }
+.bundle-tier.tier-all > .bcard.featured { flex-direction: row; align-items: stretch; gap: 30px; padding: 28px 30px; }
+.bundle-tier.tier-all > .bcard.featured .bc-info { flex: 1; justify-content: center; }
+.bundle-tier.tier-all > .bcard.featured .bc-buy { flex: 0 0 220px; margin-top: 0; justify-content: center; padding-left: 30px; border-left: 1px solid oklch(0.99 0.005 285 / 0.22); }
+.bundle-tier.tier-all > .bcard.featured .bc-price { padding-top: 0; border-top: none; }
+/* per-subject accent (canonical) */
+.bcard[data-subj]::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 2; background: var(--accent-grad); }
+.bcard[data-subj="math"]  { --accent-grad: var(--subj-math-grad); --accent: var(--subj-math); }
+.bcard[data-subj="phys"]  { --accent-grad: var(--subj-phys-grad); --accent: var(--subj-phys); }
+.bcard[data-subj="tpat3"] { --accent-grad: var(--subj-tpat-grad); --accent: var(--subj-tpat); }
+.bcard[data-subj="tgat2"] { --accent-grad: var(--subj-tgat-grad); --accent: var(--subj-tgat); }
+.bcard[data-subj] .bc-tier { color: var(--accent); }
+.bcard[data-subj] .bc-count b { color: var(--accent); }
+.bcard[data-subj] .btn-secondary { background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); border-color: color-mix(in oklab, var(--accent) 32%, transparent); }
+.bcard[data-subj] .btn-secondary:hover { background: color-mix(in oklab, var(--accent) 20%, transparent); border-color: var(--accent); }
+.bcard.featured .btn-primary { background: #fff; color: oklch(0.34 0.18 300); }
+.bcard.featured .btn-primary:hover { background: oklch(0.97 0.01 300); }
+
+.dash-foot { margin-top: 12px; padding-top: 24px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; gap: 16px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.04em; flex-wrap: wrap; }
+
+/* ============== COMMAND PALETTE ============== */
+.cmdk-backdrop { position: fixed; inset: 0; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; opacity: 0; transition: opacity .2s; }
+.cmdk-backdrop.open { display: flex; opacity: 1; }
+.cmdk { width: min(640px, 92vw); background: var(--bg-1); border: 1px solid var(--glass-line-strong); border-radius: 18px; overflow: hidden; box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.6); transform: translateY(-12px) scale(0.98); opacity: 0; transition: transform .22s cubic-bezier(.2,.8,.2,1), opacity .22s; }
+.cmdk-backdrop.open .cmdk { transform: translateY(0) scale(1); opacity: 1; }
+.cmdk-input-row { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line-soft); }
+.cmdk-input-row svg { color: var(--fg-2); }
+.cmdk-input-row input { flex: 1; background: transparent; border: 0; color: var(--fg-0); font: inherit; font-size: 16px; outline: none; }
+.cmdk-input-row input::placeholder { color: var(--fg-3); }
+.cmdk-input-row .esc { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.cmdk-body { max-height: 50vh; overflow-y: auto; padding: 8px; }
+.cmdk-group { padding: 8px 4px; }
+.cmdk-group h5 { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; padding: 4px 10px 8px; }
+.cmdk-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--fg-1); cursor: pointer; font-size: 14px; transition: background .12s, color .12s; text-decoration: none; }
+.cmdk-item:hover, .cmdk-item.active { background: var(--bg-2); color: var(--fg-0); }
+.cmdk-item .icon { width: 28px; height: 28px; border-radius: 8px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; color: var(--fg-2); flex-shrink: 0; }
+.cmdk-item:hover .icon, .cmdk-item.active .icon { background: var(--bg-3); color: var(--fg-0); }
+.cmdk-item .label { flex: 1; }
+.cmdk-item .label small { display: block; color: var(--fg-2); font-size: 12px; margin-top: 2px; }
+.cmdk-item .meta { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cmdk-foot { padding: 10px 18px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cmdk-foot .keys { display: flex; gap: 14px; }
+.cmdk-foot .keys span { display: inline-flex; align-items: center; gap: 4px; }
+.cmdk-foot kbd { background: var(--bg-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-family: inherit; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1280px) {
+  .subject-grid { grid-template-columns: repeat(3, 1fr); }
+  .course-grid { grid-template-columns: 1fr 1fr; }
+  .featured { grid-template-columns: 1fr; }
+  .featured-thumb { aspect-ratio: 16/9; }
+}
+@media (max-width: 980px) {
+  .app, .app.collapsed { grid-template-columns: 72px 1fr; }
+  .sb-logo .word, .sb-section .heading, .sb-item span:not(.pill):not(.count), .sb-item .count, .sb-item .pill, .sb-user .info, .sb-user .chev { display: none; }
+  .sb-item { justify-content: center; }
+  .sb-toggle { display: none; }
+}
+@media (max-width: 720px) {
+  .subject-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 72%; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px 8px; }
+  .subj { scroll-snap-align: start; }
+  .course-grid { grid-template-columns: 1fr; }
+  .bundle-tier.tier-all > .bcard.featured { flex-direction: column; gap: 16px; }
+  .bundle-tier.tier-all > .bcard.featured .bc-buy { flex-basis: auto; padding-left: 0; border-left: 0; padding-top: 16px; border-top: 1px solid oklch(0.99 0.005 285 / 0.22); }
+  .page { padding: 20px 16px 60px; }
+  .search-trigger .label, .search-trigger .kbd { display: none; }
+  .search-trigger { padding: 0; width: 38px; justify-content: center; }
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="01 Browse Courses">
+
+  <!-- SIDEBAR (rebuilt by sidebar.js — Browse Courses is now a primary nav item) -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Dashboard.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item active" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">14</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info"><b>น้องปาล์ม</b><span>LV 14 · 2,840 XP</span></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>คอร์สทั้งหมด</b>
+      </div>
+
+      <div class="top-actions">
+        <button class="search-trigger" id="open-cmdk" aria-label="ค้นหา (⌘K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="label">ค้นหาคอร์ส...</span>
+          <span class="kbd">⌘K</span>
+        </button>
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page" id="page">
+
+      <!-- ===== PAGE HEAD ===== -->
+      <section class="page-head">
+        <div class="titles">
+          <div class="eyebrow">COURSE CATALOG · TCAS 70</div>
+          <h1>คอร์ส<span class="grad">ทั้งหมด</span></h1>
+        </div>
+        <div class="meta">
+          <span><b id="stat-courses">14</b>คอร์ส</span>
+          <span><b>4</b>วิชา</span>
+          <span><b>2,400+</b>นักเรียน</span>
+        </div>
+      </section>
+
+      <!-- ===== SUBJECT TILES ===== -->
+      <section>
+        <div class="section-title">
+          <h2>เลือกวิชาที่อยากเก่ง</h2>
+          <div class="hint">กดเลือกวิชาเพื่อกรอง — ค่าเริ่มต้นคือ "ทั้งหมด"</div>
+        </div>
+        <div class="subject-grid" role="radiogroup" aria-label="หมวดวิชา" id="subject-grid"></div>
+      </section>
+
+      <!-- ===== LEVEL SUB-FILTER (math/phys only) ===== -->
+      <section class="level-bar" id="level-bar" role="group" aria-label="กรองตามระดับ" hidden></section>
+
+      <!-- ===== TOOLBAR ===== -->
+      <div class="catalog-toolbar">
+        <div class="result-meta" id="result-meta"></div>
+        <select class="sort-select" id="sort-sel" aria-label="เรียงตาม"></select>
+      </div>
+
+      <!-- ===== FEATURED ===== -->
+      <section class="featured" id="featured"></section>
+
+      <!-- ===== GRID ===== -->
+      <section class="course-grid" id="course-grid"></section>
+
+      <!-- ===== BUNDLES ===== -->
+      <section id="bundles">
+        <div class="zone-head">
+          <span class="ze">แพ็กเกจรวม</span>
+          <h2>เรียนหลายคอร์ส? <span class="grad">เหมาเป็นแพ็กคุ้มกว่า</span></h2>
+        </div>
+        <div class="bundle-note">
+          <div class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div>
+            <b>ซื้อคอร์สเดียวก็ได้สิทธิเต็มทุกอย่าง</b>
+            <span>แพ็กเกจมีไว้ช่วยเหมาหลายคอร์สในราคาถูกลง — ไม่ได้ปลดล็อกสิทธิเพิ่ม ทุกสิทธิ (feedback พี่หมิง · คลังข้อสอบ · เรียนซ้ำไม่จำกัด) ได้ครบตั้งแต่ซื้อคอร์สเดียว</span>
+          </div>
+        </div>
+        <div class="bundle-grid" id="bundle-grid"></div>
+      </section>
+
+      <div class="dash-foot">
+        <div>© 2026 MINGSMILEYFACE · v0.3 BROWSE</div>
+        <div>SUBJECT-FIRST DISCOVERY · CMD+K SEARCH</div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== COMMAND PALETTE ============== -->
+<div class="cmdk-backdrop" id="cmdk-backdrop" role="dialog" aria-modal="true" aria-label="ค้นหา">
+  <div class="cmdk">
+    <div class="cmdk-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="cmdk-input" type="text" placeholder="ค้นหาคอร์ส หรือคำสั่ง..." />
+      <span class="esc">ESC</span>
+    </div>
+    <div class="cmdk-body" id="cmdk-body"></div>
+    <div class="cmdk-foot">
+      <div class="keys">
+        <span><kbd>↑</kbd><kbd>↓</kbd> เลื่อน</span>
+        <span><kbd>↵</kbd> เลือก</span>
+        <span><kbd>esc</kbd> ปิด</span>
+      </div>
+      <div>powered by ⌘K</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============== THEME ==============
+const root = document.documentElement;
+const btnDark = document.getElementById('btn-dark');
+const btnLight = document.getElementById('btn-light');
+function setTheme(t){
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', (t === 'petronas' || t === 'classic-dark' || t === 'dark'));
+  btnLight.setAttribute('aria-pressed', (t === 'petronas-light' || t === 'classic-light' || t === 'light'));
+  try{ localStorage.setItem('ming-theme', t); }catch(e){}
+}
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark' ? 'petronas' : saved === 'light' ? 'petronas-light' : (saved || 'petronas-light')); }catch(e){}
+
+// ============== SIDEBAR COLLAPSE ==============
+(function(){
+  const app = document.querySelector('.app');
+  const toggle = document.getElementById('sb-toggle');
+  if(!app || !toggle) return;
+  try { if(localStorage.getItem('ming-sidebar') === 'collapsed') app.classList.add('collapsed'); } catch(e){}
+  toggle.addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    try { localStorage.setItem('ming-sidebar', app.classList.contains('collapsed') ? 'collapsed' : 'expanded'); } catch(e){}
+  });
+})();
+
+// ============== CATALOG DATA (sourced from Courses.html) ==============
+/* subjects: exactly 4 (math/physics each cover every level) */
+const SUBJECTS = [
+  { key:'all',   label:'ทั้งหมด',  en:'ALL SUBJECTS' },
+  { key:'math',  label:'คณิต',     en:'MATH' },
+  { key:'phys',  label:'ฟิสิกส์',   en:'PHYSICS' },
+  { key:'tpat3', label:'TPAT3',    en:'ENGINEERING' },
+  { key:'tgat2', label:'TGAT2',    en:'APTITUDE' }
+];
+const LEVELABLE = ['math','phys'];
+const LEVELS = [
+  { key:'all', label:'ทั้งหมด' }, { key:'m4', label:'ม.4' }, { key:'m5', label:'ม.5' }, { key:'m6', label:'ม.6' }, { key:'alevel', label:'A-Level' }
+];
+const SUBJLABEL = { tgat2:'TGAT2', tpat3:'TPAT3', math:'คณิต', phys:'ฟิสิกส์' };
+const LEVELTAG = { m4:'ม.4', m5:'ม.5', m6:'ม.6', alevel:'A-LEVEL' };
+const GLYPH = { tgat2:'∑', tpat3:'∂', math:'∫', phys:'Φ' };
+const SUBJ_ICON = {
+  math:  '<path d="M16 4c-2 0-3 1-3 3v10c0 2-1 3-3 3"/><path d="M4 12h6M7 9v6"/>',
+  phys:  '<circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-60 12 12)"/>',
+  tpat3: '<path d="M12 2 4 5v6c0 5 4 10 8 11 4-1 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/>',
+  tgat2: '<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V18a3 3 0 0 1-3-3 3 3 0 0 1 .5-5A2.5 2.5 0 0 1 7 5.5 2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5"/>',
+  all:   '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'
+};
+const SORTS = [
+  { key:'rec', label:'แนะนำ' }, { key:'popular', label:'ยอดนิยม' }, { key:'rating', label:'คะแนนรีวิว' }, { key:'priceasc', label:'ราคาน้อย→มาก' }, { key:'pricedesc', label:'ราคามาก→น้อย' }
+];
+function tagFor(c){ return LEVELABLE.includes(c.subj) ? SUBJLABEL[c.subj]+' · '+(LEVELTAG[c.level]||'') : SUBJLABEL[c.subj]; }
+
+const COURSES = [
+  { id:'amath-calculus', subj:'math', level:'alevel', name:'แคลคูลัส · ขั้นเทพ', meta:'24 บท · ม.6 · พี่หมิง', rating:4.9, reviews:412, hours:'18 ชม.', lessons:'24 บท', students:'1,820', now:2490, old:3990, ribbon:'hot' },
+  { id:'amath-alevel1', subj:'math', level:'alevel', name:'A-Level คณิต 1 · ฉบับเก็บคะแนน', meta:'22 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:564, hours:'20 ชม.', lessons:'22 บท', students:'1,640', now:1990, old:2990, ribbon:'rec' },
+  { id:'math-trig', subj:'math', level:'m5', name:'ตรีโกณมิติ ม.5 เทอม 1', meta:'10 บท · ม.5 · พี่หมิง', rating:5.0, reviews:682, hours:'7 ชม.', lessons:'10 บท', students:'3,140', free:true, ribbon:'free' },
+  { id:'math-func', subj:'math', level:'m4', name:'ฟังก์ชัน & ลอการิทึม', meta:'12 บท · ม.4 · พี่หมิง', rating:4.9, reviews:204, hours:'9 ชม.', lessons:'12 บท', students:'1,360', now:1190, ribbon:'rec' },
+  { id:'math-stats', subj:'math', level:'m6', name:'ความน่าจะเป็นและสถิติ', meta:'14 บท · ม.6 · พี่หมิง', rating:4.8, reviews:312, hours:'11 ชม.', lessons:'14 บท', students:'1,124', now:1790 },
+  { id:'aphys-full', subj:'phys', level:'alevel', name:'A-Level ฟิสิกส์ · ครบสนามสอบ', meta:'24 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:498, hours:'21 ชม.', lessons:'24 บท', students:'1,510', now:2290, old:3490, ribbon:'hot' },
+  { id:'aphys-mechanics', subj:'phys', level:'alevel', name:'กลศาสตร์ & โมเมนตัม · A-Level', meta:'18 บท · เตรียมสอบ · พี่หมิง', rating:4.8, reviews:276, hours:'15 ชม.', lessons:'18 บท', students:'928', now:1990 },
+  { id:'phys-kinematics', subj:'phys', level:'m4', name:'จลนศาสตร์เบื้องต้น', meta:'12 บท · ม.4 · พี่หมิง', rating:4.8, reviews:168, hours:'9 ชม.', lessons:'12 บท', students:'742', now:1290, ribbon:'rec' },
+  { id:'phys-electric', subj:'phys', level:'m5', name:'ไฟฟ้าสถิตและกระแส', meta:'16 บท · ม.5 · พี่หมิง', rating:4.7, reviews:238, hours:'12 ชม.', lessons:'16 บท', students:'962', now:1790, old:2490 },
+  { id:'phys-wave', subj:'phys', level:'m6', name:'คลื่นและเสียง · เต็มรูป', meta:'14 บท · ม.6 · พี่หมิง', rating:4.8, reviews:204, hours:'12 ชม.', lessons:'14 บท', students:'786', now:1890 },
+  { id:'tpat3-latest', subj:'tpat3', name:'ตะลุย TPAT3 ปีล่าสุด', meta:'20 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:722, hours:'22 ชม.', lessons:'20 บท', students:'2,180', now:2290, old:3490, ribbon:'hot' },
+  { id:'tpat3-logic', subj:'tpat3', name:'TPAT3 · ตรรกะวิศวกร', meta:'14 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:388, hours:'12 ชม.', lessons:'14 บท', students:'1,420', now:1890 },
+  { id:'tpat3-mock', subj:'tpat3', name:'ข้อสอบจำลอง TPAT3 · 5 ชุด', meta:'5 ชุด · เตรียมสอบ · พี่หมิง', rating:4.8, reviews:212, hours:'16 ชม.', lessons:'5 ชุด', students:'684', now:1490, ribbon:'new' },
+  { id:'tgat2-logic', subj:'tgat2', name:'TGAT2 · การคิดอย่างมีเหตุผล', meta:'20 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:528, hours:'16 ชม.', lessons:'20 บท', students:'1,580', now:1990, old:2890, ribbon:'rec' }
+];
+
+let activeSubj = 'all', activeLevel = 'all', activeSort = 'rec';
+function filtered(){
+  return COURSES.filter(c => {
+    if (activeSubj !== 'all' && c.subj !== activeSubj) return false;
+    if (LEVELABLE.includes(activeSubj) && activeLevel !== 'all' && c.level !== activeLevel) return false;
+    return true;
+  });
+}
+function baht(n){ return '฿' + n.toLocaleString('en-US'); }
+function priceVal(c){ return c.free ? 0 : c.now; }
+function popVal(c){ return parseInt(String(c.students).replace(/[^0-9]/g,''),10) || 0; }
+function sortList(list){
+  const a = list.slice();
+  if (activeSort === 'popular') a.sort((x,y)=>popVal(y)-popVal(x));
+  else if (activeSort === 'rating') a.sort((x,y)=>(y.rating-x.rating)||(y.reviews-x.reviews));
+  else if (activeSort === 'priceasc') a.sort((x,y)=>priceVal(x)-priceVal(y));
+  else if (activeSort === 'pricedesc') a.sort((x,y)=>priceVal(y)-priceVal(x));
+  return a;
+}
+function ribbonHTML(r){
+  if (r==='hot') return '<span class="ribbon hot">HOT</span>';
+  if (r==='new') return '<span class="ribbon new">NEW</span>';
+  if (r==='rec') return '<span class="ribbon rec">แนะนำ</span>';
+  if (r==='free') return '<span class="ribbon free">ฟรี</span>';
+  return '';
+}
+const IC = {
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg>'
+};
+
+// ---- subject tiles ----
+function renderSubjects(){
+  const grid = document.getElementById('subject-grid');
+  grid.innerHTML = SUBJECTS.map(s => {
+    const ct = s.key==='all' ? COURSES.length : COURSES.filter(c=>c.subj===s.key).length;
+    const cls = s.key==='all' ? 'all' : s.key;
+    return `<button class="subj ${cls}" role="radio" aria-pressed="${s.key===activeSubj}" data-subject="${s.key}">
+      <div class="subj-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SUBJ_ICON[s.key]}</svg></div>
+      <div class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div>
+        <div class="subj-name">${s.label}</div>
+        <div class="subj-meta"><span>${s.en}</span><span class="count">${ct}</span></div>
+      </div>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.subj').forEach(b => b.addEventListener('click', () => {
+    activeSubj = b.dataset.subject; activeLevel = 'all';
+    renderSubjects(); renderLevels(); applyBleed(); renderGrid();
+  }));
+}
+function renderLevels(){
+  const bar = document.getElementById('level-bar');
+  if (!LEVELABLE.includes(activeSubj)){ bar.hidden = true; bar.innerHTML=''; return; }
+  bar.hidden = false;
+  const inSubj = COURSES.filter(c=>c.subj===activeSubj);
+  bar.innerHTML = '<span class="lv-label">ระดับ</span>' + LEVELS.map(l => {
+    const ct = l.key==='all' ? inSubj.length : inSubj.filter(c=>c.level===l.key).length;
+    return `<button class="level-chip" role="radio" aria-pressed="${l.key===activeLevel}" data-level="${l.key}">${l.label} <span class="ct">${ct}</span></button>`;
+  }).join('');
+  bar.querySelectorAll('.level-chip').forEach(b => b.addEventListener('click', () => {
+    activeLevel = b.dataset.level; renderLevels(); renderGrid();
+  }));
+}
+function applyBleed(){
+  const page = document.getElementById('page');
+  const map = { math:'var(--subj-math)', phys:'var(--subj-phys)', tpat3:'var(--subj-tpat)', tgat2:'var(--subj-tgat)' };
+  if (map[activeSubj]) page.style.setProperty('--bleed-from', map[activeSubj]);
+  else page.style.removeProperty('--bleed-from');
+}
+function renderSort(){
+  const sel = document.getElementById('sort-sel');
+  sel.innerHTML = SORTS.map(s => `<option value="${s.key}"${s.key===activeSort?' selected':''}>เรียงตาม: ${s.label}</option>`).join('');
+  sel.onchange = () => { activeSort = sel.value; renderGrid(); };
+}
+
+// ---- featured (first HOT course, follows filter) ----
+function renderFeatured(list){
+  const el = document.getElementById('featured');
+  const f = list.find(c=>c.ribbon==='hot') || list[0];
+  if (!f){ el.style.display='none'; return; }
+  el.style.display='';
+  const priceHTML = f.free ? 'ฟรี' : `${f.old?'<span class="strike">'+baht(f.old)+'</span>':''}${baht(f.now)}`;
+  const disc = (!f.free && f.old) ? `<span class="discount">SAVE ${Math.round((1-f.now/f.old)*100)}%</span>` : '';
+  el.innerHTML = `
+    <div class="featured-thumb t-${f.subj}">
+      <div class="ribbons"><span class="ribbon hot">BESTSELLER</span><span class="ribbon">${tagFor(f)}</span></div>
+      <span class="glyph">${GLYPH[f.subj]}</span>
+    </div>
+    <div class="featured-body">
+      <div class="cat">${tagFor(f)}</div>
+      <h2>${f.name}</h2>
+      <div class="stats">
+        <div class="item">${IC.clock}<b>${f.hours.replace(' ชม.','')}</b> ชม.</div>
+        <div class="item">${IC.book}<b>${f.lessons.replace(/[^0-9]/g,'')}</b> ${/ชุด/.test(f.lessons)?'ชุด':'บท'}</div>
+        <div class="item">${IC.user}<b>${f.students}</b> คน</div>
+        <div class="stars">★ <b>${f.rating.toFixed(1)}</b> <span>(${f.reviews})</span></div>
+      </div>
+      <div class="price-row"><div class="price">${priceHTML}</div>${disc}</div>
+      <div class="cta-row">
+        <a href="Course Detail.html?c=${f.id}" class="btn btn-primary">ดูรายละเอียด <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="Course Detail.html?c=${f.id}" class="btn btn-ghost">ดูตัวอย่างฟรี</a>
+      </div>
+    </div>`;
+}
+
+function renderGrid(){
+  const list = sortList(filtered());
+  applyBleed();
+  document.getElementById('result-meta').innerHTML = list.length ? `พบ <b>${list.length}</b> คอร์ส${activeSubj!=='all'?' · '+SUBJLABEL[activeSubj]:''}` : '';
+  renderFeatured(list);
+  const grid = document.getElementById('course-grid');
+  if (!list.length){ grid.innerHTML = '<div class="course-empty">ยังไม่มีคอร์สในวิชานี้ — เร็วๆ นี้</div>'; return; }
+  grid.innerHTML = list.map((c,i) => {
+    const priceHTML = c.free ? '<div class="price free">ฟรี</div>' : `<div class="price">${c.old?'<span class="strike">'+baht(c.old)+'</span>':''}${baht(c.now)}</div>`;
+    const disc = (!c.free && c.old) ? `<span class="discount">-${Math.round((1-c.now/c.old)*100)}%</span>` : '';
+    return `<a href="Course Detail.html?c=${c.id}" class="cc" data-subject="${c.subj}" style="animation-delay:${Math.min(i,9)*35}ms">
+      <div class="cc-thumb"><div class="cc-thumb-inner t-${c.subj}">
+        <span class="glyph">${GLYPH[c.subj]}</span><span class="tag">${tagFor(c)}</span>${ribbonHTML(c.ribbon)}
+      </div><div class="meta"><div class="name">${c.name}</div><div class="sub">${c.meta}</div></div></div>
+      <div class="cc-body">
+        <div class="stars">★★★★★ <b>${c.rating.toFixed(1)}</b> <span class="count">(${c.reviews})</span></div>
+        <div class="stats"><div class="item">${IC.clock}${c.hours}</div><div class="item">${IC.book}${c.lessons}</div><div class="item">${IC.user}${c.students}</div></div>
+        <div class="cc-foot">${priceHTML}${disc}</div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+// ---- bundles (computed from catalog) ----
+const BUNDLE_DEFS = {
+  m4:    { tier:'ม.4', name:'ม.4 ครบชุด', desc:'รวมทุกวิชาเนื้อหาระดับ ม.4', match:(c)=>c.level==='m4', off:0.20 },
+  m5:    { tier:'ม.5', name:'ม.5 ครบชุด', desc:'รวมทุกวิชาเนื้อหาระดับ ม.5', match:(c)=>c.level==='m5', off:0.20 },
+  m6:    { tier:'ม.6', name:'ม.6 ครบชุด', desc:'รวมทุกวิชาเนื้อหาระดับ ม.6', match:(c)=>c.level==='m6', off:0.22 },
+  math:  { tier:'คณิต', name:'คณิต ครบทุกระดับ', desc:'คณิต ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='math', off:0.25, subj:'math' },
+  phys:  { tier:'ฟิสิกส์', name:'ฟิสิกส์ ครบทุกระดับ', desc:'ฟิสิกส์ ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='phys', off:0.25, subj:'phys' },
+  tpat3: { tier:'TPAT3', name:'TPAT3 ครบชุด', desc:'ตะลุย TPAT3 ครบทุกคอร์ส', match:(c)=>c.subj==='tpat3', off:0.22, subj:'tpat3' },
+  tgat2: { tier:'TGAT2', name:'TGAT2 ครบชุด', desc:'TGAT2 ครบทุกคอร์ส', match:(c)=>c.subj==='tgat2', off:0.15, subj:'tgat2' },
+  all:   { tier:'ALL ACCESS', name:'เหมาหมด ทุกคอร์ส', desc:'ทุกคอร์สที่มีตอนนี้ + ที่จะเพิ่มตลอดปี', match:(c)=>true, off:0.35, featured:true }
+};
+const BUNDLE_TIERS = [
+  { cls:'tier-level', keys:['m4','m5','m6'] },
+  { cls:'tier-subject', keys:['math','phys','tpat3','tgat2'] },
+  { cls:'tier-all', keys:['all'] }
+];
+const BSUBJORDER = { math:0, phys:1, tpat3:2, tgat2:3 };
+function bundleCardHTML(key){
+  const b = BUNDLE_DEFS[key];
+  const items = COURSES.filter(b.match);
+  const list = items.reduce((s,c)=>s+(c.free?0:(c.now||0)),0);
+  const price = Math.round(list*(1-b.off)/10)*10;
+  const save = list>price ? Math.round((1-price/list)*100) : 0;
+  const subjs = [...new Set(items.map(c=>c.subj))].sort((a,z)=>BSUBJORDER[a]-BSUBJORDER[z]);
+  const chips = subjs.map(s=>`<span class="bchip">${SUBJLABEL[s]}</span>`).join('');
+  const priceSub = list>price ? `<div class="sub"><span class="strike">${baht(list)}</span><span class="save">ประหยัด ${save}%</span></div>` : '';
+  const accent = b.subj ? ` data-subj="${b.subj}"` : '';
+  return `<div class="bcard${b.featured?' featured':''}"${accent}>
+      <div class="bc-info">
+        ${b.featured?'<div class="bc-pop">★ คุ้มที่สุด</div>':''}
+        <div class="bc-tier">${b.tier}</div>
+        <h3 class="bc-name">${b.name}</h3>
+        <p class="bc-desc">${b.desc}</p>
+        <div class="bc-count">รวม <b>${items.length}</b> คอร์ส</div>
+        <div class="bc-chips">${chips}</div>
+      </div>
+      <div class="bc-buy">
+        <div class="bc-price">
+          <div class="now"><span class="cur">฿</span>${price.toLocaleString('en-US')}</div>
+          ${priceSub}
+          <div class="once">จ่ายครั้งเดียว · เรียนได้ถึงสนามสอบ</div>
+        </div>
+        <a href="Checkout.html?pkg=${key}" class="btn ${b.featured?'btn-primary':'btn-secondary'} btn-lg">เลือกแพ็กนี้</a>
+      </div>
+    </div>`;
+}
+function renderBundles(){
+  document.getElementById('bundle-grid').innerHTML = BUNDLE_TIERS.map(t =>
+    `<div class="bundle-tier ${t.cls}">${t.keys.map(bundleCardHTML).join('')}</div>`
+  ).join('');
+}
+
+// ---- command palette ----
+function renderCmdk(){
+  const top = sortList(COURSES.slice()).slice(0,4);
+  document.getElementById('cmdk-body').innerHTML = `
+    <div class="cmdk-group"><h5>คอร์สแนะนำ</h5>${top.map((c,i)=>`
+      <a href="Course Detail.html?c=${c.id}" class="cmdk-item${i===0?' active':''}">
+        <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SUBJ_ICON[c.subj]}</svg></div>
+        <div class="label">${c.name}<small>${tagFor(c)} · ${c.free?'ฟรี':baht(c.now)}</small></div>${i===0?'<span class="meta">↵</span>':''}
+      </a>`).join('')}</div>
+    <div class="cmdk-group"><h5>คำสั่งด่วน</h5>
+      <a href="My Courses.html" class="cmdk-item"><div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg></div><div class="label">คอร์สของฉัน<small>ไปคลังคอร์สที่ซื้อแล้ว</small></div></a>
+      <a href="Dashboard.html" class="cmdk-item"><div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div><div class="label">ไปหน้า Dashboard<small>กลับไปหน้าหลัก</small></div></a>
+    </div>`;
+}
+
+// render all
+renderSubjects(); renderLevels(); renderSort(); renderGrid(); renderBundles(); renderCmdk();
+
+// ============== COMMAND PALETTE ==============
+const cmdk = document.getElementById('cmdk-backdrop');
+const cmdkInput = document.getElementById('cmdk-input');
+function openCmdk() { cmdk.classList.add('open'); setTimeout(() => cmdkInput.focus(), 60); }
+function closeCmdk() { cmdk.classList.remove('open'); }
+document.getElementById('open-cmdk').addEventListener('click', openCmdk);
+cmdk.addEventListener('click', (e) => { if (e.target === cmdk) closeCmdk(); });
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    cmdk.classList.contains('open') ? closeCmdk() : openCmdk();
+  } else if (e.key === 'Escape' && cmdk.classList.contains('open')) { closeCmdk(); }
+});
+cmdk.addEventListener('keydown', (e) => {
+  const items = Array.from(cmdk.querySelectorAll('.cmdk-item'));
+  let i = items.findIndex(x => x.classList.contains('active'));
+  if (e.key === 'ArrowDown') { e.preventDefault(); items[i]?.classList.remove('active'); items[(i+1)%items.length].classList.add('active'); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); items[i]?.classList.remove('active'); items[(i-1+items.length)%items.length].classList.add('active'); }
+});
+</script>
+</body>
+</html>

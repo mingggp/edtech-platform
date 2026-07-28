@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>แคลคูลัส · ขั้นเทพ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* ============== APP SHELL (same as Dashboard / Courses) ============== */
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word, .app.collapsed .sb-section .heading, .app.collapsed .sb-item span:not(.pill):not(.count), .app.collapsed .sb-item .count, .app.collapsed .sb-item .pill, .app.collapsed .sb-user .info, .app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.7); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+.search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
+.search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.search-trigger .kbd { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.search-trigger .label { display: inline; min-width: 140px; text-align: left; }
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+.top-av { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-1); cursor: pointer; }
+.top-av .av { width: 30px; height: 30px; border-radius: 50%; background: var(--grad-cool); font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.top-av .name { font-size: 13px; font-weight: 500; }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+/* ============== HERO BAND (full-width gradient bg behind hero area) ============== */
+.detail-shell {
+  position: relative;
+  isolation: isolate;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(360px, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 460px;
+  background: linear-gradient(135deg, oklch(0.30 0.20 295) 0%, oklch(0.38 0.22 320) 38%, oklch(0.45 0.22 5) 75%, oklch(0.50 0.20 30) 100%);
+  z-index: -1;
+  overflow: hidden;
+}
+.hero-bg::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(oklch(0.99 0.005 285 / 0.18) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(80% 60% at 70% 20%, #000, transparent);
+  opacity: 0.5;
+}
+.hero-bg::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 30%, var(--bg-0) 100%);
+}
+.hero-bg .glyph {
+  position: absolute;
+  right: -40px; top: -80px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 480px;
+  color: oklch(0.99 0.005 285 / 0.10);
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+  user-select: none;
+}
+
+/* ============== LEFT COL ============== */
+.left-col { padding-top: 36px; min-width: 0; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px;
+  color: oklch(0.99 0.005 285 / 0.7);
+  text-decoration: none;
+  margin-bottom: 16px;
+  transition: color .15s;
+}
+.back-link:hover { color: #fff; }
+
+.hero-text { margin-bottom: 48px; }
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: "JetBrains Mono";
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #fff;
+  background: oklch(0.99 0.005 285 / 0.18);
+  backdrop-filter: blur(20px);
+  border: 1px solid oklch(0.99 0.005 285 / 0.22);
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.hero-tag.solid {
+  background: linear-gradient(115deg, oklch(0.68 0.25 5), oklch(0.78 0.20 50));
+  border-color: transparent;
+  box-shadow: 0 6px 16px -4px oklch(0.66 0.23 295 / 0.5);
+}
+.hero-text h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(36px, 4.4vw, 60px);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: #fff;
+}
+.hero-text h1 .grad {
+  background: linear-gradient(115deg, oklch(0.96 0.10 50), oklch(0.94 0.12 80));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-text .tagline {
+  margin-top: 18px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: oklch(0.99 0.005 285 / 0.85);
+  max-width: 52ch;
+}
+.hero-text .meta-row {
+  display: flex; gap: 22px; flex-wrap: wrap; align-items: center;
+  margin-top: 22px;
+  color: #fff;
+  font-size: 13.5px;
+}
+.hero-text .meta-row .stars { color: oklch(0.96 0.18 80); }
+.hero-text .meta-row .stars b { color: #fff; font-weight: 600; }
+.hero-text .meta-row .stars span { opacity: 0.7; }
+.hero-text .meta-row .dot-sep { width: 4px; height: 4px; border-radius: 50%; background: oklch(0.99 0.005 285 / 0.4); }
+.hero-text .meta-row b { font-weight: 600; }
+
+.instr-chip {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 24px;
+  padding: 6px 14px 6px 6px;
+  background: oklch(0.99 0.005 285 / 0.14);
+  backdrop-filter: blur(20px);
+  border: 1px solid oklch(0.99 0.005 285 / 0.22);
+  border-radius: 99px;
+  text-decoration: none;
+  color: #fff;
+  transition: background .15s;
+}
+.instr-chip:hover { background: oklch(0.99 0.005 285 / 0.22); }
+.instr-chip .av {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, oklch(0.55 0.22 295), oklch(0.68 0.25 5));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+  border: 2px solid #fff;
+}
+.instr-chip .label { font-size: 13px; line-height: 1.2; }
+.instr-chip .label b { font-weight: 600; }
+.instr-chip .label span { display: block; font-size: 11px; opacity: 0.75; letter-spacing: 0.04em; font-family: "JetBrains Mono"; }
+
+/* ============== BODY SECTIONS ============== */
+.body { display: flex; flex-direction: column; gap: 48px; }
+
+.section h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: var(--fg-0);
+  display: flex; align-items: center; gap: 12px;
+}
+.section h2 .num {
+  font-family: "JetBrains Mono";
+  font-size: 11.5px;
+  color: var(--fg-3);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 99px;
+}
+.section .sub-h {
+  font-size: 13.5px;
+  color: var(--fg-2);
+  margin-top: 6px;
+  line-height: 1.55;
+}
+
+.about-text { display: flex; flex-direction: column; gap: 18px; margin-top: 22px; }
+.about-text p { font-size: 16px; color: var(--fg-1); line-height: 1.7; max-width: 64ch; }
+.about-text p b { color: var(--fg-0); font-weight: 600; }
+
+/* What you'll learn */
+.learn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 22px;
+}
+.learn-item {
+  display: flex; gap: 14px; align-items: start;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--bg-1);
+  transition: border-color .2s, background .2s;
+}
+.learn-item:hover { border-color: var(--glass-line-strong); }
+.learn-item .check {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, oklch(0.86 0.18 80), oklch(0.78 0.20 70));
+  display: flex; align-items: center; justify-content: center;
+  color: oklch(0.18 0.06 50);
+  box-shadow: 0 4px 12px -4px oklch(0.86 0.18 80 / 0.5);
+}
+.learn-item .check svg { width: 16px; height: 16px; stroke-width: 3; }
+.learn-item .text { font-size: 14.5px; color: var(--fg-1); line-height: 1.5; }
+.learn-item .text b { color: var(--fg-0); font-weight: 600; }
+
+/* Chapters accordion */
+.chapters { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.chapter {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg-1);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.chapter[open] { border-color: var(--glass-line-strong); }
+.chapter summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+}
+.chapter summary::-webkit-details-marker { display: none; }
+.chapter summary::marker { display: none; }
+.chapter .num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  background: var(--bg-3);
+  color: var(--fg-1);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.chapter[open] .num {
+  background: var(--grad-signature);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px oklch(0.66 0.23 295 / 0.5);
+}
+.chapter .title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--fg-0);
+}
+.chapter .meta {
+  font-family: "JetBrains Mono";
+  font-size: 11.5px;
+  color: var(--fg-3);
+}
+.chapter .chev {
+  color: var(--fg-2);
+  transition: transform .26s cubic-bezier(.2,.8,.2,1);
+}
+.chapter[open] .chev { transform: rotate(180deg); color: var(--fg-0); }
+
+.chapter .lessons {
+  padding: 4px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line-soft);
+  margin-top: 4px;
+}
+.lesson {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 14px;
+}
+.lesson:last-child { border-bottom: 0; }
+.lesson .icon {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.lesson .icon.preview { background: var(--bg-3); color: var(--fg-1); }
+.lesson .icon.locked { background: var(--bg-3); color: var(--fg-3); }
+.lesson .icon.preview svg, .lesson .icon.locked svg { width: 12px; height: 12px; }
+.lesson .name { color: var(--fg-1); }
+.lesson .name.preview-yes { color: var(--fg-0); }
+.lesson .duration { font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-3); }
+.lesson .preview-tag {
+  font-family: "JetBrains Mono";
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: oklch(0.78 0.18 150 / 0.14);
+  color: var(--success);
+  border: 1px solid oklch(0.78 0.18 150 / 0.3);
+}
+
+/* Instructor */
+.instr-block {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  margin-top: 22px;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: var(--bg-1);
+  align-items: start;
+}
+.instr-photo {
+  aspect-ratio: 1/1;
+  border-radius: 18px;
+  background: linear-gradient(160deg, oklch(0.40 0.18 295), oklch(0.50 0.20 320), oklch(0.55 0.22 5));
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.instr-photo::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(45deg, oklch(0.99 0.005 285 / 0.04), oklch(0.99 0.005 285 / 0.04) 2px, transparent 2px, transparent 14px);
+}
+.instr-photo .label {
+  position: absolute; top: 12px; left: 12px;
+  font-family: "JetBrains Mono";
+  font-size: 9.5px;
+  color: oklch(0.99 0.005 285 / 0.5);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.instr-photo .signature {
+  position: absolute;
+  inset: auto 12px 12px auto;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: #fff;
+  background: oklch(0 0 0 / 0.35);
+  backdrop-filter: blur(10px);
+  padding: 8px 12px;
+  border-radius: 12px;
+  letter-spacing: -0.015em;
+}
+.instr-info h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: var(--fg-0);
+}
+.instr-info h3 small {
+  display: block;
+  font-family: "IBM Plex Sans Thai";
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--brand-cyan);
+  margin-top: 4px;
+  letter-spacing: 0;
+}
+.instr-info p { font-size: 14.5px; color: var(--fg-1); line-height: 1.65; margin-top: 14px; max-width: 60ch; }
+.instr-info p b { color: var(--fg-0); font-weight: 600; }
+.instr-creds { display: flex; gap: 18px; margin-top: 16px; flex-wrap: wrap; font-size: 13px; color: var(--fg-2); }
+.instr-creds .item { display: flex; align-items: center; gap: 6px; }
+.instr-creds .item b { color: var(--fg-0); font-weight: 600; font-family: var(--font-display); letter-spacing: -0.005em; }
+.instr-socials { display: flex; gap: 8px; margin-top: 20px; }
+.instr-socials a {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--fg-1);
+  text-decoration: none;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.instr-socials a:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-3); }
+.instr-socials svg { width: 16px; height: 16px; }
+
+/* FAQ */
+.faq-list { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.faq {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg-1);
+  overflow: hidden;
+}
+.faq[open] { border-color: var(--glass-line-strong); }
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--fg-0);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::marker { display: none; }
+.faq summary .plus { color: var(--fg-2); transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.faq[open] summary .plus { transform: rotate(45deg); color: var(--brand-magenta); }
+.faq .answer {
+  padding: 0 22px 20px;
+  font-size: 14.5px;
+  color: var(--fg-1);
+  line-height: 1.65;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 16px;
+  max-width: 64ch;
+}
+.faq .answer b { color: var(--fg-0); font-weight: 600; }
+
+/* ============== RIGHT COL: STICKY ENROLL ============== */
+.right-col { padding-top: 36px; }
+.enroll {
+  position: sticky;
+  top: 24px;
+  border-radius: 22px;
+  background: var(--bg-1);
+  border: 1px solid var(--glass-line-strong);
+  overflow: hidden;
+  box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.5);
+}
+.enroll-cover {
+  aspect-ratio: 16/10;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, oklch(0.42 0.20 295), oklch(0.52 0.22 320), oklch(0.58 0.24 5));
+}
+.enroll-cover::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(oklch(0.99 0.005 285 / 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent);
+  opacity: 0.5;
+}
+.enroll-cover .glyph {
+  position: absolute; right: -10px; top: -22px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 180px;
+  color: oklch(0.99 0.005 285 / 0.16);
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+}
+.enroll-cover::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, oklch(0 0 0 / 0.5));
+}
+.enroll-cover .play {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1;
+}
+.enroll-cover .play .btn-play {
+  appearance: none; border: 0;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: oklch(0.99 0.005 285 / 0.95);
+  color: oklch(0.30 0.18 295);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -4px oklch(0 0 0 / 0.5);
+  transition: transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.enroll-cover .play .btn-play:hover { transform: scale(1.06); }
+.enroll-cover .play svg { width: 22px; height: 22px; margin-left: 3px; }
+.enroll-cover .preview-tag {
+  position: absolute; top: 12px; left: 12px;
+  background: oklch(0 0 0 / 0.45);
+  backdrop-filter: blur(20px);
+  color: #fff;
+  font-family: "JetBrains Mono";
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.enroll-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+.enroll-price { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
+.enroll-price .num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 36px;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: var(--fg-0);
+}
+.enroll-price .strike { color: var(--fg-3); font-weight: 500; font-size: 20px; text-decoration: line-through; margin-right: 8px; }
+.enroll-price .discount {
+  font-family: "JetBrains Mono";
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: oklch(0.86 0.18 80 / 0.14);
+  color: oklch(0.78 0.18 80);
+  border: 1px solid oklch(0.86 0.18 80 / 0.3);
+  padding: 4px 9px;
+  border-radius: 7px;
+}
+.enroll-meta {
+  font-size: 12.5px;
+  color: var(--fg-2);
+}
+.enroll-meta b { color: var(--brand-magenta); font-weight: 600; }
+
+.enroll-cta { display: flex; flex-direction: column; gap: 8px; }
+.enroll-cta .btn { width: 100%; }
+
+.enroll-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+}
+.enroll-stats .item {
+  display: flex; flex-direction: column; gap: 4px;
+  align-items: start;
+}
+.enroll-stats .item .ico {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--fg-2);
+  margin-bottom: 4px;
+}
+.enroll-stats .item .ico svg { width: 14px; height: 14px; }
+.enroll-stats .item .val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  color: var(--fg-0);
+}
+.enroll-stats .item .lab {
+  font-size: 11.5px;
+  color: var(--fg-2);
+}
+
+.enroll-guarantees {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+}
+.enroll-guarantees .item {
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12.5px;
+  color: var(--fg-1);
+}
+.enroll-guarantees .item svg { color: var(--success); flex-shrink: 0; }
+.enroll-guarantees .item b { color: var(--fg-0); font-weight: 600; }
+
+/* ============== MOBILE STICKY BOTTOM BAR ============== */
+.mobile-bottom {
+  display: none;
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 14px 20px;
+  background: oklch(from var(--bg-0) l c h / 0.85);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-top: 1px solid var(--line);
+  z-index: 50;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+.mobile-bottom .price-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.015em;
+  color: var(--fg-0);
+  line-height: 1.2;
+}
+.mobile-bottom .price-text small {
+  display: block;
+  font-family: "JetBrains Mono";
+  font-size: 10.5px;
+  font-weight: 500;
+  text-decoration: line-through;
+  color: var(--fg-3);
+  margin-top: 2px;
+}
+
+.dash-foot { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; gap: 16px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.04em; flex-wrap: wrap; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1100px) {
+  .detail-shell { grid-template-columns: 1fr; gap: 32px; }
+  .right-col { padding-top: 0; }
+  .enroll { position: static; }
+  .hero-bg { height: 320px; }
+  .instr-block { grid-template-columns: 1fr; }
+  .instr-photo { max-width: 280px; }
+}
+@media (max-width: 980px) {
+  .app, .app.collapsed { grid-template-columns: 72px 1fr; }
+  .sb-logo .word, .sb-section .heading, .sb-item span:not(.pill):not(.count), .sb-item .count, .sb-item .pill, .sb-user .info, .sb-user .chev { display: none; }
+  .sb-item { justify-content: center; }
+  .sb-toggle { display: none; }
+  .search-trigger .label { display: none; }
+  .search-trigger { padding: 0; width: 38px; justify-content: center; }
+  .search-trigger .kbd { display: none; }
+}
+@media (max-width: 720px) {
+  .learn-grid { grid-template-columns: 1fr; }
+  .detail-shell { padding: 0 16px 100px; }
+  .mobile-bottom { display: flex; }
+  .enroll { display: none; }
+}
+
+/* ============== MARKETING CHROME (nav + footer) ============== */
+.container-wide { max-width: 1360px; margin: 0 auto; padding: 0 32px; }
+.nav-wrap { position: sticky; top: 0; z-index: 100; padding: 14px 0; }
+.nav-wrap::before { content:""; position:absolute; inset:0; background: oklch(from var(--bg-0) l c h / 0.72); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid var(--line-soft); opacity:0; transition: opacity .25s; pointer-events:none; }
+.nav-wrap.scrolled::before { opacity:1; }
+.nav-wrap nav { position: relative; max-width: 1360px; margin: 0 auto; padding: 0 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; color: var(--fg-0); }
+.nav-logo .mark { width:36px; height:36px; border-radius:11px; background: var(--grad-signature); display:flex; align-items:center; justify-content:center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.nav-logo .mark svg { width:75%; height:75%; }
+.nav-logo .word { font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:-0.025em; }
+.nav-links { display:flex; gap:28px; list-style:none; align-items:center; margin:0; padding:0; }
+.nav-links a { font-size:14px; color: var(--fg-1); text-decoration:none; font-weight:500; transition:color .2s; position:relative; }
+.nav-links a:not(.nav-soon)::before {
+  content: ""; position: absolute; left: 0; right: 100%; bottom: -8px; height: 2px;
+  border-radius: 2px; background: var(--grad-signature); transition: right .25s cubic-bezier(.2,.8,.2,1);
+}
+.nav-links a:not(.nav-soon):hover::before { right: 0; }
+.nav-links a:hover { color: var(--fg-0); }
+.nav-links a.nav-soon, .nav-links a.nav-soon:hover { color: var(--fg-3); opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+.foot-col a.nav-soon, .foot-col a.nav-soon:hover { color: var(--fg-3); opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+.nav-links a.current { color: var(--fg-0); }
+.nav-links a.current::after { content:""; position:absolute; left:0; right:0; bottom:-8px; height:2px; border-radius:2px; background: var(--grad-signature); }
+.nav-actions { display:flex; gap:12px; align-items:center; }
+footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-top: 20px; }
+.foot-grid { display:grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap:48px; margin-bottom:56px; }
+.foot-brand .word { font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:-0.025em; display:flex; align-items:center; gap:12px; }
+.foot-brand p { margin-top:18px; font-size:14px; color: var(--fg-2); line-height:1.6; max-width:40ch; }
+.foot-brand .socials { margin-top:20px; display:flex; gap:8px; }
+.foot-brand .socials a { width:38px; height:38px; border-radius:10px; border:1px solid var(--line); background: var(--bg-1); display:flex; align-items:center; justify-content:center; color: var(--fg-1); text-decoration:none; transition: color .2s, border-color .2s, background .2s; }
+.foot-brand .socials a:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.foot-brand .socials svg { width:16px; height:16px; }
+.foot-col h5 { font-family:"JetBrains Mono"; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color: var(--fg-2); margin-bottom:18px; font-weight:600; }
+.foot-col ul { list-style:none; display:flex; flex-direction:column; gap:12px; margin:0; padding:0; }
+.foot-col a { color: var(--fg-1); text-decoration:none; font-size:14.5px; transition:color .2s; }
+.foot-col a:hover { color: var(--fg-0); }
+.foot-bottom { padding-top:32px; border-top:1px solid var(--line-soft); display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; font-family:"JetBrains Mono"; font-size:11.5px; color: var(--fg-3); letter-spacing:0.02em; }
+@media (max-width: 900px){ .foot-grid { grid-template-columns: 1fr 1fr; gap:40px; } .nav-links { display:none; } }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html" class="current">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Login Signup.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+      <div class="detail-shell">
+
+        <!-- Hero background — extends behind both columns at the top -->
+        <div class="hero-bg" aria-hidden="true"><span class="glyph" id="cd-glyph">∫</span></div>
+
+        <!-- LEFT: hero text + body -->
+        <div class="left-col">
+          <a href="Courses.html" class="back-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+            กลับไปยังคอร์สทั้งหมด
+          </a>
+
+          <div class="hero-text">
+            <div class="hero-tags">
+              <span class="hero-tag solid" id="cd-badge">BESTSELLER</span>
+              <span class="hero-tag" id="cd-subject">คณิต · A-LEVEL คณิต 1</span>
+              <span class="hero-tag">TCAS 70</span>
+            </div>
+            <h1 id="cd-title">แคลคูลัส<br/>ฉบับเข้าใจ <span class="grad">ภายใน 30 วัน</span></h1>
+            <p class="tagline" id="cd-tagline">เริ่มจากศูนย์ — ไล่ขั้นจาก ลิมิต → อนุพันธ์ → ปริพันธ์ → โจทย์รวมแนวข้อสอบ. คอร์สที่นักเรียนพี่หมิงสอบติด <b style="color:#fff;font-weight:600">วิศวะ จุฬาฯ</b> มากที่สุดในปีที่ผ่านมา.</p>
+
+            <div class="meta-row">
+              <span class="stars">★★★★★ <b id="cd-rating">4.9</b> <span id="cd-reviews">(412 รีวิว)</span></span>
+              <span class="dot-sep"></span>
+              <span><b id="cd-students">1,820</b> นักเรียน</span>
+              <span class="dot-sep"></span>
+              <span id="cd-level">ม.6 · เตรียมสอบ</span>
+              <span class="dot-sep"></span>
+              <span>อัปเดต <b>พ.ค. 2026</b></span>
+            </div>
+
+            <a href="#instructor" class="instr-chip">
+              <div class="av">หม</div>
+              <div class="label">
+                <b>โดย พี่หมิง</b>
+                <span>VISHWA CHULA · 7 YEARS TUTORING</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- BODY SECTIONS -->
+          <div class="body">
+
+            <!-- ABOUT -->
+            <section class="section" id="about">
+              <h2>เกี่ยวกับคอร์ส <span class="num">01</span></h2>
+              <div class="about-text">
+                <p>
+                  คอร์สนี้ออกแบบสำหรับน้องที่ <b>กลัวแคลคูลัส</b> มาตั้งแต่ ม.5. เราจะเริ่มจากศูนย์ — ไม่มีคำว่า "ต้องรู้มาก่อน".
+                  พี่หมิงสอนแบบ <b>เริ่มจากความรู้สึก</b> ก่อนที่จะมาเขียนสูตร เพราะถ้าน้องไม่เข้าใจว่าลิมิตคือ
+                  อะไร อนุพันธ์ใช้ทำไม — สูตรที่ท่องมาทั้งหมดจะไม่อยู่ในหัวเกิน 2 อาทิตย์.
+                </p>
+                <p>
+                  ภายใน 30 วัน เราจะพาน้องไปจนถึงจุดที่ <b>ทำข้อสอบ A-Level คณิต 1 ปีล่าสุดได้ 80+ คะแนน</b>.
+                  ทุกบทมีโจทย์จริงจาก TCAS ปีย้อนหลัง 5 ปี + เฉลยรายข้อที่พี่หมิงเฉลยเอง (ไม่ใช่ AI).
+                </p>
+                <p>
+                  สิ่งที่ทำให้คอร์สนี้ต่าง: เราไม่ได้สอน "ให้รู้" — เราสอน "ให้ทำได้". ทุกๆ 3 บทมี <b>checkpoint quiz</b>
+                  + พี่หมิงนัด live Q&amp;A สัปดาห์ละครั้ง ทุกวันพุธ 20:00 ใน Discord ของคอร์ส.
+                </p>
+              </div>
+            </section>
+
+            <!-- WHAT YOU'LL LEARN -->
+            <section class="section" id="learn">
+              <h2>สิ่งที่จะได้ <span class="num">02</span></h2>
+              <p class="sub-h">6 ทักษะที่น้องจะมีหลังจบคอร์ส — ทดสอบได้จริง ไม่ใช่แค่ "เห็น" ในวิดีโอ</p>
+              <div class="learn-grid">
+                <div class="learn-item">
+                  <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="text">เข้าใจ <b>ลิมิตของฟังก์ชัน</b> โดยไม่ต้องท่องสูตร — เห็นภาพในหัวว่ามันคืออะไร</div>
+                </div>
+                <div class="learn-item">
+                  <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="text">คำนวณ <b>อนุพันธ์</b> ทุกประเภทได้คล่อง — chain rule, product rule, quotient rule</div>
+                </div>
+                <div class="learn-item">
+                  <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="text">ทำ <b>ปริพันธ์</b> ทั้งเทคนิคพื้นฐานและการประยุกต์หาพื้นที่ใต้กราฟ</div>
+                </div>
+                <div class="learn-item">
+                  <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="text">แก้โจทย์ <b>A-Level คณิต 1 ปีล่าสุด</b> ได้ — มีโจทย์จริงให้ฝึก 5 ปีย้อนหลัง</div>
+                </div>
+                <div class="learn-item">
+                  <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="text">เทคนิคทำโจทย์ใน <b>90 วินาที</b> สำหรับข้อสอบเวลาจำกัด</div>
+                </div>
+                <div class="learn-item">
+                  <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="text">ระบบติว <b>1-on-1 ผ่าน chat</b> กับพี่หมิง — ถามได้ตลอด 12 ชั่วโมงต่อข้อ</div>
+                </div>
+              </div>
+            </section>
+
+            <!-- CHAPTERS -->
+            <section class="section" id="chapters">
+              <h2>เนื้อหา <span class="num">03</span></h2>
+              <p class="sub-h" id="cd-chapters-line">5 บท · 24 บทเรียน · 18 ชั่วโมง · 3 บทเรียนแรกดูฟรี</p>
+
+              <div class="chapters">
+
+                <details class="chapter" open>
+                  <summary>
+                    <span class="num">01</span>
+                    <span class="title">ลิมิตและความต่อเนื่อง</span>
+                    <span class="meta">5 บทเรียน · 3ชม. 24น.</span>
+                    <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+                  </summary>
+                  <div class="lessons">
+                    <div class="lesson">
+                      <div class="icon preview"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div>
+                      <span class="name preview-yes">1.1 ลิมิตคืออะไร — เริ่มจากศูนย์</span>
+                      <span class="preview-tag">ฟรี</span>
+                      <span class="duration">42 น.</span>
+                    </div>
+                    <div class="lesson">
+                      <div class="icon preview"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div>
+                      <span class="name preview-yes">1.2 ลิมิตด้านซ้ายและขวา</span>
+                      <span class="preview-tag">ฟรี</span>
+                      <span class="duration">38 น.</span>
+                    </div>
+                    <div class="lesson">
+                      <div class="icon preview"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div>
+                      <span class="name preview-yes">1.3 ลิมิตของฟังก์ชันที่ไม่ต่อเนื่อง</span>
+                      <span class="preview-tag">ฟรี</span>
+                      <span class="duration">44 น.</span>
+                    </div>
+                    <div class="lesson">
+                      <div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                      <span class="name">1.4 ความต่อเนื่อง · เกณฑ์ 3 ข้อ</span>
+                      <span></span>
+                      <span class="duration">36 น.</span>
+                    </div>
+                    <div class="lesson">
+                      <div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                      <span class="name">1.5 Quiz · ตรวจสอบความเข้าใจ</span>
+                      <span></span>
+                      <span class="duration">44 น.</span>
+                    </div>
+                  </div>
+                </details>
+
+                <details class="chapter">
+                  <summary>
+                    <span class="num">02</span>
+                    <span class="title">อนุพันธ์เบื้องต้น</span>
+                    <span class="meta">6 บทเรียน · 4ชม. 12น.</span>
+                    <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+                  </summary>
+                  <div class="lessons">
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">2.1 อนุพันธ์คือความชัน</span><span></span><span class="duration">48 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">2.2 สูตรพื้นฐาน · ทำไมเป็นแบบนั้น</span><span></span><span class="duration">42 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">2.3 อนุพันธ์ของพหุนาม</span><span></span><span class="duration">38 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">2.4 Product rule · เข้าใจที่มา</span><span></span><span class="duration">44 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">2.5 Quotient rule · เคล็ดลับจำง่าย</span><span></span><span class="duration">36 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">2.6 โจทย์รวม + Quiz</span><span></span><span class="duration">44 น.</span></div>
+                  </div>
+                </details>
+
+                <details class="chapter">
+                  <summary>
+                    <span class="num">03</span>
+                    <span class="title">เทคนิคหาอนุพันธ์ขั้นสูง</span>
+                    <span class="meta">5 บทเรียน · 3ชม. 48น.</span>
+                    <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+                  </summary>
+                  <div class="lessons">
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">3.1 Chain rule · กฎลูกโซ่</span><span></span><span class="duration">52 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">3.2 อนุพันธ์ฟังก์ชันตรีโกณมิติ</span><span></span><span class="duration">46 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">3.3 อนุพันธ์ของ ln และ e^x</span><span></span><span class="duration">42 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">3.4 Implicit differentiation</span><span></span><span class="duration">44 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">3.5 โจทย์ TCAS 5 ปีย้อนหลัง</span><span></span><span class="duration">44 น.</span></div>
+                  </div>
+                </details>
+
+                <details class="chapter">
+                  <summary>
+                    <span class="num">04</span>
+                    <span class="title">ปริพันธ์</span>
+                    <span class="meta">5 บทเรียน · 3ชม. 36น.</span>
+                    <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+                  </summary>
+                  <div class="lessons">
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">4.1 ปริพันธ์คืออะไร — เริ่มจากพื้นที่</span><span></span><span class="duration">48 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">4.2 สูตรพื้นฐาน + integration by substitution</span><span></span><span class="duration">44 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">4.3 Integration by parts</span><span></span><span class="duration">42 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">4.4 หาพื้นที่ใต้กราฟ + ปริมาตร</span><span></span><span class="duration">38 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">4.5 โจทย์ปริพันธ์จาก A-Level</span><span></span><span class="duration">44 น.</span></div>
+                  </div>
+                </details>
+
+                <details class="chapter">
+                  <summary>
+                    <span class="num">05</span>
+                    <span class="title">การประยุกต์และข้อสอบรวม</span>
+                    <span class="meta">3 บทเรียน · 2ชม. 12น.</span>
+                    <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+                  </summary>
+                  <div class="lessons">
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">5.1 ตะลุยข้อสอบ A-Level ปี 2024</span><span></span><span class="duration">52 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">5.2 เทคนิคทำโจทย์ใน 90 วินาที</span><span></span><span class="duration">38 น.</span></div>
+                    <div class="lesson"><div class="icon locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="name">5.3 Final Exam · 24 ข้อ</span><span></span><span class="duration">42 น.</span></div>
+                  </div>
+                </details>
+
+              </div>
+            </section>
+
+            <!-- INSTRUCTOR -->
+            <section class="section" id="instructor">
+              <h2>ผู้สอน <span class="num">04</span></h2>
+              <div class="instr-block">
+                <div class="instr-photo">
+                  <div class="label">[ INSTRUCTOR PHOTO ]</div>
+                  <div class="signature">หม</div>
+                </div>
+                <div class="instr-info">
+                  <h3>พี่หมิง<small>FOUNDER &amp; SOLO TUTOR · MINGSMILEYFACE</small></h3>
+                  <p>
+                    เริ่มจากติวเพื่อนตอน ม.6 จนวันนี้ปีที่ 7 ของการติวคณิต ฟิสิกส์ เคมี ให้น้อง ม.ปลาย.
+                    <b>ทุก feedback ทุก dashboard ทุกข้อสอบ</b> — ฉันดูแลคนเดียวทั้งหมด ไม่มี TA ไม่มี AI.
+                  </p>
+                  <p>
+                    คอร์สนี้คือคอร์สที่ฉันทำขึ้นจากการสอนเด็กจริงมา 4 รุ่น และปรับ feedback ทุกปี.
+                    ถ้าน้องติดข้อไหน ทักได้เลย ฉันตอบเองภายใน 12 ชั่วโมง.
+                  </p>
+                  <div class="instr-creds">
+                    <div class="item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="m6 12 0 5c3 3 9 3 12 0v-5"/></svg> <b>วิศวะ จุฬาฯ</b> เกียรตินิยม</div>
+                    <div class="item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 19 22l-7-4-7 4 3.5-8.5"/></svg> <b>เหรียญทอง สอวน.</b> ฟิสิกส์</div>
+                    <div class="item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg> <b>2,400+</b> นักเรียนสอบติด</div>
+                  </div>
+                  <div class="instr-socials">
+                    <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2z"/></svg></a>
+                    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+                    <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+                    <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- FAQ -->
+            <section class="section" id="faq">
+              <h2>คำถามที่พบบ่อย <span class="num">05</span></h2>
+              <p class="sub-h">ถ้าคำตอบไม่มีในนี้ — ทักไลน์มาถามได้ตลอด</p>
+
+              <div class="faq-list">
+                <details class="faq" open>
+                  <summary>
+                    คอร์สนี้เหมาะกับใคร?
+                    <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  </summary>
+                  <div class="answer">
+                    น้อง <b>ม.6 ที่กำลังเตรียมสอบ TCAS / A-Level คณิต 1</b> โดยเฉพาะถ้ารู้สึกว่าแคลคูลัสยาก. คอร์สนี้เริ่มจากศูนย์ ไม่ต้องมีพื้นฐานก่อน — แต่ถ้าน้องเป็น ม.5 ที่อยากนำหน้าก็ใช้ได้.
+                  </div>
+                </details>
+                <details class="faq">
+                  <summary>
+                    เรียนผ่าน device อะไรได้บ้าง?
+                    <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  </summary>
+                  <div class="answer">
+                    เว็บ Mingsmileyface ใช้ได้บนทุก device — Desktop · iPad · มือถือ. แนะนำให้เรียนบน <b>Desktop หรือ iPad landscape</b> เพื่อให้เห็นกระดานเฉลยชัด. มีระบบ <b>auto-resume</b> เปิดเครื่องไหนก็เรียนต่อจากจุดเดิม.
+                  </div>
+                </details>
+                <details class="faq">
+                  <summary>
+                    ถ้าซื้อแล้วไม่ชอบ ได้คืนเงินไหม?
+                    <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  </summary>
+                  <div class="answer">
+                    <b>คืนเงิน 100% ภายใน 14 วันแรก</b> ถ้ารู้สึกว่าไม่ใช่ทาง. ทักแอดมินไลน์มาบอกเหตุผลคร่าวๆ (เพื่อให้เราพัฒนาคอร์สต่อ) — ไม่มีคำถามจุกจิก.
+                  </div>
+                </details>
+                <details class="faq">
+                  <summary>
+                    เข้าคอร์สแล้วได้อะไรเพิ่ม นอกจากวิดีโอ?
+                    <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  </summary>
+                  <div class="answer">
+                    นอกจากวิดีโอ 18 ชม. + 24 บทเรียน น้องจะได้: <b>Discord ส่วนตัวของคอร์ส</b> (Q&amp;A กับพี่หมิง + เพื่อนรุ่นเดียวกัน), <b>PDF สรุปทุกบท</b> (พิมพ์ได้), <b>โจทย์ A-Level 5 ปีย้อนหลัง</b> + เฉลย, และ <b>Live ติวก่อนสอบ 2 สัปดาห์</b> สำหรับ TCAS 70.
+                  </div>
+                </details>
+                <details class="faq">
+                  <summary>
+                    คอร์สหมดอายุไหม?
+                    <span class="plus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  </summary>
+                  <div class="answer">
+                    ไม่หมดอายุ — ซื้อครั้งเดียว <b>เข้าได้ตลอดชีพ</b>. รวมถึง updates ใหม่ๆ ที่พี่หมิงเพิ่มเข้าไปด้วย (ปกติเพิ่ม 2-3 ครั้งต่อปีตามแนวข้อสอบล่าสุด).
+                  </div>
+                </details>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: STICKY ENROLL CARD -->
+        <aside class="right-col">
+          <div class="enroll">
+            <div class="enroll-cover">
+              <span class="glyph">∫</span>
+              <span class="preview-tag">ตัวอย่าง 90 วินาที</span>
+              <div class="play">
+                <button class="btn-play" aria-label="เล่นตัวอย่าง">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="enroll-body">
+              <div class="enroll-price">
+                <div class="num" id="cd-price"><span class="strike">฿3,990</span>฿2,490</div>
+                <span class="discount" id="cd-discount">SAVE 38%</span>
+              </div>
+              <div class="enroll-meta"><b>เหลือ 5 วัน</b> · ราคาขึ้น 25% หลังจากนั้น</div>
+
+              <div class="enroll-cta">
+                <a href="#" class="btn btn-primary btn-lg">
+                  ลงทะเบียนเรียน
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+                <a href="#" class="btn btn-ghost">เพิ่มในรายการ</a>
+              </div>
+
+              <div class="enroll-stats">
+                <div class="item">
+                  <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+                  <div class="val" id="cd-stat-hours">18 ชม.</div>
+                  <div class="lab">เนื้อหา</div>
+                </div>
+                <div class="item">
+                  <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+                  <div class="val" id="cd-stat-lessons">24 บท</div>
+                  <div class="lab">5 chapter</div>
+                </div>
+                <div class="item">
+                  <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div>
+                  <div class="val" id="cd-stat-level">ม.6</div>
+                  <div class="lab">เตรียมสอบ</div>
+                </div>
+              </div>
+
+              <div class="enroll-guarantees">
+                <div class="item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span><b>เข้าได้ตลอดชีพ</b> · รวม updates ในอนาคต</span>
+                </div>
+                <div class="item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>คืนเงิน <b>100% ภายใน 14 วัน</b></span>
+                </div>
+                <div class="item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Q&amp;A กับพี่หมิงผ่าน <b>Discord</b></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+
+    </main>
+
+    <footer data-screen-label="Footer">
+      <div class="container-wide">
+        <div class="foot-grid">
+          <div class="foot-brand">
+            <div class="word">
+              <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+                  <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+                  <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+                  <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+                </svg>
+              </div>
+              mingsmileyface
+            </div>
+            <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+            <div class="socials">
+              <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+              <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+              <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+              <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+            </div>
+          </div>
+          <div class="foot-col">
+            <h5>คอร์ส</h5>
+            <ul>
+              <li><a href="Courses.html">TGAT2</a></li>
+              <li><a href="Courses.html">TPAT3</a></li>
+              <li><a href="Courses.html">คณิต</a></li>
+              <li><a href="Courses.html">ฟิสิกส์</a></li>
+              <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h5>เกี่ยวกับ</h5>
+            <ul>
+              <li><a href="About.html">ติวเตอร์</a></li>
+              <li><a href="Results.html">ผลงานนักเรียน</a></li>
+              <li><a href="Testimonials.html">รีวิว</a></li>
+              <li><a href="Referral.html">ชวนเพื่อน</a></li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h5>ช่วยเหลือ</h5>
+            <ul>
+              <li><a href="FAQ.html">FAQ</a></li>
+              <li><a href="Contact.html">ติดต่อ</a></li>
+              <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+              <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+          <div>Made in Bangkok · v0.1</div>
+        </div>
+      </div>
+    </footer>
+
+<!-- MOBILE STICKY BOTTOM BAR -->
+<div class="mobile-bottom">
+  <div class="price-text" id="cd-mobile-price">
+    ฿2,490<small>฿3,990</small>
+  </div>
+  <a href="#" class="btn btn-primary">
+    ลงทะเบียน
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</div>
+
+<script>
+// ===== Course data binding (from ?c=<id>) =====================================
+// Keeps the rich detail layout; swaps the identifying fields per course.
+const COURSE_DB = {
+  'tgat2-logic':   { subj:'tgat2', glyph:'∑', subject:'TGAT2 · การคิดอย่างมีเหตุผล', badge:'แนะนำ', title:'TGAT2<br/>การคิดอย่าง<span class="grad">มีเหตุผล</span>', tagline:'เจาะ TGAT2 ส่วนการคิดอย่างมีตรรกะและตัวเลข — จับแพตเทิร์นข้อสอบจริง ทำทันเวลา ทุกพาร์ต.', rating:'4.9', reviews:'528 รีวิว', students:'1,580', level:'เตรียมสอบ · TCAS', lessonsLong:'20 บทเรียน', hours:'16 ชม.', lessons:'20 บท', statLevel:'เตรียมสอบ', priceNow:1990, priceOld:2890 },
+  'tpat3-latest':  { subj:'tpat3', glyph:'∂', subject:'TPAT3 · ความถนัดวิทย์', badge:'BESTSELLER', title:'ตะลุย TPAT3<br/><span class="grad">ปีล่าสุด</span>', tagline:'รวมแนวข้อสอบ TPAT3 ปีล่าสุดทุกพาร์ต — ฟิสิกส์ เคมีพื้นฐานการคำนวณ ตรรกะ และมิติสัมพันธ์ พร้อมเฉลยละเอียด.', rating:'4.9', reviews:'722 รีวิว', students:'2,180', level:'เตรียมสอบ · TCAS', lessonsLong:'20 บทเรียน', hours:'22 ชม.', lessons:'20 บท', statLevel:'เตรียมสอบ', priceNow:2290, priceOld:3490 },
+  'tpat3-logic':   { subj:'tpat3', glyph:'⌬', subject:'TPAT3 · ตรรกะ', badge:'แนะนำ', title:'TPAT3<br/>ตรรกะ<span class="grad">วิศวกร</span>', tagline:'ฝึกการคิดเชิงตรรกะและมิติสัมพันธ์แบบที่ TPAT3 ชอบออก — เห็นโจทย์ปุ๊บรู้วิธีคิดปั๊บ.', rating:'4.9', reviews:'388 รีวิว', students:'1,420', level:'เตรียมสอบ · TCAS', lessonsLong:'14 บทเรียน', hours:'12 ชม.', lessons:'14 บท', statLevel:'เตรียมสอบ', priceNow:1890 },
+  'tpat3-mock':    { subj:'tpat3', glyph:'⊕', subject:'TPAT3 · MOCK', badge:'NEW', title:'ข้อสอบจำลอง<br/>TPAT3 · <span class="grad">5 ชุด</span>', tagline:'ซ้อมจริงด้วยชุดข้อสอบจำลอง 5 ชุด จับเวลาเหมือนสนามจริง พร้อมเฉลยรายข้อและวิเคราะห์จุดอ่อน.', rating:'4.8', reviews:'212 รีวิว', students:'684', level:'เตรียมสอบ · TCAS', lessonsLong:'5 ชุดข้อสอบ', hours:'16 ชม.', lessons:'5 ชุด', statLevel:'เตรียมสอบ', priceNow:1490 },
+  'amath-calculus':{ subj:'amath', glyph:'∫', subject:'คณิต · A-LEVEL', badge:'BESTSELLER', title:'แคลคูลัส<br/>ฉบับเข้าใจ <span class="grad">ภายใน 30 วัน</span>', tagline:'เริ่มจากศูนย์ — ไล่ขั้นจาก ลิมิต → อนุพันธ์ → ปริพันธ์ → โจทย์รวมแนวข้อสอบ. คอร์สที่นักเรียนพี่หมิงสอบติด <b style="color:#fff;font-weight:600">วิศวะ จุฬาฯ</b> มากที่สุดในปีที่ผ่านมา.', rating:'4.9', reviews:'412 รีวิว', students:'1,820', level:'ม.6 · เตรียมสอบ', lessonsLong:'24 บทเรียน', hours:'18 ชม.', lessons:'24 บท', statLevel:'ม.6', priceNow:2490, priceOld:3990 },
+  'amath-alevel1': { subj:'amath', glyph:'∫', subject:'คณิต · A-LEVEL คณิต 1', badge:'แนะนำ', title:'A-Level คณิต 1<br/><span class="grad">ฉบับเก็บคะแนน</span>', tagline:'ครบทุกบทที่ออกใน A-Level คณิตประยุกต์ 1 — เน้นโจทย์เก็บคะแนนและเทคนิคทำเร็ว.', rating:'4.9', reviews:'564 รีวิว', students:'1,640', level:'เตรียมสอบ · TCAS', lessonsLong:'22 บทเรียน', hours:'20 ชม.', lessons:'22 บท', statLevel:'เตรียมสอบ', priceNow:1990, priceOld:2990 },
+  'aphys-full':    { subj:'aphys', glyph:'Φ', subject:'ฟิสิกส์ · A-LEVEL', badge:'BESTSELLER', title:'A-Level ฟิสิกส์<br/>ครบ<span class="grad">สนามสอบ</span>', tagline:'ครบทุกบทของ A-Level ฟิสิกส์ — กลศาสตร์ ไฟฟ้า คลื่น ความร้อน ฟิสิกส์ยุคใหม่ พร้อมโจทย์ข้อสอบจริง.', rating:'4.9', reviews:'498 รีวิว', students:'1,510', level:'เตรียมสอบ · TCAS', lessonsLong:'24 บทเรียน', hours:'21 ชม.', lessons:'24 บท', statLevel:'เตรียมสอบ', priceNow:2290, priceOld:3490 },
+  'aphys-mechanics':{ subj:'aphys', glyph:'Φ', subject:'ฟิสิกส์ · A-LEVEL', badge:'', title:'กลศาสตร์ &amp; โมเมนตัม<br/><span class="grad">A-Level</span>', tagline:'เจาะลึกกลศาสตร์และโมเมนตัมสำหรับ A-Level ฟิสิกส์ — เข้าใจหลักการ ทำโจทย์ยากได้.', rating:'4.8', reviews:'276 รีวิว', students:'928', level:'เตรียมสอบ · TCAS', lessonsLong:'18 บทเรียน', hours:'15 ชม.', lessons:'18 บท', statLevel:'เตรียมสอบ', priceNow:1990 },
+  'math-trig':     { subj:'math', glyph:'π', subject:'คณิต · ม.5', badge:'ฟรี', title:'ตรีโกณมิติ<br/>ม.5 <span class="grad">เทอม 1</span>', tagline:'ปูพื้นตรีโกณมิติให้แน่นตั้งแต่ในห้องเรียน — คอร์สฟรีให้ลองสัมผัสวิธีสอนของพี่หมิงก่อน.', rating:'5.0', reviews:'682 รีวิว', students:'3,140', level:'ม.5 · ในเทอม', lessonsLong:'10 บทเรียน', hours:'7 ชม.', lessons:'10 บท', statLevel:'ม.5', free:true },
+  'math-stats':    { subj:'math', glyph:'π', subject:'คณิต · ม.6', badge:'', title:'ความน่าจะเป็น<br/>และ<span class="grad">สถิติ</span>', tagline:'เก็บครบความน่าจะเป็นและสถิติ ม.6 — เข้าใจคอนเซปต์ ไม่ใช่ท่องสูตร พร้อมโจทย์หลากหลาย.', rating:'4.8', reviews:'312 รีวิว', students:'1,124', level:'ม.6 · ในเทอม', lessonsLong:'14 บทเรียน', hours:'11 ชม.', lessons:'14 บท', statLevel:'ม.6', priceNow:1790 },
+  'phys-electric': { subj:'phys', glyph:'g', subject:'ฟิสิกส์ · ม.5', badge:'', title:'ไฟฟ้าสถิต<br/>และ<span class="grad">กระแส</span>', tagline:'เข้าใจไฟฟ้าสถิตและไฟฟ้ากระแสแบบเห็นภาพ — ปูพื้นแน่นก่อนต่อ A-Level และ TPAT3.', rating:'4.7', reviews:'238 รีวิว', students:'962', level:'ม.5 · ในเทอม', lessonsLong:'16 บทเรียน', hours:'12 ชม.', lessons:'16 บท', statLevel:'ม.5', priceNow:1790, priceOld:2490 },
+  'phys-wave':     { subj:'phys', glyph:'g', subject:'ฟิสิกส์ · ม.6', badge:'', title:'คลื่นและเสียง<br/><span class="grad">เต็มรูป</span>', tagline:'ครบเรื่องคลื่นกล คลื่นเสียง และปรากฏการณ์ที่ออกสอบบ่อย — เข้าใจตั้งแต่ในห้องเรียน.', rating:'4.8', reviews:'204 รีวิว', students:'786', level:'ม.6 · ในเทอม', lessonsLong:'14 บทเรียน', hours:'12 ชม.', lessons:'14 บท', statLevel:'ม.6', priceNow:1890 }
+};
+function baht(n){ return '฿' + n.toLocaleString('en-US'); }
+function setText(id, txt){ var el = document.getElementById(id); if (el) el.textContent = txt; }
+function setHTML(id, html){ var el = document.getElementById(id); if (el) el.innerHTML = html; }
+(function applyCourse(){
+  var id = new URLSearchParams(location.search).get('c');
+  var c = id && COURSE_DB[id];
+  if (!c) return; // no/unknown param → keep default (แคลคูลัส) template
+  // strip leading subject prefix from subject string for the crumb/title
+  var plainTitle = c.title.replace(/<[^>]+>/g, '');
+  document.title = plainTitle + ' — Mingsmileyface';
+  setText('cd-crumb', plainTitle);
+  setText('cd-glyph', c.glyph);
+  setText('cd-subject', c.subject);
+  setHTML('cd-title', c.title);
+  setHTML('cd-tagline', c.tagline);
+  setText('cd-rating', c.rating);
+  setText('cd-reviews', '(' + c.reviews + ')');
+  setText('cd-students', c.students);
+  setText('cd-level', c.level);
+  setText('cd-stat-hours', c.hours);
+  setText('cd-stat-lessons', c.lessons);
+  setText('cd-stat-level', c.statLevel);
+  setText('cd-chapters-line', c.lessonsLong + ' · ' + c.hours + ' · 3 บทเรียนแรกดูฟรี');
+  // badge
+  var badge = document.getElementById('cd-badge');
+  if (badge){ if (c.badge){ badge.textContent = c.badge; badge.style.display=''; } else { badge.style.display='none'; } }
+  // price
+  if (c.free){
+    setHTML('cd-price', '<span style="color:var(--success)">ฟรี</span>');
+    var d = document.getElementById('cd-discount'); if (d) d.style.display='none';
+    setHTML('cd-mobile-price', 'ฟรี');
+  } else {
+    setHTML('cd-price', (c.priceOld ? '<span class="strike">'+baht(c.priceOld)+'</span>' : '') + baht(c.priceNow));
+    var disc = document.getElementById('cd-discount');
+    if (disc){
+      if (c.priceOld){ disc.textContent = 'SAVE ' + Math.round((1 - c.priceNow/c.priceOld)*100) + '%'; disc.style.display=''; }
+      else disc.style.display='none';
+    }
+    setHTML('cd-mobile-price', baht(c.priceNow) + (c.priceOld ? '<small>'+baht(c.priceOld)+'</small>' : ''));
+  }
+})();
+
+// Theme
+const root = document.documentElement;
+const btnDark = document.getElementById('btn-dark');
+const btnLight = document.getElementById('btn-light');
+function setTheme(t){
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', (t === 'petronas' || t === 'classic-dark' || t === 'dark'));
+  btnLight.setAttribute('aria-pressed', (t === 'petronas-light' || t === 'classic-light' || t === 'light'));
+  try{ localStorage.setItem('ming-theme', t); }catch(e){}
+}
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark' ? 'petronas' : saved === 'light' ? 'petronas-light' : (saved || 'petronas-light')); }catch(e){}
+
+// Sidebar collapse
+(function(){
+  const app = document.querySelector('.app');
+  const toggle = document.getElementById('sb-toggle');
+  if(!app || !toggle) return;
+  try { if(localStorage.getItem('ming-sidebar') === 'collapsed') app.classList.add('collapsed'); } catch(e){}
+  toggle.addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    try { localStorage.setItem('ming-sidebar', app.classList.contains('collapsed') ? 'collapsed' : 'expanded'); } catch(e){}
+  });
+})();
+
+// nav scroll state (marketing chrome)
+(function(){ var nw=document.getElementById('nav-wrap'); if(!nw) return; function s(){ nw.classList.toggle('scrolled', window.scrollY>24); } window.addEventListener('scroll', s, {passive:true}); s(); })();
+</script>
+<script src="site-config.js"></script>
+<script>
+/* soon-gated pages: Referral, Testimonials, Results, FAQ — not live yet.
+   Ports the same logic as marketing-common.js since this page doesn't load
+   that shared file (it has its own inline theme/scroll code instead). */
+(function () {
+  var SOON_PAGES = ['referral.html', 'testimonials.html', 'results.html', 'faq.html'];
+  function baseName(href) {
+    try { return href.split('/').pop().split('#')[0].split('?')[0].toLowerCase(); } catch (e) { return ''; }
+  }
+  function applySoonGating() {
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var target = baseName(a.getAttribute('href'));
+      if (SOON_PAGES.indexOf(target) === -1) return;
+      if (a.closest('.soon-banner')) return;
+      if (a.dataset.soonWired) return;
+      a.dataset.soonWired = '1';
+      a.classList.add('nav-soon');
+      a.addEventListener('click', function (e) { e.preventDefault(); });
+    });
+  }
+  applySoonGating();
+  var navLinksEl = document.querySelector('.nav-links');
+  if (navLinksEl && window.MutationObserver) {
+    new MutationObserver(applySoonGating).observe(navLinksEl, { childList: true, subtree: true });
+  }
+  setTimeout(applySoonGating, 300);
+  setTimeout(applySoonGating, 1200);
+})();
+</script>
+</body>
+</html>

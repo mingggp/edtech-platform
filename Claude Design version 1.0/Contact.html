@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ติดต่อพี่หมิง — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<style>
+/* ============== CONTACT — page specific ============== */
+.contact-layout { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: start; }
+
+/* form */
+.cform { border: 1px solid var(--line); border-radius: 26px; background: var(--bg-1); padding: 34px; }
+.cform .fhead h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; letter-spacing: -0.02em; color: var(--fg-0); }
+.cform .fhead p { margin-top: 8px; font-size: 14px; color: var(--fg-2); line-height: 1.5; }
+.cform .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: 12.5px; font-weight: 600; color: var(--fg-1); }
+.field label .req { color: var(--brand-magenta); }
+.field input, .field textarea, .field select {
+  width: 100%; font: inherit; font-size: 14.5px; color: var(--fg-0);
+  background: var(--bg-0); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+:root[data-theme="light"] .field input, :root[data-theme="light"] .field textarea, :root[data-theme="light"] .field select, :root[data-theme="petronas-light"] .field input, :root[data-theme="petronas-light"] .field textarea, :root[data-theme="petronas-light"] .field select { background: var(--bg-2); }
+.field textarea { resize: vertical; min-height: 120px; line-height: 1.55; }
+.field input::placeholder, .field textarea::placeholder { color: var(--fg-3); }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--brand-violet); box-shadow: 0 0 0 3px oklch(0.66 0.23 295 / 0.16); }
+.field .err { font-size: 11.5px; color: var(--danger); display: none; }
+.field.invalid input, .field.invalid textarea, .field.invalid select { border-color: var(--danger); }
+.field.invalid .err { display: block; }
+.cform .submit-row { margin-top: 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cform .submit-row .note { font-size: 12px; color: var(--fg-3); }
+.cform .btn-primary { min-width: 180px; justify-content: center; }
+
+/* success state */
+.form-success { display: none; flex-direction: column; align-items: center; text-align: center; padding: 40px 20px; }
+.cform.sent .form-body { display: none; }
+.cform.sent .form-success { display: flex; }
+.form-success .ico { width: 64px; height: 64px; border-radius: 50%; background: oklch(0.78 0.18 150 / 0.16); color: var(--success); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.form-success .ico svg { width: 30px; height: 30px; }
+.form-success h3 { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -0.02em; color: var(--fg-0); }
+.form-success p { margin-top: 10px; font-size: 14.5px; color: var(--fg-2); line-height: 1.6; max-width: 38ch; }
+.form-success .btn { margin-top: 22px; }
+
+/* contact info side */
+.cinfo { display: flex; flex-direction: column; gap: 14px; }
+.cmethod { display: flex; align-items: center; gap: 16px; padding: 20px 22px; border-radius: 18px; border: 1px solid var(--line); background: var(--bg-1); text-decoration: none; transition: transform .25s, box-shadow .25s, border-color .25s; }
+.cmethod:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.cmethod .ico { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.cmethod .ico svg { width: 24px; height: 24px; }
+.cmethod.line .ico { background: linear-gradient(135deg, oklch(0.60 0.17 150), oklch(0.70 0.18 150)); }
+.cmethod.mail .ico { background: var(--grad-cool); }
+.cmethod.ig .ico { background: linear-gradient(135deg, oklch(0.62 0.22 30), oklch(0.58 0.24 330)); }
+.cmethod .body b { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--fg-0); display: block; }
+.cmethod .body span { font-size: 13.5px; color: var(--fg-2); }
+.cmethod .go { margin-left: auto; color: var(--fg-3); }
+.cmethod .go svg { width: 20px; height: 20px; }
+
+.hours-card { padding: 22px 24px; border-radius: 18px; border: 1px solid var(--line); background: var(--bg-1); }
+.hours-card .ttl { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--fg-0); margin-bottom: 14px; }
+.hours-card .ttl svg { width: 18px; height: 18px; color: var(--brand-cyan); }
+.hours-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 14px; border-bottom: 1px solid var(--line-soft); }
+.hours-row:last-child { border-bottom: 0; }
+.hours-row .d { color: var(--fg-1); }
+.hours-row .h { color: var(--fg-2); font-family: "JetBrains Mono"; font-size: 12.5px; }
+.hours-row .h.off { color: var(--fg-3); }
+.hours-card .resp { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: oklch(0.80 0.16 205 / 0.1); border: 1px solid oklch(0.80 0.16 205 / 0.24); font-size: 12.5px; color: var(--fg-1); display: flex; gap: 9px; align-items: flex-start; line-height: 1.5; }
+.hours-card .resp svg { width: 15px; height: 15px; color: var(--brand-cyan); flex-shrink: 0; margin-top: 1px; }
+
+@media (max-width: 940px) {
+  .contact-layout { grid-template-columns: 1fr; gap: 28px; }
+  .cform .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Courses.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO ============== -->
+<section class="page-hero" data-screen-label="01 Contact Hero" style="padding-bottom:24px">
+  <div class="container-wide">
+    <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+      <a href="Landing Page.html">หน้าหลัก</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>ติดต่อ</span>
+    </div>
+    <div class="t-eyebrow reveal"><span class="dot"></span><span>ติดต่อเรา</span></div>
+    <h1 class="reveal" data-delay="1" style="margin-top:18px;max-width:18ch">มีคำถาม? <span class="grad">ทักมาได้เลย</span></h1>
+    <p class="lede reveal" data-delay="2">สงสัยเรื่องคอร์ส ราคา หรืออยากปรึกษาแผนการเรียน — พี่หมิงตอบเอง. เลือกช่องทางที่สะดวก หรือฝากข้อความไว้ได้เลย.</p>
+  </div>
+</section>
+
+<!-- ============== CONTACT BODY ============== -->
+<section style="padding-top:8px" data-screen-label="02 Contact">
+  <div class="container-wide">
+    <div class="contact-layout">
+
+      <!-- FORM -->
+      <form class="cform reveal" id="cform" novalidate>
+        <div class="form-body">
+          <div class="fhead">
+            <h2>ฝากข้อความถึงพี่หมิง</h2>
+            <p>กรอกแบบฟอร์ม แล้วพี่หมิงจะติดต่อกลับทางช่องทางที่คุณสะดวก.</p>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="f-name">ชื่อ <span class="req">*</span></label>
+              <input type="text" id="f-name" name="name" placeholder="ชื่อ–นามสกุล หรือชื่อเล่น" required />
+              <span class="err">กรุณากรอกชื่อ</span>
+            </div>
+            <div class="field">
+              <label for="f-contact">เบอร์ / Line / อีเมล <span class="req">*</span></label>
+              <input type="text" id="f-contact" name="contact" placeholder="ช่องทางให้เราติดต่อกลับ" required />
+              <span class="err">กรุณากรอกช่องทางติดต่อ</span>
+            </div>
+            <div class="field">
+              <label for="f-role">คุณคือ</label>
+              <select id="f-role" name="role">
+                <option value="student">นักเรียน</option>
+                <option value="parent">ผู้ปกครอง</option>
+                <option value="other">อื่นๆ</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-topic">เรื่องที่ต้องการสอบถาม</label>
+              <select id="f-topic" name="topic">
+                <option value="course">คอร์ส &amp; เนื้อหา</option>
+                <option value="price">ราคา &amp; แพ็กเกจ</option>
+                <option value="pay">การชำระเงิน</option>
+                <option value="plan">ปรึกษาแผนการเรียน</option>
+                <option value="other">อื่นๆ</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="f-msg">ข้อความ <span class="req">*</span></label>
+              <textarea id="f-msg" name="message" placeholder="เล่าให้พี่หมิงฟังหน่อย — ตอนนี้เรียนอยู่ชั้นไหน อยากเตรียมสอบอะไร มีคำถามอะไรบ้าง" required></textarea>
+              <span class="err">กรุณากรอกข้อความ</span>
+            </div>
+          </div>
+          <div class="submit-row">
+            <button type="submit" class="btn btn-primary btn-lg">ส่งข้อความ
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            </button>
+            <span class="note">ปกติตอบกลับภายใน 1 วันทำการ</span>
+          </div>
+        </div>
+
+        <div class="form-success">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3>ส่งข้อความเรียบร้อย!</h3>
+          <p>ขอบคุณที่ติดต่อมานะ — พี่หมิงจะตอบกลับโดยเร็วที่สุด. ถ้าอยากได้คำตอบไวขึ้น ทักไลน์ได้เลย.</p>
+          <a href="#" class="btn btn-secondary">ทักไลน์พี่หมิงเลย</a>
+        </div>
+      </form>
+
+      <!-- INFO -->
+      <aside class="cinfo reveal" data-delay="1">
+        <a href="#" class="cmethod line">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2z"/></svg></div>
+          <div class="body"><b>Line</b><span>@mingsmileyface · ตอบไวที่สุด</span></div>
+          <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a href="#" class="cmethod mail">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+          <div class="body"><b>อีเมล</b><span>hello@mingsmileyface.com</span></div>
+          <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a href="#" class="cmethod ig">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></div>
+          <div class="body"><b>Instagram</b><span>@mingsmileyface</span></div>
+          <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+
+        <div class="hours-card">
+          <div class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>เวลาตอบกลับ</div>
+          <div class="hours-row"><span class="d">จันทร์ – ศุกร์</span><span class="h">10:00 – 21:00</span></div>
+          <div class="hours-row"><span class="d">เสาร์ – อาทิตย์</span><span class="h">12:00 – 20:00</span></div>
+          <div class="hours-row"><span class="d">วันหยุดนักขัตฤกษ์</span><span class="h off">ตอบเมื่อสะดวก</span></div>
+          <div class="resp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            คำถามเรื่องการบ้าน/เนื้อหาในคอร์ส ตอบผ่านระบบภายใน 12 ชม. — ทักในแอปได้เลย.
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta" style="padding-top:60px" data-screen-label="03 CTA">
+  <div class="container">
+    <div class="final-cta-card reveal">
+      <div class="eyebrow"><span class="dot"></span><span>ยังไม่เคยลองเรียน?</span></div>
+      <h2>ลองเรียนฟรี 7 วัน<br/>ก่อนถามก็ได้.</h2>
+      <p>บางทีลองเองสักนิดก็เห็นภาพชัดกว่า — เริ่มฟรี ไม่ต้องผูกบัตร.</p>
+      <div class="cta-row">
+        <a href="Courses.html" class="btn btn-primary btn-lg">เริ่มเรียนฟรี 7 วัน
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="FAQ.html" class="btn btn-glass btn-lg">ดู FAQ ก่อน</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Referral.html">ชวนเพื่อน</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="FAQ.html">FAQ</a></li>
+          <li><a href="Contact.html">ติดต่อ</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--fg-0);color:var(--bg-0);font-weight:600;font-size:14px;padding:12px 22px;border-radius:99px;box-shadow:var(--shadow-2);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:200;"></div>
+
+<script>
+(function(){
+  var form = document.getElementById('cform');
+  var required = ['f-name','f-contact','f-msg'];
+  function fieldOf(id){ return document.getElementById(id).closest('.field'); }
+  required.forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){
+      if (this.value.trim()) fieldOf(id).classList.remove('invalid');
+    });
+  });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var ok = true;
+    required.forEach(function(id){
+      var el = document.getElementById(id);
+      if (!el.value.trim()){ fieldOf(id).classList.add('invalid'); ok = false; }
+      else fieldOf(id).classList.remove('invalid');
+    });
+    if (!ok){
+      var firstBad = form.querySelector('.field.invalid input, .field.invalid textarea');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+    // mock submit
+    form.classList.add('sent');
+    window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+  });
+})();
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+</body>
+</html>

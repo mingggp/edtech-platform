@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>แต่งข้อสอบ — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-exams.css?v=1" />
+<style>
+.ex-panel { display: none; }
+.ex-panel.active { display: block; animation: exIn .3s cubic-bezier(.2,.8,.2,1); }
+.back-link { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12.5px; font-weight: 600; text-decoration: none; color: var(--fg-2); transition: color .15s, transform .15s; }
+.back-link:hover { color: var(--fg-0); transform: translateX(-2px); }
+@keyframes exIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.seg-field button { border: 0; background: transparent; color: var(--fg-2); font: inherit; font-size: 13px; font-weight: 600; padding: 9px 0; border-radius: 8px; cursor: pointer; transition: color .15s, background .15s; }
+.seg-field button:hover { color: var(--fg-0); }
+.seg-field button[aria-pressed="true"] { color: #fff; background: var(--grad-signature); box-shadow: 0 4px 12px -4px oklch(0.66 0.23 295 / 0.5); }
+/* ระดับความยาก — สีตามระดับ เหมือน chip หน้าข้อสอบนักเรียน */
+#ex-diff { --dc-easy: var(--success); --dc-mid: oklch(0.62 0.15 75); --dc-hard: oklch(0.60 0.18 50); --dc-brutal: var(--danger); }
+:root[data-theme="petronas"] #ex-diff, :root[data-theme="dark"] #ex-diff { --dc-mid: var(--warning); --dc-hard: oklch(0.72 0.20 50); }
+#ex-diff button[aria-pressed="false"][data-v="easy"]:hover { color: var(--dc-easy); }
+#ex-diff button[aria-pressed="false"][data-v="mid"]:hover { color: var(--dc-mid); }
+#ex-diff button[aria-pressed="false"][data-v="hard"]:hover { color: var(--dc-hard); }
+#ex-diff button[aria-pressed="false"][data-v="brutal"]:hover { color: var(--dc-brutal); }
+#ex-diff button[aria-pressed="true"] { background: none; box-shadow: none; }
+#ex-diff button[aria-pressed="true"][data-v="easy"] { color: var(--dc-easy); background: oklch(from var(--dc-easy) l c h / 0.14); box-shadow: inset 0 0 0 1px oklch(from var(--dc-easy) l c h / 0.5); }
+#ex-diff button[aria-pressed="true"][data-v="mid"] { color: var(--dc-mid); background: oklch(from var(--dc-mid) l c h / 0.14); box-shadow: inset 0 0 0 1px oklch(from var(--dc-mid) l c h / 0.5); }
+#ex-diff button[aria-pressed="true"][data-v="hard"] { color: var(--dc-hard); background: oklch(from var(--dc-hard) l c h / 0.14); box-shadow: inset 0 0 0 1px oklch(from var(--dc-hard) l c h / 0.5); }
+#ex-diff button[aria-pressed="true"][data-v="brutal"] { color: var(--dc-brutal); background: oklch(from var(--dc-brutal) l c h / 0.14); box-shadow: inset 0 0 0 1px oklch(from var(--dc-brutal) l c h / 0.5); }
+.acc-opts { display: flex; flex-direction: column; gap: 8px; }
+.acc-opt { display: flex; cursor: pointer; }
+.acc-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.acc-opt .t { display: block; width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg-1); transition: border-color .15s, background .15s, box-shadow .15s; }
+.acc-opt .t b { display: block; font-size: 13.5px; color: var(--fg-0); font-weight: 600; }
+.acc-opt .t small { font-size: 11.5px; color: var(--fg-3); line-height: 1.4; display: block; margin-top: 2px; }
+.acc-opt:hover .t { border-color: var(--fg-3); }
+.acc-opt input:checked + .t { border-color: oklch(0.66 0.23 295 / 0.6); background: oklch(0.66 0.23 295 / 0.08); box-shadow: 0 0 0 3px oklch(0.66 0.23 295 / 0.12); }
+/* image choices */
+.choice .c-imgslot { flex: 1; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; border: 1.5px dashed var(--line); background: var(--bg-1); cursor: pointer; color: var(--fg-2); font-size: 12.5px; transition: border-color .15s, background .15s; }
+.choice .c-imgslot:hover { border-color: oklch(0.66 0.23 295 / 0.5); background: oklch(0.66 0.23 295 / 0.05); }
+.choice .c-imgslot svg { width: 16px; height: 16px; flex-shrink: 0; }
+.choice .c-imgslot.filled { border-style: solid; color: var(--fg-0); }
+/* attach-image chip inside question field */
+.q-text-wrap { position: relative; }
+.q-text-wrap textarea { width: 100%; padding-bottom: 40px; }
+.q-attach { position: absolute; right: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border-radius: 8px; border: 1px dashed var(--line); background: var(--bg-2); color: var(--fg-2); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+.q-attach:hover { color: var(--fg-0); border-color: oklch(0.66 0.23 295 / 0.5); background: oklch(0.66 0.23 295 / 0.07); }
+.q-attach svg { width: 14px; height: 14px; }
+.q-attach.filled { border-style: solid; border-color: oklch(0.66 0.23 295 / 0.5); color: var(--fg-0); background: oklch(0.66 0.23 295 / 0.08); }
+
+/* SA answer digit grid */
+.ans-grid { display: flex; align-items: center; gap: 7px; }
+.ag-cell { width: 46px; height: 56px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 24px; color: var(--fg-0); background: var(--bg-1); border: 2px solid var(--line); border-radius: 12px; transition: border-color .15s, box-shadow .15s, background .15s, transform .12s; }
+.ag-cell:focus { outline: none; border-color: var(--brand-magenta); box-shadow: 0 0 0 4px oklch(0.68 0.25 5 / 0.14); transform: translateY(-2px); }
+.ag-cell.filled { border-color: oklch(0.66 0.23 295 / 0.55); background: oklch(0.66 0.23 295 / 0.08); }
+.ag-dot { font-family: var(--font-display); font-weight: 800; font-size: 28px; color: var(--fg-1); padding: 0 2px; }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='exams';</script>
+<div class="adm" id="adm" data-screen-label="Admin · แต่งข้อสอบ">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><a href="Admin Exams.html">ข้อสอบ</a><span class="sep">/</span><b id="crumb-title">A-Level ฟิสิกส์ · ชุดเสมือนจริง #1</b></nav>
+      <div class="adm-top-actions">
+        <span class="autosave" id="autosave"><span class="d"></span>บันทึกแล้ว · 15:08</span>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <a class="back-link" href="Admin Exams.html"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>กลับไปหน้าข้อสอบ</a>
+            <div class="eyebrow">แต่งข้อสอบ</div>
+            <h1 id="page-title">A-Level ฟิสิกส์ <span class="grad">ชุดเสมือนจริง #1</span></h1>
+            <div class="sub" id="head-sub">842 ครั้งที่ทำ · คะแนนเฉลี่ย 68% · ปลดล็อกด้วยคอร์สวิชาฟิสิกส์</div>
+          </div>
+          <div class="adm-head-actions">
+            <div class="seg sm" id="mode" role="group" aria-label="โหมด">
+              <button data-v="edit" aria-pressed="true">แก้ไข</button>
+              <button data-v="preview" aria-pressed="false">ดูแบบนักเรียน</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TABS -->
+        <section class="reveal" data-delay="1">
+          <div class="ed-tabs" role="tablist" style="margin-bottom:18px">
+            <button class="ed-tab" role="tab" aria-selected="true" data-extab="settings">ข้อมูลชุดข้อสอบ</button>
+            <button class="ed-tab" role="tab" aria-selected="false" data-extab="questions">คำถาม <span class="c" id="tab-q-count">5</span></button>
+          </div>
+
+          <!-- PANEL: SETTINGS -->
+          <div class="ex-panel active" data-expanel="settings">
+            <div class="ed-grid" style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
+              <div class="adm-card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+                <div class="field">
+                  <label>ชื่อชุดข้อสอบ</label>
+                  <input class="inp" id="ex-name" data-save value="A-Level ฟิสิกส์ · ชุดเสมือนจริง #1" style="width:100%" />
+                </div>
+                <div class="field">
+                  <label>คำอธิบาย <span class="opt">แสดงในหน้าเตรียมสอบของนักเรียน</span></label>
+                  <textarea class="inp" id="ex-desc" data-save rows="3">ข้อสอบเสมือนจริงตามโครงสร้าง A-Level ฟิสิกส์ล่าสุด ครอบคลุมกลศาสตร์ถึงฟิสิกส์ยุคใหม่ พร้อมเฉลยละเอียดทุกข้อ</textarea>
+                </div>
+                <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                  <div class="field">
+                    <label>วิชา</label>
+                    <select class="tb-select" id="ex-subject" data-save style="width:100%;height:44px">
+                      <option>คณิต</option><option selected>ฟิสิกส์</option><option>TPAT3</option><option>TGAT2</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>ระดับ</label>
+                    <select class="tb-select" id="ex-level" data-save style="width:100%;height:44px">
+                      <option>ม.4</option><option>ม.5</option><option>ม.6</option><option selected>A-Level</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                  <div class="field">
+                    <label>เวลาทำ (นาที)</label>
+                    <input class="inp" id="ex-time" data-save type="number" min="5" max="180" step="5" value="60" style="width:100%" />
+                  </div>
+                  <div class="field">
+                    <label>ระดับความยาก</label>
+                    <div class="seg-field" id="ex-diff" role="radiogroup" style="display:flex;gap:4px;padding:4px;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:11px">
+                      <button type="button" data-v="easy" aria-pressed="false" style="flex:1">ง่าย</button>
+                      <button type="button" data-v="mid" aria-pressed="false" style="flex:1">กลาง</button>
+                      <button type="button" data-v="hard" aria-pressed="true" style="flex:1">ยาก</button>
+                      <button type="button" data-v="brutal" aria-pressed="false" style="flex:1">โหด</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div class="adm-card" style="padding:22px">
+                  <div class="field">
+                    <label style="margin-bottom:10px;display:block">การเข้าถึง</label>
+                    <div class="acc-opts" id="ex-access">
+                      <label class="acc-opt">
+                        <input type="radio" name="ex-acc" value="subject" checked />
+                        <span class="t"><b>ปลดล็อกด้วยคอร์สวิชา</b><small>นักเรียนที่ซื้อคอร์สวิชานี้คอร์สใดก็ตาม ทำได้ทันที</small></span>
+                      </label>
+                      <label class="acc-opt">
+                        <input type="radio" name="ex-acc" value="free" />
+                        <span class="t"><b>ฟรี · ทุกคนทำได้</b><small>เปิดเป็น mock เรียกลูกค้า ไม่ต้องซื้อคอร์ส</small></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="adm-card" style="padding:22px">
+                  <div class="field">
+                    <label style="margin-bottom:10px;display:block">สถานะ</label>
+                    <button class="stoggle" id="ex-publish" aria-pressed="true"><span class="track"></span><span class="lbl">เผยแพร่</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL: QUESTIONS -->
+          <div class="ex-panel" data-expanel="questions">
+        <section class="qa" data-delay="1">
+          <!-- LIST -->
+          <div class="qa-list">
+            <div class="qa-list-head"><b>คำถาม</b><span class="c" id="q-count">5 ข้อ</span></div>
+            <div class="qa-rows" id="q-rows"></div>
+            <div style="padding:8px;border-top:1px solid var(--line-soft)">
+              <button class="add-lesson" id="add-q" style="margin:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มคำถาม</button>
+            </div>
+          </div>
+
+          <!-- EDITOR -->
+          <div class="qe" id="qe">
+            <div class="qe-head">
+              <div class="qe-title"><span class="num" id="qe-num">ข้อ 1</span><span class="of" id="qe-of">จาก 5</span></div>
+              <div style="display:flex;gap:8px">
+                <button class="ic-btn" id="dup-q" title="ทำซ้ำข้อนี้"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+                <button class="ic-btn danger" id="del-q" title="ลบข้อนี้"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+              </div>
+            </div>
+
+            <div class="qe-body">
+              <!-- EDIT MODE -->
+              <div class="qe-edit">
+                <div class="field" style="margin-bottom:14px">
+                  <label>ประเภทคำถาม</label>
+                  <div class="seg-field" id="q-type" role="radiogroup" style="display:flex;gap:4px;padding:4px;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:11px;max-width:340px">
+                    <button type="button" data-v="mc" aria-pressed="true" style="flex:1">ปรนัย (ช้อยส์)</button>
+                    <button type="button" data-v="sa" aria-pressed="false" style="flex:1">อัตนัย (เติมคำตอบ)</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>โจทย์คำถาม</label>
+                  <div class="q-text-wrap">
+                    <textarea class="inp" id="q-text" data-save rows="3"></textarea>
+                    <button type="button" class="q-attach" id="q-img-drop" title="แนบรูปประกอบ (กราฟ/แผนภาพ/สูตร) · PNG/JPG">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+                      <span class="tx"><b>แนบรูป</b></span>
+                    </button>
+                  </div>
+                </div>
+                <div id="mc-sec">
+                <div class="field" style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+                  <label style="margin:0">ตัวเลือก · กดวงกลมเพื่อตั้งข้อที่ถูก</label>
+                  <label style="display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--fg-2);cursor:pointer;white-space:nowrap">
+                    <input type="checkbox" id="choice-img-toggle" style="width:15px;height:15px;accent-color:var(--brand-magenta)" />
+                    ตัวเลือกเป็นรูป
+                  </label>
+                </div>
+                <div class="choices" id="choices"></div>
+                <button class="add-lesson" id="add-choice" style="margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มตัวเลือก</button>
+                </div>
+                <div id="sa-sec" style="display:none">
+                  <div class="field">
+                    <label>คำตอบที่ถูก <span class="opt">รูปแบบ xxxx.xx — เลข 4 หลัก + ทศนิยม 2 ตำแหน่ง (มาตรฐาน A-Level)</span></label>
+                    <div class="ans-grid" id="ans-grid">
+                      <input class="ag-cell" inputmode="numeric" maxlength="1" data-ag="0" aria-label="หลักพัน" />
+                      <input class="ag-cell" inputmode="numeric" maxlength="1" data-ag="1" aria-label="หลักร้อย" />
+                      <input class="ag-cell" inputmode="numeric" maxlength="1" data-ag="2" aria-label="หลักสิบ" />
+                      <input class="ag-cell" inputmode="numeric" maxlength="1" data-ag="3" aria-label="หลักหน่วย" />
+                      <span class="ag-dot">.</span>
+                      <input class="ag-cell" inputmode="numeric" maxlength="1" data-ag="4" aria-label="ทศนิยม 1" />
+                      <input class="ag-cell" inputmode="numeric" maxlength="1" data-ag="5" aria-label="ทศนิยม 2" />
+                    </div>
+                    <div class="hint" style="margin-top:8px">นักเรียนจะเห็นช่องเติมทีละหลักแบบเดียวกันนี้ในห้องสอบ · คำตอบ: <b id="ans-echo" style="font-family:'JetBrains Mono';color:var(--fg-1)">—</b></div>
+                  </div>
+                </div>
+                <div class="field" style="margin-top:20px">
+                  <label>คำเฉลย / คำอธิบาย <span class="opt">พิมพ์ข้อความ หรือแนบรูปเฉลยแทน</span></label>
+                  <div class="q-text-wrap">
+                    <textarea class="inp" id="q-explain" data-save rows="3" placeholder="อธิบายว่าทำไมข้อนี้ถึงถูก..."></textarea>
+                    <button type="button" class="q-attach" id="ex-img-drop" title="แนบรูปเฉลย (วิธีทำเขียนมือ/สแกน) · PNG/JPG">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+                      <span class="tx"><b>แนบรูปเฉลย</b></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PREVIEW MODE -->
+              <div class="qe-preview" id="qe-preview"></div>
+            </div>
+
+            <div class="qe-foot">
+              <button class="btn btn-ghost btn-sm" id="prev-q"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>ข้อก่อนหน้า</button>
+              <span style="font-size:12px;color:var(--fg-3);font-family:'JetBrains Mono'" id="foot-pos">1 / 5</span>
+              <button class="btn btn-primary btn-sm" id="next-q">ข้อถัดไป<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+        </section>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script src="admin-exam-editor.js?v=8"></script>
+<script>
+// exam settings tabs + interactions
+(function(){
+  document.querySelectorAll('[data-extab]').forEach(t=>t.addEventListener('click', ()=>{
+    document.querySelectorAll('[data-extab]').forEach(x=>x.setAttribute('aria-selected','false'));
+    t.setAttribute('aria-selected','true');
+    document.querySelectorAll('.ex-panel').forEach(p=>p.classList.toggle('active', p.dataset.expanel===t.dataset.extab));
+  }));
+  // difficulty segmented
+  document.querySelectorAll('#ex-diff button').forEach(b=>b.addEventListener('click', ()=>{
+    document.querySelectorAll('#ex-diff button').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+  }));
+  // publish toggle
+  const pt = document.getElementById('ex-publish');
+  pt?.addEventListener('click', ()=>{ const on = pt.getAttribute('aria-pressed')!=='true'; pt.setAttribute('aria-pressed', String(on)); pt.querySelector('.lbl').textContent = on?'เผยแพร่':'ฉบับร่าง'; });
+  // access option label follows selected subject
+  const exSubj = document.getElementById('ex-subject');
+  function syncAccLabel(){
+    const b = document.querySelector('#ex-access input[value="subject"] + .t b');
+    const s = document.querySelector('#ex-access input[value="subject"] + .t small');
+    if(b) b.textContent = 'ปลดล็อกด้วยคอร์สวิชา' + (/^[A-Za-z]/.test(exSubj.value) ? ' ' : '') + exSubj.value;
+    if(s) s.textContent = 'นักเรียนที่ซื้อคอร์สวิชา' + exSubj.value + ' คอร์สใดก็ตาม ทำได้ทันที';
+  }
+  exSubj?.addEventListener('change', syncAccLabel);
+  syncAccLabel();
+  // live-sync name → h1 + crumb
+  const nm = document.getElementById('ex-name');
+  nm?.addEventListener('input', ()=>{
+    const v = nm.value.trim() || 'ชุดข้อสอบใหม่';
+    document.getElementById('crumb-title').textContent = v;
+    const parts = v.split(' · ');
+    document.getElementById('page-title').innerHTML = parts.length>1 ? parts[0]+' <span class="grad">'+parts.slice(1).join(' · ')+'</span>' : v;
+  });
+})();
+</script>
+</body>
+</html>

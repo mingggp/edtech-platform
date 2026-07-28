@@ -1,0 +1,310 @@
+/* ==========================================================================
+   Mingsmileyface · Batch 7 · Sidebar Vibes (anti-template exploration)
+   Loads AFTER app-shell.css. Switched via <html data-sb="...">.
+   Four genuinely distinct directions — structure AND typeface change, so the
+   product stops reading as a generic AI-scaffold. Prototyped on Settings.html;
+   once a vibe is chosen we propagate the winner into app-shell.css for all pages.
+   Vibes: classic · editorial · console · soft
+   ========================================================================== */
+
+/* ---------- shared: neutralise the templated left-bar active marker ------ */
+[data-sb="editorial"] .sb-item.active::before,
+[data-sb="console"]   .sb-item.active::before,
+[data-sb="soft"]      .sb-item.active::before { display: none; }
+
+/* font vars per vibe (also lightly applied to page headers for cohesion) */
+[data-sb="editorial"] { --vibe-disp: "Space Grotesk", "Anuphan", ui-sans-serif, sans-serif; --vibe-body: "Anuphan", "IBM Plex Sans Thai", sans-serif; }
+[data-sb="console"]   { --vibe-disp: "Chakra Petch", ui-monospace, monospace;             --vibe-body: "Chakra Petch", "IBM Plex Sans Thai", sans-serif; }
+[data-sb="soft"]      { --vibe-disp: var(--font-display), "Kanit", ui-sans-serif, sans-serif;  --vibe-body: "Kanit", "IBM Plex Sans Thai", sans-serif; }
+
+[data-sb="editorial"] body, [data-sb="console"] body, [data-sb="soft"] body { font-family: var(--vibe-body); }
+[data-sb="editorial"] :is(.page-head h1, .prof-card .ph h2, .crumb b, .theme-opt .tp-foot b, .set-master .mt b),
+[data-sb="console"]   :is(.page-head h1, .prof-card .ph h2, .crumb b, .theme-opt .tp-foot b, .set-master .mt b),
+[data-sb="soft"]      :is(.page-head h1, .prof-card .ph h2, .crumb b, .theme-opt .tp-foot b, .set-master .mt b) { font-family: var(--vibe-disp); }
+/* keep dense inner UI (settings tabs + form labels) in the legible text font —
+   swapping their metrics makes labels wrap & overlap. Display surfaces only. */
+[data-sb] :is(.prof-tab, .prof-tab small, .fld label, .set-row .set-tx, .seg-block label, .nt-row, .segmented button) { font-family: "IBM Plex Sans Thai", "IBM Plex Sans", sans-serif; }
+/* sidebar interior always uses the vibe display font */
+[data-sb] .sb-logo .word, [data-sb] .sb-item span, [data-sb] .sb-section .heading,
+[data-sb] .sb-big .bt b, [data-sb] .sb-big .bt .bs,
+[data-sb] .sb-user .info b { font-family: var(--vibe-disp); }
+
+/* ======================================================================== *
+   1 · EDITORIAL — typographic, confident, no chrome. Larger nav, hairline
+   section rules, filled-pill active with a leading accent tick. Detail accent
+   = a thin vertical brand rule down the whole rail.
+   ======================================================================== */
+[data-sb="editorial"] .sidebar { padding: 26px 18px; gap: 30px; background: oklch(from var(--bg-0) l c h / 0.72); }
+[data-sb="editorial"] .sb-logo { padding: 4px 8px 18px; border-bottom: 1px solid var(--line-soft); }
+[data-sb="editorial"] .sb-logo .word { font-weight: 700; font-size: 18px; letter-spacing: -0.04em; }
+[data-sb="editorial"] .sb-logo .word small { letter-spacing: 0.22em; opacity: .7; }
+[data-sb="editorial"] .sb-section { gap: 3px; }
+[data-sb="editorial"] .sb-section .heading { font-family: var(--vibe-disp); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: none; color: var(--fg-3); padding: 0 12px 9px; }
+[data-sb="editorial"] .sb-item { font-size: 15px; font-weight: 500; padding: 11px 14px; border-radius: 11px; letter-spacing: -0.01em; }
+[data-sb="editorial"] .sb-item svg { width: 17px; height: 17px; opacity: .8; }
+[data-sb="editorial"] .sb-item.active { background: var(--bg-2); font-weight: 700; }
+[data-sb="editorial"] .sb-item.active svg { opacity: 1; color: var(--brand-magenta); }
+[data-sb="editorial"] .sb-item.active span:first-of-type::after,
+[data-sb="editorial"] .sb-item.active > span:not(.pill):not(.count) { }
+[data-sb="editorial"] .sb-item.active::after { content: ""; margin-left: auto; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--grad-signature); flex-shrink: 0; }
+[data-sb="editorial"] .sb-item .count, [data-sb="editorial"] .sb-item .pill { font-family: var(--vibe-disp); }
+[data-sb="editorial"] .sb-user { border-radius: 14px; border-color: var(--line-soft); }
+
+/* ======================================================================== *
+   2 · CONSOLE — terminal/exam-hacker energy. Monospace-ish Chakra Petch,
+   sharp corners, // section comments, › item carets, inverted active block.
+   Subtle dotted grid backdrop. Reads like a CLI dashboard, not a SaaS shell.
+   ======================================================================== */
+[data-sb="console"] .sidebar { padding: 20px 14px; gap: 22px; background: oklch(from var(--bg-0) l c h / 0.8);
+  border-right: 1px solid var(--line); background-image: radial-gradient(var(--line-soft) 1px, transparent 1px);
+  background-size: 16px 16px; }
+[data-sb="console"] .sb-logo { padding: 4px 6px 16px; border-bottom: 1px dashed var(--line); }
+[data-sb="console"] .sb-logo .mark { border-radius: 7px; }
+[data-sb="console"] .sb-logo .word { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+[data-sb="console"] .sb-logo .word small { font-family: "JetBrains Mono", monospace; letter-spacing: 0.18em; }
+[data-sb="console"] .sb-section { gap: 2px; }
+[data-sb="console"] .sb-section .heading { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: lowercase; color: var(--fg-3); padding: 0 10px 7px; }
+[data-sb="console"] .sb-section .heading::before { content: "// "; color: var(--brand-magenta); }
+[data-sb="console"] .sb-item { font-size: 13.5px; font-weight: 500; padding: 9px 11px; border-radius: 6px; }
+[data-sb="console"] .sb-item span:not(.pill):not(.count)::before { content: "› "; color: var(--fg-3); font-family: "JetBrains Mono", monospace; }
+[data-sb="console"] .sb-item svg { width: 16px; height: 16px; }
+[data-sb="console"] .sb-item.active { background: var(--brand-magenta); color: #fff; box-shadow: 0 0 0 1px var(--brand-magenta), 0 0 22px -6px oklch(0.68 0.25 5 / 0.7); }
+[data-sb="console"] .sb-item.active svg { color: #fff; }
+[data-sb="console"] .sb-item.active span:not(.pill):not(.count)::before { content: "$ "; color: oklch(0.99 0.005 285 / 0.7); }
+[data-sb="console"] .sb-item .count { font-family: "JetBrains Mono", monospace; }
+[data-sb="console"] .sb-item .pill { border-radius: 4px; font-family: "JetBrains Mono", monospace; }
+[data-sb="console"] .sb-user { border-radius: 8px; border-style: dashed; }
+[data-sb="console"] .sb-user .av { border-radius: 8px; }
+[data-sb="console"] .sb-user .info span { font-family: "JetBrains Mono", monospace; }
+
+/* ======================================================================== *
+   3 · SOFT — friendly, floating. Detached rounded card, Kanit type, big
+   rounded pills with icon chips, gradient active pill with glow. Warm + human.
+   ======================================================================== */
+[data-sb="soft"] .app { background: transparent; }
+[data-sb="soft"] .sidebar { margin: 14px 0 14px 14px; border: 1px solid var(--line); border-right: 1px solid var(--line);
+  border-radius: 26px; background: var(--bg-1); box-shadow: 0 18px 50px -24px oklch(0 0 0 / 0.5); padding: 22px 16px; gap: 24px; }
+[data-sb="soft"] .sb-logo .word { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+[data-sb="soft"] .sb-section { gap: 6px; }
+[data-sb="soft"] .sb-section .heading { font-family: var(--vibe-disp); font-weight: 600; font-size: 11px;
+  letter-spacing: 0.04em; text-transform: none; color: var(--fg-3); padding: 0 14px 6px; }
+[data-sb="soft"] .sb-item { font-size: 14px; font-weight: 500; padding: 10px 12px; border-radius: 99px; gap: 13px; }
+[data-sb="soft"] .sb-item svg { width: 18px; height: 18px; padding: 0; }
+[data-sb="soft"] .sb-item > svg { box-sizing: content-box; width: 18px; height: 18px; padding: 7px; border-radius: 12px;
+  background: var(--bg-2); color: var(--fg-1); transition: background .15s, color .15s; }
+[data-sb="soft"] .sb-item:hover > svg { background: var(--bg-3); }
+[data-sb="soft"] .sb-item.active { background: var(--grad-signature); color: #fff;
+  box-shadow: 0 12px 26px -10px oklch(0.66 0.23 295 / 0.7); }
+[data-sb="soft"] .sb-item.active > svg { background: oklch(0.99 0.005 285 / 0.22); color: #fff; }
+[data-sb="soft"] .sb-item.active .count { color: oklch(0.99 0.005 285 / 0.85); }
+[data-sb="soft"] .sb-user { border-radius: 20px; background: var(--bg-2); border-color: transparent; }
+[data-sb="soft"] .sb-user .av { border-radius: 14px; }
+
+/* Kanit runs heavy — lighten weights + open up letter-spacing so it breathes */
+[data-sb="soft"] .sb-item { font-weight: 400; letter-spacing: 0.012em; }
+[data-sb="soft"] .sb-item.active { font-weight: 500; }
+[data-sb="soft"] .sb-logo .word { font-weight: 500; letter-spacing: 0.005em; }
+[data-sb="soft"] .sb-section .heading { font-weight: 500; letter-spacing: 0.05em; }
+[data-sb="soft"] .sb-user .info b { font-weight: 500; letter-spacing: 0.01em; }
+[data-sb="soft"] :is(.page-head h1, .prof-card .ph h2) { font-weight: 700; letter-spacing: -0.025em; }
+
+/* keep collapsed behaviour sane across vibes */
+[data-sb="soft"] .app.collapsed .sidebar { border-radius: 22px; }
+
+/* ======================================================================== *
+   PRIMARY HOME — a big centred house "logo" tile near the top of the sidebar,
+   with "หน้าหลัก" small beneath. A glowing light ORBITS the perimeter (a comet
+   dot travelling around — rotating wrapper, no @property/mask, engine-safe).
+   Variations via data-home: orbit (light circles round) · aura (breathing
+   halo) · solid (plain tile).
+   ======================================================================== */
+.sb-home { display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 2px 0 8px;
+  text-decoration: none; margin-bottom: 4px; }
+.sb-home .tile { position: relative; width: 80px; height: 80px; display: grid; place-items: center;
+  transition: transform .22s var(--ease-spring); }
+.sb-home:hover .tile { transform: translateY(-2px) scale(1.04); }
+.sb-home .face { position: absolute; inset: 0; border-radius: 24px; background: var(--grad-signature);
+  display: grid; place-items: center; box-shadow: 0 12px 28px -10px oklch(0.66 0.23 295 / 0.7), 0 0 0 1px oklch(0.99 0.005 285 / 0.14) inset; }
+.sb-home .tile svg { position: relative; z-index: 1; width: 40px; height: 40px; color: #fff; }
+.sb-home .label { font-family: var(--vibe-disp, var(--font-display)); font-size: 12.5px; font-weight: 600;
+  color: var(--fg-1); letter-spacing: 0.04em; transition: color .15s; white-space: nowrap; }
+.sb-home:hover .label { color: var(--fg-0); }
+/* the orbiting light: a rotating wrapper carrying one bright comet dot */
+.sb-home .orbit { position: absolute; inset: -7px; border-radius: 50%; z-index: 0; pointer-events: none; display: none; }
+.sb-home .orbit::before { content: ""; position: absolute; top: -5px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 0 10px 3px oklch(0.80 0.16 205 / 0.95), 0 0 20px 7px oklch(0.68 0.25 5 / 0.7), 0 0 34px 12px oklch(0.66 0.23 295 / 0.45); }
+[data-home="orbit"] .sb-home .orbit { display: block; animation: homeOrbit 2.8s linear infinite; }
+/* a faint second dot trailing opposite for a fuller "ring of light" feel */
+[data-home="orbit"] .sb-home .orbit2 { display: block; inset: -7px; animation: homeOrbit 2.8s linear infinite; animation-delay: -1.4s; }
+[data-home="orbit"] .sb-home .orbit2::before { width: 7px; height: 7px; margin-left: -3.5px; opacity: .7;
+  box-shadow: 0 0 8px 2px oklch(0.86 0.20 130 / 0.9), 0 0 16px 5px oklch(0.78 0.20 50 / 0.6); }
+@keyframes homeOrbit { to { transform: rotate(360deg); } }
+
+/* aura — soft breathing halo that cycles through the active theme's brand
+   colors (tokens shift per theme, so the glow always matches the brand). */
+[data-home="aura"] .sb-home .face { animation: homeAura 4.4s ease-in-out infinite; }
+@keyframes homeAura {
+  0%, 100% { box-shadow: 0 12px 28px -10px var(--brand-violet), 0 0 18px 3px color-mix(in oklch, var(--brand-violet), transparent 52%), 0 0 0 1px oklch(0.99 0.005 285 / 0.14) inset; }
+  33%      { box-shadow: 0 12px 30px -9px var(--brand-magenta), 0 0 26px 6px color-mix(in oklch, var(--brand-magenta), transparent 46%), 0 0 0 1px oklch(0.99 0.005 285 / 0.14) inset; }
+  66%      { box-shadow: 0 12px 30px -9px var(--brand-coral), 0 0 26px 6px color-mix(in oklch, var(--brand-coral), transparent 46%), 0 0 0 1px oklch(0.99 0.005 285 / 0.14) inset; }
+}
+
+/* collapsed sidebar → shrink the home tile */
+.app.collapsed .sb-home .label { display: none; }
+.app.collapsed .sb-home .tile { width: 46px; height: 46px; }
+.app.collapsed .sb-home .face { border-radius: 14px; }
+.app.collapsed .sb-home .tile svg { width: 24px; height: 24px; }
+.app.collapsed .sb-home .orbit, .app.collapsed .sb-home .orbit2 { inset: -5px; }
+/* some pages collapse to an icon rail via their own media query (not the
+   .collapsed class) — shrink the home tile there too so it never overflows */
+@media (max-width: 980px) {
+  .sb-home .tile { width: 46px; height: 46px; }
+  .sb-home .face { border-radius: 14px; }
+  .sb-home .tile svg { width: 24px; height: 24px; }
+  .sb-home .label { display: none; }
+  .sb-home .orbit, .sb-home .orbit2 { inset: -5px; }
+}
+
+/* ======================================================================== *
+   TOP-AV dropdown menu (profile button → settings / profile / logout)
+   ======================================================================== */
+.top-av { position: relative; }
+.av-menu { position: absolute; top: calc(100% + 10px); right: 0; z-index: 60; width: 220px; padding: 7px;
+  background: oklch(from var(--bg-1) l c h / 0.97); backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%); border: 1px solid var(--glass-line-strong);
+  border-radius: 16px; box-shadow: 0 24px 60px -18px oklch(0 0 0 / 0.6); display: none; }
+.av-menu.open { display: block; animation: avPop .16s var(--ease-spring) both; }
+@keyframes avPop { from { transform: translateY(-6px) scale(.98); } to { transform: translateY(0) scale(1); } }
+.av-menu .am-head { display: flex; align-items: center; gap: 11px; padding: 10px 11px 12px; border-bottom: 1px solid var(--line-soft); margin-bottom: 6px; }
+.av-menu .am-head .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex;
+  align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; }
+.av-menu .am-head .ai b { display: block; font-size: 13.5px; font-weight: 600; color: var(--fg-0); }
+.av-menu .am-head .ai span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono", monospace; }
+.av-menu a { display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 10px; text-decoration: none;
+  color: var(--fg-1); font-size: 13.5px; font-weight: 500; transition: background .14s, color .14s; }
+.av-menu a:hover { background: var(--bg-2); color: var(--fg-0); }
+.av-menu a svg { width: 16px; height: 16px; color: var(--fg-2); }
+.av-menu a:hover svg { color: var(--fg-0); }
+.av-menu a.danger { color: var(--danger); }
+.av-menu a.danger svg { color: var(--danger); }
+.av-menu a.danger:hover { background: oklch(0.66 0.22 25 / 0.1); }
+.av-menu .am-sep { height: 1px; background: var(--line-soft); margin: 6px 4px; }
+.av-catcher { position: fixed; inset: 0; z-index: 55; display: none; }
+.av-catcher.open { display: block; }
+.top-av .chev { transition: transform .2s var(--ease-spring); }
+.top-av.menu-open .chev { transform: rotate(180deg); }
+
+/* bottom user card removed — identity lives in the Dashboard hero, account
+   actions in the top-av menu. Hidden pre-JS too, to avoid a flash. */
+.sidebar .sb-user { display: none !important; }
+
+/* ======================================================================== *
+   NAV REDESIGN — primary glass group (3 big buttons, หน้าหลัก most prominent)
+   + secondary mini icon dock (label on hover). Tweakable via data-sbp
+   (container), data-sbhome (home emphasis), data-sbsub (subtitles).
+   ======================================================================== */
+.sb-primary { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 20px; }
+/* default = GLASS */
+.sb-primary {
+  background: oklch(from var(--bg-1) l c h / 0.5);
+  border: 1px solid var(--glass-line, oklch(1 0 0 / 0.12));
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  box-shadow: 0 12px 34px -18px oklch(0 0 0 / 0.45), 0 1px 0 oklch(1 0 0 / 0.08) inset;
+}
+:root[data-sbp="solid"]   .sb-primary { background: var(--bg-1); border-color: var(--line); box-shadow: var(--shadow-1, 0 2px 10px -4px oklch(0 0 0 / 0.3)); -webkit-backdrop-filter: none; backdrop-filter: none; }
+:root[data-sbp="outline"] .sb-primary { background: transparent; border: 1px solid var(--line); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+:root[data-sbp="plain"]   .sb-primary { background: transparent; border-color: transparent; box-shadow: none; padding: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+.sb-big { display: flex; align-items: center; gap: 13px; padding: 11px 12px; border-radius: 15px;
+  text-decoration: none; color: var(--fg-1); position: relative;
+  transition: background .16s, transform .16s, width .26s cubic-bezier(.4,0,.2,1), height .26s cubic-bezier(.4,0,.2,1), padding .26s cubic-bezier(.4,0,.2,1), gap .26s cubic-bezier(.4,0,.2,1); }
+.sb-big .bi { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; flex-shrink: 0;
+  background: var(--bg-2); color: var(--fg-1); transition: background .16s, color .16s, width .26s cubic-bezier(.4,0,.2,1), height .26s cubic-bezier(.4,0,.2,1); }
+.sb-big .bi svg { width: 21px; height: 21px; }
+.sb-big .bt { display: flex; flex-direction: column; gap: 1px; min-width: 0;
+  transition: opacity .18s ease, transform .22s cubic-bezier(.4,0,.2,1); }
+.sb-big .bt b { font-size: 15px; font-weight: 600; color: var(--fg-0); letter-spacing: -0.01em; white-space: nowrap; line-height: 1.2; }
+.sb-big .bt .bs { font-size: 11.5px; color: var(--fg-2); white-space: nowrap; line-height: 1.2; }
+.sb-big:hover { background: oklch(from var(--bg-2) l c h / 0.7); transform: translateY(-1px); }
+.sb-big.active:not(.sb-big-home) { background: var(--bg-2); }
+.sb-big.active:not(.sb-big-home) .bi { background: var(--grad-signature); color: #fff; }
+
+/* HOME — keeps a gradient icon chip for identity on every page, but the
+   prominent colored FRAME + aura only appear when home is the ACTIVE page
+   (so it isn't distracting when you're on Courses/Exams). */
+/* home icon chip stays neutral like the others unless home is the ACTIVE
+   page — so it doesn't read as "selected" while you're on another page */
+.sb-big-home.active .bi { background: var(--grad-signature); color: #fff; }
+.sb-big-home.active { background: linear-gradient(120deg, oklch(0.66 0.23 295 / 0.13), oklch(0.80 0.16 205 / 0.11));
+  box-shadow: 0 0 0 1px oklch(0.66 0.23 295 / 0.22) inset; }
+.sb-big-home.active:hover { background: linear-gradient(120deg, oklch(0.66 0.23 295 / 0.2), oklch(0.80 0.16 205 / 0.16)); }
+@media (prefers-reduced-motion: no-preference) { .sb-big-home.active .bi { animation: homeAura 4.4s ease-in-out infinite; } }
+:root[data-sbhome="gradient"] .sb-big-home.active { background: var(--grad-signature); box-shadow: 0 14px 28px -12px oklch(0.66 0.23 295 / 0.6); }
+:root[data-sbhome="gradient"] .sb-big-home.active .bt b, :root[data-sbhome="gradient"] .sb-big-home.active .bt .bs { color: #fff; }
+:root[data-sbhome="gradient"] .sb-big-home.active .bt .bs { opacity: 0.85; }
+:root[data-sbhome="gradient"] .sb-big-home.active .bi { background: oklch(1 0 0 / 0.22); color: #fff; animation: none; box-shadow: none; }
+:root[data-sbhome="subtle"] .sb-big-home.active { background: oklch(from var(--bg-2) l c h / 0.7); box-shadow: none; }
+:root[data-sbhome="subtle"] .sb-big-home.active .bi { animation: none; }
+
+/* subtitles toggle — hidden by default on every page; tweak can opt back in */
+.sb-big .bt .bs { display: none; }
+:root[data-sbsub="on"] .sb-big .bt .bs { display: block; }
+
+/* separator between groups */
+.sb-mini-sep { height: 1px; margin: 4px 10px; background: var(--line-soft); }
+
+/* SECONDARY — mini icon dock; name appears only on hover */
+.sb-mini { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 2px 4px; }
+.sb-dot { position: relative; width: 46px; height: 44px; border-radius: 13px; display: grid; place-items: center;
+  color: var(--fg-2); text-decoration: none; transition: background .15s, color .15s, transform .15s, width .26s cubic-bezier(.4,0,.2,1), height .26s cubic-bezier(.4,0,.2,1); }
+.sb-dot svg { width: 20px; height: 20px; }
+.sb-dot:hover { background: var(--bg-2); color: var(--fg-0); transform: translateY(-1px); }
+.sb-dot.active { color: var(--brand-magenta); background: var(--bg-2); }
+.sb-dot.active::after { content: ""; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%; background: var(--grad-signature); }
+/* hover label */
+.sb-dot::before { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 7px);
+  transform: translateX(-50%) translateY(5px); background: var(--fg-0); color: var(--bg-0);
+  font-family: var(--vibe-disp, var(--font-display)); font-size: 11.5px; font-weight: 600;
+  padding: 5px 9px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity .14s, transform .14s; z-index: 40; box-shadow: 0 8px 20px -8px oklch(0 0 0 / 0.5); }
+.sb-dot:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* collapsed / icon-rail: big buttons → icon only, dock stacks vertically */
+.app.collapsed .sb-primary { padding: 8px; gap: 6px; }
+.app.collapsed .sb-big { justify-content: center; padding: 9px; }
+.app.collapsed .sb-big .bt { display: none; }
+.app.collapsed .sb-mini { flex-direction: column; flex-wrap: nowrap; }
+.app.collapsed .sb-dot::before { left: calc(100% + 10px); bottom: auto; top: 50%; transform: translateY(-50%) translateX(5px); }
+.app.collapsed .sb-dot:hover::before { transform: translateY(-50%) translateX(0); }
+@media (max-width: 980px) {
+  .sb-primary { padding: 8px; gap: 6px; }
+  .sb-big { justify-content: center; padding: 9px; }
+  .sb-big .bt { display: none; }
+  .sb-mini { flex-direction: column; flex-wrap: nowrap; }
+  .sb-mini-sep { margin: 4px 8px; }
+  .sb-dot::before { left: calc(100% + 10px); bottom: auto; top: 50%; transform: translateY(-50%) translateX(5px); }
+  .sb-dot:hover::before { transform: translateY(-50%) translateX(0); }
+}
+
+/* collapsed rail: unify EVERYTHING onto one centered 44px column.
+   Previously the big-button cluster and the mini-dock used different
+   widths/paddings, so their icons sat on different vertical axes and
+   at different sizes — reading as messy. One axis, one size, even gaps. */
+.app.collapsed .sidebar { gap: 12px; align-items: center; padding-left: 10px; padding-right: 10px; }
+.app.collapsed .sb-logo { justify-content: center; padding: 0; width: 44px; }
+.app.collapsed .sb-primary, .app.collapsed .sb-mini { width: auto; padding: 0; }
+.app.collapsed .sb-primary { gap: 6px; display: flex; flex-direction: column; align-items: center; }
+.app.collapsed .sb-mini { gap: 6px; align-items: center; }
+.app.collapsed .sb-big { width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border-radius: 13px; }
+.app.collapsed .sb-big .bi { width: 34px; height: 34px; border-radius: 10px; }
+.app.collapsed .sb-big .bi svg { width: 18px; height: 18px; }
+.app.collapsed .sb-mini-sep { width: 34px; margin: 2px 0; }
+.app.collapsed .sb-dot { width: 44px; height: 44px; border-radius: 13px; }
+.app.collapsed .sb-dot svg { width: 18px; height: 18px; }
+.app.collapsed .sb-dot.active::after { bottom: 6px; }

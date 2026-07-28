@@ -1,0 +1,100 @@
+/* ==========================================================================
+   Mingsmileyface · App Shell (sidebar + topbar + scroll page)
+   Shared by Payments + Profile. Loads after brand.css.
+   ========================================================================== */
+:root{ --ease-spring: cubic-bezier(.2,.8,.2,1); }
+body { overflow: hidden; }
+
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s var(--ease-spring); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word, .app.collapsed .sb-section .heading, .app.collapsed .sb-item span:not(.pill):not(.count), .app.collapsed .sb-item .count, .app.collapsed .sb-item .pill, .app.collapsed .sb-user .info, .app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s var(--ease-spring); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; flex-shrink: 0; }
+.sb-item span:not(.pill):not(.count) { white-space: nowrap; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; cursor: pointer; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
+.search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.search-trigger svg { color: var(--fg-2); }
+.search-trigger .kbd { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.search-trigger .label { display: none; }
+@media (min-width: 900px) { .search-trigger .label { display: inline; min-width: 140px; text-align: left; } }
+
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+.top-av { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-1); cursor: pointer; }
+.top-av .av { width: 30px; height: 30px; border-radius: 50%; background: var(--grad-cool); font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.top-av .name { font-size: 13px; font-weight: 500; }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+.page { padding: 32px 32px 80px; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; position: relative; }
+.page::before { content: ""; position: absolute; inset: 0 -32px 60% -32px; background: linear-gradient(180deg, oklch(0.66 0.23 295 / 0.05), transparent 80%); z-index: -1; pointer-events: none; }
+
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.page-head .titles { display: flex; flex-direction: column; gap: 6px; }
+.page-head .eyebrow { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); display: flex; align-items: center; gap: 10px; }
+.page-head .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-magenta); box-shadow: 0 0 0 4px oklch(0.68 0.25 5 / 0.18); }
+.page-head h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 2.8vw, 36px); letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0); white-space: nowrap; }
+.page-head .titles { min-width: 0; }
+@media (max-width: 480px) { .page-head h1 { white-space: normal; } }
+.page-head h1 .grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.page-head .meta { display: flex; gap: 20px; font-size: 13px; color: var(--fg-2); }
+.page-head .meta b { color: var(--fg-0); font-weight: 600; font-family: var(--font-display); font-size: 15px; letter-spacing: -0.005em; margin-right: 4px; }
+
+/* mobile: collapse sidebar to icons */
+@media (max-width: 860px) {
+  .app { grid-template-columns: 76px 1fr; }
+  .app .sb-logo .word, .app .sb-section .heading, .app .sb-item span:not(.pill):not(.count), .app .sb-item .count, .app .sb-item .pill, .app .sb-user .info, .app .sb-user .chev { display: none; }
+  .app .sb-item { justify-content: center; padding: 10px; }
+  .app .sb-logo { justify-content: center; }
+  .app .sb-user { padding: 8px; justify-content: center; }
+  .top-av .name { display: none; }
+  .page { padding: 24px 18px 70px; }
+}

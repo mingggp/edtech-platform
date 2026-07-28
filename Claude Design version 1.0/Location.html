@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>สถานที่เรียนออนไซต์ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<style>
+/* ============== LOCATION — page specific ============== */
+
+.loc-hero-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+.loc-hero-inner .lhi-copy { display: flex; flex-direction: column; align-items: center; }
+.lhi-sep { color: var(--fg-3); font-weight: 300; margin: 0 0.22em; }
+.loc-hero-inner h1 { max-width: none; white-space: nowrap; font-size: clamp(30px, 6.2vw, 58px); }
+.loc-hero-inner .lede { max-width: 56ch; }
+.lhi-facts { display: grid; gap: 12px; }
+.lhi-facts .fact { display: flex; gap: 15px; align-items: center; padding: 16px 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-1); transition: border-color .25s, transform .25s; }
+.lhi-facts .fact:hover { border-color: color-mix(in oklab, var(--brand-violet) 35%, transparent); transform: translateX(3px); }
+.lhi-facts .fact > svg { width: 22px; height: 22px; color: var(--brand-violet); flex: 0 0 auto; }
+.lhi-facts .fact b { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--fg-0); }
+.lhi-facts .fact span { font-size: 13px; color: var(--fg-2); }
+.lhi-facts .open-badge .tx { font-size: 11px; }
+@media (max-width: 900px) { .loc-hero-inner { grid-template-columns: 1fr; gap: 30px; } .loc-hero-inner h1, .loc-hero-inner .lede { max-width: none; } }
+
+/* quick chips under hero copy */
+.loc-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.loc-chip {
+  display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px;
+  border-radius: 99px; border: 1px solid var(--line); background: var(--bg-1);
+  font-size: 13.5px; font-weight: 600; color: var(--fg-1);
+}
+.loc-chip svg { width: 15px; height: 15px; color: var(--brand-violet); flex: 0 0 auto; }
+.loc-chip b { color: var(--fg-0); font-weight: 700; }
+.loc-chip.bts svg { color: oklch(0.62 0.17 150); }
+
+/* ============== MAP SHELL ============== */
+.map-wrap { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: stretch; }
+
+.map-frame {
+  position: relative; border-radius: 28px; overflow: hidden;
+  border: 1px solid var(--line); background: var(--bg-1);
+  box-shadow: var(--shadow-2);
+  min-height: clamp(480px, 70vh, 760px);
+}
+/* ---- 🗺️ MAP MOUNT --------------------------------------------------------
+   ตัวแผนที่ 3D จริง (MapLibre + เส้นทาง BTS) เป็น component แยก:
+   ให้ mount ลงใน #map-slot แล้วลบ/แทนที่ .map-placeholder ทั้งก้อน
+   ข้างในถูกเว้นเป็น absolute inset:0 ไว้ให้เต็มกรอบพอดี
+--------------------------------------------------------------------------- */
+#map-slot { position: absolute; inset: 0; }
+
+/* placeholder (โชว์จนกว่า map จริงจะเสียบ) */
+.map-placeholder { position: absolute; inset: 0; overflow: hidden; background:
+  radial-gradient(120% 90% at 18% 8%, color-mix(in oklab, var(--brand-violet) 14%, transparent), transparent 55%),
+  radial-gradient(110% 80% at 88% 92%, color-mix(in oklab, var(--pop, var(--brand-magenta)) 12%, transparent), transparent 50%),
+  var(--bg-2);
+}
+.map-placeholder .grid-dots { position: absolute; inset: 0; background-image: radial-gradient(color-mix(in oklab, var(--fg-3) 38%, transparent) 1px, transparent 1px); background-size: 26px 26px; mask-image: radial-gradient(85% 85% at 50% 50%, #000, transparent); }
+.map-placeholder .blocks { position: absolute; inset: 0; opacity: 0.5; }
+.map-placeholder .blocks i {
+  position: absolute; border-radius: 6px; border: 1px solid color-mix(in oklab, var(--fg-3) 30%, transparent);
+  background: color-mix(in oklab, var(--bg-0) 60%, transparent);
+}
+.map-placeholder svg.route { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map-placeholder .route .rd { stroke-dasharray: 10 9; animation: locDash 1.6s linear infinite; }
+@keyframes locDash { to { stroke-dashoffset: -19; } }
+@media (prefers-reduced-motion: reduce) { .map-placeholder .route .rd { animation: none; } }
+
+.map-pin { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 7px; transform: translate(-50%, -100%); }
+.map-pin .tag { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.08em; font-weight: 600; padding: 5px 10px; border-radius: 8px; color: #fff; white-space: nowrap; box-shadow: 0 8px 22px -8px oklch(0 0 0 / 0.5); }
+.map-pin .dot { width: 14px; height: 14px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 14px -2px oklch(0 0 0 / 0.45); }
+.map-pin.p-bts .tag { background: oklch(0.55 0.15 150); }
+.map-pin.p-bts .dot { background: oklch(0.62 0.17 150); }
+.map-pin.p-shop .tag { background: var(--grad-signature); }
+.map-pin.p-shop .dot { background: var(--brand-violet); animation: locPulse 2.2s ease-out infinite; }
+@keyframes locPulse { 0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--brand-violet) 55%, transparent); } 75% { box-shadow: 0 0 0 16px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+.map-placeholder .mp-note {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--fg-3); padding: 8px 16px; border-radius: 99px;
+  background: color-mix(in oklab, var(--bg-0) 78%, transparent); border: 1px solid var(--line);
+  backdrop-filter: blur(10px); white-space: nowrap;
+}
+
+.map-placeholder .mp-note .mp-play { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--grad-signature); color: #fff; font-size: 9px; padding-left: 2px; }
+
+/* ---- live 3D map (MapLibre) ---- */
+#map-live { position: absolute; inset: 0; }
+#map-live canvas { outline: none; }
+.map-live-cta {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 3;
+  display: none; align-items: center; gap: 9px; padding: 11px 20px; border-radius: 99px;
+  border: 0; cursor: pointer; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 14px; font-weight: 700; color: #fff;
+  background: var(--grad-signature); box-shadow: 0 10px 30px -8px oklch(0 0 0 / 0.45), 0 0 18px color-mix(in oklab, var(--brand-violet) 40%, transparent);
+  transition: transform .2s, filter .2s;
+}
+.map-live-cta:hover { transform: translateX(-50%) translateY(-2px); filter: brightness(1.06); }
+.map-live-cta .pl { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: oklch(1 0 0 / 0.22); font-size: 9px; padding-left: 2px; }
+.lm-pin { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.lm-pin .tag { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.06em; font-weight: 600; padding: 5px 10px; border-radius: 8px; color: #fff; white-space: nowrap; box-shadow: 0 8px 22px -8px oklch(0 0 0 / 0.5); }
+.lm-pin .dot { width: 14px; height: 14px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 14px -2px oklch(0 0 0 / 0.45); }
+.lm-pin.bts .tag { background: oklch(0.55 0.15 150); }
+.lm-pin.bts .dot { background: oklch(0.62 0.17 150); }
+.lm-pin.shop .tag { background: var(--grad-signature); }
+.lm-pin.shop .dot { background: var(--brand-violet); animation: locPulse 2.2s ease-out infinite; }
+
+/* hint ribbon on top of frame */
+.map-hint {
+  position: absolute; top: 18px; left: 18px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 99px;
+  font-size: 12.5px; font-weight: 600; color: var(--fg-0);
+  background: color-mix(in oklab, var(--bg-0) 82%, transparent); border: 1px solid var(--line);
+  backdrop-filter: blur(12px); pointer-events: none;
+}
+.map-hint svg { width: 14px; height: 14px; color: var(--brand-violet); }
+
+/* ============== SIDE RAIL ============== */
+.map-rail { display: flex; flex-direction: column; gap: 14px; }
+.rail-card { border: 1px solid var(--line); border-radius: 22px; background: var(--bg-1); padding: 22px; }
+.rail-card .rc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.rail-card .rc-head svg { width: 17px; height: 17px; color: var(--brand-violet); flex: 0 0 auto; }
+.rail-card .rc-head b { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; color: var(--fg-0); }
+.rail-card .addr { font-size: 14px; line-height: 1.65; color: var(--fg-1); }
+.rail-card .addr b { color: var(--fg-0); }
+
+.hours-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed var(--line-soft); font-size: 13.5px; }
+.hours-row:last-of-type { border-bottom: 0; }
+.hours-row .d { color: var(--fg-2); font-weight: 500; }
+.hours-row .t { font-family: "JetBrains Mono"; font-size: 12.5px; color: var(--fg-0); font-weight: 600; }
+.open-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 99px; margin-left: auto; }
+.open-badge .pd { width: 7px; height: 7px; border-radius: 50%; }
+.open-badge.is-open { color: oklch(0.52 0.14 150); background: oklch(0.62 0.17 150 / 0.14); }
+.open-badge.is-open .pd { background: oklch(0.62 0.17 150); animation: locPulse 2s ease-out infinite; }
+.open-badge.is-closed { color: var(--fg-2); background: var(--bg-3); }
+.open-badge.is-closed .pd { background: var(--fg-3); }
+
+.bts-line { display: flex; align-items: center; gap: 12px; }
+.bts-badge { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 13px; color: #fff; background: oklch(0.55 0.15 150); }
+.bts-line .body { font-size: 13.5px; color: var(--fg-1); line-height: 1.5; }
+.bts-line .body b { color: var(--fg-0); display: block; font-size: 14.5px; }
+
+.rail-actions { display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto; }
+.rail-actions .btn { justify-content: center; flex: 1 1 auto; min-height: 46px; }
+
+/* ============== DIRECTIONS STEPS ============== */
+.dir-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; counter-reset: dirstep; }
+.dir-grid.three { grid-template-columns: repeat(3, 1fr); }
+.dir-step { position: relative; border: 1px solid var(--line); border-radius: 22px; background: var(--bg-1); padding: 26px; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s; }
+.dir-step:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: color-mix(in oklab, var(--brand-violet) 35%, transparent); }
+.dir-step .n { counter-increment: dirstep; font-family: var(--font-display); font-weight: 800; font-size: 15px; width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; background: var(--grad-signature); margin-bottom: 16px; }
+.dir-step .n::before { content: counter(dirstep); }
+.dir-step h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: -0.01em; color: var(--fg-0); }
+.dir-step p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--fg-1); }
+.dir-step .meta { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-2); padding: 5px 11px; border-radius: 8px; background: var(--bg-3); }
+.dir-step .meta svg { width: 13px; height: 13px; }
+
+/* รูปประกอบ + จัดกึ่งกลางแต่ละขั้น (วิธีเดินทาง) */
+.dir-ph { position: relative; aspect-ratio: 16/10; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 20px; }
+.dir-ph::before { content: ""; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, oklch(0.99 0.005 285 / 0.05), oklch(0.99 0.005 285 / 0.05) 2px, transparent 2px, transparent 9px); }
+.dir-ph .lb { position: absolute; top: 12px; left: 14px; font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(0.99 0.005 285 / 0.62); }
+.dir-grid.three .dir-step { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.dir-grid.three .dir-step .dir-ph { width: 100%; }
+.dir-grid.three .dir-step .n { margin: 0 0 14px; }
+.dir-grid.three .dir-step .meta { margin-left: auto; margin-right: auto; }
+
+/* ============== GALLERY ============== */
+.gal-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; }
+.gal-ph { position: relative; aspect-ratio: 16/10; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: linear-gradient(150deg, color-mix(in oklab, var(--brand-violet) 22%, var(--bg-2)), color-mix(in oklab, var(--pop, var(--brand-magenta)) 16%, var(--bg-2))); }
+.gal-ph::before { content: ""; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, oklch(0.99 0.005 285 / 0.05), oklch(0.99 0.005 285 / 0.05) 2px, transparent 2px, transparent 14px); }
+.gal-ph .lb { position: absolute; top: 16px; left: 16px; font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(0.99 0.005 285 / 0.6); }
+.gal-ph .cap { position: absolute; left: 18px; bottom: 16px; font-family: var(--font-display); font-weight: 600; font-size: 17px; color: #fff; text-shadow: 0 2px 12px oklch(0 0 0 / 0.4); }
+.gal-ph.big { grid-row: span 1; }
+
+/* gallery slideshow (เวทีใหญ่ + ถัมเนลเล็ก) */
+.gal-show { display: grid; gap: 14px; }
+.gal-stage { position: relative; aspect-ratio: 16/9; border-radius: 24px; overflow: hidden; border: 1px solid var(--line); }
+.gal-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; }
+.gal-slide.is-active { opacity: 1; }
+.gal-show .ph { position: absolute; inset: 0; }
+.gal-show .ph::before { content: ""; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, oklch(0.99 0.005 285 / 0.05), oklch(0.99 0.005 285 / 0.05) 2px, transparent 2px, transparent 9px); }
+.gal-slide .lb { position: absolute; top: 18px; left: 18px; z-index: 2; font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(0.99 0.005 285 / 0.6); }
+.gal-stage .cap { position: absolute; left: 22px; bottom: 20px; z-index: 3; font-family: var(--font-display); font-weight: 700; font-size: 21px; color: #fff; text-shadow: 0 2px 14px oklch(0 0 0 / 0.5); }
+.gal-stage::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 52%, oklch(0 0 0 / 0.5)); pointer-events: none; z-index: 1; }
+.gal-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--glass-line-strong); background: oklch(0.16 0.016 285 / 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s; }
+.gal-nav:hover { background: oklch(0.16 0.016 285 / 0.85); }
+.gal-nav svg { width: 20px; height: 20px; }
+.gal-nav.prev { left: 14px; } .gal-nav.next { right: 14px; }
+.gal-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: 18px; z-index: 4; display: flex; gap: 7px; }
+.gal-dots b { width: 7px; height: 7px; border-radius: 50%; background: oklch(1 0 0 / 0.45); cursor: pointer; transition: background .2s, width .2s; }
+.gal-dots b.on { width: 22px; border-radius: 99px; background: #fff; }
+.gal-thumbs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.gal-thumb { position: relative; aspect-ratio: 16/10; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); cursor: pointer; padding: 0; }
+.gal-thumb.on { outline: 2px solid var(--brand-violet); outline-offset: 2px; }
+.gal-thumb .tn { position: absolute; inset: 0; z-index: 2; background: oklch(0 0 0 / 0.28); opacity: 0; transition: opacity .2s; }
+.gal-thumb:not(.on):hover .tn { opacity: 1; }
+
+/* สถานที่ใกล้เคียง (side rail) */
+.rail-card .nearby { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.rail-card .nearby li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--fg-1); padding-bottom: 9px; border-bottom: 1px solid var(--line-soft); }
+.rail-card .nearby li:last-child { border-bottom: 0; padding-bottom: 0; }
+.rail-card .nearby .dd { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); white-space: nowrap; }
+@media (max-width: 760px) { .gal-thumbs { grid-template-columns: repeat(5, 1fr); } }
+
+@media (max-width: 1080px) {
+  .map-wrap { grid-template-columns: 1fr; }
+  .map-rail { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
+  .rail-actions { grid-column: 1 / -1; flex-direction: row; }
+  .rail-actions .btn { flex: 1; }
+  .dir-grid { grid-template-columns: 1fr 1fr; }
+  .dir-grid.three { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 760px) {
+  .dir-grid { grid-template-columns: 1fr; }
+  .dir-grid.three { grid-template-columns: 1fr; }
+  .gal-grid { grid-template-columns: 1fr; }
+  .map-rail { grid-template-columns: 1fr; }
+  .rail-actions { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="Location.html" class="current">สถานที่เรียน</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Courses.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO ============== -->
+<section class="page-hero" data-screen-label="01 Location Hero" style="padding-bottom:36px">
+  <div class="container-wide">
+    <div class="loc-hero-inner">
+      <div class="lhi-copy">
+        <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+          <a href="Landing Page.html">หน้าหลัก</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          <span>สถานที่เรียน</span>
+        </div>
+        <div class="t-eyebrow reveal"><span class="dot"></span><span>สถานที่เรียน Onsite</span></div>
+        <h1 class="reveal" data-delay="1" style="margin-top:18px">
+          Onsite <span class="lhi-sep">|</span> <span class="grad">Learning Space</span>
+        </h1>
+        <p class="lede reveal" data-delay="2">
+          ศูนย์ติวออนไซต์ใจกลางรัชโยธิน เดินจาก BTS แค่ 3 นาที.
+          ลากแผนที่ด้านล่างเล่นได้เลย — มีเส้นทางพาเดินจากสถานีถึงหน้าร้าน.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MAP ============== -->
+<section class="tight" id="map" data-screen-label="02 Map" style="padding-top:0">
+  <div class="container-wide">
+    <div class="map-wrap reveal">
+
+      <div class="map-frame">
+        <div class="map-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>
+          ลากหมุน · ซูมดูเส้นทางจาก BTS ได้
+        </div>
+
+        <!-- 🗺️ MAP MOUNT: ตัวแผนที่ 3D จริง (MapLibre + เส้นทางวิ่งจาก BTS)
+             ทำเป็น component แยกแล้ว — ให้ mount ลงใน #map-slot นี้
+             แล้วลบ .map-placeholder ทั้งก้อนออก -->
+        <div id="map-slot">
+          <div class="map-placeholder" aria-label="ตัวอย่างแผนที่ — แผนที่ 3D จริงกำลังจะมาแทนที่บล็อกนี้">
+            <div class="grid-dots"></div>
+            <div class="blocks" aria-hidden="true">
+              <i style="left:6%;  top:12%; width:13%; height:18%"></i>
+              <i style="left:24%; top:6%;  width:10%; height:13%"></i>
+              <i style="left:8%;  top:56%; width:16%; height:20%"></i>
+              <i style="left:30%; top:64%; width:11%; height:16%"></i>
+              <i style="left:56%; top:10%; width:14%; height:15%"></i>
+              <i style="left:78%; top:22%; width:12%; height:18%"></i>
+              <i style="left:62%; top:70%; width:13%; height:16%"></i>
+              <i style="left:84%; top:58%; width:9%;  height:13%"></i>
+            </div>
+            <svg class="route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path class="rd" d="M22 78 C 34 70, 38 56, 50 48 S 70 34, 76 26" fill="none" stroke="var(--brand-violet)" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:3px"/>
+            </svg>
+            <div class="map-pin p-bts" style="left:22%; top:78%">
+              <span class="tag">BTS รัชโยธิน · EXIT 4</span><span class="dot"></span>
+            </div>
+            <div class="map-pin p-shop" style="left:76%; top:26%">
+              <span class="tag">MING STUDIO ☺</span><span class="dot"></span>
+            </div>
+            <div class="mp-note">
+              <span style="display:inline-flex;align-items:center;gap:8px">
+                <span class="mp-play" aria-hidden="true">▶</span> เริ่มนำทาง · [ 3D MAP · MOUNT AT #map-slot ]
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="map-live-cta" id="map-live-cta"><span class="pl">▶</span>เริ่มนำทางจาก BTS</button>
+      </div>
+
+      <aside class="map-rail">
+        <div class="rail-card">
+          <div class="rc-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <b>ที่อยู่</b>
+          </div>
+          <p class="addr">
+            <b>Mingsmileyface Learning Space</b><br/>
+            (ศูนย์เรียนออนไซต์พี่หมิง)<br/>
+            1604 ถ.พหลโยธิน แขวงจันทรเกษม<br/>
+            เขตจตุจักร กรุงเทพฯ 10900
+          </p>
+        </div>
+
+        <div class="rail-card">
+          <div class="rc-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <b>เวลาเปิด–ปิด</b>
+            <span class="open-badge is-closed" id="open-now-rail"><span class="pd"></span><span class="tx">…</span></span>
+          </div>
+          <div class="hours-row"><span class="d">จันทร์ – ศุกร์</span><span class="t">15:00 – 20:00</span></div>
+          <div class="hours-row"><span class="d">เสาร์ – อาทิตย์</span><span class="t">09:00 – 17:00</span></div>
+        </div>
+
+        <div class="rail-card">
+          <div class="rc-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9h.01M9 13h.01M9 17h.01"/></svg>
+            <b>สถานที่ใกล้เคียง</b>
+          </div>
+          <ul class="nearby">
+            <li><span>Major Cineplex รัชโยธิน</span><span class="dd">ติดสถานี</span></li>
+            <li><span>เซ็นทรัล ลาดพร้าว</span><span class="dd">~1.8 กม.</span></li>
+            <li><span>แดนเนรมิต (เก่า)</span><span class="dd">~700 ม.</span></li>
+            <li><span>ตึกช้าง</span><span class="dd">~1.2 กม.</span></li>
+          </ul>
+        </div>
+
+        <div class="rail-actions">
+          <a class="btn btn-primary" href="#" id="gmaps-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            เปิดใน Google Maps
+          </a>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== DIRECTIONS ============== -->
+<section data-screen-label="03 Directions">
+  <div class="container-wide">
+    <div class="section-head center">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>วิธีเดินทาง</span></div>
+      <h2 class="reveal" data-delay="1">จาก BTS ถึงหน้าร้าน<br/><span class="grad">ง่ายๆ ใน 3 ขั้น</span></h2>
+    </div>
+    <div class="dir-grid three">
+      <div class="dir-step reveal" data-delay="1">
+        <div class="dir-ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--brand-violet) 30%,var(--bg-1)),color-mix(in oklab,var(--subj-tgat) 22%,var(--bg-1)))"><span class="lb">[ PHOTO · สถานี ]</span></div>
+        <div class="n"></div>
+        <h3>นั่ง BTS มาลงสถานีรัชโยธิน</h3>
+        <span class="meta">BTS RATCHAYOTHIN · N11</span>
+      </div>
+      <div class="dir-step reveal" data-delay="2">
+        <div class="dir-ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-math) 28%,var(--bg-1)),color-mix(in oklab,var(--brand-violet) 22%,var(--bg-1)))"><span class="lb">[ PHOTO · ฟุตบาท ]</span></div>
+        <div class="n"></div>
+        <h3>ออกทางออก 4 เดินตามฟุตบาท</h3>
+        <span class="meta">พหลโยธิน · ~250 ม.</span>
+      </div>
+      <div class="dir-step reveal" data-delay="3">
+        <div class="dir-ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-phys) 28%,var(--bg-1)),color-mix(in oklab,var(--brand-magenta) 22%,var(--bg-1)))"><span class="lb">[ PHOTO · หน้าร้าน ]</span></div>
+        <div class="n"></div>
+        <h3>เข้าซอยพหลโยธิน 30/1 — เจอเลย</h3>
+        <span class="meta">มองหาป้ายยิ้ม</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== GALLERY ============== -->
+<section class="story" data-screen-label="04 Gallery">
+  <div class="container-wide">
+    <div class="section-head">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>บรรยากาศห้องเรียน</span></div>
+      <h2 class="reveal" data-delay="1">ที่นั่งสบาย <span class="grad">โฟกัสเต็มร้อย</span></h2>
+    </div>
+    <div class="gal-show reveal" data-delay="1">
+      <div class="gal-stage" id="gal-stage">
+        <div class="gal-slide is-active"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--brand-violet) 34%,var(--bg-1)),color-mix(in oklab,var(--brand-magenta) 24%,var(--bg-1)))"></div><span class="lb">[ PHOTO 01 · 16:9 ]</span><span class="cap">ห้องเรียนหลัก — กลุ่มเล็ก 8 ที่นั่ง</span></div>
+        <div class="gal-slide"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-tgat) 30%,var(--bg-1)),color-mix(in oklab,var(--brand-magenta) 22%,var(--bg-1)))"></div><span class="lb">[ PHOTO 02 · 16:9 ]</span><span class="cap">หน้าร้าน &amp; ป้ายยิ้ม</span></div>
+        <div class="gal-slide"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--brand-violet) 28%,var(--bg-1)),color-mix(in oklab,var(--subj-math) 26%,var(--bg-1)))"></div><span class="lb">[ PHOTO 03 · 16:9 ]</span><span class="cap">มุมติวเดี่ยว / โฟกัส</span></div>
+        <div class="gal-slide"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-phys) 30%,var(--bg-1)),color-mix(in oklab,var(--brand-violet) 22%,var(--bg-1)))"></div><span class="lb">[ PHOTO 04 · 16:9 ]</span><span class="cap">ไวท์บอร์ด &amp; จอใหญ่</span></div>
+        <div class="gal-slide"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-math) 28%,var(--bg-1)),color-mix(in oklab,var(--subj-tgat) 22%,var(--bg-1)))"></div><span class="lb">[ PHOTO 05 · 16:9 ]</span><span class="cap">มุมพักเบรก / กาแฟ</span></div>
+        <button class="gal-nav prev" id="gal-prev" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button class="gal-nav next" id="gal-next" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+        <div class="gal-dots" id="gal-dots"></div>
+      </div>
+      <div class="gal-thumbs" id="gal-thumbs">
+        <button class="gal-thumb on" aria-label="รูป 1"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--brand-violet) 34%,var(--bg-1)),color-mix(in oklab,var(--brand-magenta) 24%,var(--bg-1)))"></div><span class="tn"></span></button>
+        <button class="gal-thumb" aria-label="รูป 2"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-tgat) 30%,var(--bg-1)),color-mix(in oklab,var(--brand-magenta) 22%,var(--bg-1)))"></div><span class="tn"></span></button>
+        <button class="gal-thumb" aria-label="รูป 3"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--brand-violet) 28%,var(--bg-1)),color-mix(in oklab,var(--subj-math) 26%,var(--bg-1)))"></div><span class="tn"></span></button>
+        <button class="gal-thumb" aria-label="รูป 4"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-phys) 30%,var(--bg-1)),color-mix(in oklab,var(--brand-violet) 22%,var(--bg-1)))"></div><span class="tn"></span></button>
+        <button class="gal-thumb" aria-label="รูป 5"><div class="ph" style="background:linear-gradient(150deg,color-mix(in oklab,var(--subj-math) 28%,var(--bg-1)),color-mix(in oklab,var(--subj-tgat) 22%,var(--bg-1)))"></div><span class="tn"></span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Location.html">สถานที่เรียน</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Contact.html">ติดต่อ</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="Landing Page.html#faq">FAQ</a></li>
+          <li><a href="FAQ.html#pay">วิธีชำระเงิน</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+<script>
+/* เปิด/ปิดตอนนี้ — จ–ศ 15:00–20:00 · ส–อา 09:00–17:00 (เวลาไทย) */
+(function(){
+  function update(){
+    var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));    var day = now.getDay(); // 0=Sun
+    var mins = now.getHours()*60 + now.getMinutes();
+    var open, label;
+    if(day >= 1 && day <= 5){ open = mins >= 15*60 && mins < 20*60; label = open ? 'เปิดอยู่ · ถึง 20:00' : 'ปิดอยู่ · เปิด 15:00'; }
+    else { open = mins >= 9*60 && mins < 17*60; label = open ? 'เปิดอยู่ · ถึง 17:00' : 'ปิดอยู่ · เปิด 09:00'; }
+    ['open-now','open-now-rail'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      el.classList.toggle('is-open', open);
+      el.classList.toggle('is-closed', !open);
+      el.querySelector('.tx').textContent = label;
+    });
+  }
+  update();
+  setInterval(update, 60000);
+
+  /* Google Maps link (พิกัดจริง) */
+  var g = document.getElementById('gmaps-btn');
+  if(g) g.href = 'https://www.google.com/maps/search/?api=1&query=13.830787,100.570975';
+
+  /* แกลเลอรี slideshow — รูปใหญ่ + ถัมเนล + เลื่อนอัตโนมัติ */
+  var stage = document.getElementById('gal-stage');
+  if(stage){
+    var slides = [].slice.call(stage.querySelectorAll('.gal-slide'));
+    var thumbs = [].slice.call(document.querySelectorAll('#gal-thumbs .gal-thumb'));
+    var dotsWrap = document.getElementById('gal-dots');
+    var show = document.querySelector('.gal-show');
+    var idx = 0, timer = null;
+    slides.forEach(function(_, i){
+      var b = document.createElement('b');
+      if(i === 0) b.className = 'on';
+      b.addEventListener('click', function(){ go(i); restart(); });
+      dotsWrap.appendChild(b);
+    });
+    var dots = [].slice.call(dotsWrap.children);
+    function go(n){
+      idx = (n + slides.length) % slides.length;
+      slides.forEach(function(s, i){ s.classList.toggle('is-active', i === idx); });
+      thumbs.forEach(function(t, i){ t.classList.toggle('on', i === idx); });
+      dots.forEach(function(d, i){ d.classList.toggle('on', i === idx); });
+    }
+    function restart(){ if(timer) clearInterval(timer); timer = setInterval(function(){ go(idx + 1); }, 4200); }
+    thumbs.forEach(function(t, i){ t.addEventListener('click', function(){ go(i); restart(); }); });
+    var prev = document.getElementById('gal-prev'), next = document.getElementById('gal-next');
+    if(prev) prev.addEventListener('click', function(){ go(idx - 1); restart(); });
+    if(next) next.addEventListener('click', function(){ go(idx + 1); restart(); });
+    if(show){
+      show.addEventListener('mouseenter', function(){ if(timer) clearInterval(timer); });
+      show.addEventListener('mouseleave', restart);
+    }
+    restart();
+  }
+})();
+</script>
+<script>
+/* ==========================================================================
+   🗺️ LIVE 3D MAP — MapLibre GL + OpenFreeMap (prototype ในหน้านี้)
+   ตอนลง Next.js: ถ้าจะใช้ component ที่เขียนแยกไว้ ให้ลบ <script> บล็อกนี้
+   แล้ว mount component ลง #map-slot ตามเดิม (.map-placeholder เป็น fallback)
+   ========================================================================== */
+(function(){
+  if(!window.maplibregl) return; // โหลดไลบรารีไม่ได้ (ออฟไลน์) → คง placeholder ไว้
+
+  var SHOP = [100.570975, 13.830787];           // Mingsmileyface Learning Space · 1604 พหลโยธิน
+  var ROAD_BRG = 24;                            // แนวถนนพหลโยธินช่วงรัชโยธิน (องศา)
+  var STATION = [100.569600, 13.829650];        // BTS รัชโยธิน (N11) — จะ snap จากข้อมูลแผนที่จริงอีกที
+
+  function offset(pt, brg, m){
+    var r = brg*Math.PI/180;
+    return [ pt[0] + (m*Math.sin(r))/(111320*Math.cos(pt[1]*Math.PI/180)), pt[1] + (m*Math.cos(r))/110540 ];
+  }
+  function metersBetween(a, b){
+    var dx=(b[0]-a[0])*111320*Math.cos(a[1]*Math.PI/180), dy=(b[1]-a[1])*110540;
+    return { dx:dx, dy:dy, d:Math.sqrt(dx*dx+dy*dy) };
+  }
+
+  var slot = document.getElementById('map-slot');
+  var mapDiv = document.createElement('div');
+  mapDiv.id = 'map-live';
+  slot.appendChild(mapDiv);
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var map;
+  try {
+    map = new maplibregl.Map({
+      container: mapDiv,
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      center: [100.57020, 13.82960],
+      zoom: 15.7, pitch: 56, bearing: -18,
+      antialias: true, attributionControl: false
+    });
+  } catch(e) { return; }
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+  map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+  /* เส้นทางเดิน: ออกทางออก 4 → ตรงตามฟุตบาท (ขนานถนน) → เลี้ยวขวาเข้าซอย 30/1 → ร้าน */
+  var PTS = [], BRG = [], EXIT4, SOI_IDX = 0;
+  function buildRoute(){
+    if(!TRACKC) TRACKC = STATION;
+    var vs = metersBetween(TRACKC, SHOP), rb = ROAD_BRG*Math.PI/180;
+    var along = vs.dx*Math.sin(rb) + vs.dy*Math.cos(rb);   // ระยะตามแนวถนนจากสถานีถึงจุดตรงข้ามร้าน (= ปากซอย 30/1)
+    var perp  = vs.dx*Math.cos(rb) - vs.dy*Math.sin(rb);   // ระยะตั้งฉาก (เข้าซอย) — บอกว่าซอยอยู่ฝั่งไหน
+    var pside = perp >= 0 ? 90 : -90;
+    var foot  = 7;                                         // ฟุตบาทห่างจากแกนราง
+    EXIT4 = offset(offset(TRACKC, ROAD_BRG, 42), ROAD_BRG + pside, foot);            // ทางออก 4 ข้างสถานี (บนฟุตบาท)
+    var W;
+    if(SOI_PATH && SOI_PATH.length >= 2){
+      /* เดินตามฟุตบาทไปจนถึง "ปากซอย 30/1" จริง แล้วเลี้ยวเข้าซอยตามแนวจริงจนถึงหน้าร้าน (ไม่ตัดผ่านตึก) */
+      var endA = SOI_PATH[0], endB = SOI_PATH[SOI_PATH.length-1];
+      var ordered = metersBetween(TRACKC, endA).d <= metersBetween(TRACKC, endB).d ? SOI_PATH.slice() : SOI_PATH.slice().reverse(); // [ปากซอย → ก้นซอย]
+      var mouth = ordered[0];
+      var cutIdx = 0, cutPt = ordered[1] || ordered[0], bestd = 1e9;        // จุดในซอยที่ใกล้ร้านที่สุด (ตัดปลายซอยส่วนเกินทิ้ง)
+      for(var s=0;s<ordered.length-1;s++){
+        var pr = clampProject(SHOP, ordered[s], ordered[s+1]);
+        var d = metersBetween(SHOP, pr).d;
+        if(d < bestd){ bestd = d; cutIdx = s; cutPt = pr; }
+      }
+      var mv = metersBetween(TRACKC, mouth);
+      var mAlong = mv.dx*Math.sin(rb) + mv.dy*Math.cos(rb);
+      var SOImouth = offset(offset(TRACKC, ROAD_BRG, mAlong), ROAD_BRG + pside, foot); // ปากซอยบนแนวฟุตบาท (จุดเลี้ยว)
+      W = [EXIT4, SOImouth];
+      for(var s2=0;s2<=cutIdx;s2++) W.push(ordered[s2]);
+      W.push(cutPt);
+      W.push(SHOP);
+    } else {
+      var SOImouth = offset(offset(TRACKC, ROAD_BRG, along), ROAD_BRG + pside, foot);  // ปากซอยจากการประมาณ (ตั้งฉากตรงข้ามร้าน)
+      W = [EXIT4, SOImouth, SHOP];
+    }
+    // ตัดจุดซ้ำ/ใกล้กันเกิน
+    var Wc = [W[0]];
+    for(var w=1;w<W.length;w++){ if(metersBetween(Wc[Wc.length-1], W[w]).d > 1.5) Wc.push(W[w]); }
+    W = Wc;
+    PTS = []; BRG = [];
+    for(var i=0;i<W.length-1;i++){
+      var m = metersBetween(W[i], W[i+1]);
+      var n = Math.max(6, Math.round(m.d*2.4));
+      var b = Math.atan2(m.dx, m.dy)*180/Math.PI;
+      for(var j=0;j<n;j++){ PTS.push([W[i][0]+(W[i+1][0]-W[i][0])*j/n, W[i][1]+(W[i+1][1]-W[i][1])*j/n]); BRG.push(b); }
+      if(i === 0) SOI_IDX = PTS.length; // ดัชนีปากซอย 30/1 (สิ้นสุดช่วงเดินตามถนน → เริ่มเลี้ยวเข้าซอย)
+    }
+    PTS.push(SHOP); BRG.push(BRG[BRG.length-1]);
+  }
+  buildRoute();
+
+  function lineData(upTo){
+    return { type:'Feature', geometry:{ type:'LineString', coordinates: PTS.slice(0, Math.max(2, upTo)) } };
+  }
+  function pointData(i){
+    return { type:'Feature', geometry:{ type:'Point', coordinates: PTS[Math.min(i, PTS.length-1)] } };
+  }
+  function trainSeg(center){
+    return { type:'Feature', geometry:{ type:'LineString', coordinates: [offset(center, ROAD_BRG+180, 34), offset(center, ROAD_BRG, 34)] } };
+  }
+  var TRACKC; // จุดกึ่งกลางรางบนแนวถนน (ตั้งค่าใน buildRoute, อัปเดตหลังตรวจแนวถนนจริง)
+  function rectPoly(center, brg, len, wid){
+    var f = offset(center, brg, len/2), b = offset(center, brg+180, len/2);
+    var c1 = offset(f, brg+90, wid/2), c2 = offset(f, brg-90, wid/2),
+        c3 = offset(b, brg-90, wid/2), c4 = offset(b, brg+90, wid/2);
+    return [c1, c2, c3, c4, c1];
+  }
+  function projectOnLine(p, a, b){
+    var ab = metersBetween(a, b), ap = metersBetween(a, p);
+    var t = (ap.dx*ab.dx + ap.dy*ab.dy) / (ab.d*ab.d);
+    return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t];
+  }
+  function clampProject(p, a, b){
+    var ab = metersBetween(a, b), ap = metersBetween(a, p);
+    var t = (ap.dx*ab.dx + ap.dy*ab.dy) / (ab.d*ab.d);
+    t = Math.max(0, Math.min(1, t));
+    return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t];
+  }
+  var SOI_PATH = null; // โพลีไลน์ซอย 30/1 จริงจากแผนที่ (ตามชื่อ) — เดินตามแนวซอยจริง ไม่ตัดผ่านตึก
+  /* รถไฟฟ้า 2 ทาง — ราง 2 เส้นขนาน, ขบวนละ 4 ตู้ กล่อง 3D ลอยบนรางยกระดับ */
+  var TRACK_GAP = 4.6;                                  // ระยะห่างระหว่างราง 2 ทาง (ตั้งฉาก)
+  function railCenter(side){ return offset(TRACKC, ROAD_BRG + 90, side * TRACK_GAP); }   // side = +1 / -1
+  function trackDeck(side){
+    return { type:'Feature', geometry:{ type:'Polygon', coordinates:[ rectPoly(railCenter(side), ROAD_BRG, 820, 5.4) ] } };
+  }
+  // headAlong = ตำแหน่งหัวขบวนตามแนวราง (0 = จอดที่สถานี) · dir = ทิศวิ่ง (+1/-1) ตู้ต่อท้ายด้านหลัง
+  function trainCars(headAlong, side, dir){
+    var head = offset(railCenter(side), ROAD_BRG, headAlong);
+    var cars = [], L = 20, GAP = 2.4, N = 4;
+    for(var k=0;k<N;k++){
+      var back = (k*(L+GAP) + L/2) * (dir >= 0 ? 1 : -1);
+      var c = offset(head, ROAD_BRG + 180, back);
+      cars.push({ type:'Feature', properties:{}, geometry:{ type:'Polygon', coordinates:[rectPoly(c, ROAD_BRG, L, 3.2)] } });
+    }
+    return { type:'FeatureCollection', features: cars };
+  }
+  // ชานชาลา + หลังคาสถานี (คร่อมราง 2 ทาง) ให้ดูออกว่าเป็นสถานีรถไฟฟ้า
+  function stationDeck(){ return { type:'Feature', geometry:{ type:'Polygon', coordinates:[ rectPoly(TRACKC, ROAD_BRG, 130, TRACK_GAP*2 + 10) ] } }; }
+  function stationRoof(){ return { type:'Feature', geometry:{ type:'Polygon', coordinates:[ rectPoly(TRACKC, ROAD_BRG, 142, TRACK_GAP*2 + 15) ] } }; }
+
+  var ready = false, playing = false, played = false;
+  map.on('load', function(){
+    ready = true;
+
+    /* 3D buildings (ถ้า style ไม่มีอยู่แล้ว) */
+    try {
+      var has3d = map.getStyle().layers.some(function(l){ return l.type === 'fill-extrusion'; });
+      if(!has3d && map.getSource('openmaptiles')){
+        map.addLayer({
+          id:'ming-3d-buildings', type:'fill-extrusion', source:'openmaptiles', 'source-layer':'building', minzoom:14,
+          paint:{
+            'fill-extrusion-color':'#b7ccd4',
+            'fill-extrusion-height':['coalesce',['get','render_height'],14],
+            'fill-extrusion-base':['coalesce',['get','render_min_height'],0],
+            'fill-extrusion-opacity':0.72
+          }
+        });
+      }
+    } catch(e){}
+
+    /* รางยกระดับ 2 ทาง + สถานี + รถไฟ BTS 3D — วิ่งเข้าเทียบท่าก่อนเริ่มนำทาง */
+    map.addSource('ming-track-a', { type:'geojson', data: trackDeck(1) });
+    map.addSource('ming-track-b', { type:'geojson', data: trackDeck(-1) });
+    map.addLayer({ id:'ming-track-a-deck', type:'fill-extrusion', source:'ming-track-a',
+      paint:{ 'fill-extrusion-color':'#8f9ba1', 'fill-extrusion-base':10, 'fill-extrusion-height':11.0, 'fill-extrusion-opacity':0.92 } });
+    map.addLayer({ id:'ming-track-b-deck', type:'fill-extrusion', source:'ming-track-b',
+      paint:{ 'fill-extrusion-color':'#8f9ba1', 'fill-extrusion-base':10, 'fill-extrusion-height':11.0, 'fill-extrusion-opacity':0.92 } });
+
+    /* สถานี: ชานชาลา + หลังคา (ลอยเหนือราง) */
+    map.addSource('ming-stn-deck', { type:'geojson', data: stationDeck() });
+    map.addLayer({ id:'ming-stn-deck-x', type:'fill-extrusion', source:'ming-stn-deck',
+      paint:{ 'fill-extrusion-color':'#c4ced4', 'fill-extrusion-base':9.4, 'fill-extrusion-height':11.4, 'fill-extrusion-opacity':0.96 } });
+
+    /* รถไฟ 2 ขบวน (ทาง A/B สวนกัน) · ลาย BTS: ตัวถังขาว คาดแดง+น้ำเงินช่วงล่าง */
+    map.addSource('ming-train',  { type:'geojson', data: trainCars(480, 1, -1) });
+    map.addSource('ming-train2', { type:'geojson', data: trainCars(-480, -1, 1) });
+    [['ming-train','-a'], ['ming-train2','-b']].forEach(function(t){
+      map.addLayer({ id:'mtrain'+t[1]+'-red', type:'fill-extrusion', source:t[0],
+        paint:{ 'fill-extrusion-color':'#e2222e', 'fill-extrusion-base':11.0, 'fill-extrusion-height':11.95, 'fill-extrusion-opacity':1 } });
+      map.addLayer({ id:'mtrain'+t[1]+'-blue', type:'fill-extrusion', source:t[0],
+        paint:{ 'fill-extrusion-color':'#143c8c', 'fill-extrusion-base':11.95, 'fill-extrusion-height':12.8, 'fill-extrusion-opacity':1 } });
+      map.addLayer({ id:'mtrain'+t[1]+'-white', type:'fill-extrusion', source:t[0],
+        paint:{ 'fill-extrusion-color':'#f4f7fa', 'fill-extrusion-base':12.8, 'fill-extrusion-height':14.8, 'fill-extrusion-opacity':1 } });
+    });
+
+    /* route layers */
+    map.addSource('ming-route', { type:'geojson', data: lineData(2) });
+    map.addLayer({ id:'ming-route-casing', type:'line', source:'ming-route',
+      layout:{ 'line-cap':'round', 'line-join':'round' },
+      paint:{ 'line-color':'#ffffff', 'line-width':9, 'line-opacity':0.85 } });
+    map.addLayer({ id:'ming-route-line', type:'line', source:'ming-route',
+      layout:{ 'line-cap':'round', 'line-join':'round' },
+      paint:{ 'line-color':'#14b8a8', 'line-width':5 } });
+    map.addSource('ming-head', { type:'geojson', data: pointData(0) });
+    map.addLayer({ id:'ming-head-halo', type:'circle', source:'ming-head',
+      paint:{ 'circle-radius':14, 'circle-color':'#14b8a8', 'circle-opacity':0.25 } });
+    map.addLayer({ id:'ming-head-dot', type:'circle', source:'ming-head',
+      paint:{ 'circle-radius':7, 'circle-color':'#0ea5a0', 'circle-stroke-color':'#ffffff', 'circle-stroke-width':2.5 } });
+
+    /* pins */
+    function pin(cls, text){
+      var el = document.createElement('div');
+      el.className = 'lm-pin ' + cls;
+      el.innerHTML = '<span class="tag">'+text+'</span><span class="dot"></span>';
+      return el;
+    }
+    var btsMarker = new maplibregl.Marker({ element: pin('bts','BTS รัชโยธิน · EXIT 4'), anchor:'bottom' }).setLngLat(STATION).addTo(map);
+    new maplibregl.Marker({ element: pin('shop','MING STUDIO ☺'), anchor:'bottom' }).setLngLat(SHOP).addTo(map);
+
+    /* ปรับทุกอย่างให้ตรงข้อมูลแผนที่จริง: แนวถนน + ตำแหน่งสถานี */
+    map.once('idle', function(){
+      try {
+        /* 1) หาแนวถนนพหลโยธินจริงใกล้สถานี → ราง/ฟุตบาทขนานกันพอดี */
+        var segA = null, segB = null, sd = 1e9;
+        map.querySourceFeatures('openmaptiles', { sourceLayer:'transportation' }).forEach(function(f){
+          var cls = f.properties && f.properties.class;
+          if(cls !== 'motorway' && cls !== 'trunk' && cls !== 'primary' && cls !== 'secondary') return;
+          var g = f.geometry; if(!g) return;
+          var lines = g.type === 'LineString' ? [g.coordinates] : (g.type === 'MultiLineString' ? g.coordinates : []);
+          lines.forEach(function(cs){
+            for(var i=0;i<cs.length-1;i++){
+              var m = metersBetween(cs[i], cs[i+1]);
+              if(m.d < 15) continue;
+              var mid = [(cs[i][0]+cs[i+1][0])/2, (cs[i][1]+cs[i+1][1])/2];
+              var d = metersBetween(STATION, mid).d;
+              if(d < sd){ sd = d; segA = cs[i]; segB = cs[i+1]; }
+            }
+          });
+        });
+        if(segA && sd < 150){
+          var sm = metersBetween(segA, segB);
+          var rb = Math.atan2(sm.dx, sm.dy)*180/Math.PI;
+          if(rb > 90) rb -= 180; if(rb <= -90) rb += 180; // ให้ชี้ขึ้นเหนือเสมอ
+          ROAD_BRG = rb;
+        }
+        /* 2) snap หมุดสถานีให้ตรง POI สถานีจริง */
+        var feats = map.querySourceFeatures('openmaptiles', { sourceLayer:'poi' });
+        var best = null, bd = 1e9;
+        feats.forEach(function(f){
+          var p = f.properties || {};
+          var nm = String(p['name:th'] || p.name || '');
+          if(nm.indexOf('รัชโยธิน') < 0 && nm.toLowerCase().indexOf('ratchayothin') < 0) return;
+          if(!(p.class === 'railway' || p.subclass === 'station' || p.subclass === 'subway' || p.subclass === 'tram_stop')) return;
+          if(!f.geometry || f.geometry.type !== 'Point') return;
+          var c = f.geometry.coordinates;
+          var d = metersBetween(STATION, c).d;
+          if(d < bd && d < 450){ bd = d; best = c; }
+        });
+        if(best) STATION = [best[0], best[1]];
+        /* 2.5) หา "ซอยพหลโยธิน 30/1" ตามชื่อจากแผนที่ → เดินไปถึงปากซอยจริงก่อนเลี้ยวขวาเข้า */
+        var minorCls = ['service','minor','residential','living_street','unclassified','pedestrian','path','track','tertiary'];
+        var soiPath = null, soiBestD = 1e9;
+        function considerSoi(cs){
+          var dmin = 1e9;
+          for(var i=0;i<cs.length-1;i++){
+            var d = metersBetween(SHOP, clampProject(SHOP, cs[i], cs[i+1])).d;
+            if(d < dmin) dmin = d;
+          }
+          if(dmin < soiBestD){ soiBestD = dmin; soiPath = cs.slice(); }
+        }
+        ['transportation_name','transportation'].forEach(function(layer){
+          map.querySourceFeatures('openmaptiles', { sourceLayer: layer }).forEach(function(f){
+            var p = f.properties || {};
+            var nm = ((p.name||'')+' '+(p['name:en']||'')+' '+(p['name:th']||'')+' '+(p.name_en||'')).toLowerCase();
+            if(nm.indexOf('30/1') < 0) return;          // ต้องเป็นซอย 30/1 เท่านั้น
+            var g = f.geometry; if(!g) return;
+            var lines = g.type === 'LineString' ? [g.coordinates] : (g.type === 'MultiLineString' ? g.coordinates : []);
+            lines.forEach(considerSoi);
+          });
+        });
+        /* fallback: หาชื่อไม่เจอ → ใช้ถนนย่อย/ซอยที่ใกล้ร้านที่สุด */
+        if(!soiPath || soiBestD > 70){
+          var ssd = 1e9, sgc = null;
+          map.querySourceFeatures('openmaptiles', { sourceLayer:'transportation' }).forEach(function(f){
+            var cls = f.properties && f.properties.class;
+            if(minorCls.indexOf(cls) < 0) return;
+            var g = f.geometry; if(!g) return;
+            var lines = g.type === 'LineString' ? [g.coordinates] : (g.type === 'MultiLineString' ? g.coordinates : []);
+            lines.forEach(function(cs){
+              for(var i=0;i<cs.length-1;i++){
+                if(metersBetween(cs[i], cs[i+1]).d < 6) continue;
+                var d = metersBetween(SHOP, clampProject(SHOP, cs[i], cs[i+1])).d;
+                if(d < ssd){ ssd = d; sgc = [cs[i], cs[i+1]]; }
+              }
+            });
+          });
+          if(sgc && ssd < 55 && (!soiPath || ssd < soiBestD)) soiPath = sgc;
+        }
+        SOI_PATH = soiPath;
+        /* 3) คำนวณราง/เส้นทางใหม่จากข้อมูลจริง */
+        TRACKC = (segA && sd < 150) ? projectOnLine(STATION, segA, segB) : STATION;
+        buildRoute();
+        btsMarker.setLngLat(STATION);
+        map.getSource('ming-track-a').setData(trackDeck(1));
+        map.getSource('ming-track-b').setData(trackDeck(-1));
+        map.getSource('ming-stn-deck').setData(stationDeck());
+        if(!playing){
+          map.getSource('ming-route').setData(lineData(played ? PTS.length : 2));
+          map.getSource('ming-head').setData(pointData(played ? PTS.length-1 : 0));
+          map.getSource('ming-train').setData(trainCars(played ? -CONSIST_HALF : 480, 1, -1));
+          map.getSource('ming-train2').setData(trainCars(played ? CONSIST_HALF : -480, -1, 1));
+        }
+      } catch(e){}
+    });
+
+    /* placeholder → fade out, live CTA → in */
+    var ph = document.querySelector('.map-placeholder');
+    if(ph){ ph.style.transition = 'opacity .9s'; ph.style.opacity = '0'; ph.style.pointerEvents = 'none'; setTimeout(function(){ ph.style.display = 'none'; }, 950); }
+    var cta = document.getElementById('map-live-cta');
+    if(cta) cta.style.display = 'inline-flex';
+
+    if(reduceMotion){
+      map.getSource('ming-route').setData(lineData(PTS.length));
+      map.getSource('ming-head').setData(pointData(PTS.length-1));
+      map.getSource('ming-train').setData(trainCars(-CONSIST_HALF, 1, -1));
+      map.getSource('ming-train2').setData(trainCars(CONSIST_HALF, -1, 1));
+      played = true;
+    } else {
+      setTimeout(function(){ if(!played && !playing) playAll(); }, 1600); // เปิดหน้าแล้วเล่นให้ดูหนึ่งรอบ
+    }
+  });
+
+  /* ฉาก 1: รถไฟ 2 ขบวนสวนทางกันเข้าเทียบท่าเกือพร้อมกัน · จอดเสมอกัน */
+  var raf = null, navTimers = [], trainRafs = [];
+  var CONSIST_HALF = 44;   // ครึ่งความยาวขบวน 4 ตู้ — ใช้จอดให้กึ่งกลางขบวนตรงสถานีพอดี (เสมอกันทั้งสองทาง)
+  function stepPop(lngLat, html){
+    return new maplibregl.Popup({ offset: 16, closeButton: false, closeOnClick: false })
+      .setLngLat(lngLat)
+      .setHTML('<div style="font-family:\'IBM Plex Sans Thai\',sans-serif;font-weight:700;font-size:12.5px;white-space:nowrap">'+html+'</div>')
+      .addTo(map);
+  }
+  function animateTrain(srcId, side, dir, fromA, toA, dur, cb){
+    var t0 = null;
+    function frame(ts){
+      if(t0 === null) t0 = ts;
+      var t = Math.min(1, (ts - t0) / dur);
+      var e = 1 - Math.pow(1 - t, 3); // ease-out = เบรกเข้าจอด
+      map.getSource(srcId).setData(trainCars(fromA + (toA - fromA) * e, side, dir));
+      if(t < 1){ trainRafs.push(requestAnimationFrame(frame)); }
+      else if(cb){ cb(); }
+    }
+    trainRafs.push(requestAnimationFrame(frame));
+  }
+  function trainArrive(cb){
+    /* มุมกล้องใกล้—เห็นขบวนวิ่งเข้าเทียบท่าชัดๆ */
+    map.easeTo({ center: offset(STATION, ROAD_BRG, 4), zoom: 17.1, pitch: 61, bearing: ROAD_BRG + 30, duration: 1000 });
+    var arrived = 0;
+    function fin(){ if(++arrived >= 2){ navTimers.push(setTimeout(cb, 650)); } }
+    navTimers.push(setTimeout(function(){
+      /* สองขบวนสวนทางกัน — เข้าเกือพร้อมกัน (ห่างแค่แปบเดียว) · จอดเสมอกันที่หน้าสถานี */
+      animateTrain('ming-train', 1, -1, 480, -CONSIST_HALF, 2300, fin);
+      navTimers.push(setTimeout(function(){
+        animateTrain('ming-train2', -1, 1, -480, CONSIST_HALF, 2300, fin);
+      }, 280));
+    }, 880));
+  }
+
+  /* ฉาก 2: เดินจากทางออก 4 → ปากซอย 30/1 (ขึ้นป้าย) → เข้าซอยถึงร้าน */
+  function walk(from, to, dur, cb){
+    var t0 = null;
+    function frame(ts){
+      if(t0 === null) t0 = ts;
+      var t = Math.min(1, (ts - t0) / dur);
+      var e = t*t*(3-2*t); // smoothstep
+      var i = Math.round(from + e * (to - from));
+      map.getSource('ming-route').setData(lineData(i+1));
+      map.getSource('ming-head').setData(pointData(i));
+      var b = BRG[Math.min(i, BRG.length-1)], cur = map.getBearing();
+      map.jumpTo({ center: PTS[Math.min(i, PTS.length-1)], bearing: cur + (((b - cur + 540) % 360) - 180) * 0.06 });
+      if(t < 1){ raf = requestAnimationFrame(frame); }
+      else if(cb){ cb(); }
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function startNavInner(){
+    if(raf) cancelAnimationFrame(raf);
+    map.easeTo({ center: PTS[0], zoom: 17.1, pitch: 61, duration: 1000 });
+    navTimers.push(setTimeout(function(){
+      walk(0, SOI_IDX, 4200, function(){
+        var p2 = stepPop(PTS[SOI_IDX], '↪ ปากซอยพหลโยธิน 30/1 · เลี้ยวเข้า');
+        navTimers.push(setTimeout(function(){
+          p2.remove();
+          walk(SOI_IDX, PTS.length-1, 2800, function(){
+            playing = false;
+            map.easeTo({ center: SHOP, zoom: 17.6, pitch: 58, bearing: 0, duration: 1400 });
+            new maplibregl.Popup({ offset: 46, closeButton: false })
+              .setLngLat(SHOP)
+              .setHTML('<div style="font-family:\'IBM Plex Sans Thai\',sans-serif;font-weight:700;font-size:13.5px">ถึงแล้ว! 🎉<br/><span style="font-weight:500;font-size:12px">Mingsmileyface Learning Space · 1604 พหลโยธิน</span></div>')
+              .addTo(map);
+          });
+        }, 1500));
+      });
+    }, 500));
+  }
+  /* ลำดับเต็ม: รถไฟเข้าจอด → เดินนำทาง */
+  function playAll(){
+    if(!ready || playing) return;
+    playing = true; played = true;
+    if(raf) cancelAnimationFrame(raf);
+    trainRafs.forEach(cancelAnimationFrame); trainRafs = [];
+    navTimers.forEach(clearTimeout); navTimers = [];
+    document.querySelectorAll('.maplibregl-popup').forEach(function(p){ p.remove(); });
+    map.getSource('ming-route').setData(lineData(2));
+    map.getSource('ming-head').setData(pointData(0));
+    map.getSource('ming-train').setData(trainCars(480, 1, -1));
+    map.getSource('ming-train2').setData(trainCars(-480, -1, 1));
+    trainArrive(function(){ startNavInner(); });
+  }
+
+  var cta = document.getElementById('map-live-cta');
+  if(cta) cta.addEventListener('click', function(){
+    playing = false;
+    playAll();
+  });
+})();
+</script>
+</body>
+</html>

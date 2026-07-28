@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>รีวิวจากนักเรียน — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<style>
+/* ============== TESTIMONIALS — page specific ============== */
+
+/* hero rating summary */
+.rating-hero { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; align-items: center; margin-top: 8px; }
+.rating-big { text-align: center; padding: 36px 28px; border-radius: 28px; border: 1px solid var(--line); background: var(--bg-1); }
+.rating-big .score { font-family: var(--font-display); font-weight: 700; font-size: 88px; line-height: 0.9; letter-spacing: -0.03em; background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rating-big .stars { color: var(--brand-coral); font-size: 22px; letter-spacing: 0.08em; margin-top: 10px; }
+.rating-big .count { margin-top: 12px; font-size: 14px; color: var(--fg-2); }
+.rating-big .count b { color: var(--fg-0); font-weight: 600; }
+.rating-bars { display: flex; flex-direction: column; gap: 12px; }
+.rbar { display: grid; grid-template-columns: 56px 1fr 54px; gap: 14px; align-items: center; }
+.rbar .lab { font-size: 13px; color: var(--fg-2); display: flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
+.rbar .lab svg { width: 13px; height: 13px; color: var(--brand-coral); }
+.rbar .track { display: block; height: 9px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.rbar .fill { display: block; height: 100%; border-radius: 99px; background: var(--grad-signature); }
+.rbar .pct { font-family: "JetBrains Mono"; font-size: 12.5px; color: var(--fg-1); text-align: right; }
+.rating-src { margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; }
+.src-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg-2); font-size: 13px; color: var(--fg-1); }
+.src-chip b { color: var(--fg-0); font-weight: 600; font-family: var(--font-display); }
+.src-chip svg { width: 15px; height: 15px; color: var(--brand-cyan); }
+
+/* filter bar */
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 40px; }
+.filter-chip {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 99px; font-size: 13.5px; font-weight: 500;
+  border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-1);
+  transition: color .2s, border-color .2s, background .2s, transform .15s;
+}
+.filter-chip:hover { color: var(--fg-0); border-color: var(--fg-3); transform: translateY(-1px); }
+.filter-chip .ct { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.filter-chip[aria-pressed="true"] { color: #fff; border-color: transparent; background: var(--grad-signature); box-shadow: 0 8px 22px -8px oklch(0.66 0.23 295 / 0.6); }
+.filter-chip[aria-pressed="true"] .ct { color: oklch(0.99 0.005 285 / 0.8); }
+
+/* review wall (masonry via columns) */
+.wall { columns: 3; column-gap: 20px; }
+.review {
+  break-inside: avoid; margin-bottom: 20px; padding: 26px;
+  border-radius: 22px; border: 1px solid var(--line); background: var(--bg-1);
+  display: flex; flex-direction: column; gap: 16px;
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .25s;
+  animation: rvIn .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.review:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+@keyframes rvIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.review .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.review .stars { color: var(--brand-coral); font-size: 15px; letter-spacing: 0.06em; }
+.review .subj-tag { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 9px; border-radius: 7px; background: var(--bg-3); color: var(--fg-2); white-space: nowrap; }
+.review .body { font-size: 15px; line-height: 1.6; color: var(--fg-0); }
+.review .body .hl { background: linear-gradient(transparent 62%, oklch(0.68 0.25 5 / 0.28) 0); padding: 0 1px; }
+.review .who { display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+.review .who .av { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 15px; color: #fff; flex-shrink: 0; }
+.review .who .info { line-height: 1.35; min-width: 0; }
+.review .who .info b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--fg-0); display: block; }
+.review .who .info span { font-size: 12px; color: var(--fg-2); }
+.review .who .verified { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--success); font-weight: 600; white-space: nowrap; }
+.review .who .verified svg { width: 14px; height: 14px; }
+.review.feature { color: #fff; border-color: transparent; background: linear-gradient(145deg, oklch(0.42 0.20 295), oklch(0.52 0.22 330) 55%, oklch(0.58 0.22 5)); }
+.review.feature .body { color: #fff; font-size: 17px; font-family: var(--font-display); font-weight: 500; line-height: 1.45; }
+.review.feature .subj-tag { background: oklch(0.99 0.005 285 / 0.16); color: #fff; }
+.review.feature .who { border-color: oklch(0.99 0.005 285 / 0.18); }
+.review.feature .who .info b { color: #fff; }
+.review.feature .who .info span { color: oklch(0.99 0.005 285 / 0.72); }
+.review.feature .who .verified { color: oklch(0.90 0.16 130); }
+
+.wall-empty { text-align: center; padding: 60px 0; color: var(--fg-2); font-size: 15px; }
+
+.load-more { display: flex; justify-content: center; margin-top: 12px; }
+
+@media (max-width: 1000px) {
+  .rating-hero { grid-template-columns: 1fr; gap: 32px; }
+  .rating-big { max-width: 360px; }
+  .wall { columns: 2; }
+}
+@media (max-width: 680px) {
+  .wall { columns: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html" class="current">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Courses.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO + RATING SUMMARY ============== -->
+<section class="page-hero" data-screen-label="01 Reviews Hero">
+  <div class="container-wide">
+    <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+      <a href="Landing Page.html">หน้าหลัก</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>รีวิว</span>
+    </div>
+    <div class="soon-banner reveal">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="tx"><b>ฟีเจอร์นี้ยังไม่เปิดใช้งาน</b><span>หน้ารีวิวนักเรียนกำลังอยู่ระหว่างพัฒนา เร็วๆ นี้</span></div>
+      <a href="Landing Page.html" class="btn btn-ghost btn-sm">กลับหน้าหลัก</a>
+    </div>
+    <div class="t-eyebrow reveal"><span class="dot"></span><span>รีวิวจากนักเรียน</span></div>
+    <h1 class="reveal" data-delay="1" style="margin-top:18px;max-width:22ch">เสียงจริงจาก <span class="grad">น้องๆ ที่เรียนด้วย</span></h1>
+    <p class="lede reveal" data-delay="2">รวมรีวิวจากนักเรียนพี่หมิง — คัดมาจาก Line, หน้าเว็บ และแบบประเมินหลังจบคอร์ส. ทุกรีวิวมาจากคนที่เรียนจริง.</p>
+
+    <div class="rating-hero reveal" data-delay="2">
+      <div class="rating-big">
+        <div class="score">4.9</div>
+        <div class="stars">★★★★★</div>
+        <div class="count">จาก <b>1,247 รีวิว</b><br/>เฉลี่ยตลอด 7 ปี</div>
+      </div>
+      <div>
+        <div class="rating-bars">
+          <div class="rbar"><span class="lab">5 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .9-5 4.9 1.2 7L12 18l-6.4 3.3L6.8 14l-5-4.9 7-.9z"/></svg></span><span class="track"><span class="fill" style="width:92%"></span></span><span class="pct">92%</span></div>
+          <div class="rbar"><span class="lab">4 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .9-5 4.9 1.2 7L12 18l-6.4 3.3L6.8 14l-5-4.9 7-.9z"/></svg></span><span class="track"><span class="fill" style="width:6%"></span></span><span class="pct">6%</span></div>
+          <div class="rbar"><span class="lab">3 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .9-5 4.9 1.2 7L12 18l-6.4 3.3L6.8 14l-5-4.9 7-.9z"/></svg></span><span class="track"><span class="fill" style="width:2%"></span></span><span class="pct">2%</span></div>
+          <div class="rbar"><span class="lab">2 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .9-5 4.9 1.2 7L12 18l-6.4 3.3L6.8 14l-5-4.9 7-.9z"/></svg></span><span class="track"><span class="fill" style="width:0%"></span></span><span class="pct">0%</span></div>
+          <div class="rbar"><span class="lab">1 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .9-5 4.9 1.2 7L12 18l-6.4 3.3L6.8 14l-5-4.9 7-.9z"/></svg></span><span class="track"><span class="fill" style="width:0%"></span></span><span class="pct">0%</span></div>
+        </div>
+        <div class="rating-src">
+          <span class="src-chip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2z"/></svg><b>820+</b> รีวิวจาก Line</span>
+          <span class="src-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><b>98%</b> แนะนำต่อเพื่อน</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== REVIEW WALL ============== -->
+<section style="padding-top:24px" data-screen-label="02 Review Wall">
+  <div class="container-wide">
+    <div class="filter-bar reveal" id="filter-bar" role="group" aria-label="กรองตามวิชา"></div>
+    <div class="wall" id="wall"></div>
+    <div class="load-more"><button class="btn btn-secondary" id="load-more">ดูรีวิวเพิ่ม</button></div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta" data-screen-label="03 CTA">
+  <div class="container">
+    <div class="final-cta-card reveal">
+      <div class="eyebrow"><span class="dot"></span><span>มาเป็นรีวิวถัดไป</span></div>
+      <h2>เริ่มเขียนรีวิว<br/>ของตัวเองดูไหม?</h2>
+      <p>ลองเรียนฟรี 7 วัน แล้วมาเล่าว่าเกิดอะไรขึ้นกับคะแนนของน้อง — เราอยากได้ยินเรื่องของน้องคนต่อไป.</p>
+      <div class="cta-row">
+        <a href="Courses.html" class="btn btn-primary btn-lg">เริ่มเรียนฟรี 7 วัน
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="Results.html" class="btn btn-glass btn-lg">ดูคะแนนสอบจริง</a>
+      </div>
+      <div class="micro">รีวิวทั้งหมดมาจากนักเรียนจริง · ขออนุญาตก่อนเผยแพร่ทุกครั้ง</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Contact.html">ติดต่อ</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="Landing Page.html#faq">FAQ</a></li>
+          <li><a href="FAQ.html#pay">วิธีชำระเงิน</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- review data (swap with real reviews later) -------------------------- */
+const SUBJECTS = [
+  { key: 'all',   label: 'ทั้งหมด' },
+  { key: 'tgat2', label: 'TGAT2' },
+  { key: 'tpat3', label: 'TPAT3' },
+  { key: 'math',  label: 'คณิต' },
+  { key: 'phys',  label: 'ฟิสิกส์' }
+];
+const SUBJ_LABEL = Object.fromEntries(SUBJECTS.map(s => [s.key, s.label]));
+const AV = ['linear-gradient(135deg,oklch(0.55 0.22 295),oklch(0.68 0.25 5))','linear-gradient(135deg,oklch(0.74 0.21 35),oklch(0.86 0.20 130))','linear-gradient(135deg,oklch(0.80 0.16 205),oklch(0.55 0.22 295))','linear-gradient(135deg,oklch(0.78 0.20 50),oklch(0.86 0.20 130))','linear-gradient(135deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))','linear-gradient(135deg,oklch(0.68 0.25 5),oklch(0.78 0.20 50))'];
+
+const REVIEWS = [
+  { name:'น้องปาล์ม', school:'เตรียมอุดมศึกษา', subj:'math', rating:5, quote:'พี่หมิงไม่ใช่แค่สอน แต่อยู่กับเราจริงๆ ทุกวันสองทุ่ม. <span class="hl">คะแนนที่เคยติด C ไปอยู่ที่ A ภายในเทอมเดียว</span>. ปังมากค่ะ.', src:'Line', feature:true },
+  { name:'น้องเจ', school:'สวนกุหลาบวิทยาลัย', subj:'tpat3', rating:5, quote:'คอร์ส TPAT3 กะทัดรัด ตรงประเด็น ไม่มีฟิลเลอร์. เรียน 3 ชั่วโมงคุ้มกว่าดูคลิป 10 ชั่วโมง.', src:'แบบประเมิน' },
+  { name:'น้องนก', school:'กรุงเทพคริสเตียน', subj:'tgat2', rating:5, quote:'เคยรู้สึกว่าตัวเองโง่ หลังเรียนกับพี่หมิงรู้แล้วว่าไม่ใช่ — แค่หา<span class="hl">วิธีคิดที่ใช่</span>ไม่เจอ.', src:'Line' },
+  { name:'น้องตูน', school:'โยธินบูรณะ', subj:'phys', rating:5, quote:'ฟิสิกส์ ม.6 เคยเข้าใจ 0%. เรียนกับพี่หมิง 4 เดือน A-Level ทำได้ 88 — เหมือนคนละคน.', src:'Line' },
+  { name:'น้องมายด์', school:'สตรีวิทยา', subj:'math', rating:5, quote:'ปูพื้นคณิต ม.4 ใหม่หมดเลย จากที่ตามเพื่อนไม่ทันในห้อง ตอนนี้กลายเป็นคนที่เพื่อนมาถาม.', src:'แบบประเมิน' },
+  { name:'น้องเบนซ์', school:'หอวัง', subj:'phys', rating:5, quote:'พี่หมิงอธิบายฟิสิกส์เป็นภาพ เห็นแล้วเข้าใจเลยว่าแรงมันทำงานยังไง ไม่ต้องท่องสูตร.', src:'Line' },
+  { name:'น้องแพรว', school:'บดินทรเดชา', subj:'tgat2', rating:5, quote:'ชอบที่มี dashboard ให้เห็น streak ทุกวัน <span class="hl">ทำให้ไม่อยากขาดเรียน</span> สนุกเหมือนเล่นเกม.', src:'หน้าเว็บ' },
+  { name:'น้องกร', school:'เทพศิรินทร์', subj:'math', rating:4.5, quote:'โจทย์ A-Level คณิตเยอะและตรงสนามจริงมาก เฉลยละเอียดทุกข้อ ถามเพิ่มได้ตลอด.', src:'Line' },
+  { name:'น้องอุ๋งอิ๋ง', school:'สามเสนวิทยาลัย', subj:'phys', rating:5, quote:'ติวสดแล้วถามได้ทันที ไม่เข้าใจตรงไหนพี่หมิงย้อนให้ใหม่จนกว่าจะเก็ต. ใจดีและตั้งใจมาก.', src:'แบบประเมิน' },
+  { name:'น้องฟิล์ม', school:'สวนกุหลาบวิทยาลัย', subj:'tpat3', rating:5, quote:'จากไม่รู้ว่า TPAT3 ต้องเตรียมยังไง พี่หมิงวางแผนให้เป็นสเต็ป ทำตามแล้วได้คะแนนเกินเป้า.', src:'Line' },
+  { name:'น้องเปรม', school:'มงฟอร์ตวิทยาลัย', subj:'math', rating:5, quote:'อยู่ต่างจังหวัดก็เรียนได้เหมือนนั่งอยู่หน้าพี่หมิง คลิปย้อนหลังชัด เฉลยการบ้านไว.', src:'หน้าเว็บ' },
+  { name:'น้องข้าวฟ่าง', school:'ขอนแก่นวิทยายน', subj:'phys', rating:5, quote:'ฟิสิกส์ในเทอมจากที่กลัวสุด กลายเป็นวิชาที่มั่นใจที่สุด คะแนนกลางภาคขึ้นจาก 12 เป็น 27.', src:'Line' },
+  { name:'น้องไอซ์', school:'ราชินี', subj:'tgat2', rating:5, quote:'พี่หมิงตอบไลน์เองทุกครั้ง ไม่ใช่ทีมงาน รู้สึกว่ามีคนดูแลเราจริงๆ ตลอดทาง.', src:'Line' },
+  { name:'น้องบีม', school:'อัสสัมชัญ', subj:'math', rating:4.5, quote:'เนื้อหาแน่น แต่ย่อยง่าย เพราะพี่หมิงเริ่มจากทำไมก่อนเสมอ จำน้อยลงแต่ทำได้มากขึ้น.', src:'แบบประเมิน' },
+  { name:'น้องพลอย', school:'เซนต์ฟรังซีสซาเวียร์', subj:'phys', rating:5, quote:'สอบติดคณะที่อยากเข้าแล้วค่ะ! ขอบคุณพี่หมิงที่ไม่ปล่อยให้ยอมแพ้ตอนคะแนนยังไม่ขึ้น.', src:'Line' }
+];
+
+/* ---- state + render ------------------------------------------------------ */
+const STEP = 9;
+let activeSubj = 'all';
+let shown = STEP;
+
+function starHTML(r){
+  const full = Math.floor(r);
+  let s = '★'.repeat(full);
+  if (r % 1) s += '½';
+  return s.padEnd(5, '☆');
+}
+function filtered(){ return activeSubj === 'all' ? REVIEWS : REVIEWS.filter(r => r.subj === activeSubj); }
+
+function renderFilters(){
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = SUBJECTS.map(s => {
+    const ct = s.key === 'all' ? REVIEWS.length : REVIEWS.filter(r => r.subj === s.key).length;
+    return `<button class="filter-chip" role="radio" aria-pressed="${s.key===activeSubj}" data-subj="${s.key}">${s.label} <span class="ct">${ct}</span></button>`;
+  }).join('');
+  bar.querySelectorAll('.filter-chip').forEach(b => b.addEventListener('click', () => {
+    activeSubj = b.dataset.subj; shown = STEP; renderFilters(); renderWall();
+  }));
+}
+
+function renderWall(){
+  const wall = document.getElementById('wall');
+  const list = filtered();
+  const slice = list.slice(0, shown);
+  if (!slice.length){ wall.innerHTML = `<div class="wall-empty">ยังไม่มีรีวิวในวิชานี้ — เร็วๆ นี้</div>`; }
+  else {
+    wall.innerHTML = slice.map((r, i) => {
+      const av = AV[i % AV.length];
+      const init = r.name.replace('น้อง','').slice(0,2);
+      return `<article class="review${r.feature?' feature':''}" data-subj="${r.subj}" style="animation-delay:${Math.min(i,8)*40}ms">
+        <div class="top">
+          <span class="stars">${starHTML(r.rating)}</span>
+          <span class="subj-tag">${SUBJ_LABEL[r.subj]}</span>
+        </div>
+        <div class="body">${r.quote}</div>
+        <div class="who">
+          <span class="av" style="background:${av}">${init}</span>
+          <span class="info"><b>${r.name}</b><span>${r.school}</span></span>
+          <span class="verified" title="รีวิวจาก ${r.src}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>${r.src}
+          </span>
+        </div>
+      </article>`;
+    }).join('');
+  }
+  const more = document.getElementById('load-more');
+  more.style.display = shown < list.length ? '' : 'none';
+}
+
+document.getElementById('load-more').addEventListener('click', () => { shown += STEP; renderWall(); });
+renderFilters();
+renderWall();
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+</body>
+</html>

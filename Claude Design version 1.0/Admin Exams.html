@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ข้อสอบ — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-exams.css?v=2" />
+<style>
+/* instant subject filter chips (house pattern) */
+.subj-chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 4px; border-radius: 12px; background: var(--glass); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); border: 1px solid var(--glass-line-strong); }
+.subj-chips button { display: inline-flex; align-items: center; gap: 7px; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 12.5px; font-weight: 600; color: var(--fg-2); background: transparent; border: 0; padding: 8px 13px; border-radius: 9px; cursor: pointer; transition: color .15s, background .15s, transform .15s; }
+.subj-chips button .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.subj-chips button:hover { color: var(--fg-0); background: var(--bg-2); }
+.subj-chips button:active { transform: scale(0.95); }
+.subj-chips button[aria-pressed="true"] { color: #fff; background: var(--grad-signature); box-shadow: 0 4px 12px -4px oklch(0.66 0.23 295 / 0.5); }
+.subj-chips button[aria-pressed="true"] .dot { box-shadow: 0 0 0 2px oklch(0.99 0.005 285 / 0.4); }
+.acc-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; padding: 4px 11px; border-radius: 99px; white-space: nowrap; }
+.acc-badge.free { color: var(--brand-lime); background: oklch(from var(--brand-lime) l c h / 0.12); border: 1px solid oklch(from var(--brand-lime) l c h / 0.3); }
+.acc-badge.subj { color: var(--fg-1); background: var(--bg-2); border: 1px solid var(--line-soft); }
+
+/* rows/grid view toggle */
+.view-toggle { display: inline-flex; padding: 4px; gap: 2px; border-radius: 11px; background: var(--glass); border: 1px solid var(--glass-line-strong); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); }
+.view-toggle button { width: 36px; height: 32px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer; transition: color .15s, background .15s; }
+.view-toggle button svg { width: 16px; height: 16px; }
+.view-toggle button:hover { color: var(--fg-0); background: var(--bg-2); }
+.view-toggle button[aria-pressed="true"] { color: #fff; background: var(--grad-signature); box-shadow: 0 4px 12px -4px oklch(0.66 0.23 295 / 0.5); }
+
+/* card grid view */
+.exam-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.exc { border-radius: 16px; padding: 18px 20px; cursor: pointer; border: 1px solid var(--glass-line-strong); background: var(--glass); backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%); box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset, 0 14px 38px -24px oklch(0 0 0 / 0.5); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s, border-color .2s; display: flex; flex-direction: column; gap: 12px; }
+.exc:hover { transform: translateY(-3px); border-color: var(--glass-line-strong); box-shadow: 0 20px 46px -20px oklch(0 0 0 / 0.55); }
+.exc .top { display: flex; align-items: center; gap: 11px; }
+.exc .ic { width: 40px; height: 40px; border-radius: 11px; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.exc .ic svg { width: 19px; height: 19px; }
+.exc h3 { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; letter-spacing: -0.01em; color: var(--fg-0); line-height: 1.3; flex: 1; min-width: 0; }
+.exc .meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.exc .stat-row { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--fg-2); margin-top: auto; }
+.exc .stat-row b { color: var(--fg-0); font-family: "JetBrains Mono"; font-weight: 600; }
+
+/* pinned exam */
+.pin-badge { display: inline-flex; align-items: center; gap: 4px; margin-left: 7px; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; vertical-align: 1px;
+  color: var(--brand-magenta); border: 1px solid oklch(from var(--brand-magenta) l c h / 0.45); background: oklch(from var(--brand-magenta) l c h / 0.1); }
+.ic-btn.pin-btn.on { color: var(--brand-magenta); border-color: oklch(from var(--brand-magenta) l c h / 0.55); background: oklch(from var(--brand-magenta) l c h / 0.12); }
+
+/* ===== premium confirm modal ===== */
+.adm-cf-veil { position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: oklch(0 0 0 / 0.45); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%);
+  animation: cfVeilIn .22s ease; }
+.adm-cf-veil.closing { animation: cfVeilOut .2s ease forwards; }
+@keyframes cfVeilIn { from { opacity: 0; } }
+@keyframes cfVeilOut { to { opacity: 0; } }
+.adm-cf { width: 400px; max-width: 100%; border-radius: 22px; padding: 24px; text-align: center; position: relative; overflow: hidden;
+  background: var(--glass-strong, var(--bg-1)); backdrop-filter: blur(28px) saturate(165%); -webkit-backdrop-filter: blur(28px) saturate(165%);
+  border: 1px solid var(--glass-line-strong, var(--line)); box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.08) inset, 0 40px 90px -30px oklch(0 0 0 / 0.65);
+  animation: cfPop .38s cubic-bezier(.34,1.45,.64,1); }
+.adm-cf-veil.closing .adm-cf { animation: cfDrop .2s cubic-bezier(.4,0,.8,.4) forwards; }
+@keyframes cfPop { from { opacity: 0; transform: translateY(18px) scale(0.92); } }
+@keyframes cfDrop { to { opacity: 0; transform: translateY(10px) scale(0.96); } }
+.adm-cf::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--cf-c, var(--grad-signature)); }
+.adm-cf[data-tone="danger"] { --cf-c: linear-gradient(90deg, oklch(0.62 0.24 25), oklch(0.7 0.19 35)); --cf-solid: var(--danger); }
+.adm-cf[data-tone="pin"] { --cf-c: var(--grad-signature); --cf-solid: var(--brand-magenta); }
+.adm-cf .cf-ico { width: 54px; height: 54px; border-radius: 17px; margin: 2px auto 14px; display: flex; align-items: center; justify-content: center; color: #fff;
+  background: var(--cf-c, var(--grad-signature)); box-shadow: 0 10px 28px -8px oklch(from var(--cf-solid, var(--brand-magenta)) l c h / 0.65);
+  animation: cfIcoPop .5s cubic-bezier(.34,1.56,.64,1) .08s backwards; }
+@keyframes cfIcoPop { from { opacity: 0; transform: scale(0.4) rotate(-12deg); } }
+.adm-cf .cf-ico svg { width: 24px; height: 24px; }
+.adm-cf h3 { font-family: var(--font-display); font-weight: 700; font-size: 18.5px; letter-spacing: -0.02em; color: var(--fg-0); animation: cfFade .35s ease .14s backwards; }
+.adm-cf p { font-size: 13px; line-height: 1.65; color: var(--fg-2); margin-top: 8px; animation: cfFade .35s ease .2s backwards; }
+.adm-cf p b { color: var(--fg-0); font-weight: 600; }
+@keyframes cfFade { from { opacity: 0; transform: translateY(5px); } }
+.adm-cf .cf-acts { display: flex; gap: 10px; margin-top: 20px; animation: cfFade .35s ease .26s backwards; }
+.adm-cf .cf-acts button { flex: 1; height: 42px; border-radius: 12px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: transform .15s cubic-bezier(.2,.8,.2,1), filter .15s, background .15s; }
+.adm-cf .cf-acts button:active { transform: scale(0.97); }
+.adm-cf .cf-cancel { border: 1px solid var(--line); background: transparent; color: var(--fg-1); }
+.adm-cf .cf-cancel:hover { background: var(--bg-2); color: var(--fg-0); }
+.adm-cf .cf-ok { border: 0; color: #fff; background: var(--cf-c, var(--grad-signature)); box-shadow: 0 8px 22px -8px oklch(from var(--cf-solid, var(--brand-magenta)) l c h / 0.6); }
+.adm-cf .cf-ok:hover { filter: brightness(1.1); transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { .adm-cf, .adm-cf *, .adm-cf-veil { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='exams';</script>
+<div class="adm" id="adm" data-screen-label="Admin · ข้อสอบ">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>ข้อสอบ</b></nav>
+      <div class="adm-top-actions">
+        <button class="adm-search" id="cmdk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="lbl">ค้นหา · คำสั่ง</span><span class="kbd">⌘K</span></button>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow">CONTENT STUDIO · ข้อสอบ</div>
+            <h1>ข้อ<span class="grad">สอบ</span></h1>
+          </div>
+          <div class="adm-head-actions">
+            <a class="btn btn-primary btn-sm" href="Admin Exam Editor.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>สร้างชุดข้อสอบ</a>
+          </div>
+        </section>
+
+        <section class="sum-strip reveal" data-delay="1">
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-violet)"></span>ชุดข้อสอบ</div><div class="sv">8<span class="unit">ชุด</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-magenta)"></span>คำถามรวม</div><div class="sv">214<span class="unit">ข้อ</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-cyan)"></span>ครั้งที่ทำ</div><div class="sv">3,482<span class="unit">ครั้ง</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--success)"></span>คะแนนเฉลี่ย</div><div class="sv">71<span class="unit">%</span></div></div>
+        </section>
+
+        <section class="adm-toolbar reveal" data-delay="2">
+          <div class="tb-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="search" placeholder="ค้นหาชุดข้อสอบ..." /></div>
+          <div class="subj-chips" id="f-subject" role="group" aria-label="กรองวิชา">
+            <button data-v="all" aria-pressed="true">ทั้งหมด</button>
+            <button data-v="คณิต" aria-pressed="false"><span class="dot" style="background:var(--subj-math)"></span>คณิต</button>
+            <button data-v="ฟิสิกส์" aria-pressed="false"><span class="dot" style="background:var(--subj-phys)"></span>ฟิสิกส์</button>
+            <button data-v="TPAT3" aria-pressed="false"><span class="dot" style="background:var(--subj-tpat)"></span>TPAT3</button>
+            <button data-v="TGAT2" aria-pressed="false"><span class="dot" style="background:var(--subj-tgat)"></span>TGAT2</button>
+          </div>
+          <div class="grow"></div>
+          <div class="view-toggle" id="view-toggle" role="group" aria-label="รูปแบบการแสดง">
+            <button data-view="rows" aria-pressed="true" title="แถว"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+            <button data-view="grid" aria-pressed="false" title="ตาราง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+          </div>
+        </section>
+
+        <section class="exam-table-wrap reveal" data-delay="3">
+          <table class="exam-table" id="table">
+            <thead><tr>
+              <th data-sort="name">ชุดข้อสอบ</th>
+              <th data-sort="subject">วิชา</th>
+              <th data-sort="questions">จำนวนข้อ <span class="sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></span></th>
+              <th data-sort="course">การเข้าถึง</th>
+              <th data-sort="attempts">ครั้งที่ทำ <span class="sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></span></th>
+              <th style="text-align:right">จัดการ</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </section>
+        <section class="exam-cards reveal" id="exam-cards" data-delay="3" style="display:none"></section>
+        <div id="no-result" style="display:none"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">แถบสลับสีในตาราง</div>
+    <div class="tweak-seg" data-tweak="zebra"><button data-v="on" aria-pressed="true">เปิด</button><button data-v="off" aria-pressed="false">ปิด</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">Demo · สถานะหน้า</div>
+    <div class="tweak-seg" data-tweak="view"><button data-v="data" aria-pressed="true">มีข้อมูล</button><button data-v="empty" aria-pressed="false">ว่างเปล่า</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable', zebra:'on', view:'data' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script src="admin-exams.js?v=4"></script>
+</body>
+</html>

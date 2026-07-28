@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>2.3 อนุพันธ์ของพหุนาม — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* subject accent — set per-subject (this lesson = คณิต) */
+html { --accent: var(--subj-math); --accent-fg: var(--subj-math-fg); --accent-grad: var(--subj-math-grad); }
+
+body { overflow: hidden; }
+.app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas: "header header" "sidebar main";
+  height: 100vh;
+  transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1);
+}
+.app.sidebar-collapsed { grid-template-columns: 0 1fr; }
+.app.sidebar-collapsed .lp-sidebar { transform: translateX(-100%); }
+
+/* ============== HEADER ============== */
+.lp-header { grid-area: header; background: oklch(from var(--bg-0) l c h / 0.75); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; padding: 0 16px; gap: 14px; z-index: 30; position: relative; }
+.lp-back { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border-radius: 10px; text-decoration: none; color: var(--fg-1); font-size: 13.5px; font-weight: 500; border: 1px solid transparent; transition: color .15s, background .15s, border-color .15s; }
+.lp-back:hover { color: var(--fg-0); background: var(--bg-2); border-color: var(--line); }
+.lp-back svg { color: var(--fg-2); }
+.lp-divider { width: 1px; height: 24px; background: var(--line-soft); }
+.lp-logo { display: flex; align-items: center; gap: 10px; }
+.lp-logo .mark { width: 28px; height: 28px; border-radius: 9px; background: var(--accent-grad); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px -4px oklch(from var(--accent) l c h / 0.6); }
+.lp-logo .mark svg { width: 18px; height: 18px; }
+.lp-course-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.lp-course-info .crumb { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-fg); font-weight: 500; }
+.lp-course-info .title { font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: -0.005em; color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lp-header-progress { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px 5px 5px; }
+.lp-header-progress .ring { width: 28px; height: 28px; border-radius: 50%; background: conic-gradient(var(--accent) 0deg 135deg, var(--bg-3) 135deg); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; transition: background .5s ease; }
+.lp-header-progress .ring::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--bg-1); }
+.lp-header-progress .ring span { position: relative; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 700; color: var(--accent-fg); }
+.lp-header-progress .text { font-size: 12.5px; color: var(--fg-1); white-space: nowrap; }
+.lp-header-progress .text b { color: var(--fg-0); font-weight: 600; }
+.lp-header-actions { display: flex; align-items: center; gap: 8px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn.active { color: var(--accent-fg); border-color: oklch(from var(--accent) l c h / 0.34); background: oklch(from var(--accent) l c h / 0.1); }
+.icon-btn .dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg-1); }
+.lp-toggle-sidebar { color: var(--fg-2); }
+.lp-user-av { width: 32px; height: 32px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; cursor: pointer; }
+
+/* ============== SIDEBAR ============== */
+.lp-sidebar { grid-area: sidebar; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border-right: 1px solid var(--line-soft); display: flex; flex-direction: column; overflow: hidden; transition: transform .26s cubic-bezier(.2,.8,.2,1); z-index: 15; }
+.lp-sidebar-top { padding: 18px 20px; border-bottom: 1px solid var(--line-soft); background: var(--bg-1); }
+.lp-sidebar-top h2 { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.015em; color: var(--fg-0); margin-bottom: 4px; line-height: 1.2; }
+.lp-sidebar-top .meta { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-fg); font-weight: 500; margin-bottom: 14px; }
+.lp-progress-block { display: flex; flex-direction: column; gap: 6px; }
+.lp-progress-block .head { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; }
+.lp-progress-block .head .label { color: var(--fg-2); }
+.lp-progress-block .head .val { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--accent-fg); }
+.lp-progress-bar { height: 6px; border-radius: 99px; background: var(--bg-3); overflow: hidden; position: relative; }
+.lp-progress-bar > div { height: 100%; border-radius: 99px; background: var(--accent-grad); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.lp-progress-meta { font-size: 11.5px; color: var(--fg-2); display: flex; justify-content: space-between; }
+.lp-progress-meta b { color: var(--fg-1); font-weight: 600; }
+.lp-auto-note { margin-top: 10px; display: flex; gap: 8px; align-items: flex-start; font-size: 11px; color: var(--fg-3); line-height: 1.45; }
+.lp-auto-note svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; color: var(--accent-fg); }
+
+.lp-chapters { flex: 1; overflow-y: auto; padding: 14px 12px; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.lp-chapters::-webkit-scrollbar { width: 6px; }
+.lp-chapters::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 4px; }
+.chapter { border-radius: 12px; margin-bottom: 6px; border: 1px solid transparent; transition: border-color .2s, background .2s; }
+.chapter[open] { border-color: var(--line-soft); background: var(--bg-1); }
+.chapter summary { list-style: none; cursor: pointer; padding: 12px 14px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; border-radius: 12px; transition: background .15s; }
+.chapter summary:hover { background: var(--bg-2); }
+.chapter[open] summary:hover { background: transparent; }
+.chapter summary::-webkit-details-marker { display: none; }
+.chapter summary::marker { content: ""; }
+.chapter .num-badge { font-family: "JetBrains Mono"; font-size: 11px; font-weight: 700; width: 26px; height: 26px; border-radius: 8px; background: var(--bg-3); color: var(--fg-2); display: inline-flex; align-items: center; justify-content: center; }
+.chapter.done .num-badge { background: oklch(0.78 0.18 150 / 0.18); color: var(--success); }
+.chapter.active .num-badge { background: var(--accent-grad); color: #fff; box-shadow: 0 4px 10px -3px oklch(from var(--accent) l c h / 0.5); }
+.chapter.locked .num-badge { color: var(--fg-3); }
+.chapter .info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.chapter .info .ctitle { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; letter-spacing: -0.005em; color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chapter.locked .info .ctitle { color: var(--fg-2); }
+.chapter .info .cmeta { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.04em; }
+.chapter.active .info .cmeta { color: var(--accent-fg); }
+.chapter .chev { color: var(--fg-3); transition: transform .26s cubic-bezier(.2,.8,.2,1); flex-shrink: 0; }
+.chapter[open] .chev { transform: rotate(180deg); color: var(--fg-1); }
+.chapter.locked .chev { display: none; }
+.chapter.locked .lock { color: var(--fg-3); width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; }
+.lessons { padding: 0 8px 8px 8px; }
+.lesson { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; margin-left: 26px; border-left: 1.5px solid var(--line-soft); padding-left: 16px; position: relative; cursor: pointer; border-radius: 8px; font-size: 13px; color: var(--fg-1); transition: background .15s, color .15s; }
+.lesson:hover { background: var(--bg-2); color: var(--fg-0); }
+.lesson::before { content: ""; position: absolute; left: -5px; top: 50%; transform: translateY(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--bg-3); border: 1.5px solid var(--bg-0); }
+.lesson.done::before { background: var(--success); }
+.lesson.active::before { background: var(--accent); width: 10px; height: 10px; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.28); animation: lessonPulse 2.4s ease-in-out infinite; }
+@keyframes lessonPulse { 50% { box-shadow: 0 0 0 6px oklch(from var(--accent) l c h / 0); } }
+.lesson .ico { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lesson.done .ico { background: oklch(0.78 0.18 150 / 0.18); color: var(--success); }
+.lesson.active .ico { background: var(--accent-grad); color: #fff; box-shadow: 0 4px 12px -4px oklch(from var(--accent) l c h / 0.55); }
+.lesson .ico svg { width: 11px; height: 11px; }
+.lesson.locked .ico { background: var(--bg-3); color: var(--fg-3); }
+.lesson .name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.lesson.done .name { color: var(--fg-2); }
+.lesson.active .name { color: var(--fg-0); font-weight: 600; }
+.lesson.locked .name { color: var(--fg-3); }
+.lesson.active { background: linear-gradient(90deg, oklch(from var(--accent) l c h / 0.12), transparent); }
+.lesson.active::after { content: ""; position: absolute; left: 16px; right: 10px; bottom: 3px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--accent) 45%, var(--accent-fg), var(--accent) 55%, transparent); background-size: 45% 100%; background-repeat: no-repeat; animation: lessonProg 1.7s linear infinite; }
+@keyframes lessonProg { 0% { background-position: -45% 0; } 100% { background-position: 145% 0; } }
+@media (prefers-reduced-motion: reduce) { .lesson.active::after { animation: none; background-position: 0 0; } }
+.lesson .dur { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); flex-shrink: 0; }
+
+/* ============== MAIN ============== */
+.lp-main { grid-area: main; position: relative; overflow: hidden; }
+.lp-scroll { height: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.lp-scroll::-webkit-scrollbar { width: 10px; }
+.lp-scroll::-webkit-scrollbar-track { background: transparent; }
+.lp-scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+.lp-container { max-width: 980px; margin: 0 auto; padding: 28px 32px 96px; display: flex; flex-direction: column; gap: 26px; }
+
+/* ============== PREMIUM PLAYER ============== */
+.player { aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; position: relative; background: #000; box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.55), 0 0 0 1px var(--line); user-select: none; }
+.player.fs-active { border-radius: 0; }
+.stage { position: absolute; inset: 0; cursor: pointer; }
+.stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 80% at 30% 38%, oklch(from var(--accent) l c h / 0.5), transparent 65%), radial-gradient(52% 72% at 76% 64%, oklch(from var(--accent) calc(l + 0.05) c calc(h + 40) / 0.4), transparent 65%), linear-gradient(135deg, oklch(0.12 0.04 285), oklch(0.07 0.02 285)); }
+.stage::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.12) 1px, transparent 1px); background-size: 32px 32px; mask-image: radial-gradient(80% 80% at 50% 50%, #000, transparent); opacity: 0.32; }
+.scene { position: absolute; inset: 30px 30px 78px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; pointer-events: none; }
+.scene .formula { font-family: var(--font-display); font-weight: 700; font-size: clamp(48px, 8vw, 104px); color: oklch(0.99 0.005 285 / 0.92); letter-spacing: -0.04em; line-height: 1; text-shadow: 0 6px 30px oklch(0 0 0 / 0.4); }
+.scene .formula sup { font-size: 0.5em; }
+.scene .sub { font-family: "IBM Plex Sans Thai"; font-size: clamp(14px, 1.6vw, 20px); font-weight: 400; color: oklch(from var(--accent-fg) l c h / 0.95); }
+.scene .live-dot { display: inline-flex; align-items: center; gap: 7px; font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.1em; color: oklch(0.99 0.005 285 / 0.6); text-transform: uppercase; }
+.scene .live-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: livePulse 1.6s ease-in-out infinite; }
+@keyframes livePulse { 50% { opacity: 0.3; } }
+
+.q-badge { position: absolute; top: 16px; left: 16px; z-index: 4; font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.1em; font-weight: 600; padding: 4px 9px; border-radius: 7px; background: oklch(0 0 0 / 0.45); backdrop-filter: blur(10px); border: 1px solid oklch(0.99 0.005 285 / 0.16); color: oklch(0.99 0.005 285 / 0.85); }
+.boost-chip { position: absolute; top: 16px; left: 50%; transform: translateX(-50%) translateY(-6px); z-index: 6; display: none; align-items: center; gap: 7px; font-family: "JetBrains Mono"; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 99px; background: oklch(from var(--accent) l c h / 0.92); color: #fff; box-shadow: 0 8px 24px -6px oklch(from var(--accent) l c h / 0.7); opacity: 0; transition: opacity .18s, transform .18s; }
+.boost-chip.show { display: flex; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.caption { position: absolute; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 5; max-width: 80%; text-align: center; font-size: clamp(15px, 1.7vw, 21px); font-weight: 500; color: #fff; background: oklch(0 0 0 / 0.62); padding: 6px 14px; border-radius: 8px; line-height: 1.4; }
+.caption[hidden] { display: none; }
+
+.seek-ripple { position: absolute; top: 0; bottom: 78px; width: 38%; z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; }
+.seek-ripple.left { left: 0; }
+.seek-ripple.right { right: 0; }
+.seek-ripple.flash { animation: seekFlash .5s ease-out; }
+@keyframes seekFlash { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.seek-ripple .burst { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; background: oklch(0 0 0 / 0.4); width: 92px; height: 92px; border-radius: 50%; justify-content: center; }
+.seek-ripple .burst svg { width: 24px; height: 24px; }
+.seek-ripple .burst span { font-family: "JetBrains Mono"; font-size: 12px; font-weight: 600; }
+
+.big-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 6; width: 84px; height: 84px; border-radius: 50%; background: oklch(0.99 0.005 285 / 0.96); color: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 0; box-shadow: 0 16px 44px -8px oklch(0 0 0 / 0.6); transition: transform .2s cubic-bezier(.2,.8,.2,1), opacity .2s; }
+.big-play:hover { transform: translate(-50%,-50%) scale(1.06); }
+.big-play svg { width: 34px; height: 34px; margin-left: 4px; }
+.player.playing .big-play { opacity: 0; pointer-events: none; transform: translate(-50%,-50%) scale(0.8); }
+
+.ctrl { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 14px; background: linear-gradient(180deg, transparent, oklch(0 0 0 / 0.72)); z-index: 7; display: flex; flex-direction: column; gap: 8px; opacity: 1; transition: opacity .25s; }
+.player.playing.idle .ctrl { opacity: 0; }
+.player.playing.idle .stage { cursor: none; }
+.scrub { height: 6px; display: flex; align-items: center; cursor: pointer; position: relative; }
+.scrub .track { position: absolute; left: 0; right: 0; height: 4px; border-radius: 99px; background: oklch(0.99 0.005 285 / 0.22); overflow: hidden; transition: height .15s; }
+.scrub:hover .track { height: 6px; }
+.scrub .buffered { position: absolute; left: 0; top: 0; bottom: 0; background: oklch(0.99 0.005 285 / 0.2); border-radius: 99px; width: 0; }
+.scrub .filled { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-grad); border-radius: 99px; width: 0; }
+.scrub .knob { position: absolute; top: 50%; left: 0; transform: translate(-50%,-50%) scale(0); width: 13px; height: 13px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px oklch(from var(--accent) l c h / 0.4); transition: transform .15s; }
+.scrub:hover .knob { transform: translate(-50%,-50%) scale(1); }
+.ctrl-row { display: flex; align-items: center; gap: 6px; color: #fff; }
+.cbtn { appearance: none; border: 0; background: transparent; color: #fff; cursor: pointer; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: background .15s; flex-shrink: 0; }
+.cbtn:hover { background: oklch(0.99 0.005 285 / 0.16); }
+.cbtn svg { width: 19px; height: 19px; }
+.cbtn.sm svg { width: 17px; height: 17px; }
+.vol { display: flex; align-items: center; }
+.vol input[type=range] { width: 0; opacity: 0; transition: width .2s, opacity .2s; }
+.vol:hover input[type=range], .vol input[type=range]:focus-visible { width: 72px; opacity: 1; margin: 0 6px; }
+.time { font-family: "JetBrains Mono"; font-size: 12px; opacity: 0.9; white-space: nowrap; padding: 0 6px; }
+.time b { opacity: 1; font-weight: 600; }
+.spacer { flex: 1; }
+.rate-btn { appearance: none; border: 1px solid oklch(0.99 0.005 285 / 0.2); background: transparent; color: #fff; cursor: pointer; font-family: "JetBrains Mono"; font-size: 12px; font-weight: 700; padding: 0 10px; height: 30px; border-radius: 8px; transition: background .15s, border-color .15s; flex-shrink: 0; }
+.rate-btn:hover { background: oklch(0.99 0.005 285 / 0.14); }
+
+/* range inputs (volume + speed) accent */
+input[type=range].rng { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 99px; background: oklch(0.99 0.005 285 / 0.28); outline: none; }
+input[type=range].rng::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4); }
+input[type=range].rng::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4); }
+
+/* settings popover */
+.pop { position: absolute; right: 16px; bottom: 64px; z-index: 9; width: 280px; background: oklch(0.13 0.02 285 / 0.96); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border: 1px solid oklch(0.99 0.005 285 / 0.14); border-radius: 16px; padding: 16px; box-shadow: 0 24px 60px -16px oklch(0 0 0 / 0.7); color: #fff; display: none; flex-direction: column; gap: 16px; }
+.pop.open { display: flex; animation: popIn .2s cubic-bezier(.2,.8,.2,1); }
+@keyframes popIn { from { opacity: 0; transform: translateY(8px); } }
+.pop .pop-sec > .lbl { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(0.99 0.005 285 / 0.5); font-weight: 600; margin-bottom: 9px; display: flex; align-items: center; justify-content: space-between; }
+.pop .pop-sec > .lbl b { font-weight: 700; color: var(--accent-fg); }
+.speed-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 11px; }
+.speed-presets button { appearance: none; border: 1px solid oklch(0.99 0.005 285 / 0.16); background: transparent; color: oklch(0.99 0.005 285 / 0.85); font-family: "JetBrains Mono"; font-size: 12px; font-weight: 600; padding: 6px 0; border-radius: 8px; cursor: pointer; flex: 1 1 28%; transition: background .14s, border-color .14s, color .14s; }
+.speed-presets button:hover { background: oklch(0.99 0.005 285 / 0.12); }
+.speed-presets button.on { background: var(--accent-grad); border-color: transparent; color: #fff; }
+.speed-slide { display: flex; align-items: center; gap: 10px; }
+.speed-slide input { flex: 1; }
+.speed-slide .v { font-family: "JetBrains Mono"; font-size: 12px; font-weight: 700; min-width: 44px; text-align: right; color: var(--accent-fg); }
+.q-list { display: flex; flex-direction: column; gap: 2px; }
+.q-opt { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; cursor: pointer; font-size: 13.5px; transition: background .14s; }
+.q-opt:hover { background: oklch(0.99 0.005 285 / 0.1); }
+.q-opt .tick { width: 16px; color: var(--accent-fg); opacity: 0; }
+.q-opt.on .tick { opacity: 1; }
+.q-opt.on { font-weight: 600; }
+.q-opt .meta { margin-left: auto; font-family: "JetBrains Mono"; font-size: 10px; color: oklch(0.99 0.005 285 / 0.45); }
+
+/* ============== LESSON INFO ============== */
+.lesson-info { display: flex; flex-direction: column; gap: 14px; }
+.lesson-info .top-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.lesson-info .tag { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-fg); font-weight: 600; }
+.lesson-info .lmeta { font-size: 12.5px; color: var(--fg-2); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.lesson-info .lmeta .dot-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--fg-3); }
+.lesson-info h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.6vw, 36px); letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0); }
+
+.nav-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 14px 0; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+.watch-state { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; color: var(--fg-2); }
+.watch-state .ws-ring { width: 26px; height: 26px; border-radius: 50%; background: conic-gradient(var(--accent) 0deg, var(--bg-3) 0deg); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+.watch-state .ws-ring::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--bg-0); }
+.watch-state .ws-ring svg { position: relative; width: 12px; height: 12px; color: var(--success); opacity: 0; transition: opacity .3s; }
+.watch-state.done .ws-ring svg { opacity: 1; }
+.watch-state b { color: var(--fg-1); font-weight: 600; }
+.watch-state.done b { color: var(--success); }
+.prev-next { display: flex; gap: 8px; margin-left: auto; }
+
+/* ============== DOC BUTTONS ============== */
+.doc-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.doc-btn { display: inline-flex; align-items: center; gap: 11px; padding: 13px 18px; border-radius: 13px; text-decoration: none; cursor: pointer; font: inherit; border: 1px solid var(--line); transition: transform .18s, box-shadow .18s, border-color .18s, background .18s; }
+.doc-btn .ic { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.doc-btn .ic svg { width: 18px; height: 18px; }
+.doc-btn .tx { display: flex; flex-direction: column; gap: 1px; text-align: left; }
+.doc-btn .tx b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--fg-0); }
+.doc-btn .tx span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; letter-spacing: 0.02em; }
+.doc-btn.primary { background: var(--accent-grad); border-color: transparent; box-shadow: 0 12px 28px -12px oklch(from var(--accent) l c h / 0.6); }
+.doc-btn.primary .ic { background: oklch(0.99 0.005 285 / 0.2); color: #fff; }
+.doc-btn.primary .tx b { color: #fff; }
+.doc-btn.primary .tx span { color: oklch(0.99 0.005 285 / 0.82); }
+.doc-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -14px oklch(from var(--accent) l c h / 0.7); }
+.doc-btn.ghost { background: var(--bg-1); }
+.doc-btn.ghost .ic { background: var(--bg-3); color: var(--accent-fg); }
+.doc-btn.ghost:hover { transform: translateY(-2px); border-color: var(--glass-line-strong); background: var(--bg-2); }
+
+/* ============== QUIZ ============== */
+.quiz { border-radius: 20px; border: 1px solid var(--line); background: var(--bg-1); padding: 24px 26px 26px; position: relative; overflow: hidden; }
+.quiz::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent-grad); }
+.quiz-head { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+.quiz-head .qbadge { width: 42px; height: 42px; border-radius: 12px; background: var(--accent-grad); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; box-shadow: 0 8px 20px -8px oklch(from var(--accent) l c h / 0.6); }
+.quiz-head .qbadge svg { width: 21px; height: 21px; }
+.quiz-head .qh-tx { flex: 1; }
+.quiz-head .qh-tx .ey { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-fg); font-weight: 600; }
+.quiz-head .qh-tx h3 { font-family: var(--font-display); font-weight: 700; font-size: 21px; letter-spacing: -0.02em; color: var(--fg-0); margin-top: 3px; }
+.quiz-head .qscore { font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-2); font-weight: 600; padding: 6px 12px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--line); }
+.quiz-head .qscore b { color: var(--accent-fg); }
+.quiz-q { margin-top: 20px; opacity: 0; transform: translateY(24px); }
+.quiz.revealed .quiz-q { animation: quizFloat .6s cubic-bezier(.2,.8,.2,1) forwards; }
+.quiz.revealed .quiz-q:nth-child(2) { animation-delay: .08s; }
+.quiz.revealed .quiz-q:nth-child(3) { animation-delay: .22s; }
+@keyframes quizFloat { to { opacity: 1; transform: none; } }
+.quiz-q .qnum { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); font-weight: 600; letter-spacing: 0.06em; }
+.quiz-q .prompt { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--fg-0); line-height: 1.4; margin: 6px 0 14px; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 600px) { .choices { grid-template-columns: 1fr; } }
+.choice { display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); cursor: pointer; font: inherit; font-size: 14.5px; color: var(--fg-1); text-align: left; transition: border-color .16s, background .16s, transform .12s; }
+.choice:hover:not(:disabled) { border-color: var(--accent); background: var(--bg-3); transform: translateY(-1px); }
+.choice .key { width: 28px; height: 28px; border-radius: 8px; background: var(--bg-3); border: 1px solid var(--line); font-family: "JetBrains Mono"; font-weight: 700; font-size: 13px; color: var(--fg-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .16s, color .16s, border-color .16s; }
+.choice .ctext { flex: 1; }
+.choice .res { width: 18px; opacity: 0; flex-shrink: 0; }
+.choice.correct { border-color: var(--success); background: oklch(0.62 0.18 150 / 0.12); color: var(--fg-0); }
+.choice.correct .key { background: var(--success); border-color: transparent; color: #fff; }
+.choice.correct .res { opacity: 1; color: var(--success); }
+.choice.wrong { border-color: oklch(0.62 0.22 18); background: oklch(0.62 0.22 18 / 0.1); color: var(--fg-0); }
+.choice.wrong .key { background: oklch(0.58 0.22 18); border-color: transparent; color: #fff; }
+.choice.wrong .res { opacity: 1; color: oklch(0.66 0.21 18); }
+.choice:disabled { cursor: default; }
+.quiz-q.answered .choice:not(.correct):not(.wrong) { opacity: 0.55; }
+.explain { margin-top: 12px; padding: 13px 16px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line-soft); font-size: 13.5px; color: var(--fg-1); line-height: 1.55; display: none; gap: 10px; align-items: flex-start; }
+.explain.show { display: flex; animation: quizFloat .4s ease both; }
+.explain svg { width: 16px; height: 16px; color: var(--accent-fg); flex-shrink: 0; margin-top: 2px; }
+.explain b { color: var(--fg-0); }
+
+/* ============== COMMENTS ============== */
+.comments-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.comments-head h3 { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -0.015em; color: var(--fg-0); }
+.comments-head h3 b { color: var(--accent-fg); }
+.rating-box { display: flex; align-items: center; gap: 14px; margin-left: auto; padding: 8px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg-1); flex-wrap: wrap; }
+.rating-box .avg { display: flex; align-items: baseline; gap: 6px; }
+.rating-box .avg b { font-family: var(--font-display); font-weight: 700; font-size: 26px; color: var(--fg-0); letter-spacing: -0.02em; }
+.rating-box .avg span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.rating-box .divv { width: 1px; height: 30px; background: var(--line); }
+.rating-box .rate-mine { display: flex; flex-direction: column; gap: 3px; }
+.rating-box .rate-mine .lbl { font-size: 11px; color: var(--fg-2); }
+.stars { display: inline-flex; gap: 3px; }
+.stars button { appearance: none; border: 0; background: transparent; cursor: pointer; padding: 0; color: var(--fg-3); transition: color .12s, transform .12s; }
+.stars button svg { width: 20px; height: 20px; display: block; }
+.stars button:hover { transform: scale(1.15); }
+.stars.set button.lit, .stars button.lit { color: oklch(0.82 0.17 82); }
+.stars button.lit svg { fill: oklch(0.82 0.17 82); }
+
+.composer { display: flex; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-1); }
+.composer .av { width: 36px; height: 36px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 13px; flex-shrink: 0; }
+.composer .field { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.composer textarea { width: 100%; background: transparent; border: 0; color: var(--fg-0); font: inherit; font-size: 14.5px; resize: none; outline: none; min-height: 24px; line-height: 1.5; }
+.composer textarea::placeholder { color: var(--fg-3); }
+.gif-pending { display: none; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line-soft); width: fit-content; }
+.gif-pending.show { display: flex; }
+.gif-pending .thumb { width: 80px; height: 48px; border-radius: 7px; position: relative; overflow: hidden; }
+.gif-pending .nm { font-size: 12.5px; color: var(--fg-1); }
+.gif-pending .rm { appearance: none; border: 0; background: var(--bg-3); color: var(--fg-2); width: 22px; height: 22px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.composer .bar { display: flex; align-items: center; gap: 6px; }
+.tool-btn { appearance: none; border: 1px solid var(--line); background: var(--bg-2); color: var(--fg-1); width: 36px; height: 36px; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color .14s, border-color .14s, background .14s; position: relative; }
+.tool-btn:hover { color: var(--fg-0); border-color: var(--fg-2); }
+.tool-btn svg { width: 17px; height: 17px; }
+.tool-btn.gif { font-family: "JetBrains Mono"; font-weight: 700; font-size: 11px; width: auto; padding: 0 11px; letter-spacing: 0.04em; }
+.composer .send { margin-left: auto; }
+
+/* picker popovers */
+.picker { position: absolute; z-index: 20; bottom: 46px; left: 0; width: 300px; background: var(--bg-1); border: 1px solid var(--glass-line-strong); border-radius: 14px; box-shadow: 0 24px 60px -18px oklch(0 0 0 / 0.5); padding: 12px; display: none; }
+.picker.open { display: block; animation: popIn .18s ease both; }
+.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.emoji-grid button { appearance: none; border: 0; background: transparent; cursor: pointer; font-size: 20px; padding: 5px; border-radius: 8px; line-height: 1; transition: background .12s, transform .1s; }
+.emoji-grid button:hover { background: var(--bg-3); transform: scale(1.2); }
+.gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gif-grid .gt { position: relative; height: 76px; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--line-soft); }
+.gif-grid .gt .lab { position: absolute; left: 7px; bottom: 6px; z-index: 2; font-size: 12px; font-weight: 600; color: #fff; text-shadow: 0 1px 3px oklch(0 0 0 / 0.5); }
+.gif-grid .gt .bdg { position: absolute; right: 6px; top: 6px; z-index: 2; font-family: "JetBrains Mono"; font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; padding: 2px 5px; border-radius: 5px; background: oklch(0 0 0 / 0.45); color: #fff; }
+.gif-grid .gt:hover { transform: scale(1.03); }
+.picker .ptitle { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; margin-bottom: 8px; }
+
+/* gif shimmer */
+.gshim { position: absolute; inset: 0; }
+.gshim::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, oklch(0.99 0.005 285 / 0.35) 50%, transparent 70%); transform: translateX(-100%); animation: gifShim 2.2s linear infinite; }
+@keyframes gifShim { to { transform: translateX(100%); } }
+
+.cmt-list { display: flex; flex-direction: column; gap: 18px; }
+.cmt { display: flex; gap: 12px; animation: quizFloat .4s ease both; }
+.cmt .av { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 13px; flex-shrink: 0; }
+.cmt .cbody { flex: 1; min-width: 0; }
+.cmt .crow { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.cmt .nm { font-size: 13.5px; color: var(--fg-0); font-weight: 600; }
+.cmt .badge-inst { font-family: "JetBrains Mono"; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 5px; background: var(--accent-grad); color: #fff; }
+.cmt .stars-mini { display: inline-flex; gap: 1px; color: oklch(0.82 0.17 82); }
+.cmt .stars-mini svg { width: 12px; height: 12px; fill: oklch(0.82 0.17 82); }
+.cmt .tm { font-size: 11.5px; color: var(--fg-3); font-family: "JetBrains Mono"; margin-left: auto; }
+.cmt .ctext { font-size: 14px; color: var(--fg-1); line-height: 1.55; margin-top: 5px; word-break: break-word; }
+.cmt .cgif { margin-top: 9px; width: 200px; max-width: 100%; height: 116px; border-radius: 12px; position: relative; overflow: hidden; border: 1px solid var(--line-soft); }
+.cmt .cgif .lab { position: absolute; left: 10px; bottom: 8px; z-index: 2; font-family: var(--font-display); font-weight: 700; font-size: 17px; color: #fff; text-shadow: 0 2px 6px oklch(0 0 0 / 0.5); }
+.cmt .cgif .bdg { position: absolute; right: 8px; top: 8px; z-index: 2; font-family: "JetBrains Mono"; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 5px; background: oklch(0 0 0 / 0.5); color: #fff; }
+.cmt .cact { display: flex; gap: 16px; margin-top: 9px; align-items: center; }
+.cmt .cact button { appearance: none; border: 0; background: transparent; cursor: pointer; color: var(--fg-2); font: inherit; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; transition: color .14s; }
+.cmt .cact button:hover { color: var(--fg-0); }
+.cmt .cact button.liked { color: var(--accent-fg); }
+.cmt .cact button svg { width: 14px; height: 14px; }
+.cmt .reply-to { margin-left: 50px; }
+
+/* ============== NOTES DRAWER ============== */
+.lp-notes { position: fixed; top: 56px; bottom: 0; right: 0; width: min(420px, 96vw); background: var(--bg-1); border-left: 1px solid var(--line); z-index: 40; transform: translateX(100%); transition: transform .26s cubic-bezier(.2,.8,.2,1), box-shadow .26s; display: flex; flex-direction: column; box-shadow: -20px 0 60px -20px oklch(0 0 0 / 0); }
+.lp-notes.open { transform: translateX(0); box-shadow: -20px 0 60px -20px oklch(0 0 0 / 0.5); }
+.lp-notes-backdrop { position: fixed; inset: 56px 0 0 0; background: oklch(0 0 0 / 0); z-index: 35; pointer-events: none; transition: background .26s; }
+.lp-notes-backdrop.open { background: oklch(from var(--bg-0) l c h / 0.45); backdrop-filter: blur(4px); pointer-events: auto; }
+.lp-notes-head { padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line-soft); }
+.lp-notes-head h3 { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.015em; color: var(--fg-0); }
+.lp-notes-head h3 small { font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 500; letter-spacing: 0.1em; color: var(--success); margin-top: 3px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+.lp-notes-head h3 small::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px oklch(0.78 0.18 150 / 0.2); }
+.lp-notes-editor { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid var(--line-soft); }
+.lp-notes-editor textarea { width: 100%; background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; color: var(--fg-0); font: inherit; font-size: 14px; line-height: 1.5; resize: none; outline: none; min-height: 100px; transition: border-color .2s; }
+.lp-notes-editor textarea:focus { border-color: var(--accent); }
+.lp-notes-editor textarea::placeholder { color: var(--fg-3); }
+.lp-notes-actions { display: flex; gap: 8px; }
+.lp-notes-actions .btn-ts { background: var(--bg-2); border: 1px solid var(--line); color: var(--fg-1); padding: 7px 12px; border-radius: 9px; font: inherit; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; transition: color .15s, border-color .15s; }
+.lp-notes-actions .btn-ts:hover { color: var(--fg-0); border-color: var(--fg-2); }
+.lp-notes-actions .btn-ts svg { width: 13px; height: 13px; color: var(--accent-fg); }
+.lp-notes-actions .btn-ts .time { font-family: "JetBrains Mono"; font-weight: 600; color: var(--accent-fg); }
+.lp-notes-list { flex: 1; overflow-y: auto; padding: 14px 20px 20px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: thin; }
+.lp-notes-list .heading { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; padding: 4px 0 6px; }
+.note-item { padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--line-soft); border-radius: 12px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: border-color .15s, background .15s; }
+.note-item:hover { border-color: var(--glass-line-strong); background: var(--bg-3); }
+.note-item .ts { display: inline-flex; align-items: center; gap: 6px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--accent-fg); font-weight: 600; letter-spacing: 0.02em; }
+.note-item .ts svg { width: 11px; height: 11px; }
+.note-item .text { font-size: 13px; color: var(--fg-1); line-height: 1.55; }
+
+/* ============== DARK-MODE NEON GLOW ============== */
+[data-theme="dark"] .player { box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.55), 0 0 0 1px oklch(from var(--accent) l c h / 0.35), 0 0 70px -12px oklch(from var(--accent) l c h / 0.45); }
+[data-theme="dark"] .lp-progress-bar > div { box-shadow: 0 0 12px oklch(from var(--accent) l c h / 0.7); }
+[data-theme="dark"] .scrub .filled { box-shadow: 0 0 10px oklch(from var(--accent) l c h / 0.8); }
+[data-theme="dark"] .lp-course-info .crumb, [data-theme="dark"] .lesson-info .tag, [data-theme="dark"] .quiz-head .qh-tx .ey { text-shadow: 0 0 12px oklch(from var(--accent-fg) l c h / 0.55); }
+[data-theme="dark"] .chapter.active .num-badge, [data-theme="dark"] .lesson.active .ico { box-shadow: 0 0 16px -2px oklch(from var(--accent) l c h / 0.8); }
+[data-theme="dark"] .lesson.active::before { box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.28), 0 0 14px oklch(from var(--accent) l c h / 0.8); }
+[data-theme="dark"] .lesson.active::after { filter: drop-shadow(0 0 6px oklch(from var(--accent) l c h / 0.9)); }
+[data-theme="dark"] .quiz::before { box-shadow: 0 0 18px oklch(from var(--accent) l c h / 0.6); }
+[data-theme="dark"] .quiz-head .qbadge, [data-theme="dark"] .doc-btn.primary { box-shadow: 0 8px 26px -6px oklch(from var(--accent) l c h / 0.75), 0 0 30px -8px oklch(from var(--accent) l c h / 0.6); }
+[data-theme="dark"] .big-play { box-shadow: 0 16px 44px -8px oklch(0 0 0 / 0.6), 0 0 50px -6px oklch(from var(--accent) l c h / 0.7); }
+[data-theme="dark"] .choice.correct { box-shadow: 0 0 18px -4px oklch(0.62 0.18 150 / 0.6); }
+[data-theme="dark"] .scene .formula { text-shadow: 0 0 40px oklch(from var(--accent) l c h / 0.6), 0 6px 30px oklch(0 0 0 / 0.4); }
+[data-theme="dark"] .boost-chip { box-shadow: 0 8px 24px -6px oklch(from var(--accent) l c h / 0.8), 0 0 30px -4px oklch(from var(--accent) l c h / 0.7); }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 0 1fr; }
+  .lp-sidebar { position: fixed; top: 56px; bottom: 0; left: 0; width: 320px; transform: translateX(-100%); z-index: 25; }
+  .app:not(.sidebar-collapsed) .lp-sidebar { transform: translateX(0); box-shadow: 20px 0 60px -20px oklch(0 0 0 / 0.4); }
+}
+@media (max-width: 720px) {
+  .lp-container { padding: 16px 16px 60px; gap: 18px; }
+  .lp-course-info { display: none; }
+  .lp-header-progress .text { display: none; }
+  .lp-notes { width: 100%; }
+  .prev-next { width: 100%; margin-left: 0; }
+  .vol input[type=range] { display: none; }
+  .rating-box { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="app" data-screen-label="01 Learn">
+
+  <!-- ============== HEADER ============== -->
+  <header class="lp-header">
+    <button class="icon-btn lp-toggle-sidebar" id="toggle-sidebar" aria-label="พับเมนูบท">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a href="Dashboard.html" class="lp-logo" title="หน้าหลัก">
+      <div class="mark">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </a>
+    <div class="lp-divider"></div>
+    <a href="Course Contents.html?c=amath-calculus" class="lp-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      กลับ
+    </a>
+    <div class="lp-course-info">
+      <div class="crumb">คณิต · A-LEVEL · ม.6</div>
+      <div class="title">แคลคูลัส · ขั้นเทพ</div>
+    </div>
+    <div class="lp-header-progress" id="hdr-progress">
+      <div class="ring" id="hdr-ring"><span id="hdr-pct">38%</span></div>
+      <div class="text"><b id="hdr-done">9</b> / 24 บทเรียน</div>
+    </div>
+    <div class="lp-header-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+      </div>
+      <div class="lp-user-av" title="น้องปาล์ม">ปม</div>
+    </div>
+  </header>
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="lp-sidebar">
+    <div class="lp-sidebar-top">
+      <div class="meta">เนื้อหาคอร์ส · 5 บท</div>
+      <h2>แคลคูลัส · ขั้นเทพ</h2>
+      <div class="lp-progress-block">
+        <div class="head">
+          <span class="label">ความคืบหน้า</span>
+          <span class="val" id="sb-pct">38%</span>
+        </div>
+        <div class="lp-progress-bar"><div id="sb-bar" style="width:38%"></div></div>
+        <div class="lp-progress-meta">
+          <span><b id="sb-done">9</b> จาก 24 บทเรียน</span>
+          <span>เหลือ 12ชม. 48น.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lp-chapters">
+      <details class="chapter done">
+        <summary>
+          <span class="num-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="info"><span class="ctitle">ลิมิตและความต่อเนื่อง</span><span class="cmeta">5/5 จบแล้ว · 3ชม. 24น.</span></span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">1.1 ลิมิตคืออะไร — เริ่มจากศูนย์</span><span class="dur">42:18</span></div>
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">1.2 ลิมิตด้านซ้ายและขวา</span><span class="dur">38:24</span></div>
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">1.3 ลิมิตของฟังก์ชันที่ไม่ต่อเนื่อง</span><span class="dur">44:02</span></div>
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">1.4 ความต่อเนื่อง · เกณฑ์ 3 ข้อ</span><span class="dur">36:48</span></div>
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">1.5 Quiz · ตรวจสอบความเข้าใจ</span><span class="dur">44:00</span></div>
+        </div>
+      </details>
+
+      <details class="chapter active" open>
+        <summary>
+          <span class="num-badge">02</span>
+          <span class="info"><span class="ctitle">อนุพันธ์เบื้องต้น</span><span class="cmeta">กำลังเรียน · 2/6 · 4ชม. 12น.</span></span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">2.1 อนุพันธ์คือความชัน</span><span class="dur">48:32</span></div>
+          <div class="lesson done"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="name">2.2 สูตรพื้นฐาน · ทำไมเป็นแบบนั้น</span><span class="dur">42:06</span></div>
+          <div class="lesson active" id="active-lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div><span class="name">2.3 อนุพันธ์ของพหุนาม</span><span class="dur">38:12</span></div>
+          <div class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div><span class="name">2.4 Product rule · เข้าใจที่มา</span><span class="dur">44:18</span></div>
+          <div class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div><span class="name">2.5 Quotient rule · เคล็ดลับจำง่าย</span><span class="dur">36:42</span></div>
+          <div class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></div><span class="name">2.6 โจทย์รวม + Quiz</span><span class="dur">44:24</span></div>
+        </div>
+      </details>
+
+      <details class="chapter">
+        <summary>
+          <span class="num-badge">03</span>
+          <span class="info"><span class="ctitle">เทคนิคหาอนุพันธ์ขั้นสูง</span><span class="cmeta">5 บท · 3ชม. 48น.</span></span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+      </details>
+      <details class="chapter">
+        <summary>
+          <span class="num-badge">04</span>
+          <span class="info"><span class="ctitle">ปริพันธ์</span><span class="cmeta">5 บท · 3ชม. 36น.</span></span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+      </details>
+      <details class="chapter">
+        <summary>
+          <span class="num-badge">05</span>
+          <span class="info"><span class="ctitle">การประยุกต์และข้อสอบรวม</span><span class="cmeta">3 บท · 2ชม. 12น.</span></span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+      </details>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN ============== -->
+  <main class="lp-main">
+    <div class="lp-scroll" id="scroll">
+      <div class="lp-container">
+
+        <!-- PREMIUM PLAYER -->
+        <div class="player" id="player" tabindex="0">
+          <div class="stage" id="stage">
+            <div class="q-badge" id="q-badge">1080p60</div>
+            <div class="scene">
+              <div class="formula">d/dx · x<sup>n</sup></div>
+              <div class="sub">= n · x<sup>n−1</sup></div>
+              <div class="live-dot">power rule · นาที 10:54</div>
+            </div>
+            <div class="caption" id="caption" hidden></div>
+            <div class="seek-ripple left" id="ripple-left"><div class="burst"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.5 15a9 9 0 1 0 2-9.7L1 10"/></svg><span>10 วิ</span></div></div>
+            <div class="seek-ripple right" id="ripple-right"><div class="burst"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2-9.7L23 10"/></svg><span>10 วิ</span></div></div>
+            <div class="boost-chip" id="boost-chip">▶▶ 2× ความเร็ว</div>
+            <button class="big-play" id="big-play" aria-label="เล่น"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></button>
+          </div>
+
+          <div class="ctrl" id="ctrl">
+            <div class="scrub" id="scrub">
+              <div class="track"><div class="buffered" id="buffered"></div><div class="filled" id="filled"></div></div>
+              <div class="knob" id="knob"></div>
+            </div>
+            <div class="ctrl-row">
+              <button class="cbtn" id="play-btn" aria-label="เล่น/หยุด (Space)"><svg id="play-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></button>
+              <button class="cbtn sm" id="back10" aria-label="ย้อน 10 วินาที"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.5 15a9 9 0 1 0 2-9.7L1 10"/></svg></button>
+              <button class="cbtn sm" id="fwd10" aria-label="ไป 10 วินาที"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2-9.7L23 10"/></svg></button>
+              <div class="vol">
+                <button class="cbtn sm" id="mute-btn" aria-label="ปิดเสียง"><svg id="vol-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+                <input type="range" class="rng" id="vol-range" min="0" max="1" step="0.01" value="1" aria-label="ระดับเสียง" />
+              </div>
+              <span class="time"><b id="cur-time">10:54</b> / <span id="dur-time">38:12</span></span>
+              <div class="spacer"></div>
+              <button class="rate-btn" id="rate-btn" aria-label="ความเร็ว">1×</button>
+              <button class="cbtn sm" id="cc-btn" aria-label="คำบรรยาย"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 11h2M11 11h2M6 15h7M16 11h2"/></svg></button>
+              <button class="cbtn sm" id="gear-btn" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+              <button class="cbtn sm" id="fs-btn" aria-label="เต็มจอ"><svg id="fs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+            </div>
+          </div>
+
+          <!-- settings popover -->
+          <div class="pop" id="settings-pop">
+            <div class="pop-sec">
+              <div class="lbl">ความเร็ว <b id="pop-rate">1×</b></div>
+              <div class="speed-presets" id="speed-presets">
+                <button data-r="0.5">0.5×</button>
+                <button data-r="0.75">0.75×</button>
+                <button data-r="1" class="on">1×</button>
+                <button data-r="1.5">1.5×</button>
+                <button data-r="2">2×</button>
+                <button data-r="3">3×</button>
+              </div>
+              <div class="speed-slide">
+                <input type="range" class="rng" id="speed-range" min="0.25" max="3" step="0.05" value="1" aria-label="ปรับความเร็วเอง" />
+                <span class="v" id="speed-val">1.00×</span>
+              </div>
+            </div>
+            <div class="pop-sec">
+              <div class="lbl">คุณภาพ</div>
+              <div class="q-list" id="q-list">
+                <div class="q-opt on" data-q="1080p60"><svg class="tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>1080p</span><span class="meta">60fps · HD</span></div>
+                <div class="q-opt" data-q="720p60"><svg class="tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>720p</span><span class="meta">60fps</span></div>
+                <div class="q-opt" data-q="480p"><svg class="tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg><span>480p</span><span class="meta">ประหยัดเน็ต</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LESSON INFO -->
+        <div class="lesson-info">
+          <div class="top-row">
+            <span class="tag">บทที่ 2 · บทเรียน 2.3</span>
+            <span class="lmeta">
+              <span>38 นาที</span>
+              <span class="dot-sep"></span>
+              <span>1080p60 · HD</span>
+              <span class="dot-sep"></span>
+              <span>อัปเดต พ.ค. 2026</span>
+            </span>
+          </div>
+          <h1>อนุพันธ์ของพหุนาม</h1>
+          <div class="nav-row">
+            <div class="watch-state" id="watch-state">
+              <span class="ws-ring" id="ws-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span id="watch-label">ดูแล้ว <b id="watch-pct">30%</b></span>
+            </div>
+            <div class="prev-next">
+              <button class="btn btn-ghost btn-sm" id="prev-lesson"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg> บทก่อน</button>
+              <button class="btn btn-secondary btn-sm" id="next-lesson">บทถัดไป <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOC BUTTONS -->
+        <div class="doc-row">
+          <a class="doc-btn primary" id="dl-doc" href="#" download>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></span>
+            <span class="tx"><b>โหลดเอกสารการเรียน</b><span>PDF · 6 หน้า · 1.2 MB</span></span>
+          </a>
+          <button class="doc-btn ghost" id="preview-doc">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <span class="tx"><b>Preview</b><span>ดูตัวอย่างก่อนโหลด</span></span>
+          </button>
+        </div>
+
+        <!-- QUIZ (floats in at end of clip) -->
+        <section class="quiz" id="quiz">
+          <div class="quiz-head">
+            <div class="qbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div class="qh-tx">
+              <div class="ey">โจทย์ท้ายคลิป</div>
+              <h3>ลองทำ 2 ข้อนี้ดู</h3>
+            </div>
+            <div class="qscore" id="quiz-score">ตอบแล้ว <b id="qs-done">0</b>/2</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <div class="qnum">ข้อ 1</div>
+            <div class="prompt">d/dx ของ 3x⁵ มีค่าเท่ากับเท่าใด?</div>
+            <div class="choices">
+              <button class="choice" data-k="a"><span class="key">A</span><span class="ctext">15x⁴</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></button>
+              <button class="choice" data-k="b"><span class="key">B</span><span class="ctext">3x⁴</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              <button class="choice" data-k="c"><span class="key">C</span><span class="ctext">15x⁵</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              <button class="choice" data-k="d"><span class="key">D</span><span class="ctext">8x⁴</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="explain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span><b>ถูกต้อง · 15x⁴</b> — ดึงเลขชี้กำลัง 5 ลงมาคูณ (3·5 = 15) แล้วลดกำลังลง 1 → 15x⁴</span></div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <div class="qnum">ข้อ 2</div>
+            <div class="prompt">อนุพันธ์ของฟังก์ชันค่าคงที่ f(x) = 7 มีค่าเท่าใด?</div>
+            <div class="choices">
+              <button class="choice" data-k="a"><span class="key">A</span><span class="ctext">7</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              <button class="choice" data-k="b"><span class="key">B</span><span class="ctext">7x</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              <button class="choice" data-k="c"><span class="key">C</span><span class="ctext">0</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></button>
+              <button class="choice" data-k="d"><span class="key">D</span><span class="ctext">1</span><svg class="res" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="explain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span><b>ถูกต้อง · 0</b> — ค่าคงที่คือเส้นแนวนอน ความชันเป็น 0 เสมอ ดังนั้นอนุพันธ์ = 0</span></div>
+          </div>
+        </section>
+
+        <!-- COMMENTS -->
+        <section>
+          <div class="comments-head">
+            <h3>ความคิดเห็น <b id="cmt-count">3</b></h3>
+            <div class="rating-box">
+              <div class="avg"><b id="avg-val">4.9</b><span id="avg-count">· 412 รีวิว</span></div>
+              <div class="divv"></div>
+              <div class="rate-mine">
+                <span class="lbl" id="rate-lbl">ให้คะแนนบทเรียนนี้</span>
+                <div class="stars" id="my-stars" role="radiogroup" aria-label="ให้คะแนน">
+                  <button data-v="1" aria-label="1 ดาว"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></button>
+                  <button data-v="2" aria-label="2 ดาว"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></button>
+                  <button data-v="3" aria-label="3 ดาว"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></button>
+                  <button data-v="4" aria-label="4 ดาว"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></button>
+                  <button data-v="5" aria-label="5 ดาว"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="composer" style="margin-top:16px">
+            <div class="av">ปม</div>
+            <div class="field">
+              <textarea id="cmt-input" rows="1" placeholder="แสดงความคิดเห็น ถามคำถาม หรือแชร์ความรู้สึก... 🎉"></textarea>
+              <div class="gif-pending" id="gif-pending">
+                <div class="thumb" id="gif-pending-thumb"></div>
+                <span class="nm" id="gif-pending-nm">GIF</span>
+                <button class="rm" id="gif-pending-rm" aria-label="ลบ GIF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              </div>
+              <div class="bar">
+                <button class="tool-btn" id="emoji-btn" aria-label="อิโมจิ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></button>
+                <button class="tool-btn gif" id="gif-btn" aria-label="GIF">GIF</button>
+                <button class="btn btn-primary btn-sm send" id="cmt-send">ส่ง <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg></button>
+                <div class="picker" id="emoji-picker"><div class="ptitle">อิโมจิ</div><div class="emoji-grid" id="emoji-grid"></div></div>
+                <div class="picker" id="gif-picker"><div class="ptitle">เลือก GIF</div><div class="gif-grid" id="gif-grid"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cmt-list" id="cmt-list" style="margin-top:22px"></div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="learn.js?v=2"></script>
+</body>
+</html>

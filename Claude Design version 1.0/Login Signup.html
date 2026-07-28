@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>เข้าสู่ระบบ · สมัครสมาชิก — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Mitr:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vsalvino/computer-modern@main/fonts/serif.css" />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="auth.css?v=27" />
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="auth">
+  <!-- ================= BRAND ART PANEL ================= -->
+  <section class="brand-panel">
+    <div class="mesh" aria-hidden="true"></div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <span class="float ring" aria-hidden="true"></span>
+    <span class="float orb o1" aria-hidden="true"></span>
+    <span class="float orb o2" aria-hidden="true"></span>
+    <span class="float sq s1" aria-hidden="true"></span>
+    <span class="glyph g1" aria-hidden="true">∫</span>
+    <span class="glyph g2" aria-hidden="true">Σ</span>
+    <span class="glyph g3" aria-hidden="true">π</span>
+    <span class="glyph g4" aria-hidden="true">√</span>
+    <span class="glyph g5" aria-hidden="true">Δ</span>
+    <span class="glyph g6" aria-hidden="true">∞</span>
+    <span class="glyph g7" aria-hidden="true">θ</span>
+    <span class="glyph g8" aria-hidden="true">f(x)</span>
+
+    <a href="Dashboard.html" class="bp-logo">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="word">mingsmileyface<small>TCAS 70 · ม.ปลาย</small></span>
+    </a>
+
+    <div class="bp-body">
+      <span class="bp-eyebrow"><span class="dot"></span>ติวเตอร์ออนไลน์ · ม.4–ม.6</span>
+      <h1 class="bp-tagline">พิชิต ม.ปลาย<br>สอบติด<span class="em">วิศวะฯ</span> กับพี่หมิง</h1>
+      <div class="bp-subjects">
+        <span class="bp-chip" style="--c:var(--subj-math-grad)">คณิต</span>
+        <span class="bp-chip" style="--c:var(--subj-phys-grad)">ฟิสิกส์</span>
+        <span class="bp-chip" style="--c:var(--subj-tpat-grad)">TPAT3</span>
+        <span class="bp-chip" style="--c:var(--subj-tgat-grad)">TGAT2</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FORM PANEL ================= -->
+  <section class="form-panel">
+    <div class="form-topbar">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ LOGIN VIEW ============ -->
+    <div class="form-card" id="view-login">
+      <div class="fc-head">
+        <div class="fc-eyebrow">เข้าสู่ระบบ</div>
+        <h1 class="fc-title">ยินดีต้อนรับกลับมา 👋</h1>
+        <p class="fc-sub">เข้าสู่ระบบเพื่อกลับไปเรียนต่อจากที่ค้างไว้</p>
+      </div>
+
+      <div class="err-banner" id="login-err">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span>อีเมลหรือรหัสผ่านไม่ถูกต้อง — ลองอีกครั้ง หรือ <a href="#" class="link" style="font-size:13px" data-go="forgot">รีเซ็ตรหัสผ่าน</a></span>
+      </div>
+
+      <!-- one-tap returning Google account (Tweak: Google · returning user) -->
+      <div class="gsignin" id="gsignin">
+        <div class="gs-card">
+          <div class="gs-brandrow">
+            <svg class="gs-g" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8a12 12 0 1 1 7.9-21l5.7-5.7A20 20 0 1 0 24 44a20 20 0 0 0 19.6-23.5Z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8A12 12 0 0 1 24 12a12 12 0 0 1 7.9 3l5.7-5.7A20 20 0 0 0 6.3 14.7Z"/><path fill="#4CAF50" d="M24 44a20 20 0 0 0 13.5-5.2l-6.2-5.3A12 12 0 0 1 12.7 28l-6.6 5.1A20 20 0 0 0 24 44Z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.3C39.6 36 44 30.7 44 24a20 20 0 0 0-.4-3.5Z"/></svg>
+            <span>เข้าสู่ <b>mingsmileyface</b></span>
+          </div>
+          <div class="gs-hero">
+            <span class="gs-av-lg">ป<span class="gs-gbadge"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8a12 12 0 1 1 7.9-21l5.7-5.7A20 20 0 1 0 24 44a20 20 0 0 0 19.6-23.5Z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8A12 12 0 0 1 24 12a12 12 0 0 1 7.9 3l5.7-5.7A20 20 0 0 0 6.3 14.7Z"/><path fill="#4CAF50" d="M24 44a20 20 0 0 0 13.5-5.2l-6.2-5.3A12 12 0 0 1 12.7 28l-6.6 5.1A20 20 0 0 0 24 44Z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.3C39.6 36 44 30.7 44 24a20 20 0 0 0-.4-3.5Z"/></svg></span></span>
+            <b class="gs-name">ปาล์ม มิ่งขวัญ</b>
+            <small class="gs-email">palm.mingkwan@gmail.com</small>
+          </div>
+          <button type="button" class="gs-continue" id="gs-acct">
+            <span class="gs-spin"></span>
+            <span class="gs-cont-label">ดำเนินการต่อ</span>
+          </button>
+          <button type="button" class="gs-other" id="gs-other">ใช้บัญชีอื่น</button>
+        </div>
+        <p class="gs-note">เพื่อดำเนินการต่อ Google จะแชร์ชื่อ อีเมล และรูปโปรไฟล์ของคุณกับ mingsmileyface</p>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field" data-field="email">
+          <input class="fl-input" type="email" id="login-email" autocomplete="email" placeholder=" " />
+          <label class="fl-label" for="login-email">อีเมล</label>
+          <div class="field-msg">กรุณากรอกอีเมลให้ถูกต้อง</div>
+        </div>
+
+        <div class="field has-icon" data-field="password">
+          <input class="fl-input" type="password" id="login-pass" autocomplete="current-password" placeholder=" " />
+          <label class="fl-label" for="login-pass">รหัสผ่าน</label>
+          <button type="button" class="eye" data-eye="login-pass" aria-label="แสดงรหัสผ่าน">
+            <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 5A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a13.2 13.2 0 0 1-2.4 3.1M6.6 6.6A13.3 13.3 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4.1-.8"/><path d="M14.1 14.1a3 3 0 0 1-4.2-4.2M2 2l20 20"/></svg>
+          </button>
+          <div class="caps-warn" data-caps="login-pass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m18 15-6-6-6 6"/><path d="M6 19h12"/></svg> Caps Lock เปิดอยู่</div>
+          <div class="field-msg">กรุณากรอกรหัสผ่าน</div>
+        </div>
+
+        <div class="fl-row">
+          <label class="check-lbl"><input type="checkbox" id="remember" checked /><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>จดจำฉันไว้</label>
+          <a href="#" class="link" data-go="forgot">ลืมรหัสผ่าน?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-submit" id="login-submit">
+          <span class="label">เข้าสู่ระบบ →</span>
+          <span class="spin"></span>
+        </button>
+      </form>
+
+      <div class="divider">หรือ</div>
+      <button class="btn btn-ghost btn-oauth" type="button">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8a12 12 0 1 1 7.9-21l5.7-5.7A20 20 0 1 0 24 44a20 20 0 0 0 19.6-23.5Z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8A12 12 0 0 1 24 12a12 12 0 0 1 7.9 3l5.7-5.7A20 20 0 0 0 6.3 14.7Z"/><path fill="#4CAF50" d="M24 44a20 20 0 0 0 13.5-5.2l-6.2-5.3A12 12 0 0 1 12.7 28l-6.6 5.1A20 20 0 0 0 24 44Z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.3C39.6 36 44 30.7 44 24a20 20 0 0 0-.4-3.5Z"/></svg>
+        เข้าสู่ระบบด้วย Google
+      </button>
+
+      <p class="fc-foot">ยังไม่มีบัญชี? <a href="#" data-go="signup">สมัครสมาชิกฟรี</a></p>
+    </div>
+
+    <!-- ============ SIGNUP VIEW ============ -->
+    <div class="form-card" id="view-signup" style="display:none">
+      <div class="success-ov" id="signup-success">
+        <div class="success-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2>ยินดีต้อนรับสู่ Mingsmileyface! 🎉</h2>
+        <p>สร้างบัญชีสำเร็จแล้ว — กำลังพาคุณไปที่หน้าหลัก</p>
+        <div class="redir"><span class="spin"></span> กำลังเข้าสู่ระบบ...</div>
+      </div>
+
+      <div class="steps-ind">
+        <span class="seg active" id="seg-1"><i></i></span>
+        <span class="seg" id="seg-2"><i></i></span>
+        <span class="lab" id="step-lab">ขั้นที่ 1 / 2</span>
+      </div>
+
+      <div class="fc-head">
+        <h1 class="fc-title" id="signup-title">สร้างบัญชีใหม่</h1>
+        <p class="fc-sub" id="signup-sub">เริ่มเรียนฟรีได้ทันที ไม่ต้องใช้บัตรเครดิต</p>
+      </div>
+
+      <form id="signup-form" novalidate>
+        <!-- STEP 1 -->
+        <div class="wizard-step active" id="ws-1">
+          <div class="field" data-field="email">
+            <input class="fl-input" type="email" id="su-email" autocomplete="email" placeholder=" " />
+            <label class="fl-label" for="su-email">อีเมล</label>
+            <div class="field-msg">กรุณากรอกอีเมลให้ถูกต้อง</div>
+          </div>
+          <div class="field has-icon" data-field="password">
+            <input class="fl-input" type="password" id="su-pass" autocomplete="new-password" placeholder=" " />
+            <label class="fl-label" for="su-pass">รหัสผ่าน</label>
+            <button type="button" class="eye" data-eye="su-pass" aria-label="แสดงรหัสผ่าน">
+              <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 5A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a13.2 13.2 0 0 1-2.4 3.1M6.6 6.6A13.3 13.3 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4.1-.8"/><path d="M14.1 14.1a3 3 0 0 1-4.2-4.2M2 2l20 20"/></svg>
+            </button>
+            <div class="caps-warn" data-caps="su-pass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m18 15-6-6-6 6"/><path d="M6 19h12"/></svg> Caps Lock เปิดอยู่</div>
+          </div>
+          <div class="strength" id="su-strength"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="lab">ความแข็งแรง: <b id="su-strength-lab">—</b></div></div>
+          <div class="field" data-field="confirm">
+            <input class="fl-input" type="password" id="su-confirm" autocomplete="new-password" placeholder=" " />
+            <label class="fl-label" for="su-confirm">ยืนยันรหัสผ่าน</label>
+            <div class="field-msg">รหัสผ่านไม่ตรงกัน</div>
+          </div>
+          <div class="terms-row">
+            <label class="check-lbl"><input type="checkbox" id="su-terms" /><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>ฉันยอมรับ <a href="Terms.html" target="_blank" class="link" style="font-size:12.5px">เงื่อนไขการใช้งาน</a> และ <a href="Privacy.html" target="_blank" class="link" style="font-size:12.5px">นโยบายความเป็นส่วนตัว</a></span></label>
+            <div class="field-msg" id="terms-msg" style="padding-left:30px">กรุณายอมรับเงื่อนไขก่อนดำเนินการต่อ</div>
+          </div>
+          <button type="button" class="btn btn-primary btn-submit" id="su-next"><span class="label">ถัดไป →</span></button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="wizard-step" id="ws-2">
+          <div class="field-row">
+            <div class="field" data-field="fname">
+              <input class="fl-input" type="text" id="su-fname" placeholder=" " />
+              <label class="fl-label" for="su-fname">ชื่อจริง</label>
+            </div>
+            <div class="field" data-field="nick">
+              <input class="fl-input" type="text" id="su-nick" placeholder=" " />
+              <label class="fl-label" for="su-nick">ชื่อเล่น</label>
+            </div>
+          </div>
+
+          <div class="seg-label">ระดับชั้น</div>
+          <div class="segmented" id="grade-seg" role="radiogroup" aria-label="ระดับชั้น">
+            <button type="button" role="radio" aria-pressed="false" data-v="ม.4">ม.4</button>
+            <button type="button" role="radio" aria-pressed="true" data-v="ม.5">ม.5</button>
+            <button type="button" role="radio" aria-pressed="false" data-v="ม.6">ม.6</button>
+            <button type="button" role="radio" aria-pressed="false" data-v="อื่นๆ">อื่นๆ</button>
+          </div>
+
+          <div class="seg-label">รุ่น DEK (ปีที่สอบเข้า)</div>
+          <div class="dek-pills" id="dek-pills" role="radiogroup" aria-label="รุ่น DEK">
+            <button type="button" role="radio" aria-pressed="true" data-v="DEK68">DEK68</button>
+            <button type="button" role="radio" aria-pressed="false" data-v="DEK69">DEK69</button>
+            <button type="button" role="radio" aria-pressed="false" data-v="DEK70">DEK70</button>
+          </div>
+
+          <div class="wizard-nav">
+            <button type="button" class="btn btn-ghost btn-back" id="su-back" aria-label="ย้อนกลับ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button type="submit" class="btn btn-primary btn-submit" id="su-submit" style="flex:1">
+              <span class="label">สร้างบัญชี</span>
+              <span class="spin"></span>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <p class="fc-foot">มีบัญชีอยู่แล้ว? <a href="#" data-go="login">เข้าสู่ระบบ</a></p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ TWEAKS PANEL ============ -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag">
+    <b>Tweaks</b>
+    <button class="x" id="tweaks-close" aria-label="ปิด">✕</button>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Form card</div>
+    <div class="tweak-seg" data-tweak="card">
+      <button data-v="glass" aria-pressed="true">Glass</button>
+      <button data-v="solid" aria-pressed="false">Solid</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Font style</div>
+    <div class="tweak-seg" data-tweak="font">
+      <button data-v="grotesque" aria-pressed="true">Grotesque</button>
+      <button data-v="techy" aria-pressed="false">Techy</button>
+      <button data-v="rounded" aria-pressed="false">Rounded</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Demo · login state</div>
+    <div class="tweak-seg" data-tweak="loginState">
+      <button data-v="default" aria-pressed="true">Default</button>
+      <button data-v="loading" aria-pressed="false">Loading</button>
+      <button data-v="error" aria-pressed="false">Error</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Google · ผู้ใช้เก่า (one-tap)</div>
+    <div class="tweak-seg" data-tweak="returning">
+      <button data-v="off" aria-pressed="true">ฟอร์มปกติ</button>
+      <button data-v="oneTap" aria-pressed="false">One-tap</button>
+    </div>
+  </div>
+  <div class="tweak-grp" style="margin-bottom:0">
+    <div class="tweak-tog">
+      <span style="color:var(--fg-1)">Dot grid บนแบรนด์</span>
+      <button class="sw" data-tweak="dotGrid" aria-pressed="true" aria-label="Dot grid"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============== TWEAKS (vanilla edit-mode protocol) ==============
+const TWEAKS = /*EDITMODE-BEGIN*/{
+  "card": "glass",
+  "accent": "cool",
+  "font": "grotesque",
+  "loginState": "default",
+  "returning": "off",
+  "dotGrid": true,
+  "screen": "forgot"
+}/*EDITMODE-END*/;
+const root = document.documentElement;
+
+function applyTweaks(){
+  root.setAttribute('data-card', TWEAKS.card);
+  root.setAttribute('data-accent', TWEAKS.accent);
+  root.setAttribute('data-font', TWEAKS.font || 'grotesque');
+  root.setAttribute('data-no-grid', TWEAKS.dotGrid ? '0' : '1');
+  root.setAttribute('data-returning', TWEAKS.returning === 'oneTap' ? '1' : '0');
+  applyLoginState(TWEAKS.loginState);
+  // sync control UI
+  document.querySelectorAll('[data-tweak]').forEach(grp => {
+    const key = grp.dataset.tweak;
+    if (grp.classList.contains('sw')) { grp.setAttribute('aria-pressed', String(!!TWEAKS[key])); return; }
+    grp.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(TWEAKS[key]))));
+  });
+}
+function setTweak(key, val){
+  TWEAKS[key] = val;
+  try { window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ [key]: val } }, '*'); } catch(e){}
+  applyTweaks();
+}
+function applyLoginState(s){
+  const btn = document.getElementById('login-submit');
+  const err = document.getElementById('login-err');
+  btn.classList.toggle('loading', s === 'loading');
+  err.classList.toggle('show', s === 'error');
+}
+
+// wire tweak controls
+document.querySelectorAll('.tweak-seg[data-tweak], .tweak-sw[data-tweak]').forEach(grp => {
+  grp.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setTweak(grp.dataset.tweak, b.dataset.v)));
+});
+document.querySelector('.sw[data-tweak]').addEventListener('click', function(){ setTweak('dotGrid', this.getAttribute('aria-pressed') !== 'true'); });
+
+// one-tap Google: demo interactions
+(function(){
+  var acct = document.getElementById('gs-acct');
+  var other = document.getElementById('gs-other');
+  if(acct) acct.addEventListener('click', function(){
+    if(acct.classList.contains('loading')) return;
+    acct.classList.add('loading');
+    setTimeout(function(){ acct.classList.remove('loading'); }, 2200);
+  });
+  if(other) other.addEventListener('click', function(){ setTweak('returning', 'off'); });
+})();
+
+// edit-mode host protocol
+const panel = document.getElementById('tweaks');
+window.addEventListener('message', e => {
+  const t = e?.data?.type;
+  if (t === '__activate_edit_mode') panel.classList.add('open');
+  else if (t === '__deactivate_edit_mode') panel.classList.remove('open');
+});
+try { window.parent.postMessage({ type:'__edit_mode_available' }, '*'); } catch(e){}
+document.getElementById('tweaks-close').addEventListener('click', () => {
+  panel.classList.remove('open');
+  try { window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*'); } catch(e){}
+});
+// drag panel
+(function(){
+  const head = document.getElementById('tweaks-drag'); let sx, sy, ox, oy, drag=false;
+  head.addEventListener('mousedown', e => { if(e.target.closest('.x')) return; drag=true; sx=e.clientX; sy=e.clientY; const r=panel.getBoundingClientRect(); ox=r.left; oy=r.top; panel.style.right='auto'; e.preventDefault(); });
+  window.addEventListener('mousemove', e => { if(!drag) return; panel.style.left=(ox+e.clientX-sx)+'px'; panel.style.top=(oy+e.clientY-sy)+'px'; });
+  window.addEventListener('mouseup', () => drag=false);
+})();
+
+// ============== THEME ==============
+const btnDark = document.getElementById('btn-dark');
+const btnLight = document.getElementById('btn-light');
+function setTheme(t){
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', (t === 'petronas' || t === 'classic-dark' || t === 'dark'));
+  btnLight.setAttribute('aria-pressed', (t === 'petronas-light' || t === 'classic-light' || t === 'light'));
+  try { localStorage.setItem('ming-theme', t); } catch(e){}
+}
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try { const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark' ? 'petronas' : saved === 'light' ? 'petronas-light' : (saved || 'petronas-light')); } catch(e){}
+
+// ============== FLOATING LABEL + filled state ==============
+document.querySelectorAll('.fl-input').forEach(inp => {
+  const sync = () => inp.classList.toggle('filled', inp.value.trim() !== '');
+  inp.addEventListener('input', sync); inp.addEventListener('blur', sync); sync();
+});
+
+// ============== PASSWORD EYE ==============
+document.querySelectorAll('.eye[data-eye]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inp = document.getElementById(btn.dataset.eye);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.classList.toggle('shown', show);
+  });
+});
+
+// ============== CAPS LOCK WARNING ==============
+function wireCaps(inputId){
+  const inp = document.getElementById(inputId);
+  const warn = document.querySelector(`.caps-warn[data-caps="${inputId}"]`);
+  if(!inp || !warn) return;
+  const check = e => { if(e.getModifierState) warn.classList.toggle('show', e.getModifierState('CapsLock')); };
+  inp.addEventListener('keydown', check); inp.addEventListener('keyup', check);
+  inp.addEventListener('blur', () => warn.classList.remove('show'));
+}
+['login-pass','su-pass'].forEach(wireCaps);
+
+// ============== VALIDATION HELPERS ==============
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function setInvalid(fieldEl, bad){ fieldEl.classList.toggle('invalid', bad); return !bad; }
+
+// ============== VIEW SWITCH ==============
+const viewLogin = document.getElementById('view-login');
+const viewSignup = document.getElementById('view-signup');
+function showView(v){
+  viewLogin.style.display = v === 'login' ? '' : 'none';
+  viewSignup.style.display = v === 'signup' ? '' : 'none';
+  if(v === 'login') applyLoginState(TWEAKS.loginState);
+}
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if(!go) return;
+  e.preventDefault();
+  const dest = go.dataset.go;
+  if(dest === 'forgot') { window.location.href = 'Forgot Reset Password.html'; return; }
+  showView(dest);
+});
+
+// ============== LOGIN SUBMIT ==============
+document.getElementById('login-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const emailF = viewLogin.querySelector('[data-field="email"]');
+  const passF = viewLogin.querySelector('[data-field="password"]');
+  const email = document.getElementById('login-email');
+  const pass = document.getElementById('login-pass');
+  let ok = true;
+  ok = setInvalid(emailF, !emailRe.test(email.value.trim())) && ok;
+  ok = setInvalid(passF, pass.value.length < 1) && ok;
+  if(!ok) return;
+  const btn = document.getElementById('login-submit');
+  document.getElementById('login-err').classList.remove('show');
+  btn.classList.add('loading');
+  setTimeout(() => { window.location.href = 'Dashboard.html'; }, 1400);
+});
+['login-email','login-pass'].forEach(id => document.getElementById(id).addEventListener('input', e => e.target.closest('.field').classList.remove('invalid')));
+
+// ============== SIGNUP STRENGTH METER ==============
+const strength = document.getElementById('su-strength');
+const strengthLab = document.getElementById('su-strength-lab');
+const labels = ['','อ่อนไป','พอใช้','ดี','แข็งแรง'];
+document.getElementById('su-pass').addEventListener('input', e => {
+  const v = e.target.value; let score = 0;
+  if(v.length >= 8) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  if(v.length === 0) score = 0;
+  strength.className = 'strength' + (score ? ' s'+score : '');
+  strengthLab.textContent = labels[score] || '—';
+});
+
+// ============== SIGNUP WIZARD ==============
+const seg1 = document.getElementById('seg-1'), seg2 = document.getElementById('seg-2');
+const ws1 = document.getElementById('ws-1'), ws2 = document.getElementById('ws-2');
+const stepLab = document.getElementById('step-lab');
+const signupTitle = document.getElementById('signup-title');
+const signupSub = document.getElementById('signup-sub');
+function gotoStep(n){
+  ws1.classList.toggle('active', n === 1);
+  ws2.classList.toggle('active', n === 2);
+  seg1.className = 'seg done'; seg2.className = 'seg' + (n === 2 ? ' active' : '');
+  stepLab.textContent = `ขั้นที่ ${n} / 2`;
+  if(n === 1){ signupTitle.textContent = 'สร้างบัญชีใหม่'; signupSub.textContent = 'เริ่มเรียนฟรีได้ทันที ไม่ต้องใช้บัตรเครดิต'; }
+  else { signupTitle.textContent = 'บอกเราหน่อย'; signupSub.textContent = 'เพื่อแนะนำคอร์สและข้อสอบที่ตรงกับคุณ'; }
+}
+document.getElementById('su-next').addEventListener('click', () => {
+  const emailF = ws1.querySelector('[data-field="email"]');
+  const passF = ws1.querySelector('[data-field="password"]');
+  const confF = ws1.querySelector('[data-field="confirm"]');
+  const email = document.getElementById('su-email').value.trim();
+  const pass = document.getElementById('su-pass').value;
+  const conf = document.getElementById('su-confirm').value;
+  const terms = document.getElementById('su-terms').checked;
+  let ok = true;
+  ok = setInvalid(emailF, !emailRe.test(email)) && ok;
+  ok = setInvalid(passF, pass.length < 8) && ok;
+  ok = setInvalid(confF, conf !== pass || conf.length === 0) && ok;
+  document.getElementById('terms-msg').style.display = terms ? 'none' : 'block';
+  if(!terms) ok = false;
+  if(ok) gotoStep(2);
+});
+document.getElementById('su-back').addEventListener('click', () => gotoStep(1));
+['su-email','su-pass','su-confirm'].forEach(id => document.getElementById(id).addEventListener('input', e => e.target.closest('.field').classList.remove('invalid')));
+document.getElementById('su-terms').addEventListener('change', () => document.getElementById('terms-msg').style.display = 'none');
+
+// segmented + pills
+function wireRadioGroup(id){
+  document.querySelectorAll(`#${id} button`).forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+  }));
+}
+wireRadioGroup('grade-seg'); wireRadioGroup('dek-pills');
+
+// signup final submit → success + confetti
+document.getElementById('signup-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = document.getElementById('su-submit');
+  btn.classList.add('loading');
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    const ov = document.getElementById('signup-success');
+    ov.classList.add('show');
+    setTimeout(() => fireConfetti(ov.getBoundingClientRect()), 250);
+    setTimeout(() => { window.location.href = 'Dashboard.html'; }, 2400);
+  }, 1300);
+});
+
+// ============== CONFETTI ==============
+function fireConfetti(rect){
+  const COLORS = ['oklch(0.66 0.23 295)','oklch(0.68 0.25 5)','oklch(0.78 0.20 50)','oklch(0.80 0.16 205)','oklch(0.86 0.20 130)','oklch(0.96 0.18 80)'];
+  const c = document.createElement('div');
+  c.style.cssText = `position:fixed; left:${rect.left+rect.width/2}px; top:${rect.top+rect.height/2-40}px; pointer-events:none; z-index:9999;`;
+  document.body.appendChild(c);
+  for(let i=0;i<26;i++){
+    const p = document.createElement('div');
+    const angle = (Math.PI*2*i)/26 + (Math.random()-0.5)*0.5;
+    const dist = 90 + Math.random()*110;
+    const tx = Math.cos(angle)*dist, ty = Math.sin(angle)*dist - 30;
+    const size = 6 + Math.random()*5;
+    p.style.cssText = `position:absolute;width:${size}px;height:${size}px;background:${COLORS[i%COLORS.length]};border-radius:${Math.random()>0.5?'50%':'2px'};--tx:${tx}px;--ty:${ty}px;animation:confettiBurst ${750+Math.random()*450}ms cubic-bezier(.2,.7,.4,1) forwards;animation-delay:${Math.random()*70}ms;`;
+    c.appendChild(p);
+  }
+  setTimeout(() => c.remove(), 1700);
+}
+
+applyTweaks();
+</script>
+<script src="auth-vars.js"></script>
+</body>
+</html>

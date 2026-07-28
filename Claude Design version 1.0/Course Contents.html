@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>เนื้อหาคอร์ส — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* ============== APP SHELL ============== */
+body { overflow: hidden; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word, .app.collapsed .sb-section .heading, .app.collapsed .sb-item span:not(.pill):not(.count), .app.collapsed .sb-item .count, .app.collapsed .sb-item .pill, .app.collapsed .sb-user .info, .app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); min-width: 0; }
+.crumb b { color: var(--fg-0); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; white-space: nowrap; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
+.search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.search-trigger svg { color: var(--fg-2); }
+.search-trigger .kbd { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.search-trigger .label { display: none; }
+@media (min-width: 900px) { .search-trigger .label { display: inline; min-width: 140px; text-align: left; } }
+
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+.top-av { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-1); cursor: pointer; }
+.top-av .av { width: 30px; height: 30px; border-radius: 50%; background: var(--grad-cool); font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.top-av .name { font-size: 13px; font-weight: 500; }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+/* ============== PAGE ============== */
+.page { padding: 32px 32px 60px; max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; position: relative; }
+.page::before { content: ""; position: absolute; inset: 0 -32px 76% -32px; background: linear-gradient(180deg, oklch(0.66 0.23 295 / 0.06), transparent 80%); z-index: -1; pointer-events: none; }
+
+.back-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--fg-2); text-decoration: none; transition: color .15s; width: fit-content; }
+.back-link:hover { color: var(--fg-0); }
+.back-link svg { width: 15px; height: 15px; }
+
+/* ============== COURSE HERO ============== */
+.cc-hero { position: relative; border-radius: 26px; overflow: hidden; padding: 32px 38px; color: #fff; display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; isolation: isolate; min-height: 196px; box-shadow: 0 26px 64px -28px oklch(0.45 0.12 285 / 0.6), inset 0 1px 0 oklch(0.99 0.005 285 / 0.22); }
+.cc-hero::before { content: ""; position: absolute; inset: 0; z-index: -2; background: var(--hero-grad, var(--grad-signature)); }
+/* left-anchored scrim keeps text crisp while the cover bleeds in from the right */
+.cc-hero::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(96deg, oklch(0.2 0.05 285 / 0.34), oklch(0.2 0.05 285 / 0.12) 34%, transparent 62%); }
+/* cover image slot — faded, fades into the gradient from the right */
+.cc-cover { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; z-index: 0; color: oklch(0.99 0.005 285 / 0.6); -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%); mask-image: linear-gradient(90deg, transparent, #000 42%); }
+.cc-cover::part(frame) { background: oklch(0.99 0.005 285 / 0.05); }
+.cc-cover::part(image) { opacity: 0.5; }
+.cc-cover::part(ring) { display: none; }
+.cc-hero-main, .cc-hero-cta { position: relative; z-index: 2; }
+.cc-hero-main { display: flex; flex-direction: column; gap: 13px; max-width: 580px; }
+.cc-hero .cat { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; opacity: 0.92; }
+.cc-hero h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(27px, 2.9vw, 38px); letter-spacing: -0.03em; line-height: 1.08; }
+.cc-hero .facts { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; opacity: 0.93; }
+.cc-hero .facts span { display: inline-flex; align-items: center; gap: 7px; }
+.cc-hero .facts svg { width: 15px; height: 15px; opacity: 0.85; }
+.cc-hero-prog { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; max-width: 460px; }
+.cc-hero-prog .pl { display: flex; justify-content: space-between; font-size: 13px; }
+.cc-hero-prog .pl b { font-family: var(--font-display); font-weight: 700; }
+.cc-hero-prog .track { height: 9px; border-radius: 99px; background: oklch(0.15 0.02 285 / 0.38); overflow: hidden; }
+.cc-hero-prog .track i { display: block; height: 100%; border-radius: 99px; background: #fff; box-shadow: 0 0 14px oklch(0.99 0.005 285 / 0.5); }
+.cc-hero-cta { min-width: 210px; }
+.cc-resume-btn { display: flex; align-items: center; gap: 13px; background: oklch(0.99 0.005 285 / 0.96); color: oklch(0.2 0.03 285); padding: 14px 18px; border-radius: 15px; text-decoration: none; transition: transform .18s, box-shadow .18s; box-shadow: 0 12px 30px -12px oklch(0 0 0 / 0.5); }
+.cc-resume-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 38px -14px oklch(0 0 0 / 0.6); }
+.cc-resume-btn .pic { width: 42px; height: 42px; border-radius: 12px; background: var(--hero-grad, var(--grad-signature)); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.cc-resume-btn .pic svg { width: 19px; height: 19px; margin-left: 2px; }
+.cc-resume-btn .txt { line-height: 1.3; min-width: 0; }
+.cc-resume-btn .txt b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; display: block; }
+.cc-resume-btn .txt span { font-size: 11.5px; color: oklch(0.45 0.03 285); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 200px; }
+
+/* ============== CURRICULUM HEADER ============== */
+.cc-curr-head { display: flex; align-items: baseline; gap: 12px; }
+.cc-curr-head h2 { font-family: var(--font-display); font-weight: 600; font-size: 20px; letter-spacing: -0.015em; color: var(--fg-0); }
+.cc-curr-head .num { font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-3); font-weight: 500; }
+
+/* ============== SPLIT: rail + detail ============== */
+.cc-split { display: grid; grid-template-columns: 318px 1fr; gap: 22px; align-items: start; }
+
+.cc-rail { position: sticky; top: 4px; align-self: start; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 96px); overflow-y: auto; padding: 2px 6px 2px 2px; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.cc-rail::-webkit-scrollbar { width: 7px; }
+.cc-rail::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 6px; }
+.cc-rail-head { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; padding: 2px 8px 4px; }
+.rail-ch { appearance: none; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 13px; padding: 13px 14px; border-radius: 15px; border: 1px solid var(--glass-line, var(--line)); background: oklch(from var(--bg-1) l c h / 0.55); backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%); color: var(--fg-1); transition: border-color .15s, background .15s, transform .12s, box-shadow .15s; position: relative; font: inherit; }
+.rail-ch:hover { border-color: var(--fg-2); background: var(--bg-2); }
+.rail-ch[aria-selected="true"] { border-color: transparent; background: oklch(from var(--hero-c, var(--brand-magenta)) l c h / 0.13); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); box-shadow: inset 0 0 0 1px oklch(from var(--hero-c, var(--brand-magenta)) l c h / 0.42), 0 10px 26px -16px oklch(from var(--hero-c, var(--brand-magenta)) l c h / 0.7); }
+.rail-ch[aria-selected="true"]::before { content: ""; position: absolute; left: 0; top: 13px; bottom: 13px; width: 3px; border-radius: 0 4px 4px 0; background: var(--hero-grad, var(--grad-signature)); }
+.rail-ch .rn { width: 38px; height: 38px; border-radius: 11px; background: var(--bg-2); border: 1px solid var(--line); font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--fg-1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rail-ch .rn svg { width: 17px; height: 17px; }
+.rail-ch.cdone .rn { background: oklch(0.62 0.18 150 / 0.16); border-color: oklch(0.62 0.18 150 / 0.4); color: var(--success); }
+.rail-ch.cactive .rn, .rail-ch[aria-selected="true"] .rn { background: var(--hero-grad, var(--grad-signature)); border-color: transparent; color: #fff; }
+.rail-ch.cdone[aria-selected="true"] .rn { background: oklch(0.62 0.18 150 / 0.16); color: var(--success); }
+.rail-ch .ri { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.rail-ch .ri .rt { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; letter-spacing: -0.01em; color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rail-ch .ri .rm { font-family: "JetBrains Mono"; font-size: 10px; color: var(--fg-2); letter-spacing: 0.02em; display: flex; align-items: center; gap: 7px; }
+.rail-ch .ri .rm .now { color: var(--hero-fg, var(--brand-magenta)); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+.rail-ch .ri .rm .now::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--hero-c, var(--brand-magenta)); }
+.rail-ch .ri .rtrack { height: 4px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.rail-ch .ri .rtrack i { display: block; height: 100%; border-radius: 99px; background: var(--hero-grad, var(--grad-signature)); }
+.rail-ch .rchev { color: var(--fg-3); flex-shrink: 0; opacity: 0; transition: opacity .15s; }
+.rail-ch[aria-selected="true"] .rchev { opacity: 1; color: var(--hero-fg, var(--brand-magenta)); }
+.rail-ch .rchev svg { width: 16px; height: 16px; }
+
+/* detail */
+.cc-detail { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.cc-detail-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; animation: ccFade .44s cubic-bezier(.2,.8,.2,1) both; }
+.cc-detail-top .ey { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hero-fg, var(--brand-magenta)); font-weight: 600; }
+.cc-detail-top h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(21px, 2vw, 27px); letter-spacing: -0.02em; color: var(--fg-0); line-height: 1.14; margin-top: 7px; }
+.cc-detail-top .dm { display: flex; gap: 16px; margin-top: 11px; font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-2); flex-wrap: wrap; }
+.cc-detail-top .dm span { display: inline-flex; align-items: center; gap: 6px; }
+.cc-detail-top .dm svg { width: 13px; height: 13px; }
+.cc-chap-cta { display: inline-flex; align-items: center; gap: 9px; background: var(--hero-grad, var(--grad-signature)); color: #fff; padding: 11px 18px; border-radius: 13px; text-decoration: none; font-family: var(--font-display); font-weight: 600; font-size: 14px; white-space: nowrap; flex-shrink: 0; box-shadow: 0 10px 26px -12px oklch(0.66 0.23 295 / 0.6); transition: transform .16s, box-shadow .16s; }
+.cc-chap-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -14px oklch(0.66 0.23 295 / 0.7); }
+.cc-chap-cta svg { width: 16px; height: 16px; }
+/* prominent combined-doc download (per chapter) */
+.cc-top-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+.cc-doc-cta { display: inline-flex; align-items: center; gap: 10px; padding: 9px 15px; border-radius: 13px; text-decoration: none; border: 1.5px solid oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.45); background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.10); color: var(--fg-0); transition: transform .18s var(--ease-spring, ease), box-shadow .2s, background .15s; }
+.cc-doc-cta:hover { transform: translateY(-2px); background: oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.16); box-shadow: 0 12px 28px -14px oklch(from var(--subj-c, var(--brand-magenta)) l c h / 0.7); }
+.cc-doc-cta svg { width: 18px; height: 18px; color: var(--subj-ink, var(--fg-0)); flex-shrink: 0; }
+.cc-doc-cta span { line-height: 1.2; }
+.cc-doc-cta b { display: block; font-size: 13px; font-weight: 700; }
+.cc-doc-cta small { font-size: 10.5px; color: var(--fg-2); }
+
+.cc-lessons { border: 1px solid var(--glass-line, var(--line)); border-radius: 20px; background: oklch(from var(--bg-1) l c h / 0.55); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); overflow: hidden; box-shadow: 0 18px 44px -26px oklch(0.4 0.08 285 / 0.5); }
+.lesson { display: flex; align-items: center; gap: 15px; padding: 17px 20px; text-decoration: none; color: inherit; transition: background .16s; position: relative; animation: ccFade .42s cubic-bezier(.2,.8,.2,1) both; }
+.lesson + .lesson { border-top: 1px solid var(--line-soft); }
+.lesson:hover { background: oklch(from var(--bg-2) l c h / 0.65); }
+.lesson .lst { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; }
+.lesson .lst svg { width: 15px; height: 15px; }
+.lesson.ldone .lst { background: oklch(0.62 0.18 150 / 0.16); color: var(--success); }
+.lesson.lcurrent .lst { background: var(--hero-grad, var(--grad-signature)); color: #fff; box-shadow: 0 4px 14px -4px oklch(0.66 0.23 295 / 0.6); }
+.lesson.lcurrent .lst::after { content: ""; position: absolute; inset: -4px; border-radius: 13px; border: 2px solid var(--hero-c, var(--brand-magenta)); opacity: .5; animation: ccPulse 2.4s ease-out infinite; }
+.lesson.ltodo .lst { background: var(--bg-2); border: 1px solid var(--line); color: var(--fg-2); }
+.lesson .lbody { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.lesson .ltitle { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: var(--fg-1); }
+.lesson:hover .ltitle { color: var(--fg-0); }
+.lesson.lcurrent .ltitle { color: var(--fg-0); font-weight: 600; }
+.lesson .ltitle .lnum { font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--fg-3); flex-shrink: 0; }
+.lesson .ltitle .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lesson .resume-tag { font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--hero-grad, var(--grad-signature)); padding: 3px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0; }
+.lesson .lmeta { display: flex; align-items: center; gap: 12px; }
+.lesson .lbar { width: 132px; height: 5px; border-radius: 99px; background: var(--bg-3); overflow: hidden; flex-shrink: 0; }
+.lesson .lbar i { display: block; height: 100%; border-radius: 99px; background: var(--hero-grad, var(--grad-signature)); }
+.lesson .lbar.done i { background: linear-gradient(90deg, oklch(0.62 0.18 150), oklch(0.74 0.18 135)); }
+.lesson .lbar.live i { position: relative; overflow: hidden; }
+.lesson .lbar.live i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, oklch(0.99 0.005 285 / 0.6), transparent); transform: translateX(-100%); animation: ccShimmer 1.8s linear infinite; }
+.lesson .lstat { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-2); white-space: nowrap; }
+.lesson .lstat.todo { color: var(--fg-3); }
+.lesson.lcurrent .lstat { color: var(--hero-fg, var(--brand-magenta)); }
+.lesson .lkind { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-3); display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.lesson .lkind svg { width: 12px; height: 12px; }
+.lesson .lgo { color: var(--fg-3); opacity: 0; transform: translateX(-4px); transition: opacity .15s, transform .15s; flex-shrink: 0; }
+.lesson:hover .lgo { opacity: 1; transform: translateX(0); }
+.lesson .lgo svg { width: 16px; height: 16px; }
+
+@keyframes ccFade { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+@keyframes ccShimmer { to { transform: translateX(220%); } }
+@keyframes ccPulse { 0% { transform: scale(1); opacity: .5; } 70% { transform: scale(1.22); opacity: 0; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .cc-detail-top, .lesson { animation: none; }
+  .lesson .lbar.live i::after, .lesson.lcurrent .lst::after { animation: none; }
+}
+
+.dash-foot { margin-top: 12px; padding-top: 24px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; gap: 16px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.04em; flex-wrap: wrap; }
+
+/* ============== COMMAND PALETTE ============== */
+.cmdk-backdrop { position: fixed; inset: 0; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; opacity: 0; transition: opacity .2s; }
+.cmdk-backdrop.open { display: flex; opacity: 1; }
+.cmdk { width: min(640px, 92vw); background: var(--bg-1); border: 1px solid var(--glass-line-strong); border-radius: 18px; overflow: hidden; box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.6); transform: translateY(-12px) scale(0.98); opacity: 0; transition: transform .22s cubic-bezier(.2,.8,.2,1), opacity .22s; }
+.cmdk-backdrop.open .cmdk { transform: translateY(0) scale(1); opacity: 1; }
+.cmdk-input-row { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line-soft); }
+.cmdk-input-row svg { color: var(--fg-2); }
+.cmdk-input-row input { flex: 1; background: transparent; border: 0; color: var(--fg-0); font: inherit; font-size: 16px; outline: none; }
+.cmdk-input-row input::placeholder { color: var(--fg-3); }
+.cmdk-input-row .esc { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.cmdk-body { max-height: 50vh; overflow-y: auto; padding: 8px; }
+.cmdk-group { padding: 8px 4px; }
+.cmdk-group h5 { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; padding: 4px 10px 8px; }
+.cmdk-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--fg-1); cursor: pointer; font-size: 14px; transition: background .12s, color .12s; text-decoration: none; }
+.cmdk-item:hover, .cmdk-item.active { background: var(--bg-2); color: var(--fg-0); }
+.cmdk-item .icon { width: 28px; height: 28px; border-radius: 8px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; color: var(--fg-2); flex-shrink: 0; }
+.cmdk-item:hover .icon, .cmdk-item.active .icon { background: var(--bg-3); color: var(--fg-0); }
+.cmdk-item .label { flex: 1; }
+.cmdk-item .label small { display: block; color: var(--fg-2); font-size: 12px; margin-top: 2px; }
+.cmdk-item .meta { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cmdk-foot { padding: 10px 18px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cmdk-foot .keys { display: flex; gap: 14px; }
+.cmdk-foot .keys span { display: inline-flex; align-items: center; gap: 4px; }
+.cmdk-foot kbd { background: var(--bg-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-family: inherit; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1080px) {
+  .cc-cover { width: 64%; }
+  .cc-split { grid-template-columns: 1fr; }
+  .cc-rail { position: static; max-height: none; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; }
+  .cc-rail-head { display: none; }
+  .rail-ch { flex: 0 0 250px; }
+  .rail-ch[aria-selected="true"]::before { display: none; }
+}
+@media (max-width: 980px) {
+  .app, .app.collapsed { grid-template-columns: 72px 1fr; }
+  .sb-logo .word, .sb-section .heading, .sb-item span:not(.pill):not(.count), .sb-item .count, .sb-item .pill, .sb-user .info, .sb-user .chev { display: none; }
+  .sb-item { justify-content: center; }
+  .sb-toggle { display: none; }
+}
+@media (max-width: 720px) {
+  .page { padding: 20px 16px 60px; }
+  .cc-hero { grid-template-columns: 1fr; padding: 26px 22px; }
+  .cc-cover { width: 100%; -webkit-mask-image: linear-gradient(180deg, transparent, #000 70%); mask-image: linear-gradient(180deg, transparent, #000 70%); opacity: 0.6; }
+  .cc-hero-cta { min-width: 0; }
+  .lesson .lkind { display: none; }
+  .search-trigger .label, .search-trigger .kbd { display: none; }
+  .search-trigger { padding: 0; width: 38px; justify-content: center; }
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+<script src="image-slot.js" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="01 Course Contents">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Dashboard.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item active" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 4z"/><path d="M9 4V2h6v2"/></svg>
+        <span>คอร์สที่บันทึก</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info"><b>น้องปาล์ม</b><span>LV 14 · 2,840 XP</span></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <a href="My Courses.html">คอร์สของฉัน</a>
+        <span class="sep">/</span>
+        <b id="crumb-course">เนื้อหาคอร์ส</b>
+      </div>
+
+      <div class="top-actions">
+        <button class="search-trigger" id="open-cmdk" aria-label="ค้นหา (⌘K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="label">ค้นหาบทเรียน...</span>
+          <span class="kbd">⌘K</span>
+        </button>
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page" id="page">
+      <a href="My Courses.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        กลับไปคอร์สของฉัน
+      </a>
+
+      <!-- hero rendered by JS -->
+      <section class="cc-hero" id="cc-hero"></section>
+
+      <!-- curriculum -->
+      <div class="cc-curr-head">
+        <h2>เลือกบทเรียน</h2>
+        <span class="num" id="cc-chcount"></span>
+      </div>
+
+      <section class="cc-split">
+        <aside class="cc-rail" id="cc-rail">
+          <div class="cc-rail-head">บทเรียนในคอร์ส</div>
+        </aside>
+        <div class="cc-detail" id="cc-detail"></div>
+      </section>
+
+      <div class="dash-foot">
+        <div>© 2026 MINGSMILEYFACE · v0.3 COURSE CONTENTS</div>
+        <div>คอร์สที่ซื้อแล้ว · เลือกบท แล้วเลือกคลิปที่จะเรียน</div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== COMMAND PALETTE ============== -->
+<div class="cmdk-backdrop" id="cmdk-backdrop" role="dialog" aria-modal="true" aria-label="ค้นหา">
+  <div class="cmdk">
+    <div class="cmdk-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="cmdk-input" type="text" placeholder="ค้นหาบทเรียน หรือคำสั่ง..." />
+      <span class="esc">ESC</span>
+    </div>
+    <div class="cmdk-body">
+      <div class="cmdk-group">
+        <h5>ทางลัด</h5>
+        <a href="My Courses.html" class="cmdk-item active">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <div class="label">คอร์สของฉัน<small>กลับไปคลังคอร์สที่ซื้อแล้ว</small></div>
+          <span class="meta">↵</span>
+        </a>
+        <a href="Browse Courses.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div class="label">หาคอร์สเพิ่ม<small>เปิดหน้าคอร์สทั้งหมด</small></div>
+        </a>
+        <a href="Dashboard.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+          <div class="label">ไปหน้า Dashboard<small>กลับไปหน้าหลัก</small></div>
+        </a>
+      </div>
+    </div>
+    <div class="cmdk-foot">
+      <div class="keys">
+        <span><kbd>↑</kbd><kbd>↓</kbd> เลื่อน</span>
+        <span><kbd>↵</kbd> เลือก</span>
+        <span><kbd>esc</kbd> ปิด</span>
+      </div>
+      <div>powered by ⌘K</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============== THEME ==============
+const root = document.documentElement;
+const btnDark = document.getElementById('btn-dark');
+const btnLight = document.getElementById('btn-light');
+function setTheme(t){
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', (t === 'petronas' || t === 'classic-dark' || t === 'dark'));
+  btnLight.setAttribute('aria-pressed', (t === 'petronas-light' || t === 'classic-light' || t === 'light'));
+  try{ localStorage.setItem('ming-theme', t); }catch(e){}
+}
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark' ? 'petronas' : saved === 'light' ? 'petronas-light' : (saved || 'petronas-light')); }catch(e){}
+
+// ============== SIDEBAR COLLAPSE ==============
+(function(){
+  const app = document.querySelector('.app');
+  const toggle = document.getElementById('sb-toggle');
+  if(!app || !toggle) return;
+  try { if(localStorage.getItem('ming-sidebar') === 'collapsed') app.classList.add('collapsed'); } catch(e){}
+  toggle.addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    try { localStorage.setItem('ming-sidebar', app.classList.contains('collapsed') ? 'collapsed' : 'expanded'); } catch(e){}
+  });
+})();
+
+// ============== COURSE DATA ==============
+// d = done · c = current (resume point) · t = to-do (unlocked — owned course)
+const SUBJ = {
+  math:  { grad:'var(--subj-math-grad)', c:'var(--subj-math)', fg:'var(--subj-math-fg, var(--subj-math))' },
+  phys:  { grad:'var(--subj-phys-grad)', c:'var(--subj-phys)', fg:'var(--subj-phys-fg, var(--subj-phys))' },
+  tpat3: { grad:'var(--subj-tpat-grad)', c:'var(--subj-tpat)', fg:'var(--subj-tpat-fg, var(--subj-tpat))' },
+  tgat:  { grad:'var(--subj-tgat-grad)', c:'var(--subj-tgat)', fg:'var(--subj-tgat-fg, var(--subj-tgat))' },
+};
+function L(t, dur, st, kind, p){ return { t, dur, st: st||'t', kind: kind||'video', p: p }; }
+
+const COURSE_DB = {
+  'amath-calculus': {
+    subj:'math', cat:'คณิต · A-LEVEL', title:'แคลคูลัส · ขั้นเทพ', hours:'18 ชม.', progress:42,
+    chapters:[
+      { t:'ลิมิตและความต่อเนื่อง', ls:[ L('ลิมิตคืออะไร — เริ่มจากศูนย์','42น','d'), L('ลิมิตด้านซ้ายและขวา','38น','d'), L('ลิมิตของฟังก์ชันที่ไม่ต่อเนื่อง','44น','d'), L('ความต่อเนื่อง · เกณฑ์ 3 ข้อ','36น','d'), L('Quiz · ตรวจสอบความเข้าใจ','20น','d','quiz') ] },
+      { t:'อนุพันธ์เบื้องต้น', ls:[ L('อนุพันธ์คือความชัน','48น','d'), L('สูตรพื้นฐาน · ทำไมเป็นแบบนั้น','42น','d'), L('อนุพันธ์ของพหุนาม','38น','c',null,34), L('Product rule · เข้าใจที่มา','44น','t'), L('Quotient rule · เคล็ดลับจำง่าย','36น','t'), L('โจทย์รวม + Quiz','24น','t','quiz') ] },
+      { t:'เทคนิคหาอนุพันธ์ขั้นสูง', ls:[ L('Chain rule · กฎลูกโซ่','52น','t'), L('อนุพันธ์ฟังก์ชันตรีโกณมิติ','46น','t'), L('อนุพันธ์ของ ln และ e^x','42น','t'), L('Implicit differentiation','44น','t'), L('โจทย์ TCAS 5 ปีย้อนหลัง','44น','t','exam') ] },
+      { t:'ปริพันธ์', ls:[ L('ปริพันธ์คืออะไร — เริ่มจากพื้นที่','48น','t'), L('Integration by substitution','44น','t'), L('Integration by parts','42น','t'), L('หาพื้นที่ใต้กราฟ + ปริมาตร','38น','t'), L('โจทย์ปริพันธ์จาก A-Level','44น','t','exam') ] },
+      { t:'การประยุกต์และข้อสอบรวม', ls:[ L('โจทย์ประยุกต์ระดับสนามจริง','46น','t'), L('ตะลุยข้อสอบรวมชุดที่ 1','40น','t','exam'), L('เฉลยละเอียด + เทคนิคทำเร็ว','38น','t') ] },
+    ]
+  },
+  'tgat2-logic': {
+    subj:'tgat', cat:'TGAT2 · การคิดอย่างมีเหตุผล', title:'ตะลุยโจทย์ TGAT2', hours:'12 ชม.', progress:88,
+    chapters:[
+      { t:'พื้นฐานการคิดเชิงตรรกะ', ls:[ L('รู้จักข้อสอบ TGAT2','28น','d'), L('อนุกรมและแบบรูป','40น','d'), L('เงื่อนไขเชิงตรรกะ','38น','d'), L('Quiz','18น','d','quiz') ] },
+      { t:'การคิดอย่างมีเหตุผล', ls:[ L('ตารางเงื่อนไข','44น','d'), L('การสรุปความ','40น','d'), L('โจทย์ผสมหลายเงื่อนไข','42น','d'), L('เทคนิคตัดช้อยส์','30น','c',null,55) ] },
+      { t:'ตะลุยข้อสอบจริง', ls:[ L('ชุดข้อสอบเสมือนจริง #1','45น','t','exam'), L('เฉลยละเอียด + จับเวลา','40น','t') ] },
+    ]
+  },
+  'aphys-fluid': {
+    subj:'phys', cat:'ฟิสิกส์ · A-LEVEL', title:'กลศาสตร์ของไหล', hours:'14 ชม.', progress:6,
+    chapters:[
+      { t:'ความดันและแรงพยุง', ls:[ L('ความดันในของไหล','42น','c',null,18), L('หลักของปาสกาล','38น','t'), L('แรงพยุง · อาร์คิมิดีส','44น','t'), L('โจทย์วัตถุลอย-จม','40น','t') ] },
+      { t:'ของไหลเคลื่อนที่', ls:[ L('สมการความต่อเนื่อง','40น','t'), L('สมการแบร์นูลลี','46น','t'), L('การประยุกต์ในชีวิตจริง','38น','t') ] },
+      { t:'ตะลุยโจทย์ A-Level', ls:[ L('โจทย์รวมของไหล','44น','t','exam'), L('เฉลยและสรุปสูตร','34น','t') ] },
+    ]
+  },
+  'math-seq': {
+    subj:'math', cat:'คณิต · ม.6', title:'ลำดับและอนุกรม', hours:'10 ชม.', progress:100,
+    chapters:[
+      { t:'ลำดับ', ls:[ L('ลำดับเลขคณิต','40น','d'), L('ลำดับเรขาคณิต','42น','d'), L('ลำดับลู่เข้า-ลู่ออก','38น','d'), L('Quiz','18น','d','quiz') ] },
+      { t:'อนุกรม', ls:[ L('อนุกรมเลขคณิต','42น','d'), L('อนุกรมเรขาคณิต','40น','d'), L('ผลบวกอนันต์','44น','d') ] },
+      { t:'โจทย์รวม', ls:[ L('ตะลุยโจทย์ลำดับและอนุกรม','46น','d','exam'), L('เฉลยละเอียด','36น','d') ] },
+    ]
+  },
+  'tpat3-latest': {
+    subj:'tpat3', cat:'TPAT3 · ความถนัดวิทย์–เทคโนฯ', title:'ตะลุยโจทย์ TPAT3', hours:'16 ชม.', progress:28,
+    chapters:[
+      { t:'ความถนัดด้านวิทยาศาสตร์', ls:[ L('โครงสร้างข้อสอบ TPAT3','30น','d'), L('การคิดเชิงวิเคราะห์','42น','d'), L('ตรรกะเชิงวิทยาศาสตร์','40น','d') ] },
+      { t:'การวิเคราะห์เชิงกลและไฟฟ้า', ls:[ L('กลศาสตร์ประยุกต์','46น','c',null,40), L('วงจรไฟฟ้าเบื้องต้น','44น','t'), L('โจทย์ผสมกล-ไฟฟ้า','42น','t') ] },
+      { t:'ความถนัดด้านเทคโนโลยี', ls:[ L('ตรรกะการเขียนโปรแกรม','40น','t'), L('การออกแบบเชิงวิศวกรรม','42น','t') ] },
+      { t:'ตะลุยข้อสอบจริง', ls:[ L('ชุดเสมือนจริง #1','50น','t','exam'), L('เฉลยจับเวลา','40น','t') ] },
+    ]
+  },
+  'phys-electric': {
+    subj:'phys', cat:'ฟิสิกส์ · ม.5', title:'ไฟฟ้าสถิตและกระแส', hours:'13 ชม.', progress:100,
+    chapters:[
+      { t:'ไฟฟ้าสถิต', ls:[ L('ประจุและกฎคูลอมบ์','42น','d'), L('สนามไฟฟ้า','40น','d'), L('ศักย์ไฟฟ้า','44น','d'), L('ตัวเก็บประจุ','38น','d') ] },
+      { t:'ไฟฟ้ากระแส', ls:[ L('กระแสและความต้านทาน','42น','d'), L('กฎของโอห์ม','38น','d'), L('วงจรอนุกรม-ขนาน','46น','d'), L('กฎของเคอร์ชอฟฟ์','44น','d') ] },
+      { t:'โจทย์รวม', ls:[ L('ตะลุยโจทย์ไฟฟ้า','46น','d','exam'), L('เฉลยละเอียด','34น','d') ] },
+    ]
+  },
+  'math-stats': {
+    subj:'math', cat:'คณิต · ม.6', title:'ความน่าจะเป็นและสถิติ', hours:'11 ชม.', progress:15,
+    chapters:[
+      { t:'หลักการนับ', ls:[ L('กฎการนับเบื้องต้น','40น','c',null,25), L('การเรียงสับเปลี่ยน','42น','t'), L('การจัดหมู่','40น','t'), L('Quiz','18น','t','quiz') ] },
+      { t:'ความน่าจะเป็น', ls:[ L('ความน่าจะเป็นเบื้องต้น','42น','t'), L('เหตุการณ์ไม่อิสระ','44น','t'), L('ทฤษฎีบทของเบส์','46น','t') ] },
+      { t:'สถิติ', ls:[ L('การวัดแนวโน้มเข้าสู่ส่วนกลาง','40น','t'), L('การกระจายของข้อมูล','42น','t') ] },
+    ]
+  },
+};
+
+// ============== ICONS ==============
+const ICON = {
+  playFill: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  quiz: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>',
+  exam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+};
+function kindMeta(k){
+  if(k==='quiz') return { ic: ICON.quiz, label:'แบบทดสอบ' };
+  if(k==='exam') return { ic: ICON.exam, label:'ตะลุยโจทย์' };
+  return null;
+}
+
+// ============== RESOLVE COURSE ==============
+const params = new URLSearchParams(location.search);
+const cid = COURSE_DB[params.get('c')] ? params.get('c') : 'amath-calculus';
+const c = COURSE_DB[cid];
+const subj = SUBJ[c.subj];
+
+const pageEl = document.getElementById('page');
+pageEl.style.setProperty('--hero-grad', subj.grad);
+pageEl.style.setProperty('--hero-c', subj.c);
+pageEl.style.setProperty('--hero-fg', subj.fg);
+
+document.title = c.title + ' — เนื้อหาคอร์ส — Mingsmileyface';
+document.getElementById('crumb-course').textContent = c.title;
+
+// ----- totals & default chapter -----
+let totalL = 0, doneL = 0, defaultIdx = 0;
+c.chapters.forEach((ch, ci) => {
+  ch.ls.forEach(l => { totalL++; if(l.st==='d') doneL++; });
+  if(ch.ls.some(l => l.st==='c')) defaultIdx = ci;
+});
+const isDone = c.progress >= 100;
+
+// ----- HERO -----
+const resumeTitle = isDone ? 'ทบทวนอีกครั้ง' : (c.progress === 0 ? 'เริ่มเรียน' : 'เรียนต่อ');
+let resumeSub = '';
+c.chapters.some(ch => ch.ls.some(l => { if(l.st==='c'){ resumeSub = l.t; return true; } return false; }));
+if(!resumeSub) resumeSub = isDone ? 'เรียนจบครบทุกบทแล้ว' : c.chapters[0].ls[0].t;
+
+document.getElementById('cc-hero').innerHTML =
+  '<image-slot class="cc-cover" id="cover-'+cid+'" fit="cover" placeholder="รูปปกคอร์ส (อนาคต)"></image-slot>'
+  + '<div class="cc-hero-main">'
+    + '<div class="cat">'+c.cat+'</div>'
+    + '<h1>'+c.title+'</h1>'
+    + '<div class="facts">'
+      + '<span>'+ICON.list+' '+c.chapters.length+' บท · '+totalL+' บทเรียน</span>'
+      + '<span>'+ICON.clock+' '+c.hours+'</span>'
+      + '<span>'+ICON.check+' '+doneL+'/'+totalL+' บทเรียนแล้ว</span>'
+    + '</div>'
+    + '<div class="cc-hero-prog">'
+      + '<div class="pl"><span>ความคืบหน้า</span><b>'+c.progress+'%</b></div>'
+      + '<div class="track"><i style="width:'+c.progress+'%"></i></div>'
+    + '</div>'
+  + '</div>'
+  + '<div class="cc-hero-cta">'
+    + '<a href="Learn.html" class="cc-resume-btn"><span class="pic">'+ICON.playFill+'</span><span class="txt"><b>'+resumeTitle+'</b><span>'+resumeSub+'</span></span></a>'
+  + '</div>';
+
+// ----- chapter meta helper -----
+function chapMeta(ch){
+  const total = ch.ls.length;
+  const done = ch.ls.filter(l => l.st==='d').length;
+  const hasCurrent = ch.ls.some(l => l.st==='c');
+  const chDone = done === total;
+  const pct = Math.round(done/total*100);
+  const mins = ch.ls.reduce((s,l)=> s + (parseInt(l.dur,10)||0), 0);
+  const dur = mins >= 60 ? (Math.floor(mins/60)+'ชม. '+(mins%60)+'น.') : (mins+' น.');
+  return { total, done, hasCurrent, chDone, pct, dur };
+}
+
+document.getElementById('cc-chcount').textContent = c.chapters.length + ' บท · ' + totalL + ' บทเรียน';
+
+// ----- RAIL -----
+const rail = document.getElementById('cc-rail');
+c.chapters.forEach((ch, ci) => {
+  const m = chapMeta(ch);
+  const btn = document.createElement('button');
+  btn.className = 'rail-ch' + (m.chDone ? ' cdone' : (m.hasCurrent ? ' cactive' : ''));
+  btn.setAttribute('data-idx', ci);
+  btn.setAttribute('aria-selected', 'false');
+  btn.innerHTML =
+    '<span class="rn">'+(m.chDone ? ICON.check : String(ci+1).padStart(2,'0'))+'</span>'
+    + '<span class="ri">'
+      + '<span class="rt">บทที่ '+(ci+1)+' · '+ch.t+'</span>'
+      + '<span class="rm">'+(m.hasCurrent ? '<span class="now">กำลังเรียน</span>' : '<span>'+m.done+'/'+m.total+' บทเรียน</span>')+'</span>'
+      + '<span class="rtrack"><i style="width:'+m.pct+'%"></i></span>'
+    + '</span>'
+    + '<span class="rchev">'+ICON.chev+'</span>';
+  btn.addEventListener('click', () => selectChapter(ci));
+  rail.appendChild(btn);
+});
+
+// ----- DETAIL -----
+const detail = document.getElementById('cc-detail');
+const scroller = document.querySelector('.scroll');
+
+function selectChapter(idx){
+  const ch = c.chapters[idx];
+  const m = chapMeta(ch);
+
+  // rail selection
+  Array.from(rail.querySelectorAll('.rail-ch')).forEach(b => {
+    b.setAttribute('aria-selected', String(Number(b.dataset.idx) === idx));
+  });
+
+  // chapter CTA label
+  let ctaLabel;
+  if(m.chDone) ctaLabel = 'ทบทวนบทนี้';
+  else if(m.done === 0 && !m.hasCurrent) ctaLabel = 'เริ่มบทนี้';
+  else ctaLabel = 'เรียนบทนี้ต่อ';
+
+  const lessonsHtml = ch.ls.map((l, li) => {
+    let lstClass, lstIcon;
+    if(l.st==='d'){ lstClass='ldone'; lstIcon=ICON.check; }
+    else if(l.st==='c'){ lstClass='lcurrent'; lstIcon=ICON.playFill; }
+    else { lstClass='ltodo'; lstIcon=ICON.playFill; }
+    const durMin = parseInt(l.dur,10)||0;
+    const pct = l.st==='d' ? 100 : (l.st==='c' ? (l.p||0) : 0);
+    const watched = Math.round(durMin*pct/100);
+    let meta;
+    if(l.st==='d') meta = '<span class="lbar done"><i style="width:100%"></i></span><span class="lstat">ดูจบแล้ว · '+durMin+' นาที</span>';
+    else if(l.st==='c') meta = '<span class="lbar live"><i style="width:'+pct+'%"></i></span><span class="lstat">ดูแล้ว '+watched+' / '+durMin+' นาที · '+pct+'%</span>';
+    else meta = '<span class="lstat todo">'+durMin+' นาที</span>';
+    const km = kindMeta(l.kind);
+    const kindTag = km ? '<span class="lkind">'+km.ic+km.label+'</span>' : '';
+    const resumeTag = l.st==='c' ? '<span class="resume-tag">เรียนต่อ</span>' : '';
+    return '<a href="Learn.html" class="lesson '+lstClass+'" style="animation-delay:'+(li*45+70)+'ms">'
+      + '<span class="lst">'+lstIcon+'</span>'
+      + '<span class="lbody">'
+        + '<span class="ltitle"><span class="lnum">'+(idx+1)+'.'+(li+1)+'</span><span class="nm">'+l.t+'</span>'+resumeTag+'</span>'
+        + '<span class="lmeta">'+meta+'</span>'
+      + '</span>'
+      + kindTag
+      + '<span class="lgo">'+ICON.arrow+'</span>'
+    + '</a>';
+  }).join('');
+
+  detail.innerHTML =
+    '<div class="cc-detail-top">'
+      + '<div>'
+        + '<div class="ey">บทที่ '+(idx+1)+' จาก '+c.chapters.length+'</div>'
+        + '<h3>'+ch.t+'</h3>'
+        + '<div class="dm">'
+          + '<span>'+ICON.list+' '+m.total+' บทเรียน</span>'
+          + '<span>'+ICON.clock+' '+m.dur+'</span>'
+          + '<span>'+ICON.check+' '+m.done+'/'+m.total+' เรียนแล้ว ('+m.pct+'%)</span>'
+        + '</div>'
+      + '</div>'
+      + '<div class="cc-top-actions">'
+        + '<a href="#" class="cc-chap-cta" onclick="event.preventDefault()">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>'
+          + ' โหลดเอกสารทั้งบท'
+        + '</a>'
+      + '</div>'
+    + '</div>'
+    + '<div class="cc-lessons">'+lessonsHtml+'</div>';
+}
+
+selectChapter(defaultIdx);
+// mark default rail item & bring it into the rail's own view (not the page)
+const defBtn = rail.querySelector('.rail-ch[data-idx="'+defaultIdx+'"]');
+if(defBtn){ rail.scrollTop = Math.max(0, defBtn.offsetTop - rail.clientHeight/2); }
+
+// ============== COMMAND PALETTE ==============
+const cmdk = document.getElementById('cmdk-backdrop');
+const cmdkInput = document.getElementById('cmdk-input');
+function openCmdk() { cmdk.classList.add('open'); setTimeout(() => cmdkInput.focus(), 60); }
+function closeCmdk() { cmdk.classList.remove('open'); }
+document.getElementById('open-cmdk').addEventListener('click', openCmdk);
+cmdk.addEventListener('click', (e) => { if (e.target === cmdk) closeCmdk(); });
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    cmdk.classList.contains('open') ? closeCmdk() : openCmdk();
+  } else if (e.key === 'Escape' && cmdk.classList.contains('open')) {
+    closeCmdk();
+  }
+});
+const cmdkItems = () => Array.from(cmdk.querySelectorAll('.cmdk-item'));
+cmdk.addEventListener('keydown', (e) => {
+  const items = cmdkItems();
+  let i = items.findIndex(x => x.classList.contains('active'));
+  if (e.key === 'ArrowDown') { e.preventDefault(); items[i]?.classList.remove('active'); items[(i+1) % items.length].classList.add('active'); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); items[i]?.classList.remove('active'); items[(i-1+items.length) % items.length].classList.add('active'); }
+});
+</script>
+</body>
+</html>

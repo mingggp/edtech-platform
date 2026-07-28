@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>รายงาน — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-data.css?v=1" />
+<link rel="stylesheet" href="admin-system.css?v=2" />
+<style>
+  @media (prefers-reduced-motion: no-preference){
+    .rep-card { animation: admReveal .45s cubic-bezier(.2,.8,.2,1) both; }
+    .rep-card:nth-child(2){animation-delay:.05s}.rep-card:nth-child(3){animation-delay:.10s}
+    .rep-card:nth-child(4){animation-delay:.15s}.rep-card:nth-child(5){animation-delay:.20s}
+    .rep-card:nth-child(6){animation-delay:.25s}
+  }
+  .rep-card { transition:box-shadow .2s, transform .18s cubic-bezier(.2,.8,.2,1); }
+  .rep-card:hover { transform:translateX(3px); box-shadow:0 12px 30px -18px oklch(0 0 0 / 0.5); }
+  .rep-status { display:flex; flex-direction:column; align-items:flex-end; gap:9px; }
+  .rep-acts { display:flex; gap:6px; }
+  .rep-act { display:inline-flex; align-items:center; gap:5px; font-family:inherit; font-size:11.5px; font-weight:600; padding:6px 11px; border-radius:8px; border:1px solid var(--line); background:var(--bg-1); color:var(--fg-2); cursor:pointer; white-space:nowrap; transition:color .15s,border-color .15s,background .15s; }
+  .rep-act:hover { color:var(--fg-0); border-color:var(--fg-3); background:var(--bg-2); }
+  .rep-act.primary { color:#fff; background:var(--grad-signature); border-color:transparent; }
+  .rep-act svg { width:13px; height:13px; }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='reports';</script>
+<div class="adm" id="adm" data-screen-label="Admin · รายงาน">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>รายงาน</b></nav>
+      <div class="adm-top-actions">
+        <button class="adm-search" id="cmdk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="lbl">ค้นหา · คำสั่ง</span><span class="kbd">⌘K</span></button>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow">SYSTEM · รายงาน</div>
+            <h1>รายงาน<span class="grad">ปัญหา</span></h1>
+            <div class="sub">เรื่องที่นักเรียนแจ้ง — เนื้อหาผิด บั๊ก หรืออื่นๆ</div>
+          </div>
+        </section>
+
+        <section class="reveal" data-delay="1" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div class="tabs" id="tabs" role="tablist">
+            <button data-filter="all" aria-pressed="true">ทั้งหมด <span class="c" id="c-all">6</span></button>
+            <button data-filter="new" aria-pressed="false">ใหม่ <span class="c" id="c-new">2</span></button>
+            <button data-filter="progress" aria-pressed="false">กำลังแก้ <span class="c" id="c-progress">2</span></button>
+            <button data-filter="closed" aria-pressed="false">ปิดแล้ว <span class="c" id="c-closed">2</span></button>
+          </div>
+          <div class="tb-search" style="max-width:280px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="search" placeholder="ค้นหารายงาน..." /></div>
+        </section>
+
+        <section class="rep-list reveal" id="rep-list" data-delay="2"></section>
+        <div id="no-result" style="display:none"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+  <div class="tweak-grp"><div class="gl">Demo · สถานะหน้า</div>
+    <div class="tweak-seg" data-tweak="view"><button data-v="data" aria-pressed="true">มีข้อมูล</button><button data-v="empty" aria-pressed="false">เคลียร์หมด</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable', view:'data' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script>
+(function(){
+  const AV=['oklch(0.6 0.2 145)','oklch(0.58 0.22 5)','oklch(0.66 0.2 50)','oklch(0.5 0.18 210)','oklch(0.55 0.2 295)','oklch(0.62 0.2 230)'];
+  const REPORTS=[
+    {cat:'เนื้อหาผิด', type:'content', title:'เฉลยข้อ 14 ผิด', desc:'ในชุดข้อสอบ A-Level ฟิสิกส์ #1 ข้อ 14 เฉลยเป็นข้อ ค แต่คำนวณแล้วน่าจะเป็นข้อ ข ครับ', who:'ธนกร พ.', init:'ธพ', where:'A-Level ฟิสิกส์ #1', time:'12 นาทีที่แล้ว', status:'new'},
+    {cat:'บั๊ก', type:'bug', title:'วิดีโอบทที่ 3 เล่นไม่ได้', desc:'กดเล่นแล้วหมุนค้างอยู่ ลองหลายเบราว์เซอร์แล้วก็เป็นเหมือนกัน', who:'ณัฐริกา บ.', init:'ณบ', where:'คณิต ม.ปลาย · บทที่ 3', time:'1 ชั่วโมงที่แล้ว', status:'new'},
+    {cat:'เนื้อหาผิด', type:'content', title:'พิมพ์ตกในคำอธิบาย', desc:'หน่วยความเร็วเขียนเป็น m/s² น่าจะเป็น m/s ครับ', who:'ศุภวิชญ์ จ.', init:'ศจ', where:'TPAT3 · ชุดรวม', time:'3 ชั่วโมงที่แล้ว', status:'progress'},
+    {cat:'บั๊ก', type:'bug', title:'ดาวน์โหลด PDF ไม่ได้', desc:'กดปุ่มดาวน์โหลดเอกสารสรุปแล้วไม่มีอะไรเกิดขึ้น', who:'ภูริณัฐ ต.', init:'ภต', where:'A-Level คณิต', time:'เมื่อวาน', status:'progress'},
+    {cat:'อื่นๆ', type:'other', title:'อยากให้มีโหมดมืด', desc:'อ่านตอนกลางคืนแสบตาครับ อยากได้ dark mode', who:'สุพิชญา ค.', init:'สค', where:'ทั่วไป', time:'2 วันก่อน', status:'closed'},
+    {cat:'เนื้อหาผิด', type:'content', title:'ลิงก์เอกสารเสีย', desc:'ลิงก์เอกสารบทที่ 5 เปิดไม่ได้ ขึ้น 404', who:'จิรายุ พ.', init:'จพ', where:'ฟิสิกส์ ม.ปลาย', time:'3 วันก่อน', status:'closed'}
+  ];
+  REPORTS.forEach((r,i)=>r.av=AV[i%AV.length]);
+  const SL={new:'ใหม่', progress:'กำลังแก้', closed:'ปิดแล้ว'};
+  let filter='all', q='';
+  const list=document.getElementById('rep-list'), noResult=document.getElementById('no-result');
+
+  function render(){
+    // live tab counts
+    document.getElementById('c-all').textContent=REPORTS.length;
+    document.getElementById('c-new').textContent=REPORTS.filter(r=>r.status==='new').length;
+    document.getElementById('c-progress').textContent=REPORTS.filter(r=>r.status==='progress').length;
+    document.getElementById('c-closed').textContent=REPORTS.filter(r=>r.status==='closed').length;
+    const vis=REPORTS.filter(r=>{ if(filter!=='all'&&r.status!==filter) return false; if(q&&!(r.title+r.desc+r.where).toLowerCase().includes(q.toLowerCase())) return false; return true; });
+    if(!vis.length){ list.style.display='none'; noResult.style.display='block';
+      noResult.innerHTML='<div class="adm-empty"><div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div><h3>เคลียร์หมดแล้ว 🎉</h3><p>ไม่มีรายงานค้างในหมวดนี้</p></div>'; return; }
+    list.style.display='flex'; noResult.style.display='none';
+    list.innerHTML=vis.map(r=>{
+      const idx=REPORTS.indexOf(r);
+      const acts = r.status==='new'
+        ? `<button class="rep-act primary" data-adv="${idx}" data-to="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>เริ่มแก้</button>`
+        : r.status==='progress'
+        ? `<button class="rep-act primary" data-adv="${idx}" data-to="closed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>ปิดเรื่อง</button><button class="rep-act" data-adv="${idx}" data-to="new">กลับไปใหม่</button>`
+        : `<button class="rep-act" data-adv="${idx}" data-to="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>เปิดใหม่</button>`;
+      return `<div class="rep-card">
+      <div class="rep-ic ${r.type}">${r.type==='bug'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="8" height="14" rx="4"/><path d="M19 7l-3 2M5 7l3 2M19 17l-3-2M5 17l3-2M12 2v4M2 12h4M18 12h4"/></svg>':r.type==='content'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M12 9h.01"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16v-4M12 8h.01"/><circle cx="12" cy="12" r="9"/></svg>'}</div>
+      <div class="rep-main">
+        <div class="rep-top"><b>${r.title}</b><span class="rep-cat">${r.cat}</span></div>
+        <div class="rep-desc">${r.desc}</div>
+        <div class="rep-meta"><span class="who"><span class="av" style="background:${r.av}">${r.init}</span>${r.who}</span><span>· ${r.where}</span><span>· ${r.time}</span></div>
+      </div>
+      <div class="rep-status"><span class="rstatus ${r.status}"><span class="d"></span>${SL[r.status]}</span><div class="rep-acts">${acts}</div></div>
+    </div>`;}).join('');
+    list.querySelectorAll('[data-adv]').forEach(b=>b.addEventListener('click', ()=>{ REPORTS[+b.dataset.adv].status=b.dataset.to; render(); }));
+  }
+  document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click', ()=>{
+    document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); filter=b.dataset.filter; render();
+  }));
+  document.getElementById('search').addEventListener('input', e=>{ q=e.target.value.trim(); render(); });
+  window.__onTweak=function(k,v){ if(k==='view'){ if(v==='empty'){ filter='__none'; render(); } else { filter='all'; document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.filter==='all')); render(); } } };
+  render();
+})();
+</script>
+</body>
+</html>

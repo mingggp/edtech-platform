@@ -1,0 +1,12 @@
+# ไฟล์งานระหว่างทางจาก Claude Design — ไม่ต้องเก็บใน git
+# (โค้ดจริง html/css/js + assets/ + *.md เก็บทั้งหมด)
+
+# ภาพ screenshot ที่ใช้ตรวจงานแต่ละ batch (~162 ไฟล์ 4.6 MB)
+screenshots/
+
+# ไฟล์ที่อัปโหลดเข้า Claude Design ระหว่างออกแบบ ไม่มีโค้ดไหนอ้างถึง (~25 ไฟล์ 5.2 MB)
+uploads/
+
+# state/thumbnail ของเครื่องมือออกแบบ
+.thumbnail/
+.image-slots.state.json

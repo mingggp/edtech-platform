@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>สตรีค & เป้าหมายวันนี้ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="app-shell.css" />
+<link rel="stylesheet" href="streak.css?v=24" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="Streak & Daily Goal">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Landing Page.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="Leaderboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="Achievements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+      <a class="sb-item active" href="Streak & Daily Goal.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg>
+        <span>สตรีค</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info">
+        <b>น้องปาล์ม</b>
+        <span>LV 14 · 2,840 XP</span>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN COL ============== -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>สตรีค &amp; เป้าหมาย</b>
+      </div>
+      <div class="top-actions">
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page">
+
+      <!-- ===== PAGE HEAD + DEMO TOGGLE ===== -->
+      <div class="page-head">
+        <div class="titles">
+          <span class="eyebrow">วันอาทิตย์ที่ 31 พฤษภาคม</span>
+          <h1>สตรีค &amp; <span class="grad">เป้าหมายวันนี้</span></h1>
+        </div>
+        <div class="demo-bar">
+          <span class="lab">สถานะ (เดโม)</span>
+          <div class="demo-seg" id="demo-seg">
+            <button data-state="done" aria-pressed="true">เรียนแล้ว</button>
+            <button data-state="idle" aria-pressed="false">ยังไม่เรียน</button>
+            <button data-state="warning" aria-pressed="false">ใกล้หลุด</button>
+            <button data-state="freeze" aria-pressed="false">กันหลุด</button>
+            <button data-state="empty" aria-pressed="false">เริ่มใหม่</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HERO: STREAK + GOAL ===== -->
+      <section class="streak-grid">
+
+        <!-- StreakWidget -->
+        <div class="streak-hero is-done" id="streak-hero">
+          <div class="sh-top">
+            <div class="sh-flame" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg>
+            </div>
+            <div class="sh-headline">
+              <div class="sh-count"><span class="n" id="sh-count">12</span><span class="u">วันต่อเนื่อง</span></div>
+            </div>
+          </div>
+
+          <div class="sh-status" id="sh-status">
+            <span class="ico" id="sh-status-ico"></span>
+            <span id="sh-status-txt">เรียนวันนี้แล้ว · ไฟยังลุก</span>
+          </div>
+
+          <div class="sh-week" id="sh-week">
+            <div class="sh-day" data-i="0"><span class="dl">จ</span><span class="dd"></span></div>
+            <div class="sh-day" data-i="1"><span class="dl">อ</span><span class="dd"></span></div>
+            <div class="sh-day" data-i="2"><span class="dl">พ</span><span class="dd"></span></div>
+            <div class="sh-day today" data-i="3"><span class="dl">พฤ</span><span class="dd"></span></div>
+            <div class="sh-day" data-i="4"><span class="dl">ศ</span><span class="dd"></span></div>
+            <div class="sh-day" data-i="5"><span class="dl">ส</span><span class="dd"></span></div>
+            <div class="sh-day" data-i="6"><span class="dl">อา</span><span class="dd"></span></div>
+          </div>
+
+          <div class="sh-foot">
+            <div class="sh-freeze">
+              <span class="gems" aria-hidden="true">
+                <span class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg></span>
+                <span class="gem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg></span>
+              </span>
+              <span>ตัวกันหลุด <b>2</b> อัน</span>
+            </div>
+            <a href="Learn.html" class="btn btn-primary btn-sm">
+              เรียนต่อ → แคลคูลัส บทที่ 8
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- DailyGoalRing -->
+        <div class="goal-card" id="goal-card">
+          <div class="gc-head">
+            <div class="gc-eyebrow">เป้าหมายวันนี้</div>
+            <h3>เวลาเรียนรายวัน</h3>
+          </div>
+          <div class="ring-wrap">
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="goalGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="oklch(0.66 0.23 295)"/>
+                  <stop offset="50%" stop-color="oklch(0.68 0.25 5)"/>
+                  <stop offset="100%" stop-color="oklch(0.78 0.20 50)"/>
+                </linearGradient>
+              </defs>
+              <circle class="track" cx="100" cy="100" r="84"/>
+              <circle class="bar" id="goal-bar" cx="100" cy="100" r="84" stroke-dasharray="527.8" stroke-dashoffset="527.8"/>
+            </svg>
+            <div class="ring-center">
+              <div class="big"><span id="goal-done">22</span><span class="slash">/<span id="goal-target">30</span></span></div>
+              <div class="cap">นาที</div>
+              <div class="done-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> ทำเป้าสำเร็จ</div>
+            </div>
+          </div>
+          <div class="goal-set goal-slider" id="goal-set" role="group" aria-label="ตั้งเป้านาที">
+            <input type="range" id="goal-range" min="5" max="120" step="5" value="30" aria-label="เป้านาทีต่อวัน" />
+            <div class="gs-val"><b id="goal-range-val">30</b> นาที/วัน</div>
+          </div>
+          <div class="gc-note">ปรับเป้าได้ตามไหว — ไม่ต้องฝืน</div>
+        </div>
+      </section>
+
+      <!-- ===== QUESTS ===== -->
+      <section class="quest-sec">
+        <div class="quest-head">
+          <div class="ttl">
+            <h2>ภารกิจวันนี้</h2>
+            <div class="quest-progress">
+              <span class="qbar"><i id="qbar-fill" style="width:66%"></i></span>
+              <span><b id="quest-count">2</b>/3 สำเร็จ</span>
+            </div>
+          </div>
+          <span style="font-size:12.5px;color:var(--fg-2)">รีเซ็ตทุกเที่ยงคืน</span>
+        </div>
+
+        <div class="quest-row" id="quest-row">
+          <div class="quest quest-q1 done" data-quest="1">
+            <div class="q-top">
+              <div class="q-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+              <span class="q-reward"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg> +40 XP</span>
+            </div>
+            <div class="q-body"><b>เรียนให้จบ 1 บท</b><span>ดูวิดีโอบทเรียนจนจบอย่างน้อย 1 บท</span></div>
+            <div class="q-foot">
+              <span class="q-mini"><i style="width:100%"></i></span>
+              <span class="q-frac">1/1</span>
+              <span class="q-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></span>
+            </div>
+          </div>
+
+          <div class="quest quest-q2" data-quest="2">
+            <div class="q-top">
+              <div class="q-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg></div>
+              <span class="q-reward"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg> +60 XP</span>
+            </div>
+            <div class="q-body"><b>ทำข้อสอบ 1 ชุด</b><span>ทำแบบทดสอบหรือข้อสอบให้ครบ 1 ชุด</span></div>
+            <div class="q-foot">
+              <span class="q-mini"><i style="width:6%"></i></span>
+              <span class="q-frac">0/1</span>
+              <span class="q-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></span>
+            </div>
+          </div>
+
+          <div class="quest quest-q3 done" data-quest="3">
+            <div class="q-top">
+              <div class="q-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+              <span class="q-reward"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg> +30 XP</span>
+            </div>
+            <div class="q-body"><b>เรียนครบ 20 นาที</b><span>สะสมเวลาเรียนวันนี้ให้ถึง 20 นาที</span></div>
+            <div class="q-foot">
+              <span class="q-mini"><i style="width:100%"></i></span>
+              <span class="q-frac">22/20</span>
+              <span class="q-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quest-claim" id="quest-claim">
+          <div class="qc-copy">
+            <div class="qc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+            <div class="qc-txt">
+              <b id="qc-title">เหลืออีก 1 ภารกิจ</b>
+              <span id="qc-sub">ทำครบ 3 ภารกิจวันนี้เพื่อรับโบนัส +130 XP</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="claim-btn" disabled>รับรางวัล +130 XP</button>
+        </div>
+      </section>
+
+      <!-- ===== CALENDAR + STATS ===== -->
+      <section class="cal-grid">
+        <div class="cal-card">
+          <div class="cc-head">
+            <h3>ปฏิทินการเรียน</h3>
+            <div class="nav">
+              <button aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono';font-size:12px;color:var(--fg-2);letter-spacing:0.04em;margin-top:-4px">พฤษภาคม 2569</div>
+          <div class="cal-dow"><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span><span>อา</span></div>
+          <div class="cal-month" id="cal-month"></div>
+          <div class="cal-legend">
+            <span class="lg"><i class="sw t1"></i> 0–1 ชม.</span>
+            <span class="lg"><i class="sw t2"></i> 1–2 ชม.</span>
+            <span class="lg"><i class="sw t3"></i> 2+ ชม.</span>
+            <span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px"><i style="width:14px;height:14px;border-radius:4px;background:oklch(0.80 0.16 205 / 0.25);border:1px solid oklch(0.80 0.16 205 / 0.5);display:inline-block"></i> ตัวกันหลุด</span>
+          </div>
+        </div>
+
+        <div class="cal-aside">
+          <div class="stat-duo">
+            <div class="mini-stat" style="--ms-color:var(--brand-coral)">
+              <div class="ms-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div>
+              <div class="ms-num">28<span class="u">วัน</span></div>
+              <div class="ms-lab">สถิติสตรีคสูงสุด</div>
+            </div>
+            <div class="mini-stat" style="--ms-color:var(--brand-violet)">
+              <div class="ms-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+              <div class="ms-num">64<span class="u">วัน</span></div>
+              <div class="ms-lab">รวมวันที่เรียนทั้งหมด</div>
+            </div>
+          </div>
+
+          <div class="freeze-card">
+            <div class="fc-head">
+              <div class="fc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg></div>
+              <h4>ตัวกันหลุด</h4>
+              <span class="cnt">2</span>
+            </div>
+            <p>พลาดไปวันนึงไม่เป็นไร — <b>ตัวกันหลุด</b> จะกันให้สตรีคไม่ขาด แบบอัตโนมัติ ไม่ต้องกดอะไร</p>
+            <div class="fc-meter">
+              <span>อันถัดไป</span>
+              <span class="m"><i style="width:55%"></i></span>
+              <span>เรียนอีก <b style="color:var(--fg-0)">3 วัน</b></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== MILESTONES ===== -->
+      <section class="ms-card">
+        <div class="msc-head">
+          <h3>เป้าหมายต่อไป</h3>
+          <p>เก็บสตรีคให้ถึงหมุดหมายเพื่อปลดล็อกรางวัลพิเศษ</p>
+        </div>
+        <div class="ms-track">
+          <div class="ms-fill" style="width:31%"></div>
+          <div class="ms-node reached">
+            <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></div>
+            <div class="lab"><b>3 วัน</b><span>ตัวกันหลุด +1</span></div>
+          </div>
+          <div class="ms-node reached">
+            <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></div>
+            <div class="lab"><b>7 วัน</b><span>เหรียญ "เครื่องร้อน"</span></div>
+          </div>
+          <div class="ms-node current">
+            <div class="dot"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg></div>
+            <div class="lab"><b>30 วัน</b><span>อีก 18 วัน · เหรียญพิเศษ</span></div>
+          </div>
+          <div class="ms-node locked">
+            <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+            <div class="lab"><b>100 วัน</b><span>เหรียญ Legendary</span></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<script src="streak.js?v=4"></script>
+
+<!-- ============== TWEAKS PANEL ============== -->
+<div id="tweak-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "vibe": "aurora",
+  "energy": "calm",
+  "tone": "kind"
+}/*EDITMODE-END*/;
+
+function StreakTweaks() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(() => {
+    if (window.MingStreak) window.MingStreak.setTweaks(t);
+  }, [t.vibe, t.energy, t.tone]);
+
+  return (
+    <TweaksPanel>
+      <TweakSection label="โทนสี" hint="เปลี่ยนไล่เฉดของแบรนด์ทั้งหน้า — ปุ่ม, วงแหวน, แถบความคืบหน้า, หมุดหมาย" />
+      <TweakColor label="Aurora · Cool · Warm" value={t.vibe === 'cool' ? ['#6E5BD8','#3E8FD0','#52C7DE'] : t.vibe === 'warm' ? ['#E2476B','#E88A3C','#9FD64A'] : ['#7A5AE0','#E04A78','#F0904A']}
+        options={[
+          ['#7A5AE0','#E04A78','#F0904A'],
+          ['#6E5BD8','#3E8FD0','#52C7DE'],
+          ['#E2476B','#E88A3C','#9FD64A']
+        ]}
+        onChange={(pal) => {
+          const v = pal[1] === '#3E8FD0' ? 'cool' : pal[1] === '#E88A3C' ? 'warm' : 'aurora';
+          setTweak('vibe', v);
+        }} />
+
+      <TweakSection label="ความแรงการฉลอง" hint="ปรับพลังของแอนิเมชันและคอนเฟตตี — สุขุมแบบพรีเมียม ไปจนถึงสดใสเต็มที่" />
+      <TweakRadio label="พลังงาน" value={t.energy}
+        options={[{label:'สุขุม', value:'calm'}, {label:'สมดุล', value:'balanced'}, {label:'สดใส', value:'vivid'}]}
+        onChange={(v) => setTweak('energy', v)} />
+
+      <TweakSection label="โทนกำลังใจ" hint="เปลี่ยนน้ำเสียงของข้อความสตรีคทั้งหมด — อบอุ่นให้กำลังใจ หรือ ฮึกเหิมปลุกพลัง" />
+      <TweakRadio label="น้ำเสียง" value={t.tone}
+        options={[{label:'ใจดี อบอุ่น', value:'kind'}, {label:'ฮึกเหิม', value:'hype'}]}
+        onChange={(v) => setTweak('tone', v)} />
+    </TweaksPanel>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('tweak-root')).render(<StreakTweaks />);
+</script>
+</body>
+</html>

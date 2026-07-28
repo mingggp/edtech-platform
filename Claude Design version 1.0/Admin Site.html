@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>หน้าเว็บ & เมนู — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-system.css?v=2" />
+<style>
+/* toggle switch (mirrors settings.css) */
+.switch { position: relative; width: 46px; height: 27px; flex-shrink: 0; border: 0; padding: 0; cursor: pointer; border-radius: 99px; background: var(--bg-3); transition: background .2s; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 21px; height: 21px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px oklch(0 0 0 / 0.3); transition: transform .22s cubic-bezier(.34,1.56,.64,1); }
+.switch[aria-checked="true"] { background: var(--grad-signature); }
+.switch[aria-checked="true"]::after { transform: translateX(19px); }
+
+/* page-builder rows */
+.site-row { display: flex; align-items: center; gap: 16px; padding: 15px 4px; border-bottom: 1px solid var(--line-soft); }
+.site-row:last-child { border-bottom: 0; }
+.site-row .sr-ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 11px; background: var(--bg-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--fg-1); }
+.site-row .sr-ic svg { width: 18px; height: 18px; }
+.site-row .sr-body { min-width: 0; flex: 1; }
+.site-row .sr-body b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--fg-0); display: block; letter-spacing: -0.005em; }
+.site-row .sr-body span { font-size: 12.5px; color: var(--fg-3); margin-top: 2px; display: block; }
+.site-row .sr-body code { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-2); }
+.site-row.is-off { opacity: 0.55; }
+.site-row .sr-state { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+.site-row .sr-state.on { color: var(--success); background: oklch(0.78 0.18 150 / 0.14); }
+.site-row .sr-state.off { color: var(--fg-3); background: var(--bg-3); }
+
+.site-toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 22px; }
+.site-callout { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border-radius: 14px; margin-bottom: 18px; border: 1px solid var(--glass-line-strong); background: var(--glass); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset, 0 16px 44px -26px oklch(0 0 0 / 0.5); }
+.site-callout .ci { width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px; background: var(--bg-3); display: flex; align-items: center; justify-content: center; color: var(--brand-magenta); }
+.site-callout .ci svg { width: 17px; height: 17px; }
+.site-callout p { font-size: 13.5px; color: var(--fg-1); line-height: 1.55; }
+.site-callout p b { color: var(--fg-0); font-weight: 600; }
+.sec-count { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.ss-subhead { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); margin: 4px 0 10px; }
+.clip-row { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--line-soft); }
+.clip-row:last-child { border-bottom: 0; }
+.clip-row .cl-tag { flex: 0 0 64px; font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--fg-1); }
+.clip-row input { flex: 1; min-width: 0; font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-1); background: var(--bg-2); border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; }
+.clip-row input:focus { outline: none; border-color: var(--brand-magenta); }
+
+/* timeline (story) editor */
+.story-card { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; background: var(--bg-2); }
+.story-card .sc-top { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.story-card .sc-top .sc-yr { flex: 0 0 96px; }
+.story-card .sc-top .sc-kind { flex: 1; }
+.story-card .sc-grow { flex: 1; }
+.story-card input, .story-card textarea { width: 100%; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 13px; color: var(--fg-0); background: var(--bg-1); border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; }
+.story-card input:focus, .story-card textarea:focus { outline: none; border-color: var(--brand-magenta); }
+.story-card textarea { resize: vertical; min-height: 58px; line-height: 1.5; margin-bottom: 9px; }
+.story-card .sc-yr { font-family: var(--font-display); font-weight: 700; }
+.story-card .sc-row2 { display: flex; gap: 10px; align-items: center; }
+.story-card .sc-tag { flex: 0 0 180px; }
+.story-card .sc-actions { display: flex; gap: 5px; margin-left: auto; }
+.story-card .sc-actions button { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-2); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.story-card .sc-actions button svg { width: 14px; height: 14px; }
+.story-card .sc-actions button:hover:not(:disabled) { color: var(--fg-0); border-color: var(--fg-3); }
+.story-card .sc-actions .sc-del:hover { color: var(--danger); border-color: var(--danger); background: oklch(0.66 0.22 25 / 0.1); }
+.story-card .sc-actions button:disabled { opacity: 0.3; cursor: default; }
+.story-add { display: inline-flex; align-items: center; gap: 8px; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 13.5px; font-weight: 600; color: var(--brand-magenta); background: transparent; border: 1px dashed color-mix(in oklab, var(--brand-magenta) 40%, var(--line)); border-radius: 11px; padding: 12px 18px; cursor: pointer; width: 100%; justify-content: center; transition: background .15s, border-color .15s; }
+.story-add:hover { background: oklch(0.68 0.25 5 / 0.06); border-color: var(--brand-magenta); }
+.story-add svg { width: 16px; height: 16px; }
+
+/* gag (มุก smileyface) editor rows */
+.gag-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--bg-1); border: 1px solid var(--line-1); border-radius: 11px; margin-bottom: 8px; }
+.gag-card .gag-no { flex-shrink: 0; width: 24px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--fg-3); }
+.gag-card .gag-inp { flex: 1; min-width: 0; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 14px; color: var(--fg-0); background: var(--bg-2); border: 1px solid var(--line-1); border-radius: 8px; padding: 8px 11px; }
+.gag-card .gag-inp:focus { outline: none; border-color: var(--brand-magenta); background: var(--bg-0); }
+.gag-card .gag-del { flex-shrink: 0; }
+
+/* dashboard news editor rows */
+.news-card { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg-1); border: 1px solid var(--line-1); border-radius: 11px; margin-bottom: 8px; }
+.news-card .nc-kind { flex-shrink: 0; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 12.5px; color: var(--fg-0); background: var(--bg-2); border: 1px solid var(--line-1); border-radius: 8px; padding: 8px 8px; cursor: pointer; }
+.news-card .nc-tag { width: 116px; flex-shrink: 0; }
+.news-card .nc-text { flex: 1; min-width: 0; }
+.news-card input { font-family: "IBM Plex Sans Thai", sans-serif; font-size: 13px; color: var(--fg-0); background: var(--bg-2); border: 1px solid var(--line-1); border-radius: 8px; padding: 8px 11px; }
+.news-card input:focus, .news-card .nc-kind:focus { outline: none; border-color: var(--brand-magenta); background: var(--bg-0); }
+.news-card .news-del { flex-shrink: 0; }
+
+/* image upload tiles */
+.img-tiles { display: flex; gap: 18px; flex-wrap: wrap; }
+.img-tile { flex: 1 1 200px; min-width: 0; }
+.img-tile .it-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.img-tile .it-head b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--fg-0); }
+.img-tile .it-head code { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.img-tile .it-sub { font-size: 12.5px; color: var(--fg-3); margin-bottom: 12px; }
+.img-tile image-slot { display: block; width: 220px; max-width: 100%; height: 275px; border-radius: 16px; overflow: hidden; }
+.img-tile image-slot::part(frame) { background: var(--bg-2); border: 1px dashed var(--line); border-radius: 16px; }
+.img-tile image-slot::part(empty) { color: var(--fg-2); }
+.img-tile .it-clear { margin-top: 12px; display: inline-flex; align-items: center; gap: 7px; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 12.5px; font-weight: 600; color: var(--danger); background: transparent; border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
+.img-tile .it-clear svg { width: 14px; height: 14px; }
+.img-tile .it-clear:hover { background: oklch(0.66 0.22 25 / 0.12); border-color: var(--danger); }
+.img-tile .it-clear:disabled { opacity: 0.4; cursor: default; color: var(--fg-3); border-color: var(--line-soft); background: transparent; }
+
+/* reorder controls */
+.ord-no { width: 22px; flex-shrink: 0; text-align: center; font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-3); }
+.ord-btns { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.ord-btns button { width: 26px; height: 19px; display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 6px; border: 1px solid var(--line); background: var(--bg-2); color: var(--fg-1); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.ord-btns button svg { width: 13px; height: 13px; }
+.ord-btns button:hover:not(:disabled) { background: var(--bg-3); color: var(--fg-0); border-color: var(--fg-3); }
+.ord-btns button:disabled { opacity: 0.3; cursor: default; }
+
+/* drag-to-reorder */
+.drag-grip { width: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; align-self: stretch; color: var(--fg-3); cursor: grab; border-radius: 7px; transition: color .15s, background .15s; touch-action: none; }
+.drag-grip:hover { color: var(--fg-1); background: var(--bg-3); }
+.drag-grip:active { cursor: grabbing; }
+.drag-grip svg { width: 15px; height: 16px; pointer-events: none; }
+.story-card .drag-grip { align-self: center; height: 30px; }
+.dragitem { transition: opacity .15s, box-shadow .15s; }
+.dragitem.dragging { opacity: 0.45; box-shadow: 0 0 0 2px var(--brand-magenta), var(--shadow-2); border-radius: 12px; }
+.ss-body.drag-host, #story-rows.drag-host { position: relative; }
+
+/* segmented control */
+.seg { display: inline-flex; padding: 3px; border-radius: 11px; background: var(--bg-3); border: 1px solid var(--line); gap: 2px; flex-shrink: 0; }
+.seg button { font-family: "IBM Plex Sans Thai", sans-serif; font-size: 13px; font-weight: 600; color: var(--fg-2); background: transparent; border: 0; padding: 7px 16px; border-radius: 8px; cursor: pointer; transition: color .2s, background .2s; }
+.seg button[aria-pressed="true"] { color: #fff; background: var(--grad-signature); box-shadow: 0 4px 12px -4px oklch(0.66 0.23 295 / 0.5); }
+.seg button:hover[aria-pressed="false"] { color: var(--fg-0); }
+
+/* hub: grid of page cards */
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(264px, 1fr)); gap: 16px; }
+.hub-card { text-align: left; display: flex; flex-direction: column; gap: 13px; padding: 22px; border-radius: 18px; border: 1px solid var(--glass-line-strong); background: var(--glass); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); box-shadow: 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset, 0 16px 44px -26px oklch(0 0 0 / 0.5); cursor: pointer; font-family: inherit; transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .2s, border-color .2s; }
+.hub-card:hover { transform: translateY(-4px); box-shadow: 0 22px 50px -22px oklch(0 0 0 / 0.55), 0 1px 0 oklch(0.99 0.005 285 / 0.07) inset; border-color: var(--glass-line-strong); }
+.hub-card .hc-ic { transition: transform .22s cubic-bezier(.2,.8,.2,1); }
+.hub-card:hover .hc-ic { transform: scale(1.1) rotate(-4deg); }
+.hub-card .hc-go svg { transition: transform .2s; }
+.hub-card:hover .hc-go svg { transform: translateX(3px); }
+:root[data-theme="petronas"] .hub-card:hover, :root[data-theme="dark"] .hub-card:hover { box-shadow: 0 0 26px -8px oklch(0.66 0.23 295 / 0.4), 0 22px 50px -22px oklch(0 0 0 / 0.55); }
+.hub-card .hc-ic { width: 46px; height: 46px; border-radius: 13px; background: var(--bg-3); display: flex; align-items: center; justify-content: center; color: #fff; }
+.hub-card .hc-ic.g1 { background: var(--grad-signature); }
+.hub-card .hc-ic.g2 { background: var(--subj-math-grad); }
+.hub-card .hc-ic.g3 { background: var(--subj-phys-grad); }
+.hub-card .hc-ic.g4 { background: var(--subj-tpat-grad); }
+.hub-card .hc-ic svg { width: 23px; height: 23px; }
+.hub-card h3 { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; color: var(--fg-0); }
+.hub-card p { font-size: 12.5px; color: var(--fg-2); line-height: 1.5; flex: 1; }
+.hub-card .hc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; }
+.hub-card .hc-stat { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.hub-card .hc-go { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--brand-magenta); }
+.hub-card .hc-go svg { width: 15px; height: 15px; }
+.back-btn { display: inline-flex; align-items: center; gap: 7px; font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--fg-2); background: transparent; border: 0; cursor: pointer; padding: 6px 0; margin-bottom: 14px; }
+.back-btn svg { width: 16px; height: 16px; }
+.back-btn:hover { color: var(--fg-0); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='site';</script>
+<div class="adm" id="adm" data-screen-label="Admin · หน้าเว็บ & เมนู">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>หน้าเว็บ & เมนู</b></nav>
+      <div class="adm-top-actions">
+        <span class="autosave" id="autosave"><span class="d"></span>บันทึกอัตโนมัติ</span>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+        <a class="adm-ico" href="Landing Page.html" target="_blank" aria-label="เปิดเว็บจริง"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg></a>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow" id="adm-eyebrow">SYSTEM · หน้าร้าน</div>
+            <h1 id="adm-h1">หน้าเว็บ &amp; <span class="grad">เมนู</span></h1>
+            <div class="sub" id="adm-sub">เลือกหน้าที่ต้องการแก้ไข — แต่ละหน้าแยกจัดการเป็นสัดส่วน เปลี่ยนแล้วมีผลทันทีทั้งเว็บ</div>
+          </div>
+        </section>
+
+        <!-- ============== HUB (page index) ============== -->
+        <section class="reveal" data-delay="1" id="view-hub">
+          <div class="hub-grid">
+            <button class="hub-card" data-view="navbar">
+              <span class="hc-ic g1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>
+              <h3>NavBar</h3>
+              <p>เปิด–ปิดแต่ละหน้าที่โชว์บนแถบเมนู (Navbar) ของทุกหน้า</p>
+              <div class="hc-foot"><span class="hc-stat" id="hub-nav-stat"></span><span class="hc-go">จัดการ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+            </button>
+            <button class="hub-card" data-view="landing">
+              <span class="hc-ic g2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
+              <h3>หน้าแรก · Landing</h3>
+              <p>จัดเรียง/ซ่อนแต่ละส่วน · คอร์สเด่น · รูปฮีโร่ · แก้ข้อความแบบเห็นภาพ</p>
+              <div class="hc-foot"><span class="hc-stat" id="hub-landing-stat"></span><span class="hc-go">จัดการ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+            </button>
+            <button class="hub-card" data-view="about">
+              <span class="hc-ic g3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+              <h3>เกี่ยวกับ · About</h3>
+              <p>เปิด–ปิดแต่ละส่วน · รูปภาพ · คลิปตัวอย่างสอน · แก้ข้อความแบบเห็นภาพ</p>
+              <div class="hc-foot"><span class="hc-stat" id="hub-about-stat"></span><span class="hc-go">จัดการ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+            </button>
+            <button class="hub-card" data-view="courses">
+              <span class="hc-ic g4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+              <h3>คอร์ส · Courses</h3>
+              <p>ดูหน้าจริง · เลย์เอาต์การ์ด/ฟิลเตอร์/แพ็กเกจ ปรับได้จาก Tweaks ในหน้าจริง</p>
+              <div class="hc-foot"><span class="hc-stat">รายการคอร์ส</span><span class="hc-go">จัดการ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+            </button>
+            <button class="hub-card" data-view="dash">
+              <span class="hc-ic g1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+              <h3>แดชบอร์ดนักเรียน</h3>
+              <p>แถบข่าวสารวิ่งบนสุดแดชบอร์ด — เปิด/ปิด และเพิ่ม–แก้ข้อความได้</p>
+              <div class="hc-foot"><span class="hc-stat" id="hub-dash-stat"></span><span class="hc-go">จัดการ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+            </button>
+          </div>
+
+          <div class="site-toolbar" style="margin-top:26px">
+            <a class="btn btn-ghost" href="Landing Page.html" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>ดูหน้าเว็บจริง</a>
+            <button class="btn btn-ghost" id="reset-cfg" style="margin-left:auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>รีเซ็ตค่าเริ่มต้นทั้งหมด</button>
+          </div>
+        </section>
+
+        <!-- ============== NAVBAR ============== -->
+        <section id="view-navbar" hidden>
+          <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>กลับหน้ารวม</button>
+          <div class="site-callout">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+            <p>ปิดสวิตช์หน้าไหน เมนูนั้นจะหายจาก Navbar ทุกหน้าทันที. ตอนนี้หน้า <b>ราคา · ผลงานนักเรียน · รีวิว</b> ยังไม่มีเนื้อหา — ปิดไว้ก่อนได้ แล้วค่อยเปิดเมื่อพร้อม.</p>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>เมนูนำทาง (Navbar)</b><span>ลากที่จับ ⠿ เพื่อจัดลำดับ · สวิตช์เพื่อเปิด–ปิดแต่ละหน้าบนแถบเมนู</span></div>
+              <span class="sec-count" id="nav-count"></span>
+            </div>
+            <div class="ss-body" id="nav-rows"></div>
+          </div>
+        </section>
+
+        <!-- ============== LANDING ============== -->
+        <section id="view-landing" hidden>
+          <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>กลับหน้ารวม</button>
+          <div class="site-toolbar">
+            <button class="btn btn-primary" id="open-edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>แก้ไขหน้า Landing แบบเห็นภาพ</button>
+            <a class="btn btn-ghost" href="Landing Page.html" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>ดูหน้าเว็บจริง</a>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>ส่วนต่างๆ ในหน้า Landing</b><span>ลากที่จับ ⠿ เพื่อจัดลำดับ (หรือใช้ปุ่มลูกศร) · สวิตช์เพื่อซ่อน/แสดง</span></div>
+              <span class="sec-count" id="sec-count"></span>
+            </div>
+            <div class="ss-body" id="sec-rows"></div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>คอร์สเด่น (4 คอลัมน์เลื่อน)</b><span>ควบคุมการเลื่อนอัตโนมัติ ความเร็ว และเปิด–ปิดแต่ละวิชาในบล็อกคอร์สเด่น</span></div>
+            </div>
+            <div class="ss-body">
+              <div class="site-row">
+                <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/><path d="m19 9-3 3 3 3M5 9l3 3-3 3"/></svg></span>
+                <div class="sr-body"><b>เลื่อนอัตโนมัติ</b><span>ให้การ์ดในแต่ละคอลัมน์ไหลขึ้น–ลงช้าๆ ต่อเนื่อง</span></div>
+                <button class="switch" role="switch" id="cs-autoscroll" aria-label="เลื่อนอัตโนมัติ"></button>
+              </div>
+              <div class="site-row">
+                <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                <div class="sr-body"><b>ความเร็วการเลื่อน</b><span>ยิ่งช้ายิ่งดูสบายตา</span></div>
+                <div class="seg" id="cs-speed" role="group" aria-label="ความเร็ว">
+                  <button data-v="slow" aria-pressed="true">ช้า</button>
+                  <button data-v="medium" aria-pressed="false">กลาง</button>
+                  <button data-v="fast" aria-pressed="false">เร็ว</button>
+                </div>
+              </div>
+              <div id="cs-lanes"></div>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>รูปฮีโร่ (#hero)</b><span>รูปพี่หมิงด้านขวาของหัวเรื่องหลัก — ลากหรือคลิกเพื่ออัปโหลด</span></div>
+            </div>
+            <div class="ss-body">
+              <div class="img-tiles">
+                <div class="img-tile">
+                  <div class="it-head"><b>รูปฮีโร่ (#hero)</b><code>4:5</code></div>
+                  <div class="it-sub">รูปพี่หมิงด้านขวาของหัวเรื่องหลัก</div>
+                  <image-slot id="ming-portrait" shape="rect" fit="cover" placeholder="ลากรูปมาวาง · หรือคลิกเลือก"></image-slot>
+                  <button type="button" class="it-clear" data-slot="ming-portrait"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>ลบรูป</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== ABOUT ============== -->
+        <section id="view-about" hidden>
+          <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>กลับหน้ารวม</button>
+          <div class="site-toolbar">
+            <button class="btn btn-primary" id="edit-about"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>แก้ไขหน้า About แบบเห็นภาพ</button>
+            <a class="btn btn-ghost" href="About.html" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>ดูหน้าจริง</a>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>ส่วนต่างๆ ในหน้า About</b><span>ลากที่จับ ⠿ เพื่อจัดลำดับ · สวิตช์เพื่อเปิด–ปิดแต่ละบล็อก</span></div>
+              <span class="sec-count" id="about-count"></span>
+            </div>
+            <div class="ss-body" id="about-rows"></div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>คลิปตัวอย่างการสอน</b><span>โชว์ตอนเอาเมาส์ชี้การ์ดวิชา — วางลิงก์ .mp4 (เว้นว่าง = ใช้คลิปตัวอย่าง)</span></div>
+            </div>
+            <div class="ss-body"><div id="about-clips"></div></div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>รูปภาพในส่วน “เกี่ยวกับติวเตอร์”</b><span>ใส่ได้ 2–3 รูปจะเล่นสไลด์โชว์อัตโนมัติ</span></div>
+            </div>
+            <div class="ss-body">
+              <div class="img-tiles">
+                <div class="img-tile">
+                  <div class="it-head"><b>#about · รูปที่ 1</b><code>4:5</code></div>
+                  <div class="it-sub">รูปหลักในส่วน“เกี่ยวกับติวเตอร์”</div>
+                  <image-slot id="ming-about" shape="rect" fit="cover" placeholder="ลากรูปมาวาง · หรือคลิกเลือก"></image-slot>
+                  <button type="button" class="it-clear" data-slot="ming-about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>ลบรูป</button>
+                </div>
+                <div class="img-tile">
+                  <div class="it-head"><b>#about · รูปที่ 2</b><code>4:5</code></div>
+                  <div class="it-sub">ใส่เพิ่มเพื่อทำสไลด์โชว์ (ไม่ใส่ก็ได้)</div>
+                  <image-slot id="ming-about-2" shape="rect" fit="cover" placeholder="ลากรูปมาวาง · หรือคลิกเลือก"></image-slot>
+                  <button type="button" class="it-clear" data-slot="ming-about-2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>ลบรูป</button>
+                </div>
+                <div class="img-tile">
+                  <div class="it-head"><b>#about · รูปที่ 3</b><code>4:5</code></div>
+                  <div class="it-sub">ใส่เพิ่มเพื่อทำสไลด์โชว์ (ไม่ใส่ก็ได้)</div>
+                  <image-slot id="ming-about-3" shape="rect" fit="cover" placeholder="ลากรูปมาวาง · หรือคลิกเลือก"></image-slot>
+                  <button type="button" class="it-clear" data-slot="ming-about-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>ลบรูป</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>เส้นทางของพี่หมิง (Timeline)</b><span>แก้ไข เพิ่ม ลบ และจัดลำดับแต่ละช่วงเวลา — มีผลที่ส่วน “เส้นทางของพี่หมิง” ในหน้า About</span></div>
+              <span class="sec-count" id="story-count"></span>
+            </div>
+            <div class="ss-body">
+              <div id="story-rows"></div>
+              <button type="button" class="story-add" id="story-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มช่วงเวลา</button>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>คำกวนๆ (มุก smileyface)</b><span>ปุ่ม “กดเพื่อเฉลย” ในส่วนมุก smileyface จะวนโชว์คำเหล่านี้ทีละคำเมื่อกดซ้ำ — ลากที่จับ ⠿ เพื่อจัดลำดับ เพิ่ม/ลบได้</span></div>
+              <span class="sec-count" id="gag-count"></span>
+            </div>
+            <div class="ss-body">
+              <div id="gag-rows"></div>
+              <button type="button" class="story-add" id="gag-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มคำกวนๆ</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== COURSES ============== -->
+        <section id="view-courses" hidden>
+          <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>กลับหน้ารวม</button>
+          <div class="site-callout">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+            <p>หน้าคอร์สดึงข้อมูลจากแคตตาล็อกคอร์สโดยตรง. <b>เลย์เอาต์การ์ด · ฟิลเตอร์ · การจัดกลุ่มแพ็กเกจ</b> ปรับได้สดจากปุ่ม Tweaks ในหน้าจริง — กดดูด้านล่างได้เลย.</p>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>จัดการหน้าคอร์ส</b><span>เปิดหน้าจริงเพื่อปรับ layout / filter / แพ็กเกจผ่าน Tweaks</span></div>
+            </div>
+            <div class="ss-body">
+              <div class="site-row">
+                <span class="sr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                <div class="sr-body"><b>หน้าคอร์สทั้งหมด</b><span>คอร์สเดี่ยว + แพ็กเกจเหมา · <code>Courses.html</code></span></div>
+                <a class="btn btn-ghost" href="Courses.html" target="_blank">เปิดหน้าจริง</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============== DASHBOARD ============== -->
+        <section id="view-dash" hidden>
+          <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>กลับหน้ารวม</button>
+          <div class="site-callout">
+            <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+            <p>แถบข่าววิ่ง (marquee) บนสุดหน้าแดชบอร์ดของนักเรียน. <b>ตอนนี้ปิดไว้</b> — เปิดสวิตช์ด้านล่างเมื่อพร้อมจะโชว์.</p>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>แสดงแถบข่าวสาร</b><span>เปิดเพื่อโชว์แถบข่าววิ่งบนสุดของแดชบอร์ด</span></div>
+              <button class="switch" id="news-enable" role="switch" aria-checked="false" aria-label="เปิดแถบข่าวสาร"></button>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>ข้อความข่าวสาร</b><span>ลากที่จับ ⦿ เพื่อจัดลำดับ · แก้/เพิ่ม/ลบได้</span></div>
+              <span class="sec-count" id="news-count"></span>
+            </div>
+            <div class="ss-body">
+              <div id="news-rows"></div>
+              <button type="button" class="story-add" id="news-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มข่าว</button>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="ss-head">
+              <div class="ss-title"><b>Countdown สอบ (presets)</b><span>ชุดนับถอยหลังที่นักเรียนเลือกไปแปะหน้า Dashboard ได้ (เลือกได้ 2 อัน) · นักเรียนสร้างของตัวเองเพิ่มได้</span></div>
+              <span class="sec-count" id="cd-count"></span>
+            </div>
+            <div class="ss-body">
+              <div id="cd-rows"></div>
+              <button type="button" class="story-add" id="cd-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่ม countdown</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable' };</script>
+<script src="image-slot.js"></script>
+<script src="site-config.js"></script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script>
+/* Countdown presets manager (view-dash) */
+(function(){
+  var M = window.MingSite; if(!M) return;
+  var wrap = document.getElementById('cd-rows'); if(!wrap) return;
+  var addBtn = document.getElementById('cd-add');
+  function stripTags(s){ return String(s||'').replace(/<[^>]*>/g,''); }
+  function toLocal(iso){
+    var d = new Date(iso); if(isNaN(d)) return '';
+    var p = function(n){ return String(n).padStart(2,'0'); };
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());
+  }
+  function markSave(){
+    var pill = document.getElementById('autosave'); if(!pill) return;
+    pill.classList.add('saving'); pill.innerHTML='<span class="d"></span>กำลังบันทึก...';
+    setTimeout(function(){ var n=new Date(); pill.classList.remove('saving');
+      pill.innerHTML='<span class="d"></span>บันทึกแล้ว · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); }, 800);
+  }
+  function render(){
+    var cfg = M.get();
+    var list = cfg.countdownPresets || [];
+    wrap.innerHTML = '';
+    list.forEach(function(p, i){
+      var row = document.createElement('div');
+      row.className = 'site-row';
+      row.style.cssText = 'display:flex;gap:10px;align-items:center;flex-wrap:wrap;';
+      row.innerHTML =
+        '<input type="text" value="'+stripTags(p.title).replace(/"/g,'&quot;')+'" aria-label="ชื่อ countdown" style="flex:1;min-width:180px;height:36px;background:var(--bg-1);border:1px solid var(--line);border-radius:10px;padding:0 11px;color:var(--fg-0);font:inherit;font-size:13px;" />' +
+        '<input type="datetime-local" value="'+toLocal(p.target)+'" aria-label="วันเวลาสอบ" style="height:36px;background:var(--bg-1);border:1px solid var(--line);border-radius:10px;padding:0 9px;color:var(--fg-0);font:inherit;font-size:12.5px;" />' +
+        '<button type="button" class="btn btn-ghost" aria-label="ลบ" style="color:var(--danger);">ลบ</button>';
+      var inputs = row.querySelectorAll('input');
+      function commit(){
+        var c = M.get();
+        var arr = c.countdownPresets || [];
+        if(!arr[i]) return;
+        arr[i].title = 'นับถอยหลังสอบ <b>' + inputs[0].value.replace(/นับถอยหลังสอบ\s*/,'') + '</b>';
+        if(inputs[1].value) arr[i].target = inputs[1].value + ':00';
+        c.countdownPresets = arr; M.save(c); markSave();
+      }
+      inputs[0].addEventListener('change', commit);
+      inputs[1].addEventListener('change', commit);
+      row.querySelector('button').addEventListener('click', function(){
+        var c = M.get(); c.countdownPresets.splice(i, 1); M.save(c); markSave(); render();
+      });
+      wrap.appendChild(row);
+    });
+    var cnt = document.getElementById('cd-count');
+    if(cnt) cnt.textContent = list.length + ' preset';
+  }
+  addBtn.addEventListener('click', function(){
+    var c = M.get();
+    c.countdownPresets = c.countdownPresets || [];
+    c.countdownPresets.push({ id: 'cd-' + Date.now(), title: 'นับถอยหลังสอบ <b>สอบใหม่</b>', target: new Date(Date.now() + 30*86400000).toISOString().slice(0,16) + ':00' });
+    M.save(c); markSave(); render();
+  });
+  render();
+})();
+</script>
+<script>
+(function(){
+  var M = window.MingSite;
+  if(!M){ return; }
+
+  var NAV_DESC = {
+    home:'หน้าแรกของเว็บ', courses:'รายการคอร์สทั้งหมด', pricing:'แพ็กเกจและราคา',
+    results:'คะแนน/ผลสอบของนักเรียน', reviews:'รีวิวจากนักเรียน', about:'ประวัติพี่หมิง', location:'สถานที่เรียนออนไซต์ · แผนที่ 3D', faq:'คำถามที่พบบ่อย'
+  };
+  var EMPTY = { pricing:true, results:true, reviews:true }; // pages without real content yet
+
+  var linkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>';
+  var blockIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>';
+
+  var pill = document.getElementById('autosave'), st;
+  function markSave(){
+    clearTimeout(st);
+    pill.classList.add('saving'); pill.innerHTML='<span class="d"></span>กำลังบันทึก...';
+    st=setTimeout(function(){ var n=new Date(); pill.classList.remove('saving');
+      pill.innerHTML='<span class="d"></span>บันทึกแล้ว · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); },800);
+  }
+  function stateTag(on){ return '<span class="sr-state '+(on?'on':'off')+'">'+(on?'แสดงอยู่':'ซ่อนอยู่')+'</span>'; }
+
+  /* ---- drag-to-reorder (shared) ------------------------------------------ */
+  var GRIP = '<span class="drag-grip" title="ลากเพื่อจัดลำดับ" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.7"/><circle cx="15" cy="5" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="19" r="1.7"/><circle cx="15" cy="19" r="1.7"/></svg></span>';
+  var _dragEl = null;
+  function dragAfter(container, y){
+    var els = Array.prototype.slice.call(container.querySelectorAll(':scope > .dragitem:not(.dragging)'));
+    var best = null, bestOff = -Infinity;
+    els.forEach(function(ch){
+      var box = ch.getBoundingClientRect();
+      var off = y - box.top - box.height/2;
+      if(off < 0 && off > bestOff){ bestOff = off; best = ch; }
+    });
+    return best;
+  }
+  function wireDragItem(item){
+    if(item._dw) return; item._dw = 1;
+    var grip = item.querySelector('.drag-grip');
+    if(grip){
+      grip.addEventListener('mousedown', function(){ item.setAttribute('draggable','true'); });
+      grip.addEventListener('touchstart', function(){ item.setAttribute('draggable','true'); }, { passive:true });
+    }
+    item.addEventListener('dragstart', function(e){
+      _dragEl = item; e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain','x'); } catch(_){}
+      setTimeout(function(){ item.classList.add('dragging'); }, 0);
+    });
+    item.addEventListener('dragend', function(){
+      item.classList.remove('dragging'); item.removeAttribute('draggable'); _dragEl = null;
+    });
+  }
+  // attach container-level listeners ONCE; onDrop is refreshed every render
+  function makeReorder(container, onDrop){
+    container._onDrop = onDrop;
+    container.classList.add('drag-host');
+    Array.prototype.slice.call(container.children).forEach(function(item){
+      if(item.classList && item.classList.contains('dragitem')) wireDragItem(item);
+    });
+    if(container._dragWired) return;
+    container._dragWired = 1;
+    container.addEventListener('dragover', function(e){
+      if(!_dragEl || _dragEl.parentNode !== container) return;
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      var a = dragAfter(container, e.clientY);
+      if(a == null) container.appendChild(_dragEl);
+      else container.insertBefore(_dragEl, a);
+    });
+    container.addEventListener('drop', function(e){ if(_dragEl) e.preventDefault(); });
+    container.addEventListener('dragend', function(){ if(container._onDrop) container._onDrop(); });
+  }
+  // safety: clear stray draggable flag when a press on a grip didn't become a drag
+  document.addEventListener('mouseup', function(){
+    if(_dragEl) return;
+    document.querySelectorAll('.dragitem[draggable="true"]').forEach(function(el){ el.removeAttribute('draggable'); });
+  });
+
+  function moveSection(idx, dir){
+    var c = M.get();
+    var order = M.normalizeOrder(c.order);
+    var j = idx + dir;
+    if (j < 0 || j >= order.length) return;
+    var tmp = order[idx]; order[idx] = order[j]; order[j] = tmp;
+    c.order = order; M.save(c); markSave(); render();
+  }
+  function moveNav(idx, dir){
+    var c = M.get();
+    var order = M.normalizeNavOrder(c.navOrder);
+    var j = idx + dir;
+    if (j < 0 || j >= order.length) return;
+    var tmp = order[idx]; order[idx] = order[j]; order[j] = tmp;
+    c.navOrder = order; M.save(c); markSave(); render();
+  }
+  function moveAbout(idx, dir){
+    var c = M.get();
+    var order = M.normalizeAboutOrder(c.aboutOrder);
+    var j = idx + dir;
+    if (j < 0 || j >= order.length) return;
+    var tmp = order[idx]; order[idx] = order[j]; order[j] = tmp;
+    c.aboutOrder = order; M.save(c); markSave(); render();
+  }
+
+  function render(){
+    var cfg = M.get();
+
+    // nav rows (reorderable)
+    var nav = document.getElementById('nav-rows'); nav.innerHTML='';
+    var navOn=0;
+    var navById={}; M.NAV_ITEMS.forEach(function(it){ navById[it.id]=it; });
+    var navOrder = M.normalizeNavOrder(cfg.navOrder);
+    navOrder.forEach(function(id, idx){
+      var it = navById[id]; if(!it) return;
+      var on = cfg.nav[it.id] !== false; if(on) navOn++;
+      var row=document.createElement('div');
+      row.className='site-row dragitem'+(on?'':' is-off');
+      row.setAttribute('data-id', it.id);
+      row.innerHTML =
+        GRIP+
+        '<span class="ord-no">'+(idx+1)+'</span>'+
+        '<span class="ord-btns">'+
+          '<button class="ord-up" aria-label="เลื่อนขึ้น"'+(idx===0?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button>'+
+          '<button class="ord-down" aria-label="เลื่อนลง"'+(idx===navOrder.length-1?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>'+
+        '</span>'+
+        '<div class="sr-body"><b>'+it.label+(EMPTY[it.id]?' · <span style="color:var(--warning)">ยังไม่มีเนื้อหา</span>':'')+'</b>'+
+          '<span>'+(NAV_DESC[it.id]||'')+' · <code>'+it.file+'</code></span></div>'+
+        stateTag(on)+
+        '<button class="switch" role="switch" aria-checked="'+on+'" aria-label="'+it.label+'"></button>';
+      row.querySelector('.switch').addEventListener('click', function(){
+        var c=M.get(); c.nav[it.id]=!(c.nav[it.id]!==false); M.save(c); markSave(); render();
+      });
+      row.querySelector('.ord-up').addEventListener('click', function(){ moveNav(idx, -1); });
+      row.querySelector('.ord-down').addEventListener('click', function(){ moveNav(idx, 1); });
+      nav.appendChild(row);
+    });
+    makeReorder(nav, function(){
+      var ids = Array.prototype.slice.call(nav.children).map(function(r){ return r.getAttribute('data-id'); });
+      var c = M.get(); c.navOrder = M.normalizeNavOrder(ids); M.save(c); markSave(); render();
+    });
+    document.getElementById('nav-count').textContent = navOn+' / '+M.NAV_ITEMS.length+' เปิดอยู่';
+
+    // section rows
+    var sec = document.getElementById('sec-rows'); sec.innerHTML='';
+    var secOn=0;
+    var labelOf={}; M.SECTIONS.forEach(function(s){ labelOf[s.id]=s.label; });
+    var order = M.normalizeOrder(cfg.order);
+    order.forEach(function(id, idx){
+      var on = cfg.sections[id] !== false; if(on) secOn++;
+      var row=document.createElement('div');
+      row.className='site-row dragitem'+(on?'':' is-off');
+      row.setAttribute('data-id', id);
+      row.innerHTML =
+        GRIP+
+        '<span class="ord-no">'+(idx+1)+'</span>'+
+        '<span class="ord-btns">'+
+          '<button class="ord-up" aria-label="เลื่อนขึ้น"'+(idx===0?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button>'+
+          '<button class="ord-down" aria-label="เลื่อนลง"'+(idx===order.length-1?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>'+
+        '</span>'+
+        '<div class="sr-body"><b>'+labelOf[id]+'</b><span><code>#'+id+'</code></span></div>'+
+        stateTag(on)+
+        '<button class="switch" role="switch" aria-checked="'+on+'" aria-label="'+labelOf[id]+'"></button>';
+      row.querySelector('.switch').addEventListener('click', function(){
+        var c=M.get(); c.sections[id]=!(c.sections[id]!==false); M.save(c); markSave(); render();
+      });
+      row.querySelector('.ord-up').addEventListener('click', function(){ moveSection(idx, -1); });
+      row.querySelector('.ord-down').addEventListener('click', function(){ moveSection(idx, 1); });
+      sec.appendChild(row);
+    });
+    makeReorder(sec, function(){
+      var ids = Array.prototype.slice.call(sec.children).map(function(r){ return r.getAttribute('data-id'); });
+      var c = M.get(); c.order = M.normalizeOrder(ids); M.save(c); markSave(); render();
+    });
+    document.getElementById('sec-count').textContent = secOn+' / '+M.SECTIONS.length+' แสดงอยู่';
+
+    // about-page section rows (reorderable)
+    var aboutWrap = document.getElementById('about-rows'); aboutWrap.innerHTML='';
+    var aboutOn=0;
+    var aboutById={}; (M.ABOUT_SECTIONS||[]).forEach(function(s){ aboutById[s.id]=s; });
+    var aboutOrder = M.normalizeAboutOrder(cfg.aboutOrder);
+    aboutOrder.forEach(function(id, idx){
+      var s = aboutById[id]; if(!s) return;
+      var on = cfg.sections[s.id] !== false; if(on) aboutOn++;
+      var row=document.createElement('div');
+      row.className='site-row dragitem'+(on?'':' is-off');
+      row.setAttribute('data-id', s.id);
+      row.innerHTML =
+        GRIP+
+        '<span class="ord-no">'+(idx+1)+'</span>'+
+        '<span class="ord-btns">'+
+          '<button class="ord-up" aria-label="เลื่อนขึ้น"'+(idx===0?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button>'+
+          '<button class="ord-down" aria-label="เลื่อนลง"'+(idx===aboutOrder.length-1?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>'+
+        '</span>'+
+        '<div class="sr-body"><b>'+s.label+'</b><span><code>#'+s.id+'</code></span></div>'+
+        stateTag(on)+
+        '<button class="switch" role="switch" aria-checked="'+on+'" aria-label="'+s.label+'"></button>';
+      row.querySelector('.switch').addEventListener('click', function(){
+        var c=M.get(); c.sections[s.id]=!(c.sections[s.id]!==false); M.save(c); markSave(); render();
+      });
+      row.querySelector('.ord-up').addEventListener('click', function(){ moveAbout(idx, -1); });
+      row.querySelector('.ord-down').addEventListener('click', function(){ moveAbout(idx, 1); });
+      aboutWrap.appendChild(row);
+    });
+    makeReorder(aboutWrap, function(){
+      var ids = Array.prototype.slice.call(aboutWrap.children).map(function(r){ return r.getAttribute('data-id'); });
+      var c = M.get(); c.aboutOrder = M.normalizeAboutOrder(ids); M.save(c); markSave(); render();
+    });
+    var ac=document.getElementById('about-count'); if(ac) ac.textContent = aboutOn+' / '+(M.ABOUT_SECTIONS||[]).length+' แสดงอยู่';
+
+    // about subject clips (URL inputs)
+    var clipWrap = document.getElementById('about-clips'); clipWrap.innerHTML='';
+    (M.ABOUT_CLIPS||[]).forEach(function(cl){
+      var val = (cfg.clips && cfg.clips[cl.id]) || '';
+      var row=document.createElement('div');
+      row.className='clip-row';
+      row.innerHTML='<span class="cl-tag">'+cl.label+'</span><input type="url" placeholder="วางลิงก์คลิป .mp4 (เว้นว่าง = ใช้คลิปตัวอย่าง)" value="'+val.replace(/"/g,'&quot;')+'">';
+      var inp=row.querySelector('input');
+      inp.addEventListener('change', function(){
+        var c=M.get(); c.clips=c.clips||{}; c.clips[cl.id]=inp.value.trim(); M.save(c); markSave();
+      });
+      clipWrap.appendChild(row);
+    });
+
+    renderStory(cfg);
+    renderGag(cfg);
+    renderNews(cfg);
+
+    // featured-courses controls
+    var cc = cfg.courses || {};
+    var asw = document.getElementById('cs-autoscroll');
+    asw.setAttribute('aria-checked', cc.autoscroll !== false);
+    document.querySelectorAll('#cs-speed button').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.v === (cc.speed || 'slow'));
+    });
+    var laneWrap = document.getElementById('cs-lanes'); laneWrap.innerHTML='';
+    var lanes = cc.lanes || {};
+    M.COURSE_LANES.forEach(function(l){
+      var on = lanes[l.id] !== false;
+      var row=document.createElement('div');
+      row.className='site-row'+(on?'':' is-off');
+      row.innerHTML =
+        '<span class="sr-ic">'+blockIcon+'</span>'+
+        '<div class="sr-body"><b>คอลัมน์ '+l.label+'</b><span>แสดงคอลัมน์วิชานี้ในบล็อกคอร์สเด่น</span></div>'+
+        stateTag(on)+
+        '<button class="switch" role="switch" aria-checked="'+on+'" aria-label="'+l.label+'"></button>';
+      row.querySelector('.switch').addEventListener('click', function(){
+        var c=M.get(); c.courses.lanes[l.id]=!(c.courses.lanes[l.id]!==false); M.save(c); markSave(); render();
+      });
+      laneWrap.appendChild(row);
+    });
+  }
+
+  // ---- timeline (story) editor ----
+  var STORY_ICON_DEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>';
+  var STORY_ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>';
+  var STORY_ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  render();
+  function getStory(c){ return Array.isArray(c.story) ? c.story : (M.STORY_DEFAULT||[]).map(function(e){return Object.assign({},e);}); }
+  function saveStory(arr){ var c=M.get(); c.story=arr; M.save(c); markSave(); }
+  function renderStory(cfg){
+    var wrap=document.getElementById('story-rows'); if(!wrap) return;
+    var rows=getStory(cfg);
+    wrap.innerHTML='';
+    rows.forEach(function(e, i){
+      var card=document.createElement('div');
+      card.className='story-card dragitem';
+      card.setAttribute('data-idx', i);
+      card.innerHTML=
+        '<div class="sc-top">'+
+          GRIP+
+          '<input class="sc-yr" data-f="year" placeholder="ปี" value="'+(e.year||'').replace(/"/g,'&quot;')+'">'+
+          '<input class="sc-kind" data-f="kind" placeholder="ป้ายย่อย (เช่น YEAR 1)" value="'+(e.kind||'').replace(/"/g,'&quot;')+'">'+
+          '<span class="sc-actions">'+
+            '<button class="sc-up" aria-label="ขึ้น"'+(i===0?' disabled':'')+'>'+STORY_ICON_UP+'</button>'+
+            '<button class="sc-down" aria-label="ลง"'+(i===rows.length-1?' disabled':'')+'>'+STORY_ICON_DOWN+'</button>'+
+            '<button class="sc-del" aria-label="ลบ">'+STORY_ICON_DEL+'</button>'+
+          '</span>'+
+        '</div>'+
+        '<input data-f="title" placeholder="หัวข้อ" style="margin-bottom:9px" value="'+(e.title||'').replace(/"/g,'&quot;')+'">'+
+        '<textarea data-f="body" placeholder="รายละเอียด">'+(e.body||'').replace(/</g,'&lt;')+'</textarea>'+
+        '<div class="sc-row2"><input class="sc-tag" data-f="tag" placeholder="แท็ก (เช่น ก่อตั้ง)" value="'+(e.tag||'').replace(/"/g,'&quot;')+'"></div>';
+      card.querySelectorAll('[data-f]').forEach(function(inp){
+        inp.addEventListener('change', function(){
+          var arr=getStory(M.get()); if(!arr[i]) return;
+          arr[i][inp.getAttribute('data-f')]=inp.value;
+          saveStory(arr);
+        });
+      });
+      card.querySelector('.sc-del').addEventListener('click', function(){
+        if(!confirm('ลบช่วงเวลานี้ออก?')) return;
+        var arr=getStory(M.get()); arr.splice(i,1); saveStory(arr); renderStory(M.get());
+      });
+      card.querySelector('.sc-up').addEventListener('click', function(){
+        if(i===0) return; var arr=getStory(M.get()); var t=arr[i]; arr[i]=arr[i-1]; arr[i-1]=t; saveStory(arr); renderStory(M.get());
+      });
+      card.querySelector('.sc-down').addEventListener('click', function(){
+        var arr=getStory(M.get()); if(i>=arr.length-1) return; var t=arr[i]; arr[i]=arr[i+1]; arr[i+1]=t; saveStory(arr); renderStory(M.get());
+      });
+      wrap.appendChild(card);
+    });
+    makeReorder(wrap, function(){
+      var arr = getStory(M.get());
+      var neworder = Array.prototype.slice.call(wrap.children).map(function(c){ return arr[+c.getAttribute('data-idx')]; });
+      saveStory(neworder); renderStory(M.get());
+    });
+    var sc=document.getElementById('story-count'); if(sc) sc.textContent=rows.length+' ช่วงเวลา';
+  }
+  var storyAdd=document.getElementById('story-add');
+  if(storyAdd) storyAdd.addEventListener('click', function(){
+    var arr=getStory(M.get());
+    arr.push({ year:'', kind:'', title:'ช่วงเวลาใหม่', body:'', tag:'' });
+    saveStory(arr); renderStory(M.get());
+    var cards=document.querySelectorAll('#story-rows .story-card');
+    var last=cards[cards.length-1]; if(last){ var yr=last.querySelector('[data-f="year"]'); if(yr) yr.focus(); }
+  });
+
+  /* ---- gag lines (มุก smileyface) ---- */
+  function getGag(c){ return Array.isArray(c.gag) && c.gag.length ? c.gag.slice() : (M.GAG_DEFAULT||[]).slice(); }
+  function saveGag(arr){ var c=M.get(); c.gag=arr; M.save(c); markSave(); }
+  function renderGag(cfg){
+    var wrap=document.getElementById('gag-rows'); if(!wrap) return;
+    var rows=getGag(cfg);
+    wrap.innerHTML='';
+    rows.forEach(function(txt, i){
+      var card=document.createElement('div');
+      card.className='gag-card dragitem';
+      card.setAttribute('data-idx', i);
+      card.innerHTML=
+        GRIP+
+        '<span class="gag-no">'+(i+1)+'</span>'+
+        '<input class="gag-inp" data-f="gag" placeholder="คำกวนๆ…" value="'+(txt||'').replace(/"/g,'&quot;')+'">'+
+        '<button class="sc-del gag-del" aria-label="ลบ">'+STORY_ICON_DEL+'</button>';
+      card.querySelector('.gag-inp').addEventListener('change', function(){
+        var arr=getGag(M.get()); arr[i]=this.value; saveGag(arr);
+      });
+      card.querySelector('.gag-del').addEventListener('click', function(){
+        var arr=getGag(M.get()); arr.splice(i,1); if(!arr.length) arr.push('ไม่บอก 😏'); saveGag(arr); renderGag(M.get());
+      });
+      wrap.appendChild(card);
+    });
+    makeReorder(wrap, function(){
+      var arr=getGag(M.get());
+      var neworder=Array.prototype.slice.call(wrap.children).map(function(c){ return arr[+c.getAttribute('data-idx')]; });
+      saveGag(neworder); renderGag(M.get());
+    });
+    var gc=document.getElementById('gag-count'); if(gc) gc.textContent=rows.length+' คำ';
+  }
+  var gagAdd=document.getElementById('gag-add');
+  if(gagAdd) gagAdd.addEventListener('click', function(){
+    var arr=getGag(M.get());
+    arr.push('');
+    saveGag(arr); renderGag(M.get());
+    var inps=document.querySelectorAll('#gag-rows .gag-inp');
+    var last=inps[inps.length-1]; if(last) last.focus();
+  });
+
+  /* ---- dashboard news strip (enable + editable items) ---- */
+  function getNews(c){ return (c.dashNews && Array.isArray(c.dashNews.items)) ? c.dashNews.items.slice() : (M.DASH_NEWS_DEFAULT||[]).slice(); }
+  function saveNewsItems(arr){ var c=M.get(); c.dashNews=c.dashNews||{}; c.dashNews.items=arr; M.save(c); markSave(); }
+  function renderNews(cfg){
+    var en=document.getElementById('news-enable');
+    if(en){ en.setAttribute('aria-checked', String(!!(cfg.dashNews && cfg.dashNews.enabled))); }
+    var wrap=document.getElementById('news-rows'); if(!wrap) return;
+    var rows=getNews(cfg); wrap.innerHTML='';
+    rows.forEach(function(it,i){
+      var card=document.createElement('div');
+      card.className='news-card dragitem'; card.setAttribute('data-idx', i);
+      var opts=[['urgent','ด่วน'],['course','คอร์ส'],['success','ผลงาน'],['live','LIVE'],['','ทั่วไป']].map(function(k){ return '<option value="'+k[0]+'"'+(((it.kind||''))===k[0]?' selected':'')+'>'+k[1]+'</option>'; }).join('');
+      card.innerHTML=
+        GRIP+
+        '<select class="nc-kind" data-f="kind" aria-label="ประเภท">'+opts+'</select>'+
+        '<input class="nc-tag" data-f="tag" placeholder="ป้าย" value="'+(it.tag||'').replace(/"/g,'&quot;')+'">'+
+        '<input class="nc-text" data-f="text" placeholder="ข้อความข่าว…" value="'+(it.text||'').replace(/"/g,'&quot;')+'">'+
+        '<button class="sc-del news-del" aria-label="ลบ">'+STORY_ICON_DEL+'</button>';
+      card.querySelectorAll('[data-f]').forEach(function(inp){
+        inp.addEventListener('change', function(){ var arr=getNews(M.get()); arr[i]=Object.assign({}, arr[i]); arr[i][this.dataset.f]=this.value; saveNewsItems(arr); });
+      });
+      card.querySelector('.news-del').addEventListener('click', function(){ var arr=getNews(M.get()); arr.splice(i,1); saveNewsItems(arr); renderNews(M.get()); });
+      wrap.appendChild(card);
+    });
+    makeReorder(wrap, function(){
+      var arr=getNews(M.get());
+      var neworder=Array.prototype.slice.call(wrap.children).map(function(c){ return arr[+c.getAttribute('data-idx')]; });
+      saveNewsItems(neworder); renderNews(M.get());
+    });
+    var nc=document.getElementById('news-count'); if(nc) nc.textContent=rows.length+' ข่าว';
+  }
+  var newsEnable=document.getElementById('news-enable');
+  if(newsEnable) newsEnable.addEventListener('click', function(){
+    var c=M.get(); c.dashNews=c.dashNews||{}; c.dashNews.enabled = !(c.dashNews.enabled);
+    M.save(c); markSave(); renderNews(c);
+  });
+  var newsAdd=document.getElementById('news-add');
+  if(newsAdd) newsAdd.addEventListener('click', function(){
+    var arr=getNews(M.get());
+    arr.push({ kind:'', tag:'', text:'' });
+    saveNewsItems(arr); renderNews(M.get());
+    var inps=document.querySelectorAll('#news-rows .nc-text');
+    var last=inps[inps.length-1]; if(last) last.focus();
+  });
+
+  /* ---- hub <-> detail view switching ---- */
+  var VIEWS = {
+    hub:     { h1:'หน้าเว็บ &amp; <span class="grad">เมนู</span>', eyebrow:'SYSTEM · หน้าร้าน', sub:'เลือกหน้าที่ต้องการแก้ไข — แต่ละหน้าแยกจัดการเป็นสัดส่วน เปลี่ยนแล้วมีผลทันทีทั้งเว็บ' },
+    navbar:  { h1:'เมนู <span class="grad">นำทาง</span>', eyebrow:'หน้าเว็บ · NAVBAR', sub:'เปิด–ปิดหน้าที่โชว์บนแถบเมนู — มีผลกับทุกหน้า' },
+    landing: { h1:'หน้าแรก · <span class="grad">Landing</span>', eyebrow:'หน้าเว็บ · LANDING', sub:'จัดเรียง/ซ่อนแต่ละส่วน · คอร์สเด่น · รูปฮีโร่ · แก้ข้อความแบบเห็นภาพ' },
+    about:   { h1:'เกี่ยวกับ · <span class="grad">About</span>', eyebrow:'หน้าเว็บ · ABOUT', sub:'เปิด–ปิดแต่ละส่วน · รูปภาพ · คลิปตัวอย่างสอน · แก้ข้อความแบบเห็นภาพ' },
+    courses: { h1:'คอร์ส · <span class="grad">Courses</span>', eyebrow:'หน้าเว็บ · COURSES', sub:'ดูหน้าจริง — เลย์เอาต์/ฟิลเตอร์/แพ็กเกจ ปรับได้จาก Tweaks ในหน้าจริง' },
+    dash:    { h1:'แดชบอร์ด · <span class="grad">ข่าวสาร</span>', eyebrow:'แอปนักเรียน · DASHBOARD', sub:'เปิด/ปิดแถบข่าววิ่งบนแดชบอร์ด · เพิ่ม–แก้–จัดลำดับข้อความ' }
+  };
+  var crumbB = document.querySelector('.adm-crumb b');
+  function showView(name){
+    if(!VIEWS[name]) name = 'hub';
+    ['hub','navbar','landing','about','courses','dash'].forEach(function(v){
+      var el = document.getElementById('view-'+v);
+      if(el) el.hidden = (v !== name);
+    });
+    var m = VIEWS[name];
+    document.getElementById('adm-h1').innerHTML = m.h1;
+    document.getElementById('adm-eyebrow').textContent = m.eyebrow;
+    document.getElementById('adm-sub').textContent = m.sub;
+    if(crumbB) crumbB.textContent = (name === 'hub') ? 'หน้าเว็บ & เมนู' : 'หน้าเว็บ & เมนู / ' + ({navbar:'เมนูนำทาง',landing:'หน้าแรก',about:'เกี่ยวกับ',courses:'คอร์ส',dash:'แดชบอร์ด'}[name]);
+    try { history.replaceState(null,'', name === 'hub' ? location.pathname : '#'+name); } catch(e){}
+    if(name === 'hub') updateHubStats();
+    document.querySelector('.adm-scroll').scrollTop = 0;
+  }
+  function updateHubStats(){
+    var cfg = M.get();
+    var navOn = M.NAV_ITEMS.filter(function(it){ return cfg.nav[it.id] !== false; }).length;
+    var landOn = M.SECTIONS.filter(function(s){ return cfg.sections[s.id] !== false; }).length;
+    var aboutOn = (M.ABOUT_SECTIONS||[]).filter(function(s){ return cfg.sections[s.id] !== false; }).length;
+    var e;
+    if((e=document.getElementById('hub-nav-stat'))) e.textContent = navOn+'/'+M.NAV_ITEMS.length+' เมนูเปิดอยู่';
+    if((e=document.getElementById('hub-landing-stat'))) e.textContent = landOn+'/'+M.SECTIONS.length+' ส่วนแสดงอยู่';
+    if((e=document.getElementById('hub-about-stat'))) e.textContent = aboutOn+'/'+(M.ABOUT_SECTIONS||[]).length+' ส่วนแสดงอยู่';
+    if((e=document.getElementById('hub-dash-stat'))) { var nd=cfg.dashNews||{}; e.textContent = (nd.enabled?'แถบข่าวเปิดอยู่':'แถบข่าวปิดอยู่'); }
+  }
+  document.querySelectorAll('.hub-card').forEach(function(card){
+    card.addEventListener('click', function(){ showView(card.dataset.view); });
+  });
+  document.querySelectorAll('[data-back]').forEach(function(b){
+    b.addEventListener('click', function(){ showView('hub'); });
+  });
+  showView((location.hash || '').replace('#','') || 'hub');
+  document.getElementById('cs-autoscroll').addEventListener('click', function(){
+    var c=M.get(); c.courses.autoscroll = c.courses.autoscroll === false; M.save(c); markSave(); render();
+  });
+  document.querySelectorAll('#cs-speed button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var c=M.get(); c.courses.speed=b.dataset.v; M.save(c); markSave(); render();
+    });
+  });
+
+  document.getElementById('open-edit').addEventListener('click', function(){
+    M.openEditor();
+    window.open('Landing Page.html','_blank');
+  });
+  document.getElementById('edit-about').addEventListener('click', function(){
+    M.openEditor();
+    window.open('About.html','_blank');
+  });
+  document.getElementById('reset-cfg').addEventListener('click', function(){
+    if(!confirm('รีเซ็ตเมนูและส่วนต่างๆ ของหน้า Landing กลับเป็นค่าเริ่มต้นทั้งหมด?')) return;
+    M.reset(); markSave(); render();
+  });
+
+  // ---- image-slot clear buttons + filled-state sync ----
+  document.querySelectorAll('.it-clear').forEach(function(btn){
+    var slot = document.getElementById(btn.dataset.slot);
+    if(!slot) return;
+    function sync(){ btn.disabled = !slot.hasAttribute('data-filled'); }
+    btn.addEventListener('click', function(){
+      if(btn.disabled) return;
+      if(!confirm('ลบรูปนี้ออกจากหน้าเว็บ?')) return;
+      var clr = slot.shadowRoot && slot.shadowRoot.querySelector('button[data-act="clear"]');
+      if(clr) clr.click();
+      markSave();
+      setTimeout(sync, 60);
+    });
+    // reflect filled state as the slot loads/changes
+    new MutationObserver(sync).observe(slot, { attributes:true, attributeFilter:['data-filled'] });
+    sync();
+    // re-check after the sidecar hydrates the slot
+    setTimeout(sync, 400); setTimeout(sync, 1200);
+  });
+})();
+</script>
+</body>
+</html>

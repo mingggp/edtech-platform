@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ผลงานนักเรียน — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="marketing.css" />
+<style>
+/* ============== RESULTS — page specific ============== */
+
+/* filter bar (shared look) */
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 36px; }
+.filter-chip {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 99px; font-size: 13.5px; font-weight: 500;
+  border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-1);
+  transition: color .2s, border-color .2s, background .2s, transform .15s;
+}
+.filter-chip:hover { color: var(--fg-0); border-color: var(--fg-3); transform: translateY(-1px); }
+.filter-chip .ct { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.filter-chip[aria-pressed="true"] { color: #fff; border-color: transparent; background: var(--grad-signature); box-shadow: 0 8px 22px -8px oklch(0.66 0.23 295 / 0.6); }
+.filter-chip[aria-pressed="true"] .ct { color: oklch(0.99 0.005 285 / 0.8); }
+
+/* score grid using shared .testi-card */
+.score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.score-grid .testi-card { min-height: 300px; animation: scIn .5s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes scIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.testi-card .delta { display: inline-flex; align-items: center; gap: 5px; font-family: "JetBrains Mono"; font-size: 12px; font-weight: 600; color: var(--success); margin-top: 4px; }
+.testi-card .delta svg { width: 13px; height: 13px; }
+.testi-card.feature .delta { color: oklch(0.90 0.16 130); }
+.score-empty { text-align: center; padding: 60px 0; color: var(--fg-2); }
+
+/* admissions board */
+.adm { background: var(--bg-1); border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+:root[data-theme="dark"] .adm { background: linear-gradient(180deg, transparent, oklch(0.16 0.016 285) 16%, oklch(0.16 0.016 285) 84%, transparent); border: 0; }
+.adm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.uni-card {
+  position: relative; border-radius: 22px; padding: 26px; border: 1px solid var(--line);
+  background: var(--bg-0); overflow: hidden; display: flex; flex-direction: column; gap: 16px;
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s;
+}
+:root[data-theme="light"] .uni-card, :root[data-theme="petronas-light"] .uni-card { background: var(--bg-1); }
+.uni-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.uni-card .crest {
+  width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 19px; color: #fff; letter-spacing: -0.02em;
+}
+.uni-card .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.uni-card .cnt { text-align: right; }
+.uni-card .cnt .n { font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; letter-spacing: -0.02em; color: var(--fg-0); }
+.uni-card .cnt .l { font-size: 11px; color: var(--fg-3); font-family: "JetBrains Mono"; letter-spacing: 0.06em; text-transform: uppercase; }
+.uni-card h3 { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: -0.015em; color: var(--fg-0); }
+.uni-card .facs { display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; }
+.uni-card .fac { font-size: 12px; padding: 4px 10px; border-radius: 8px; background: var(--bg-3); color: var(--fg-1); white-space: nowrap; }
+
+/* improvement band */
+.improve { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; background: var(--bg-1); }
+.improve .cell { padding: 38px 32px; border-right: 1px solid var(--line-soft); }
+.improve .cell:last-child { border-right: 0; }
+.improve .cell .big { font-family: var(--font-display); font-weight: 700; font-size: 52px; line-height: 1; letter-spacing: -0.03em; }
+.improve .cell .big .grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.improve .cell .desc { margin-top: 12px; font-size: 14px; color: var(--fg-2); line-height: 1.5; }
+.improve .cell .desc b { color: var(--fg-0); font-weight: 600; }
+
+.note-line { margin-top: 22px; font-size: 13px; color: var(--fg-3); display: flex; align-items: center; gap: 8px; }
+.note-line svg { width: 15px; height: 15px; }
+
+@media (max-width: 1000px) {
+  .score-grid { grid-template-columns: 1fr 1fr; }
+  .adm-grid { grid-template-columns: 1fr 1fr; }
+  .improve { grid-template-columns: 1fr; }
+  .improve .cell { border-right: 0; border-bottom: 1px solid var(--line-soft); }
+  .improve .cell:last-child { border-bottom: 0; }
+}
+@media (max-width: 680px) {
+  .score-grid, .adm-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ============== NAV ============== -->
+<div class="nav-wrap" id="nav-wrap">
+  <nav data-screen-label="Nav">
+    <a href="Landing Page.html" class="nav-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface</div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="Courses.html">คอร์ส</a></li>
+      <li><a href="Courses.html#bundles">ราคา</a></li>
+      <li><a href="Results.html" class="current">ผลงานนักเรียน</a></li>
+      <li><a href="Testimonials.html">รีวิว</a></li>
+      <li><a href="About.html">เกี่ยวกับ</a></li>
+      <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+      </div>
+      <a href="Login Signup.html" class="btn btn-ghost btn-sm">เข้าสู่ระบบ</a>
+      <a href="Courses.html" class="btn btn-primary btn-sm">สมัครฟรี</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============== HERO ============== -->
+<section class="page-hero" data-screen-label="01 Results Hero">
+  <div class="container-wide">
+    <div class="crumb reveal" role="navigation" aria-label="breadcrumb">
+      <a href="Landing Page.html">หน้าหลัก</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>ผลงานนักเรียน</span>
+    </div>
+    <div class="soon-banner reveal">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="tx"><b>ฟีเจอร์นี้ยังไม่เปิดใช้งาน</b><span>หน้าผลงานนักเรียนกำลังอยู่ระหว่างพัฒนา เร็วๆ นี้</span></div>
+      <a href="Landing Page.html" class="btn btn-ghost btn-sm">กลับหน้าหลัก</a>
+    </div>
+    <div class="t-eyebrow reveal"><span class="dot"></span><span>ผลงานนักเรียน · TCAS 70</span></div>
+    <h1 class="reveal" data-delay="1" style="margin-top:18px;max-width:20ch">คะแนนที่ทำได้ — <span class="grad">ของจริง</span>.</h1>
+    <p class="lede reveal" data-delay="2">รุ่นล่าสุดของพี่หมิงสอบเข้ามหาวิทยาลัยอันดับ 1 ในประเทศได้ <b>87%</b>. ทุกคะแนนด้านล่างคือนักเรียนจริง — ไม่ตัดต่อ ไม่ปั้นตัวเลข.</p>
+  </div>
+</section>
+
+<!-- ============== STATS ============== -->
+<section class="tight" style="padding-top:0">
+  <div class="container">
+    <div class="trust reveal">
+      <div class="trust-inner">
+        <div class="trust-cell"><div class="num"><span class="grad">87%</span></div><div class="label">สอบติด <b>อันดับ 1</b><br/>ที่ตั้งใจจะเข้า</div></div>
+        <div class="trust-cell"><div class="num"><span class="grad">340+</span></div><div class="label">สอบติด <b>ปี TCAS 70</b><br/>รอบ 1–3 รวม</div></div>
+        <div class="trust-cell"><div class="num"><span class="grad">+28</span></div><div class="label">คะแนนเฉลี่ย <b>ที่เพิ่มขึ้น</b><br/>หลังเรียน 1 เทอม</div></div>
+        <div class="trust-cell"><div class="num"><span class="grad">52</span></div><div class="label">นักเรียนเข้า <b>คณะแพทย์</b><br/>ตลอด 7 ปี</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SCORE SHOWCASE ============== -->
+<section style="padding-top:80px" data-screen-label="02 Score Showcase">
+  <div class="container-wide">
+    <div class="section-head">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>คะแนนรายคน</span></div>
+      <h2 class="reveal" data-delay="1">เลือกดูตาม <span class="grad">สนามสอบ</span></h2>
+      <p class="reveal" data-delay="2">กรองดูคะแนนตามวิชา — ตัวเลขที่เพิ่มขึ้นคือส่วนต่างจากคะแนนก่อนเริ่มเรียนกับพี่หมิง.</p>
+    </div>
+    <div class="filter-bar reveal" id="filter-bar" role="group" aria-label="กรองตามสนามสอบ"></div>
+    <div class="score-grid" id="score-grid"></div>
+    <div class="load-more" style="display:flex;justify-content:center;margin-top:28px"><button class="btn btn-secondary" id="load-more">ดูคะแนนเพิ่ม</button></div>
+  </div>
+</section>
+
+<!-- ============== ADMISSIONS BOARD ============== -->
+<section class="adm" data-screen-label="03 Admissions">
+  <div class="container-wide">
+    <div class="section-head">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>เข้าเรียนที่ไหนบ้าง</span></div>
+      <h2 class="reveal" data-delay="1">นักเรียนพี่หมิง <span class="grad">สอบติดที่ไหน</span></h2>
+      <p class="reveal" data-delay="2">รวมมหาวิทยาลัยและคณะที่นักเรียนสอบติด — ตัวเลขคือจำนวนนักเรียนสะสมตลอด 7 ปี.</p>
+    </div>
+    <div class="adm-grid">
+      <div class="uni-card reveal" data-delay="1">
+        <div class="top"><div class="crest" style="background:linear-gradient(135deg,oklch(0.50 0.18 20),oklch(0.62 0.20 35))">จฬ</div><div class="cnt"><div class="n">186</div><div class="l">คน</div></div></div>
+        <h3>จุฬาลงกรณ์มหาวิทยาลัย</h3>
+        <div class="facs"><span class="fac">แพทย์</span><span class="fac">วิศวะ</span><span class="fac">บัญชี</span><span class="fac">เภสัช</span><span class="fac">นิติ</span></div>
+      </div>
+      <div class="uni-card reveal" data-delay="2">
+        <div class="top"><div class="crest" style="background:linear-gradient(135deg,oklch(0.40 0.10 250),oklch(0.52 0.14 250))">มธ</div><div class="cnt"><div class="n">142</div><div class="l">คน</div></div></div>
+        <h3>มหาวิทยาลัยธรรมศาสตร์</h3>
+        <div class="facs"><span class="fac">แพทย์</span><span class="fac">วิศวะ</span><span class="fac">เศรษฐศาสตร์</span><span class="fac">SIIT</span></div>
+      </div>
+      <div class="uni-card reveal" data-delay="3">
+        <div class="top"><div class="crest" style="background:linear-gradient(135deg,oklch(0.42 0.14 150),oklch(0.55 0.16 150))">มอ</div><div class="cnt"><div class="n">98</div><div class="l">คน</div></div></div>
+        <h3>มหิดล</h3>
+        <div class="facs"><span class="fac">แพทย์</span><span class="fac">ทันตะ</span><span class="fac">เภสัช</span><span class="fac">วิทยาศาสตร์</span></div>
+      </div>
+      <div class="uni-card reveal" data-delay="1">
+        <div class="top"><div class="crest" style="background:linear-gradient(135deg,oklch(0.46 0.16 295),oklch(0.58 0.18 300))">ลก</div><div class="cnt"><div class="n">77</div><div class="l">คน</div></div></div>
+        <h3>สจล. ลาดกระบัง</h3>
+        <div class="facs"><span class="fac">วิศวะ</span><span class="fac">วิศวะคอม</span><span class="fac">สถาปัตย์</span></div>
+      </div>
+      <div class="uni-card reveal" data-delay="2">
+        <div class="top"><div class="crest" style="background:linear-gradient(135deg,oklch(0.48 0.16 50),oklch(0.60 0.18 65))">มก</div><div class="cnt"><div class="n">64</div><div class="l">คน</div></div></div>
+        <h3>เกษตรศาสตร์</h3>
+        <div class="facs"><span class="fac">วิศวะ</span><span class="fac">วิทยาศาสตร์</span><span class="fac">เศรษฐศาสตร์</span></div>
+      </div>
+      <div class="uni-card reveal" data-delay="3">
+        <div class="top"><div class="crest" style="background:linear-gradient(135deg,oklch(0.44 0.14 200),oklch(0.56 0.16 205))">มข</div><div class="cnt"><div class="n">53</div><div class="l">คน</div></div></div>
+        <h3>ขอนแก่น</h3>
+        <div class="facs"><span class="fac">แพทย์</span><span class="fac">วิศวะ</span><span class="fac">ทันตะ</span></div>
+      </div>
+    </div>
+    <div class="note-line reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      และอีกหลายสิบมหาวิทยาลัยทั่วประเทศ — รวมนักเรียนสอบติด 2,400+ คนตั้งแต่ปี 2562.
+    </div>
+  </div>
+</section>
+
+<!-- ============== IMPROVEMENT BAND ============== -->
+<section data-screen-label="04 Improvement">
+  <div class="container-wide">
+    <div class="section-head">
+      <div class="t-eyebrow reveal"><span class="dot"></span><span>ก่อน → หลัง</span></div>
+      <h2 class="reveal" data-delay="1">ไม่ใช่แค่เด็กเก่ง<br/>ที่ <span class="grad">เก่งขึ้น</span></h2>
+      <p class="reveal" data-delay="2">สิ่งที่เราภูมิใจที่สุด ไม่ใช่คะแนนสูงสุด แต่เป็นระยะทางที่นักเรียนเดินมาได้.</p>
+    </div>
+    <div class="improve reveal">
+      <div class="cell"><div class="big"><span class="grad">+28</span></div><div class="desc">คะแนนเฉลี่ยที่ <b>เพิ่มขึ้นต่อวิชา</b> หลังเรียนครบ 1 เทอม (จากคะแนนสอบจริง)</div></div>
+      <div class="cell"><div class="big"><span class="grad">3.2×</span></div><div class="desc">นักเรียนที่เริ่มจากคะแนน <b>ต่ำกว่าเกณฑ์</b> แล้วสอบติดคณะเป้าหมาย</div></div>
+      <div class="cell"><div class="big"><span class="grad">94%</span></div><div class="desc">เรียนจนจบคอร์ส — <b>อัตราเรียนจบ</b> สูงเพราะระบบ streak &amp; เป้ารายวัน</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta" data-screen-label="05 CTA">
+  <div class="container">
+    <div class="final-cta-card reveal">
+      <div class="eyebrow"><span class="dot"></span><span>รุ่น TCAS 69 เปิดแล้ว</span></div>
+      <h2>คะแนนถัดไป<br/>เป็นของน้อง.</h2>
+      <p>เริ่มเรียนฟรี 7 วัน วันนี้ — แล้วมาเป็นหนึ่งในผลงานรุ่นหน้าของพี่หมิง.</p>
+      <div class="cta-row">
+        <a href="Courses.html" class="btn btn-primary btn-lg">เริ่มเรียนฟรี 7 วัน
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="Testimonials.html" class="btn btn-glass btn-lg">อ่านรีวิวนักเรียน</a>
+      </div>
+      <div class="micro">คะแนนและผลสอบทั้งหมดมาจากนักเรียนจริง · เผยแพร่โดยได้รับอนุญาต</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============== FOOTER ============== -->
+<footer data-screen-label="Footer">
+  <div class="container-wide">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">
+          <div style="width:32px;height:32px;border-radius:10px;background:var(--grad-signature);display:flex;align-items:center;justify-content:center" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 120 120" fill="none">
+              <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            </svg>
+          </div>
+          mingsmileyface
+        </div>
+        <p>ติวเตอร์ส่วนตัวออนไลน์สำหรับเด็ก ม.ปลาย เน้นคณิต · ฟิสิกส์ เพื่อเตรียมสอบ TCAS · A-Level · TGAT · TPAT.</p>
+        <div class="socials">
+          <a href="#" aria-label="Line"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.5 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 6-3.5 8.1-6 1.5-1.6 2.2-3.3 2.2-5.1C22.5 5.7 18 2 12 2zM8 13H6V8h2v5zm3 0H9V8h2v5zm5 0h-3V8h1v4h2v1zm3-3h-2v1h2v1h-3V8h3v2z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8.2c-1.5 0-2.9-.5-4-1.4v6.4a5.6 5.6 0 1 1-4.8-5.6v2.6a3 3 0 1 0 2.2 2.9V2h2.6c0 2.4 2 4.4 4.4 4.4v1.8h-.4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 6.6c-.3-1-1-1.8-2-2.1C18.6 4 12 4 12 4s-6.6 0-8.5.5c-1 .3-1.7 1.1-2 2.1C1 8.6 1 12 1 12s0 3.4.5 5.4c.3 1 1 1.8 2 2.1C5.4 20 12 20 12 20s6.6 0 8.5-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-5.4.5-5.4s0-3.4-.5-5.4zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>คอร์ส</h5>
+        <ul>
+          <li><a href="Courses.html">TGAT2</a></li>
+          <li><a href="Courses.html">TPAT3</a></li>
+          <li><a href="Courses.html">คณิต</a></li>
+          <li><a href="Courses.html">ฟิสิกส์</a></li>
+          <li><a href="Courses.html#bundles">แพ็กเกจรวม</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>เกี่ยวกับ</h5>
+        <ul>
+          <li><a href="About.html">ติวเตอร์</a></li>
+          <li><a href="Results.html">ผลงานนักเรียน</a></li>
+          <li><a href="Testimonials.html">รีวิว</a></li>
+          <li><a href="Contact.html">ติดต่อ</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>ช่วยเหลือ</h5>
+        <ul>
+          <li><a href="Landing Page.html#faq">FAQ</a></li>
+          <li><a href="FAQ.html#pay">วิธีชำระเงิน</a></li>
+          <li><a href="Terms.html">เงื่อนไขการใช้งาน</a></li>
+          <li><a href="Privacy.html">นโยบายความเป็นส่วนตัว</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Mingsmileyface · ติวเตอร์ส่วนตัวสำหรับ ม.ปลาย</div>
+      <div>Made with ❤️ in Bangkok · v0.1</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- score data (swap with real results later) -------------------------- */
+const EXAMS = [
+  { key:'all',   label:'ทั้งหมด' },
+  { key:'tgat2', label:'TGAT2' },
+  { key:'tpat3', label:'TPAT3' },
+  { key:'math',  label:'คณิต' },
+  { key:'phys',  label:'ฟิสิกส์' }
+];
+const EXAM_LABEL = Object.fromEntries(EXAMS.map(e => [e.key, e.label]));
+const AV = ['linear-gradient(135deg,oklch(0.55 0.22 295),oklch(0.68 0.25 5))','linear-gradient(135deg,oklch(0.74 0.21 35),oklch(0.86 0.20 130))','linear-gradient(135deg,oklch(0.80 0.16 205),oklch(0.55 0.22 295))','linear-gradient(135deg,oklch(0.78 0.20 50),oklch(0.86 0.20 130))','linear-gradient(135deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))','linear-gradient(135deg,oklch(0.68 0.25 5),oklch(0.78 0.20 50))'];
+
+const SCORES = [
+  { score:96, exam:'math', delta:'+24', quote:'พี่หมิงไม่ใช่แค่สอน แต่อยู่กับเราจริงๆ ทุกวัน. คะแนนที่เคยติด C ไปอยู่ที่ A ภายในเทอมเดียว.', name:'น้องปาล์ม', school:'เตรียมอุดมศึกษา', uni:'วิศวะ จุฬาฯ', feature:true },
+  { score:95, exam:'tpat3', delta:'Top 0.5%', quote:'คอร์สกะทัดรัด ตรงประเด็น ไม่มีฟิลเลอร์ — เรียน 3 ชั่วโมงคุ้มกว่าคลิป 10 ชั่วโมง.', name:'น้องเจ', school:'สวนกุหลาบวิทยาลัย', uni:'วิศวะคอม จุฬาฯ' },
+  { score:92, exam:'tgat2', delta:'ปีล่าสุด', quote:'เคยรู้สึกว่าตัวเองโง่ หลังเรียนกับพี่หมิงรู้แล้วว่าไม่ใช่ — แค่หาวิธีคิดที่ใช่ไม่เจอ.', name:'น้องนก', school:'กรุงเทพคริสเตียน', uni:'บัญชี จุฬาฯ' },
+  { score:88, exam:'phys', delta:'+31', quote:'ฟิสิกส์ ม.6 เคยเข้าใจ 0%. เรียนกับพี่หมิง 4 เดือน A-Level ทำได้ 88 — เหมือนคนละคน.', name:'น้องตูน', school:'โยธินบูรณะ', uni:'วิศวะ ลาดกระบัง' },
+  { score:90, exam:'tgat2', delta:'รุ่นพี่แนะนำ', quote:'เป็นนักเรียนพี่หมิงตั้งแต่ ม.4 วันนี้เข้าคณะแพทย์รามาฯ — เริ่มเลย อย่ารอจนใกล้สอบ.', name:'น้องวิน', school:'มหิดลวิทยานุสรณ์', uni:'แพทย์ รามาฯ', feature:true },
+  { score:94, exam:'math', delta:'+19', quote:'โจทย์เยอะและตรงสนามจริงมาก เฉลยละเอียดทุกข้อ ถามเพิ่มได้ตลอดไม่มีเบื่อ.', name:'น้องบีม', school:'อัสสัมชัญ', uni:'วิศวะ จุฬาฯ' },
+  { score:87, exam:'phys', delta:'+33', quote:'ติวสดแล้วถามได้ทันที ไม่เข้าใจตรงไหนพี่หมิงย้อนให้ใหม่จนกว่าจะเก็ต.', name:'น้องอุ๋งอิ๋ง', school:'สามเสนวิทยาลัย', uni:'วิศวะ มธ.' },
+  { score:91, exam:'tpat3', delta:'+22', quote:'จากไม่รู้ว่าต้องเตรียมยังไง พี่หมิงวางแผนให้เป็นสเต็ป ทำตามแล้วเกินเป้า.', name:'น้องฟิล์ม', school:'สวนกุหลาบวิทยาลัย', uni:'วิศวะคอม ลาดกระบัง' },
+  { score:'27→', exam:'phys', delta:'จาก 12', quote:'ฟิสิกส์ในเทอมจากที่กลัวสุด คะแนนกลางภาคขึ้นจาก 12 เป็น 27 เต็ม 30.', name:'น้องข้าวฟ่าง', school:'ขอนแก่นวิทยายน', uni:'สอบติดแพทย์ มข.' },
+  { score:'A', exam:'math', delta:'จาก C', quote:'ปูพื้น ม.4 ใหม่หมด จากตามเพื่อนไม่ทัน ตอนนี้เป็นคนที่เพื่อนมาถาม.', name:'น้องมายด์', school:'สตรีวิทยา', uni:'เกรดเฉลี่ยขึ้น 1.3' },
+  { score:89, exam:'math', delta:'+27', quote:'เนื้อหาแน่นแต่ย่อยง่าย เพราะเริ่มจากทำไมก่อนเสมอ จำน้อยลงแต่ทำได้มากขึ้น.', name:'น้องกร', school:'เทพศิรินทร์', uni:'บัญชี ธรรมศาสตร์' },
+  { score:93, exam:'tgat2', delta:'+18', quote:'ชอบที่มี dashboard เห็น streak ทุกวัน ทำให้ไม่อยากขาดเรียน สนุกเหมือนเล่นเกม.', name:'น้องแพรว', school:'บดินทรเดชา', uni:'รัฐศาสตร์ จุฬาฯ' }
+];
+
+/* ---- state + render ------------------------------------------------------ */
+const STEP = 6;
+let activeExam = 'all';
+let shown = STEP;
+function filtered(){ return activeExam === 'all' ? SCORES : SCORES.filter(s => s.exam === activeExam); }
+
+function renderFilters(){
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = EXAMS.map(e => {
+    const ct = e.key === 'all' ? SCORES.length : SCORES.filter(s => s.exam === e.key).length;
+    return `<button class="filter-chip" role="radio" aria-pressed="${e.key===activeExam}" data-exam="${e.key}">${e.label} <span class="ct">${ct}</span></button>`;
+  }).join('');
+  bar.querySelectorAll('.filter-chip').forEach(b => b.addEventListener('click', () => {
+    activeExam = b.dataset.exam; shown = STEP; renderFilters(); renderGrid();
+  }));
+}
+
+function renderGrid(){
+  const grid = document.getElementById('score-grid');
+  const list = filtered();
+  const slice = list.slice(0, shown);
+  if (!slice.length){ grid.innerHTML = `<div class="score-empty">ยังไม่มีคะแนนในสนามนี้ — เร็วๆ นี้</div>`; }
+  else {
+    grid.innerHTML = slice.map((s, i) => {
+      const init = s.name.replace('น้อง','').slice(0,2);
+      const av = AV[i % AV.length];
+      return `<article class="testi-card${s.feature?' feature':''}" data-exam="${s.exam}" style="animation-delay:${Math.min(i,8)*45}ms">
+        <div class="score-block">
+          <div class="num">${s.score}</div>
+          <div class="meta">
+            <div class="lab">${EXAM_LABEL[s.exam]}</div>
+            <div class="subj">${typeof s.score==='number' ? s.score+' / 100' : 'ผลที่ได้'}</div>
+            <div class="delta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>${s.delta}</div>
+          </div>
+        </div>
+        <p class="quote">${s.quote}</p>
+        <div class="who">
+          <span class="av" style="background:${av}">${init}</span>
+          <span class="info"><b>${s.name}</b><span>${s.school}</span></span>
+          <span class="uni-tag"><span class="dot-uni"></span>${s.uni}</span>
+        </div>
+      </article>`;
+    }).join('');
+  }
+  document.getElementById('load-more').style.display = shown < list.length ? '' : 'none';
+}
+
+document.getElementById('load-more').addEventListener('click', () => { shown += STEP; renderGrid(); });
+renderFilters();
+renderGrid();
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="marketing-common.js?v=2"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="marketing-tweaks.jsx"></script>
+<script src="site-config.js"></script>
+</body>
+</html>

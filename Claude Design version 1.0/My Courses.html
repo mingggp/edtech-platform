@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="soft" data-home="aura">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คอร์สของฉัน — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* ============== APP SHELL ============== */
+body { overflow: hidden; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; height: 100vh; transition: grid-template-columns .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed { grid-template-columns: 76px 1fr; }
+.app.collapsed .sb-logo .word, .app.collapsed .sb-section .heading, .app.collapsed .sb-item span:not(.pill):not(.count), .app.collapsed .sb-item .count, .app.collapsed .sb-item .pill, .app.collapsed .sb-user .info, .app.collapsed .sb-user .chev { display: none; }
+.app.collapsed .sb-item { justify-content: center; padding: 10px; }
+.app.collapsed .sb-item.active::before { display: none; }
+.app.collapsed .sb-item.active { background: var(--bg-2); box-shadow: inset 2px 0 0 var(--brand-magenta); }
+.app.collapsed .sb-logo { justify-content: center; }
+.app.collapsed .sb-user { padding: 8px; justify-content: center; }
+
+.sidebar { position: relative; border-right: 1px solid var(--line-soft); padding: 22px 16px; display: flex; flex-direction: column; gap: 28px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 10; }
+.sb-toggle { position: absolute; top: 18px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; opacity: 0; transition: opacity .2s, color .15s, border-color .15s, background .15s; box-shadow: var(--shadow-1); }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible, .app.collapsed .sb-toggle { opacity: 1; }
+.sb-toggle:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.sb-toggle svg { width: 14px; height: 14px; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.app.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+.sb-logo { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: var(--fg-0); }
+.sb-logo .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--grad-signature); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px -6px oklch(0.66 0.23 295 / 0.6), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.sb-logo .mark svg { width: 75%; height: 75%; }
+.sb-logo .word { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.025em; line-height: 1; }
+.sb-logo .word small { display: block; font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; color: var(--fg-2); margin-top: 4px; text-transform: uppercase; }
+
+.sb-section { display: flex; flex-direction: column; gap: 2px; }
+.sb-section .heading { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.18em; color: var(--fg-3); font-weight: 600; text-transform: uppercase; padding: 0 10px 8px; }
+.sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--fg-1); font-size: 14px; font-weight: 500; transition: background .15s, color .15s; position: relative; }
+.sb-item svg { width: 18px; height: 18px; stroke-width: 2; }
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active { background: var(--bg-2); color: var(--fg-0); }
+.sb-item.active::before { content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 3px; background: var(--grad-signature); border-radius: 0 4px 4px 0; }
+.sb-item .count { margin-left: auto; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.sb-item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--grad-signature); color: #fff; }
+
+.sb-user { margin-top: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1); display: flex; gap: 12px; align-items: center; }
+.sb-user .av { width: 38px; height: 38px; border-radius: 50%; background: var(--grad-cool); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; position: relative; }
+.sb-user .av::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--bg-1); }
+.sb-user .info { line-height: 1.3; flex: 1; min-width: 0; }
+.sb-user .info b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0); letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user .info span { font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono"; }
+.sb-user .chev { color: var(--fg-3); }
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.crumb a { color: var(--fg-2); text-decoration: none; transition: color .15s; }
+.crumb a:hover { color: var(--fg-0); }
+.crumb .sep { color: var(--fg-3); }
+
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.search-trigger { display: flex; align-items: center; gap: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); padding: 0 12px; height: 38px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; transition: color .15s, border-color .15s, background .15s; }
+.search-trigger:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.search-trigger svg { color: var(--fg-2); }
+.search-trigger .kbd { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.search-trigger .label { display: none; }
+@media (min-width: 900px) { .search-trigger .label { display: inline; min-width: 140px; text-align: left; } }
+
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; position: relative; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-magenta); border: 2px solid var(--bg-1); }
+.top-av { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-1); cursor: pointer; }
+.top-av .av { width: 30px; height: 30px; border-radius: 50%; background: var(--grad-cool); font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.top-av .name { font-size: 13px; font-weight: 500; }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+
+/* ============== PAGE ============== */
+.page { padding: 32px 32px 80px; max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; position: relative; }
+.page::before { content: ""; position: absolute; inset: 0 -32px 65% -32px; background: linear-gradient(180deg, oklch(0.66 0.23 295 / 0.06), transparent 80%); z-index: -1; pointer-events: none; }
+
+/* ============== PAGE HEAD ============== */
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.page-head .titles { display: flex; flex-direction: column; gap: 8px; }
+.page-head .eyebrow { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); display: flex; align-items: center; gap: 10px; }
+.page-head .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-magenta); box-shadow: 0 0 0 4px oklch(0.68 0.25 5 / 0.18); }
+.page-head h1 { font-family: var(--vibe-disp, var(--font-display)); font-weight: 700; font-size: clamp(28px, 2.8vw, 38px); letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0); }
+.page-head h1 .grad { background: var(--grad-signature); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* stat strip */
+.stat-strip { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat-pill { display: flex; flex-direction: column; gap: 2px; padding: 12px 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg-1); min-width: 96px; }
+.stat-pill b { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--fg-0); line-height: 1; }
+.stat-pill span { font-size: 11.5px; color: var(--fg-2); }
+.stat-pill.accent { background: var(--grad-signature); border-color: transparent; box-shadow: 0 10px 28px -12px oklch(0.66 0.23 295 / 0.55); }
+.stat-pill.accent b, .stat-pill.accent span { color: #fff; }
+.stat-pill.accent span { opacity: 0.86; }
+
+/* ============== CONTINUE HERO ============== */
+.section-title { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.section-title h2 { font-family: var(--font-display); font-weight: 600; font-size: 20px; letter-spacing: -0.015em; color: var(--fg-0); display: flex; align-items: center; gap: 12px; }
+.section-title h2 .num { font-family: "JetBrains Mono"; font-size: 12px; color: var(--fg-3); font-weight: 500; letter-spacing: 0.1em; padding: 4px 10px; background: var(--bg-2); border: 1px solid var(--line-soft); border-radius: 99px; }
+.section-title .hint { font-size: 12.5px; color: var(--fg-2); }
+
+.resume { display: grid; grid-template-columns: 0.95fr 1fr; gap: 0; border-radius: 28px; overflow: hidden; border: 1px solid var(--line); min-height: 300px; max-width: 880px; }
+.resume-thumb { position: relative; overflow: hidden; }
+.resume-thumb::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.15) 1px, transparent 1px); background-size: 26px 26px; mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent); opacity: 0.5; }
+.resume-thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, oklch(0 0 0 / 0.45)); }
+.resume-thumb .glyph { position: absolute; right: -24px; top: -40px; font-family: var(--font-display); font-weight: 800; font-size: 320px; color: oklch(0.99 0.005 285 / 0.18); letter-spacing: -0.05em; line-height: 0.8; user-select: none; }
+.resume-thumb .badge { position: absolute; top: 20px; left: 20px; display: flex; gap: 8px; z-index: 1; }
+.resume-thumb .badge span { background: oklch(0.16 0.014 285 / 0.82); border: 0; color: #fff; font-size: 10.5px; letter-spacing: 0.08em; font-weight: 600; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; }
+.resume-thumb .play { position: absolute; left: 28px; bottom: 28px; z-index: 1; display: flex; align-items: center; gap: 12px; color: #fff; }
+.resume-thumb .play .pbtn { width: 56px; height: 56px; border-radius: 50%; background: oklch(0.99 0.005 285 / 0.2); backdrop-filter: blur(14px); border: 1px solid oklch(0.99 0.005 285 / 0.34); display: flex; align-items: center; justify-content: center; }
+.resume-thumb .play .pbtn svg { width: 22px; height: 22px; margin-left: 3px; }
+.resume-thumb .play .lap { font-size: 12.5px; line-height: 1.3; }
+.resume-thumb .play .lap b { font-family: var(--font-display); font-weight: 600; font-size: 14px; display: block; }
+.resume-thumb .play .lap span { opacity: 0.82; }
+
+.resume-body { padding: 34px 38px; background: var(--bg-1); display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+.resume-body .cat { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brand-magenta); font-weight: 600; }
+.resume-body h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.025em; line-height: 1.12; color: var(--fg-0); }
+.resume-body .next-up { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: var(--fg-1); }
+.resume-body .next-up .ic { width: 30px; height: 30px; border-radius: 9px; background: var(--bg-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--fg-2); flex-shrink: 0; }
+.resume-body .next-up .ic svg { width: 15px; height: 15px; }
+.resume-body .next-up b { color: var(--fg-0); font-weight: 600; }
+.resume-prog { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.resume-prog .pl { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--fg-2); }
+.resume-prog .pl b { color: var(--fg-0); font-weight: 600; font-family: "JetBrains Mono"; }
+.resume-prog .track { height: 8px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.resume-prog .track i { display: block; height: 100%; border-radius: 99px; background: var(--grad-signature); }
+.resume-body .cta-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
+/* ============== FILTER BAR ============== */
+.filter-bar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.chips { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+.chip { appearance: none; border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-1); padding: 8px 16px; border-radius: 99px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: color .15s, background .15s, border-color .15s; display: inline-flex; align-items: center; gap: 8px; }
+.chip:hover { color: var(--fg-0); border-color: var(--fg-2); }
+.chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--subj-c, var(--fg-3)); }
+.chip[aria-pressed="true"] { color: var(--fg-0); border-color: transparent; background: var(--bg-3); box-shadow: var(--shadow-1); }
+.chip[aria-pressed="true"].math { background: oklch(from var(--subj-math) l c h / 0.16); border-color: oklch(from var(--subj-math) l c h / 0.4); color: var(--subj-math-fg); }
+.chip[aria-pressed="true"].phys { background: oklch(from var(--subj-phys) l c h / 0.16); border-color: oklch(from var(--subj-phys) l c h / 0.4); color: var(--subj-phys-fg); }
+.chip[aria-pressed="true"].tpat3 { background: oklch(from var(--subj-tpat) l c h / 0.16); border-color: oklch(from var(--subj-tpat) l c h / 0.4); color: var(--subj-tpat-fg); }
+.chip[aria-pressed="true"].tgat { background: oklch(from var(--subj-tgat) l c h / 0.16); border-color: oklch(from var(--subj-tgat) l c h / 0.45); color: var(--subj-tgat-fg); }
+.chip.math .dot { background: var(--subj-math); } .chip.phys .dot { background: var(--subj-phys); } .chip.tpat3 .dot { background: var(--subj-tpat); } .chip.tgat .dot { background: var(--subj-tgat); }
+
+.segment { display: inline-flex; padding: 4px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 12px; gap: 2px; margin-left: auto; }
+.segment button { appearance: none; border: 0; background: transparent; color: var(--fg-2); padding: 8px 16px; border-radius: 8px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: color .15s, background .15s; white-space: nowrap; }
+.segment button:hover { color: var(--fg-0); }
+.segment button[aria-pressed="true"] { background: var(--bg-3); color: var(--fg-0); box-shadow: var(--shadow-1); }
+
+/* ============== LIBRARY GRID ============== */
+.result-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; color: var(--fg-2); flex-wrap: wrap; gap: 12px; }
+.result-meta b { color: var(--fg-0); font-weight: 600; }
+
+.lib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.lc { border-radius: 20px; border: 1px solid var(--line); background: var(--bg-1); overflow: hidden; display: flex; flex-direction: column; transition: transform .26s cubic-bezier(.2,.8,.2,1), box-shadow .26s, border-color .2s; text-decoration: none; color: inherit; }
+.lc:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--glass-line-strong); }
+.lc:hover .lc-thumb-inner { transform: scale(1.04); }
+.lc:hover .lc-play { opacity: 1; transform: scale(1); }
+.lc-thumb { aspect-ratio: 16/9; position: relative; overflow: hidden; }
+.lc-thumb-inner { position: absolute; inset: 0; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.lc-thumb-inner::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.15) 1px, transparent 1px); background-size: 22px 22px; mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent); opacity: 0.5; }
+.lc-thumb-inner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, oklch(0 0 0 / 0.5)); }
+.lc-thumb .glyph { position: absolute; right: -8px; top: -20px; font-family: var(--font-display); font-weight: 800; font-size: 150px; color: oklch(0.99 0.005 285 / 0.16); letter-spacing: -0.05em; line-height: 0.8; }
+.lc-thumb .tag { position: absolute; top: 14px; left: 14px; background: oklch(0.16 0.014 285 / 0.82); border: 0; color: #fff; font-size: 10.5px; letter-spacing: 0.08em; font-weight: 600; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; z-index: 1; }
+.lc-thumb .done { position: absolute; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(115deg, oklch(0.62 0.18 150), oklch(0.74 0.18 135)); color: #fff; font-size: 10.5px; letter-spacing: 0.06em; font-weight: 700; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; z-index: 1; }
+.lc-thumb .done svg { width: 12px; height: 12px; }
+.lc-play { position: absolute; left: 16px; bottom: 16px; z-index: 1; width: 44px; height: 44px; border-radius: 50%; background: oklch(0.99 0.005 285 / 0.2); backdrop-filter: blur(14px); border: 1px solid oklch(0.99 0.005 285 / 0.34); display: flex; align-items: center; justify-content: center; color: #fff; opacity: 0; transform: scale(0.8); transition: opacity .22s, transform .22s; }
+.lc-play svg { width: 17px; height: 17px; margin-left: 2px; }
+.lc-thumb .name { position: absolute; bottom: 16px; left: 72px; right: 16px; color: #fff; z-index: 1; }
+.lc-thumb .name b { font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.15; display: block; }
+
+.lc-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.lc-next { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-1); }
+.lc-next .ic { color: var(--fg-3); flex-shrink: 0; }
+.lc-next .ic svg { width: 14px; height: 14px; }
+.lc-next .t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-next .t b { color: var(--fg-0); font-weight: 600; }
+.lc-prog { display: flex; flex-direction: column; gap: 7px; margin-top: auto; }
+.lc-prog .pl { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: var(--fg-2); }
+.lc-prog .pl .pct { font-family: "JetBrains Mono"; font-weight: 600; color: var(--fg-0); font-size: 13px; }
+.lc-prog .track { height: 7px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.lc-prog .track i { display: block; height: 100%; border-radius: 99px; background: var(--subj-grad, var(--grad-signature)); }
+.lc.s-math .lc-prog .track i { background: var(--subj-math-grad); }
+.lc.s-phys .lc-prog .track i { background: var(--subj-phys-grad); }
+.lc.s-tpat3 .lc-prog .track i { background: var(--subj-tpat-grad); }
+.lc.s-tgat .lc-prog .track i { background: var(--subj-tgat-grad); }
+.lc.done-card .lc-prog .track i { background: linear-gradient(115deg, oklch(0.62 0.18 150), oklch(0.74 0.18 135)); }
+.lc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
+.lc-foot .resume-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--brand-magenta); }
+.lc-foot .resume-link svg { width: 14px; height: 14px; }
+.lc.done-card .lc-foot .resume-link { color: var(--success); }
+.lc-foot .ch { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+
+/* browse CTA card */
+.lc-browse { border-radius: 20px; border: 1px dashed var(--line); background: oklch(from var(--bg-1) l c h / 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 32px; text-decoration: none; color: inherit; min-height: 240px; transition: border-color .2s, background .2s, transform .2s; }
+.lc-browse:hover { border-color: var(--brand-magenta); background: var(--bg-1); transform: translateY(-3px); }
+.lc-browse .plus { width: 56px; height: 56px; border-radius: 16px; background: var(--bg-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--brand-magenta); }
+.lc-browse .plus svg { width: 24px; height: 24px; }
+.lc-browse b { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--fg-0); }
+.lc-browse span { font-size: 12.5px; color: var(--fg-2); }
+
+/* dim filtered-out */
+.lc.hide, .lc-browse.hide { display: none; }
+
+/* ============== EMPTY ============== */
+.empty { display: none; flex-direction: column; align-items: center; text-align: center; padding: 72px 40px; border-radius: 24px; border: 1px dashed var(--line); background: var(--bg-1); gap: 14px; }
+.empty.show { display: flex; }
+.empty .illus { width: 120px; height: 120px; border-radius: 32px; background: linear-gradient(160deg, oklch(0.94 0.018 295), oklch(0.97 0.012 285)); display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); }
+:root[data-theme="petronas"] .empty .illus, :root[data-theme="dark"] .empty .illus { background: linear-gradient(160deg, oklch(0.22 0.04 285), oklch(0.16 0.02 285)); }
+.empty .illus svg { width: 52px; height: 52px; color: var(--brand-magenta); opacity: 0.7; }
+.empty h3 { font-family: var(--font-display); font-weight: 600; font-size: 21px; letter-spacing: -0.015em; color: var(--fg-0); margin-top: 6px; }
+.empty p { color: var(--fg-2); font-size: 14px; line-height: 1.55; max-width: 42ch; }
+
+.dash-foot { margin-top: 12px; padding-top: 24px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; gap: 16px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.04em; flex-wrap: wrap; }
+
+/* subject thumb recipes */
+.thumb-math { background: var(--subj-math-grad); }
+.thumb-phys { background: var(--subj-phys-grad); }
+.thumb-tpat3 { background: var(--subj-tpat-grad); }
+.thumb-tgat { background: var(--subj-tgat-grad); }
+
+/* ============== COMMAND PALETTE ============== */
+.cmdk-backdrop { position: fixed; inset: 0; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; opacity: 0; transition: opacity .2s; }
+.cmdk-backdrop.open { display: flex; opacity: 1; }
+.cmdk { width: min(640px, 92vw); background: var(--bg-1); border: 1px solid var(--glass-line-strong); border-radius: 18px; overflow: hidden; box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.6); transform: translateY(-12px) scale(0.98); opacity: 0; transition: transform .22s cubic-bezier(.2,.8,.2,1), opacity .22s; }
+.cmdk-backdrop.open .cmdk { transform: translateY(0) scale(1); opacity: 1; }
+.cmdk-input-row { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line-soft); }
+.cmdk-input-row svg { color: var(--fg-2); }
+.cmdk-input-row input { flex: 1; background: transparent; border: 0; color: var(--fg-0); font: inherit; font-size: 16px; outline: none; }
+.cmdk-input-row input::placeholder { color: var(--fg-3); }
+.cmdk-input-row .esc { font-family: "JetBrains Mono"; font-size: 10.5px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--fg-2); }
+.cmdk-body { max-height: 50vh; overflow-y: auto; padding: 8px; }
+.cmdk-group { padding: 8px 4px; }
+.cmdk-group h5 { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); font-weight: 600; padding: 4px 10px 8px; }
+.cmdk-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--fg-1); cursor: pointer; font-size: 14px; transition: background .12s, color .12s; text-decoration: none; }
+.cmdk-item:hover, .cmdk-item.active { background: var(--bg-2); color: var(--fg-0); }
+.cmdk-item .icon { width: 28px; height: 28px; border-radius: 8px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; color: var(--fg-2); flex-shrink: 0; }
+.cmdk-item:hover .icon, .cmdk-item.active .icon { background: var(--bg-3); color: var(--fg-0); }
+.cmdk-item .label { flex: 1; }
+.cmdk-item .label small { display: block; color: var(--fg-2); font-size: 12px; margin-top: 2px; }
+.cmdk-item .meta { font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cmdk-foot { padding: 10px 18px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); }
+.cmdk-foot .keys { display: flex; gap: 14px; }
+.cmdk-foot .keys span { display: inline-flex; align-items: center; gap: 4px; }
+.cmdk-foot kbd { background: var(--bg-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-family: inherit; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1280px) {
+  .lib-grid { grid-template-columns: 1fr 1fr; }
+  .resume { grid-template-columns: 1fr; }
+  .resume-thumb { aspect-ratio: 16/9; min-height: 220px; }
+}
+@media (max-width: 980px) {
+  .app, .app.collapsed { grid-template-columns: 72px 1fr; }
+  .sb-logo .word, .sb-section .heading, .sb-item span:not(.pill):not(.count), .sb-item .count, .sb-item .pill, .sb-user .info, .sb-user .chev { display: none; }
+  .sb-item { justify-content: center; }
+  .sb-toggle { display: none; }
+}
+@media (max-width: 720px) {
+  .lib-grid { grid-template-columns: 1fr; }
+  .page { padding: 20px 16px 60px; }
+  .segment { margin-left: 0; }
+  .search-trigger .label, .search-trigger .kbd { display: none; }
+  .search-trigger { padding: 0; width: 38px; justify-content: center; }
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="app" data-screen-label="01 My Courses">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <a href="Dashboard.html" class="sb-logo">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="Dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>หน้าหลัก</span>
+      </a>
+      <a class="sb-item active" href="My Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>คอร์สของฉัน</span>
+        <span class="count">7</span>
+      </a>
+      <a class="sb-item" href="Exams.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>
+        <span>ข้อสอบ</span>
+        <span class="pill">3 ใหม่</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg>
+        <span>โน้ตของฉัน</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 4z"/><path d="M9 4V2h6v2"/></svg>
+        <span>คอร์สที่บันทึก</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>คอร์สทั้งหมด</span>
+        <span class="count">18</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg>
+        <span>อันดับ</span>
+      </a>
+      <a class="sb-item" href="Public Profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+        <span>เพื่อน</span>
+        <span class="count">42</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <span>ความสำเร็จ</span>
+      </a>
+    </nav>
+
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item" href="Settings.html#billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        <span>การชำระเงิน</span>
+      </a>
+      <a class="sb-item" href="Settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+        <span>โปรไฟล์ & ตั้งค่า</span>
+      </a>
+    </nav>
+
+    <div class="sb-user">
+      <div class="av">ปม</div>
+      <div class="info"><b>น้องปาล์ม</b><span>LV 14 · 2,840 XP</span></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+
+    <header class="topbar">
+      <div class="crumb">
+        <a href="Dashboard.html">หน้าหลัก</a>
+        <span class="sep">/</span>
+        <b>คอร์สของฉัน</b>
+      </div>
+
+      <div class="top-actions">
+        <button class="search-trigger" id="open-cmdk" aria-label="ค้นหา (⌘K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="label">ค้นหาในคลังของฉัน...</span>
+          <span class="kbd">⌘K</span>
+        </button>
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="top-av">
+          <div class="av">ปม</div>
+          <div class="name">น้องปาล์ม</div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+    <div class="page" id="page">
+
+      <!-- ===== PAGE HEAD ===== -->
+      <section class="page-head">
+        <div class="titles">
+          <div class="eyebrow">คลังของฉัน · TCAS 70</div>
+          <h1>คอร์ส<span class="grad">ของฉัน</span></h1>
+        </div>
+        <div class="stat-strip">
+          <div class="stat-pill accent"><b>7</b><span>คอร์สที่ซื้อแล้ว</span></div>
+          <div class="stat-pill"><b>5</b><span>กำลังเรียน</span></div>
+          <div class="stat-pill"><b>2</b><span>เรียนจบแล้ว</span></div>
+          <div class="stat-pill"><b>48</b><span>ชม. เรียนสะสม</span></div>
+        </div>
+      </section>
+
+      <!-- ===== CONTINUE / RESUME ===== -->
+      <section>
+        <div class="section-title">
+          <h2>เรียนต่อจากที่ค้างไว้</h2>
+          <div class="hint">ดูล่าสุดเมื่อวานนี้ · 19:42 น.</div>
+        </div>
+
+        <div class="resume">
+          <div class="resume-thumb thumb-math">
+            <div class="badge"><span>คณิต · A-Level</span></div>
+            <span class="glyph">∫</span>
+            <a href="Learn.html" class="play" aria-label="เรียนต่อ">
+              <span class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+              <span class="lap"><b>เรียนต่อบทที่ 8</b><span>เหลืออีก 14 บทจะจบคอร์ส</span></span>
+            </a>
+          </div>
+          <div class="resume-body">
+            <div class="cat">คณิต · A-LEVEL</div>
+            <h2>แคลคูลัส · ขั้นเทพ</h2>
+            <div class="next-up">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <span>ต่อที่ <b>ลิมิตของฟังก์ชันที่ซับซ้อน</b></span>
+            </div>
+            <div class="resume-prog">
+              <div class="pl"><span>ความคืบหน้า</span><b>42%</b></div>
+              <div class="track"><i style="width:42%"></i></div>
+            </div>
+            <div class="cta-row">
+              <a href="Learn.html" class="btn btn-primary">
+                เรียนต่อ
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+              </a>
+              <a href="Course Contents.html?c=amath-calculus" class="btn btn-ghost">ดูเนื้อหาคอร์ส</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== FILTER + GRID ===== -->
+      <section>
+        <div class="section-title">
+          <h2>ทั้งหมดในคลัง</h2>
+        </div>
+
+        <div class="filter-bar" style="margin-bottom:20px">
+          <div class="chips" id="subject-chips" role="group" aria-label="กรองตามวิชา">
+            <button class="chip" aria-pressed="true" data-subject="all">ทั้งหมด</button>
+            <button class="chip math" aria-pressed="false" data-subject="math"><span class="dot"></span>คณิต</button>
+            <button class="chip phys" aria-pressed="false" data-subject="phys"><span class="dot"></span>ฟิสิกส์</button>
+            <button class="chip tpat3" aria-pressed="false" data-subject="tpat3"><span class="dot"></span>TPAT3</button>
+            <button class="chip tgat" aria-pressed="false" data-subject="tgat"><span class="dot"></span>TGAT2</button>
+          </div>
+          <div class="segment" id="status-segment" role="group" aria-label="สถานะการเรียน">
+            <button aria-pressed="true" data-status="all">ทั้งหมด</button>
+            <button aria-pressed="false" data-status="learning">กำลังเรียน</button>
+            <button aria-pressed="false" data-status="done">เรียนจบแล้ว</button>
+          </div>
+        </div>
+
+        <div class="lib-grid" id="lib-grid">
+
+          <!-- 1 · คณิต A-Level · 42% -->
+          <a href="Course Contents.html?c=amath-calculus" class="lc s-math" data-subject="math" data-status="learning">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-math">
+              <span class="glyph">∫</span><span class="tag">คณิต · A-Level</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>แคลคูลัส · ขั้นเทพ</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="t">ต่อที่ <b>ลิมิตของฟังก์ชันที่ซับซ้อน</b></span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>บทที่ 8 จาก 24</span><span class="pct">42%</span></div>
+                <div class="track"><i style="width:42%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">เรียนต่อ <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span><span class="ch">เรียนล่าสุด · เมื่อวาน</span></div>
+            </div>
+          </a>
+
+          <!-- 2 · TGAT2 · 88% -->
+          <a href="Course Contents.html?c=tgat2-logic" class="lc s-tgat" data-subject="tgat" data-status="learning">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-tgat">
+              <span class="glyph">∴</span><span class="tag">TGAT2 · การคิดอย่างมีเหตุผล</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>ตะลุยโจทย์ TGAT2</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="t">ต่อที่ <b>พาร์ตการคิดอย่างมีเหตุผล</b></span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>บทที่ 18 จาก 20 · เกือบจบ</span><span class="pct">88%</span></div>
+                <div class="track"><i style="width:88%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">เรียนต่อ <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span><span class="ch">เรียนล่าสุด · 2 วันก่อน</span></div>
+            </div>
+          </a>
+
+          <!-- 3 · ฟิสิกส์ · 6% -->
+          <a href="Course Contents.html?c=aphys-fluid" class="lc s-phys" data-subject="phys" data-status="learning">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-phys">
+              <span class="glyph">⌇</span><span class="tag">ฟิสิกส์ · A-Level</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>กลศาสตร์ของไหล</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="t">เริ่มที่ <b>ความดันและแรงพยุง</b></span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>บทที่ 1 จาก 18 · เพิ่งเริ่ม</span><span class="pct">6%</span></div>
+                <div class="track"><i style="width:6%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">เริ่มเรียน <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span><span class="ch">ซื้อเมื่อ 3 วันก่อน</span></div>
+            </div>
+          </a>
+
+          <!-- 4 · คณิต · 100% -->
+          <a href="Course Contents.html?c=math-seq" class="lc s-math done-card" data-subject="math" data-status="done">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-math">
+              <span class="glyph">Σ</span><span class="tag">คณิต · ม.6</span>
+              <span class="done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>จบแล้ว</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>ลำดับและอนุกรม</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span><span class="t">เรียนครบทุกบทแล้ว · ทบทวนได้ไม่จำกัด</span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>14 จาก 14 บท</span><span class="pct">100%</span></div>
+                <div class="track"><i style="width:100%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">ทบทวน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><span class="ch">จบเมื่อ 1 สัปดาห์ก่อน</span></div>
+            </div>
+          </a>
+
+          <!-- 5 · TPAT3 · 28% -->
+          <a href="Course Contents.html?c=tpat3-latest" class="lc s-tpat3" data-subject="tpat3" data-status="learning">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-tpat3">
+              <span class="glyph">⚙</span><span class="tag">TPAT3 · ความถนัดวิทย์–เทคโนฯ</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>ตะลุยโจทย์ TPAT3</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="t">ต่อที่ <b>วิเคราะห์เชิงกล & ไฟฟ้า</b></span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>บทที่ 4 จาก 16</span><span class="pct">28%</span></div>
+                <div class="track"><i style="width:28%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">เรียนต่อ <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span><span class="ch">เรียนล่าสุด · 4 วันก่อน</span></div>
+            </div>
+          </a>
+
+          <!-- 6 · ฟิสิกส์ · 100% -->
+          <a href="Course Contents.html?c=phys-electric" class="lc s-phys done-card" data-subject="phys" data-status="done">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-phys">
+              <span class="glyph">⇌</span><span class="tag">ฟิสิกส์ · ม.5</span>
+              <span class="done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>จบแล้ว</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>ไฟฟ้าสถิตและกระแส</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span><span class="t">เรียนครบทุกบทแล้ว · ดูสรุปได้</span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>16 จาก 16 บท</span><span class="pct">100%</span></div>
+                <div class="track"><i style="width:100%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">ทบทวน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><span class="ch">จบเมื่อ 2 สัปดาห์ก่อน</span></div>
+            </div>
+          </a>
+
+          <!-- 7 · คณิต ม.6 · 15% -->
+          <a href="Course Contents.html?c=math-stats" class="lc s-math" data-subject="math" data-status="learning">
+            <div class="lc-thumb"><div class="lc-thumb-inner thumb-math">
+              <span class="glyph">π</span><span class="tag">คณิต · ม.6</span>
+            </div>
+            <span class="lc-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span>
+            <div class="name"><b>ความน่าจะเป็นและสถิติ</b></div></div>
+            <div class="lc-body">
+              <div class="lc-next"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="t">ต่อที่ <b>กฎการนับเบื้องต้น</b></span></div>
+              <div class="lc-prog">
+                <div class="pl"><span>บทที่ 2 จาก 14</span><span class="pct">15%</span></div>
+                <div class="track"><i style="width:15%"></i></div>
+              </div>
+              <div class="lc-foot"><span class="resume-link">เรียนต่อ <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg></span><span class="ch">เรียนล่าสุด · 5 วันก่อน</span></div>
+            </div>
+          </a>
+
+          <!-- browse CTA -->
+          <a href="Browse Courses.html" class="lc-browse" id="browse-cta">
+            <div class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+            <b>หาคอร์สเพิ่ม</b>
+            <span>มีอีก 18 คอร์สใน Mingsmileyface<br/>ให้เลือกเรียน</span>
+          </a>
+
+        </div>
+
+        <!-- empty state -->
+        <div class="empty" id="empty-state">
+          <div class="illus">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h6"/></svg>
+          </div>
+          <h3 id="empty-title">ยังไม่มีคอร์สในมุมนี้</h3>
+          <p id="empty-desc">ลองเปลี่ยนตัวกรอง — หรือไปเลือกคอร์สใหม่มาเพิ่มในคลังของคุณ.</p>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-ghost btn-sm" id="reset-from-empty">ล้างตัวกรอง</button>
+            <a href="Browse Courses.html" class="btn btn-primary btn-sm">เลือกคอร์สเพิ่ม</a>
+          </div>
+        </div>
+      </section>
+
+      <div class="dash-foot">
+        <div>© 2026 MINGSMILEYFACE · v0.2 MY COURSES</div>
+        <div>คลังคอร์สที่ซื้อแล้ว · เรียนซ้ำไม่จำกัด</div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== COMMAND PALETTE ============== -->
+<div class="cmdk-backdrop" id="cmdk-backdrop" role="dialog" aria-modal="true" aria-label="ค้นหา">
+  <div class="cmdk">
+    <div class="cmdk-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="cmdk-input" type="text" placeholder="ค้นหาคอร์สในคลัง บทเรียน หรือคำสั่ง..." />
+      <span class="esc">ESC</span>
+    </div>
+    <div class="cmdk-body">
+      <div class="cmdk-group">
+        <h5>เรียนต่อ</h5>
+        <a href="Learn.html" class="cmdk-item active">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4c-2 0-3 1-3 3v10c0 2-1 3-3 3"/><path d="M4 12h6M7 9v6"/></svg></div>
+          <div class="label">แคลคูลัส · ขั้นเทพ<small>คณิต A-Level · 42% · ต่อบทที่ 8</small></div>
+          <span class="meta">↵</span>
+        </a>
+        <a href="Learn.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 0-4 4v12a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/></svg></div>
+          <div class="label">ตะลุยโจทย์ TGAT2<small>TGAT2 · 88% · เกือบจบแล้ว</small></div>
+        </a>
+        <a href="Learn.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 4 10 8 11 4-1 8-6 8-11V5l-8-3z"/></svg></div>
+          <div class="label">ตะลุยโจทย์ TPAT3<small>TPAT3 · 28% · ต่อบทที่ 4</small></div>
+        </a>
+      </div>
+      <div class="cmdk-group">
+        <h5>คำสั่งด่วน</h5>
+        <a href="Browse Courses.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div class="label">หาคอร์สเพิ่ม<small>เปิดหน้าคอร์สทั้งหมด</small></div>
+        </a>
+        <a href="Dashboard.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+          <div class="label">ไปหน้า Dashboard<small>กลับไปหน้าหลัก</small></div>
+        </a>
+        <a href="Exams.html" class="cmdk-item">
+          <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+          <div class="label">ไปทำข้อสอบ<small>3 ชุดใหม่รออยู่</small></div>
+        </a>
+      </div>
+    </div>
+    <div class="cmdk-foot">
+      <div class="keys">
+        <span><kbd>↑</kbd><kbd>↓</kbd> เลื่อน</span>
+        <span><kbd>↵</kbd> เลือก</span>
+        <span><kbd>esc</kbd> ปิด</span>
+      </div>
+      <div>powered by ⌘K</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============== THEME ==============
+const root = document.documentElement;
+const btnDark = document.getElementById('btn-dark');
+const btnLight = document.getElementById('btn-light');
+function setTheme(t){
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', (t === 'petronas' || t === 'classic-dark' || t === 'dark'));
+  btnLight.setAttribute('aria-pressed', (t === 'petronas-light' || t === 'classic-light' || t === 'light'));
+  try{ localStorage.setItem('ming-theme', t); }catch(e){}
+}
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark' ? 'petronas' : saved === 'light' ? 'petronas-light' : (saved || 'petronas-light')); }catch(e){}
+
+// ============== SIDEBAR COLLAPSE ==============
+(function(){
+  const app = document.querySelector('.app');
+  const toggle = document.getElementById('sb-toggle');
+  if(!app || !toggle) return;
+  try { if(localStorage.getItem('ming-sidebar') === 'collapsed') app.classList.add('collapsed'); } catch(e){}
+  toggle.addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    try { localStorage.setItem('ming-sidebar', app.classList.contains('collapsed') ? 'collapsed' : 'expanded'); } catch(e){}
+  });
+})();
+
+// ============== LIBRARY FILTERS ==============
+const SUBJECT_LABELS = { all: 'ทั้งหมด', math: 'คณิต', phys: 'ฟิสิกส์', tpat3: 'TPAT3', tgat: 'TGAT2' };
+const STATUS_LABELS = { all: 'ทั้งหมด', learning: 'กำลังเรียน', done: 'เรียนจบแล้ว' };
+const libState = { subject: 'all', status: 'all' };
+
+const libGrid = document.getElementById('lib-grid');
+const libCount = document.getElementById('lib-count');
+const browseCta = document.getElementById('browse-cta');
+const emptyState = document.getElementById('empty-state');
+const emptyTitle = document.getElementById('empty-title');
+const emptyDesc = document.getElementById('empty-desc');
+
+function applyLibFilters(){
+  const cards = Array.from(libGrid.querySelectorAll('.lc'));
+  let visible = 0;
+  cards.forEach(c => {
+    const ms = libState.subject === 'all' || libState.subject === c.dataset.subject;
+    const mt = libState.status === 'all' || libState.status === c.dataset.status;
+    if (ms && mt) { c.classList.remove('hide'); visible++; }
+    else c.classList.add('hide');
+  });
+
+  if (libCount) libCount.textContent = visible + ' คอร์ส';
+
+  // hide browse CTA only when an empty filtered result
+  if (visible === 0) {
+    browseCta.classList.add('hide');
+    emptyState.classList.add('show');
+    const s = libState.subject !== 'all' ? SUBJECT_LABELS[libState.subject] : '';
+    const st = libState.status !== 'all' ? STATUS_LABELS[libState.status] : '';
+    if (s && st) { emptyTitle.textContent = `ไม่มีคอร์ส ${s} ที่ ${st}`; }
+    else if (s) { emptyTitle.textContent = `ยังไม่มีคอร์ส ${s} ในคลัง`; }
+    else if (st) { emptyTitle.textContent = `ไม่มีคอร์สที่ ${st}`; }
+    else { emptyTitle.textContent = 'ยังไม่มีคอร์สในมุมนี้'; }
+    emptyDesc.textContent = libState.subject !== 'all'
+      ? `คุณยังไม่ได้ซื้อคอร์ส ${SUBJECT_LABELS[libState.subject]} — ไปเลือกดูในหน้าคอร์สทั้งหมดได้เลย.`
+      : 'ลองเปลี่ยนตัวกรอง — หรือไปเลือกคอร์สใหม่มาเพิ่มในคลังของคุณ.';
+  } else {
+    browseCta.classList.toggle('hide', libState.subject !== 'all' || libState.status !== 'all');
+    emptyState.classList.remove('show');
+  }
+}
+
+document.querySelectorAll('#subject-chips .chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#subject-chips .chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    libState.subject = btn.dataset.subject;
+    applyLibFilters();
+  });
+});
+document.querySelectorAll('#status-segment button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#status-segment button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    libState.status = btn.dataset.status;
+    applyLibFilters();
+  });
+});
+document.getElementById('reset-from-empty').addEventListener('click', () => {
+  libState.subject = 'all'; libState.status = 'all';
+  document.querySelectorAll('#subject-chips .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.subject === 'all' ? 'true' : 'false'));
+  document.querySelectorAll('#status-segment button').forEach(b => b.setAttribute('aria-pressed', b.dataset.status === 'all' ? 'true' : 'false'));
+  applyLibFilters();
+});
+
+applyLibFilters();
+
+// ============== COMMAND PALETTE ==============
+const cmdk = document.getElementById('cmdk-backdrop');
+const cmdkInput = document.getElementById('cmdk-input');
+function openCmdk() { cmdk.classList.add('open'); setTimeout(() => cmdkInput.focus(), 60); }
+function closeCmdk() { cmdk.classList.remove('open'); }
+document.getElementById('open-cmdk').addEventListener('click', openCmdk);
+cmdk.addEventListener('click', (e) => { if (e.target === cmdk) closeCmdk(); });
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    cmdk.classList.contains('open') ? closeCmdk() : openCmdk();
+  } else if (e.key === 'Escape' && cmdk.classList.contains('open')) {
+    closeCmdk();
+  }
+});
+const cmdkItems = () => Array.from(cmdk.querySelectorAll('.cmdk-item'));
+cmdk.addEventListener('keydown', (e) => {
+  const items = cmdkItems();
+  let i = items.findIndex(x => x.classList.contains('active'));
+  if (e.key === 'ArrowDown') { e.preventDefault(); items[i]?.classList.remove('active'); items[(i+1) % items.length].classList.add('active'); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); items[i]?.classList.remove('active'); items[(i-1+items.length) % items.length].classList.add('active'); }
+});
+</script>
+</body>
+</html>

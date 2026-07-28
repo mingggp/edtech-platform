@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-card="solid">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ยินดีต้อนรับ — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="auth.css?v=21" />
+<link rel="stylesheet" href="onboarding.css?v=22" />
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════════════════╗
+  ║  DATA CONTRACT · Batch 7 · Onboarding (backend ⚠️ to add)                  ║
+  ╠══════════════════════════════════════════════════════════════════════════╣
+  ║  User.onboarded        : boolean        // gate: redirect new signups here ║
+  ║                                         //  until true; set true on finish ║
+  ║  User.goal_exams        : string[]      // subset of ['TGAT2','TPAT3',     ║
+  ║                                         //  'MATH','PHYS']                 ║
+  ║  User.goal_scores       : {[exam]:int}  // 0–100 คะแนนเป้าต่อวิชา         ║
+  ║                                         //  มีเฉพาะวิชาที่เลือกใน goal_exams  ║
+  ║  User.goal_target       : string|null   // free text e.g.                  ║
+  ║                                         //  "จุฬาฯ · วิศวกรรมศาสตร์"        ║
+  ║  User.daily_goal_min    : 30 | 90 | 120 // 30 นาที / 1–2 ชม. / 2 ชม.+      ║
+  ║                                         //  feeds Batch 6 DailyGoalRing    ║
+  ║  User.streak_reminder   : boolean       // feeds Batch 6 streak nudge      ║
+  ║                                                                            ║
+  ║  GET  /api/me            → { ...User }                                     ║
+  ║  PATCH /api/me/onboarding {goal_exams, goal_scores, goal_target,           ║
+  ║                            daily_goal_min, streak_reminder, onboarded:true}║
+  ║  Mock below persists to localStorage 'ming-onboard' so the dashboard      ║
+  ║  SetupChecklist (Dashboard.html first-run) can read the same shape.        ║
+  ╚══════════════════════════════════════════════════════════════════════════╝
+-->
+
+<div class="ob">
+  <div class="ob-top">
+    <a href="Dashboard.html" class="ob-brand">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 120 120" fill="none"><path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></span>
+      <span class="word">mingsmileyface</span>
+    </a>
+    <a class="ob-skip" id="skip-all" href="Dashboard.html">ข้ามไปก่อน<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+
+  <div class="ob-card" data-screen-label="Onboarding">
+    <div class="ob-stepline">
+      <div class="steps-ind" id="steps-ind">
+        <div class="seg active"><i></i></div>
+        <div class="seg"><i></i></div>
+        <div class="seg"><i></i></div>
+      </div>
+      <span class="lab" id="step-lab">ขั้นที่ 1 / 3</span>
+    </div>
+
+    <form id="ob-form" autocomplete="off" onsubmit="return false">
+
+      <!-- ░░░ STEP 1 — ทักทาย ░░░ -->
+      <section class="wizard-step active ob-hello" data-step="1">
+        <div class="ob-medallion">ปม<span class="wave">👋</span></div>
+        <div class="ob-eyebrow" style="justify-content:center">ยินดีต้อนรับ</div>
+        <h1 class="ob-h">หวัดดี <span class="grad">น้องปาล์ม</span>!<br/>มาตั้งเป้ากันก่อนนะ</h1>
+        <p class="ob-sub">แค่ <b>2 คำถามสั้นๆ</b> ไม่ถึงนาที — แล้วพี่หมิงจะจัดคอร์ส ตารางเรียน และข้อสอบให้ตรงกับเป้าของน้องเลย</p>
+        <div class="ob-perks">
+          <div class="ob-perk"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 6 0 6 4 2"/></svg></span><span>ใช้เวลาแค่ <b>30 วินาที</b></span></div>
+          <div class="ob-perk"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>เปลี่ยนทีหลังได้ใน <b>‘ตั้งค่า’</b></span></div>
+          <div class="ob-perk"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><b>ไม่บังคับ</b> — ข้ามได้ทุกเมื่อ</span></div>
+        </div>
+      </section>
+
+      <!-- ░░░ STEP 2 — เป้าหมาย ░░░ -->
+      <section class="wizard-step ob-goal" data-step="2">
+        <div class="ob-eyebrow">เป้าหมาย</div>
+        <h1 class="ob-h">น้องอยากพิชิต<span class="grad">สนามไหน?</span></h1>
+
+        <div class="ob-field">
+          <div class="fl">วิชาที่จะสอบ <span class="opt">เลือกได้หลายอัน</span></div>
+          <div class="goal-grid" id="goal-grid" role="group" aria-label="วิชาที่จะสอบ">
+            <button type="button" class="goal-card s-math" data-v="MATH" aria-pressed="false">
+              <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16M9 4l-3 16M15 4l3 16M4 12h16M3 20h18"/></svg></span>
+              <span class="gc-name">คณิต</span>
+              <span class="gc-sub">ม.ปลาย · A-Level</span>
+              <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+            </button>
+            <button type="button" class="goal-card s-phys" data-v="PHYS" aria-pressed="false">
+              <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg></span>
+              <span class="gc-name">ฟิสิกส์</span>
+              <span class="gc-sub">ม.ปลาย · A-Level</span>
+              <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+            </button>
+            <button type="button" class="goal-card s-tpat3" data-v="TPAT3" aria-pressed="false">
+              <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg></span>
+              <span class="gc-name">TPAT3</span>
+              <span class="gc-sub">วิศวะฯ-วิทย์-เทคโนโลยี</span>
+              <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+            </button>
+            <button type="button" class="goal-card s-tgat" data-v="TGAT2" aria-pressed="false">
+              <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+              <span class="gc-name">TGAT2</span>
+              <span class="gc-sub">การคิดอย่างมีเหตุผล</span>
+              <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="ob-field score-field" id="score-field" hidden>
+          <div class="fl">คะแนนเป้าหมายแต่ละวิชา <span class="opt">ลากเลือกได้</span></div>
+          <div class="score-list" id="score-list"></div>
+        </div>
+
+        <div class="ob-field">
+          <div class="fl">คณะ / มหา'ลัยในฝัน <span class="opt">ไม่บังคับ</span></div>
+          <div class="uni-pills" id="uni-pills" role="group" aria-label="มหาวิทยาลัยเป้าหมาย">
+            <button type="button" class="uni-pill" data-v="จุฬาฯ" aria-pressed="false">จุฬาฯ</button>
+            <button type="button" class="uni-pill" data-v="มธ." aria-pressed="false">ธรรมศาสตร์</button>
+            <button type="button" class="uni-pill" data-v="มหิดล" aria-pressed="false">มหิดล</button>
+            <button type="button" class="uni-pill" data-v="เกษตรฯ" aria-pressed="false">เกษตรฯ</button>
+            <button type="button" class="uni-pill" data-v="ลาดกระบัง" aria-pressed="false">ลาดกระบัง</button>
+            <button type="button" class="uni-pill uni-other" data-other="1" aria-pressed="false">อื่นๆ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <input class="uni-input" id="uni-input" type="text" placeholder="หรือพิมพ์เอง เช่น “วิศวฯ จุฬาฯ”, “แพทย์ มหิดล”" />
+        </div>
+      </section>
+
+      <!-- ░░░ STEP 3 — เวลาเรียน ░░░ -->
+      <section class="wizard-step ob-time" data-step="3">
+        <div class="ob-eyebrow">เวลาเรียน</div>
+        <h1 class="ob-h">ตั้งเป้าวันละ<span class="grad">กี่นาทีดี?</span></h1>
+        <p class="ob-sub">เริ่มจากเบาๆ ก่อนก็ได้ — ทำได้ทุกวันสำคัญกว่าทำหนักวันเดียว</p>
+
+        <div class="ob-field">
+          <div class="time-grid" id="time-grid" role="radiogroup" aria-label="เป้าหมายรายวัน">
+            <button type="button" class="time-card" data-v="30" role="radio" aria-pressed="true"><span class="tc-min">30<span class="u">นาที</span></span><span class="tc-lab">สบายๆ</span></button>
+            <button type="button" class="time-card" data-v="90" role="radio" aria-pressed="false"><span class="tc-min">1–2<span class="u">ชม.</span></span><span class="tc-lab">กำลังดี 👍</span></button>
+            <button type="button" class="time-card" data-v="120" role="radio" aria-pressed="false"><span class="tc-min">2<span class="u">ชม.+</span></span><span class="tc-lab">จริงจัง</span></button>
+          </div>
+        </div>
+
+        <div class="ob-toggle">
+          <span class="tg-ico">🔥</span>
+          <div class="tg-txt"><b>เตือนรักษาสตรีคทุกวัน</b><span>เด้งเตือนเบาๆ วันละครั้ง ก่อนสตรีคจะหลุด — ปิดได้ทุกเมื่อ</span></div>
+          <button type="button" class="switch" id="streak-switch" role="switch" aria-checked="true" aria-label="เตือนรักษาสตรีค"></button>
+        </div>
+      </section>
+
+      <!-- nav -->
+      <div class="ob-nav">
+        <button type="button" class="btn btn-ghost btn-back" id="ob-back" style="display:none">ย้อนกลับ</button>
+        <button type="button" class="btn btn-primary btn-next" id="ob-next">เริ่มเลย<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+      <div class="ob-step-foot" id="ob-foot">เลือกหรือไม่เลือกก็ได้ — ข้ามขั้นนี้ไปเลยก็ได้นะ</div>
+    </form>
+  </div>
+</div>
+
+<!-- finish overlay -->
+<div class="ob-done" id="ob-done">
+  <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <h2>พร้อมแล้ว! 🎉</h2>
+  <p id="ob-done-sub">เยี่ยมมาก น้องปาล์ม — พี่หมิงจัดเส้นทางให้แล้ว ไปเริ่มภารกิจแรกกันเลย</p>
+  <button class="btn btn-primary btn-lg" id="ob-go">ไปหน้าหลักกัน<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+</div>
+
+<!-- aurora curtain (grows from the button on finish) -->
+<div class="curtain" id="curtain" aria-hidden="true">
+  <div class="tr-mark"><svg viewBox="0 0 120 120" fill="none"><path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></div>
+  <div class="tr-label">กำลังพาไปหน้าหลัก<span class="dots"><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- F1 racing wipe (skewed bars sweep left→right) -->
+<div class="f1-wipe" id="f1-wipe" aria-hidden="true">
+  <div class="f1-fill"></div>
+  <div class="f1-track"><span class="f1-bar c1"></span><span class="f1-bar c2"></span><span class="f1-bar c3"></span><span class="f1-bar c4"></span><span class="f1-bar c5"></span><span class="f1-bar c6"></span><span class="f1-bar c7"></span></div>
+  <div class="f1-streaks"><i class="f1-streak"></i><i class="f1-streak"></i><i class="f1-streak"></i><i class="f1-streak"></i></div>
+  <div class="f1-center">
+    <div class="tr-mark"><svg viewBox="0 0 120 120" fill="none"><path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></div>
+    <div class="tr-label">ออกตัว!</div>
+    <div class="speedo">LIGHTS OUT · พร้อมลุย</div>
+  </div>
+</div>
+
+<!-- slide wipe (panel rises up) -->
+<div class="slide-wipe" id="slide-wipe" aria-hidden="true">
+  <div class="tr-mark"><svg viewBox="0 0 120 120" fill="none"><path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></div>
+  <div class="tr-label">กำลังพาไปหน้าหลัก<span class="dots"><i></i><i></i><i></i></span></div>
+</div>
+
+<!-- ===== TWEAKS ===== -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp">
+    <div class="gl">เอฟเฟกต์เปลี่ยนหน้า</div>
+    <div class="tweak-seg col" data-tweak="transition">
+      <button data-v="aurora" aria-pressed="true"><span class="ti">🌌</span> ออโรรา — นุ่มละมุน</button>
+      <button data-v="f1" aria-pressed="false"><span class="ti">🏁</span> เรซซิ่ง F1 — คลื่นพุ่ง</button>
+      <button data-v="slide" aria-pressed="false"><span class="ti">🎬</span> สไลด์ — เรียบหรู</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">จังหวะ</div>
+    <div class="tweak-seg" data-tweak="pace">
+      <button data-v="chill" aria-pressed="false">ชิลล์</button>
+      <button data-v="smooth" aria-pressed="true">ปกติ</button>
+      <button data-v="hype" aria-pressed="false">ไฮป์ ⚡</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">โทนสี</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <button class="tweak-preview" id="tweak-preview"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>ดูตัวอย่าง</button>
+</div>
+
+<script>
+const root = document.documentElement;
+try { const s0 = localStorage.getItem('ming-theme') || 'petronas-light'; root.setAttribute('data-theme', s0 === 'dark' ? 'petronas' : s0 === 'light' ? 'petronas-light' : s0 === 'classic-dark' ? 'dark' : s0 === 'classic-light' ? 'light' : s0); } catch(e){}
+
+/* ---- state (mirrors DATA CONTRACT above) ---- */
+const state = { step: 1, goal_exams: [], goal_scores: {}, goal_target: null, daily_goal_min: 30, streak_reminder: true };
+const TOTAL = 3;
+const segs = [...document.querySelectorAll('#steps-ind .seg')];
+const steps = [...document.querySelectorAll('.wizard-step')];
+const lab = document.getElementById('step-lab');
+const back = document.getElementById('ob-back');
+const next = document.getElementById('ob-next');
+const foot = document.getElementById('ob-foot');
+
+function render() {
+  steps.forEach(s => s.classList.toggle('active', +s.dataset.step === state.step));
+  segs.forEach((sg, i) => { sg.classList.toggle('done', i < state.step - 1); sg.classList.toggle('active', i === state.step - 1); });
+  lab.textContent = 'ขั้นที่ ' + state.step + ' / ' + TOTAL;
+  back.style.display = state.step === 1 ? 'none' : 'inline-flex';
+  if (state.step === 1) { next.innerHTML = 'เริ่มเลย<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'; foot.textContent = 'ใช้เวลาไม่ถึงนาที สัญญา 🤙'; }
+  else if (state.step === TOTAL) { next.innerHTML = 'เสร็จแล้ว ไปเรียนกัน 🎉'; foot.textContent = 'กดข้ามด้านบนก็ได้ ถ้าอยากเริ่มเลย'; }
+  else { next.innerHTML = 'ถัดไป<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'; foot.textContent = 'เลือกหรือไม่เลือกก็ได้ — ข้ามขั้นนี้ไปเลยก็ได้นะ'; }
+}
+
+next.addEventListener('click', () => { if (state.step < TOTAL) { state.step++; render(); document.querySelector('.ob').scrollTo({top:0,behavior:'smooth'}); } else finish(); });
+back.addEventListener('click', () => { if (state.step > 1) { state.step--; render(); } });
+
+/* ---- step 2: multi-select subjects (+ per-subject target score) ---- */
+// canonical subject order + meta (matches brand: คณิต ฟิสิกส์ TPAT3 TGAT2)
+const SUBJ_ORDER = ['MATH', 'PHYS', 'TPAT3', 'TGAT2'];
+const SUBJ_META = {
+  MATH:  { label: 'คณิต',   cls: 's-math'  },
+  PHYS:  { label: 'ฟิสิกส์', cls: 's-phys'  },
+  TPAT3: { label: 'TPAT3',  cls: 's-tpat3' },
+  TGAT2: { label: 'TGAT2',  cls: 's-tgat'  }
+};
+const DEFAULT_SCORE = 75;
+const scoreField = document.getElementById('score-field');
+const scoreList = document.getElementById('score-list');
+
+function renderScores() {
+  const chosen = SUBJ_ORDER.filter(s => state.goal_exams.includes(s));
+  scoreField.hidden = chosen.length === 0;
+  scoreList.innerHTML = chosen.map(s => {
+    const m = SUBJ_META[s];
+    const v = state.goal_scores[s] != null ? state.goal_scores[s] : DEFAULT_SCORE;
+    return '<div class="score-row ' + m.cls + '">' +
+      '<div class="sr-head"><span class="sr-name">' + m.label + '</span>' +
+      '<span class="sr-val" data-for="' + s + '">' + v + '<span class="u">/100</span></span></div>' +
+      '<input class="sr-range" type="range" min="0" max="100" step="5" value="' + v + '" ' +
+      'data-v="' + s + '" style="--pct:' + v + '%" aria-label="คะแนนเป้าหมาย ' + m.label + '"></div>';
+  }).join('');
+  scoreList.querySelectorAll('.sr-range').forEach(r => r.addEventListener('input', () => {
+    const s = r.dataset.v, val = +r.value;
+    state.goal_scores[s] = val;
+    r.style.setProperty('--pct', val + '%');
+    const out = scoreList.querySelector('.sr-val[data-for="' + s + '"]');
+    if (out) out.innerHTML = val + '<span class="u">/100</span>';
+  }));
+}
+
+document.querySelectorAll('#goal-grid .goal-card').forEach(b => b.addEventListener('click', () => {
+  const on = b.getAttribute('aria-pressed') === 'true';
+  b.setAttribute('aria-pressed', String(!on));
+  const v = b.dataset.v;
+  if (on) { state.goal_exams = state.goal_exams.filter(x => x !== v); delete state.goal_scores[v]; }
+  else { if (!state.goal_exams.includes(v)) state.goal_exams.push(v); if (state.goal_scores[v] == null) state.goal_scores[v] = DEFAULT_SCORE; }
+  renderScores();
+}));
+
+/* ---- step 2: university quick-pick + free text ---- */
+const uniInput = document.getElementById('uni-input');
+document.querySelectorAll('#uni-pills .uni-pill').forEach(b => b.addEventListener('click', () => {
+  // “อื่นๆ” — ไม่ได้ตั้งค่า แค่พาไปพิมพ์เองในช่องข้างล่าง
+  if (b.dataset.other) {
+    document.querySelectorAll('#uni-pills .uni-pill').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    state.goal_target = uniInput.value.trim() || null;
+    uniInput.focus();
+    return;
+  }
+  const on = b.getAttribute('aria-pressed') === 'true';
+  document.querySelectorAll('#uni-pills .uni-pill').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  b.setAttribute('aria-pressed', String(!on));
+  state.goal_target = on ? null : b.dataset.v;
+  if (!on && !uniInput.value) uniInput.value = b.textContent.trim();
+}));
+uniInput.addEventListener('input', () => {
+  state.goal_target = uniInput.value.trim() || null;
+  document.querySelectorAll('#uni-pills .uni-pill').forEach(x => x.setAttribute('aria-pressed', 'false'));
+});
+
+/* ---- step 3: daily goal radio ---- */
+document.querySelectorAll('#time-grid .time-card').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#time-grid .time-card').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  b.setAttribute('aria-pressed', 'true');
+  state.daily_goal_min = +b.dataset.v;
+}));
+
+/* ---- step 3: streak reminder switch ---- */
+const sw = document.getElementById('streak-switch');
+sw.addEventListener('click', () => { const on = sw.getAttribute('aria-checked') === 'true'; sw.setAttribute('aria-checked', String(!on)); state.streak_reminder = !on; });
+
+/* ---- finish: persist + confetti + overlay ---- */
+function fireConfetti(rect) {
+  const COLORS = ['oklch(0.66 0.23 295)','oklch(0.68 0.25 5)','oklch(0.78 0.20 50)','oklch(0.80 0.16 205)','oklch(0.86 0.20 130)','oklch(0.96 0.18 80)'];
+  const c = document.createElement('div');
+  c.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;pointer-events:none;z-index:9999;`;
+  document.body.appendChild(c);
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    const ang = (Math.PI * 2 * i) / 30 + (Math.random() - 0.5) * 0.5;
+    const dist = 90 + Math.random() * 130;
+    const size = 6 + Math.random() * 6;
+    const shape = Math.random() > 0.5 ? '50%' : '2px';
+    p.style.cssText = `position:absolute;width:${size}px;height:${size}px;background:${COLORS[i % COLORS.length]};border-radius:${shape};--tx:${Math.cos(ang)*dist}px;--ty:${Math.sin(ang)*dist - 22}px;animation:confettiBurst ${800+Math.random()*450}ms cubic-bezier(.2,.7,.4,1) forwards;animation-delay:${Math.random()*80}ms;`;
+    c.appendChild(p);
+  }
+  setTimeout(() => c.remove(), 1700);
+}
+function finish() {
+  try {
+    localStorage.setItem('ming-onboard', JSON.stringify({ onboarded: true, goal_exams: state.goal_exams, goal_scores: state.goal_scores, goal_target: state.goal_target, daily_goal_min: state.daily_goal_min, streak_reminder: state.streak_reminder }));
+  } catch(e){}
+  /* PATCH /api/me/onboarding {...state, onboarded:true} would fire here */
+  const sub = document.getElementById('ob-done-sub');
+  if (state.goal_target) sub.innerHTML = 'เป้า <b>' + state.goal_target + '</b> ไว้แล้ว — พี่หมิงจัดเส้นทางให้ ไปเริ่มภารกิจแรกกันเลย';
+  const done = document.getElementById('ob-done');
+  done.classList.add('show');
+  setTimeout(() => { const m = done.querySelector('.tick').getBoundingClientRect(); fireConfetti({ left: m.left + m.width/2, top: m.top + m.height/2 }); }, 260);
+}
+
+/* ====================================================================== *
+   PAGE-TRANSITION ENGINE  (3 expressive "feels", tweakable)
+   Each cover-fn returns the ms until the screen is fully covered, so the
+   caller can navigate under cover. Pace rescales every duration + confetti.
+   ====================================================================== */
+const PACE_MULT = { chill: 1.4, smooth: 1, hype: 0.66 };
+function paceDur(ms){ return Math.round(ms * (PACE_MULT[TWEAKS.pace] || 1)); }
+
+function clearTransitions(){
+  ['curtain','f1-wipe','slide-wipe'].forEach(id => {
+    const el = document.getElementById(id);
+    el.getAnimations({ subtree: true }).forEach(a => a.cancel());  // revert to hidden base CSS
+    el.classList.remove('on');
+    el.style.clipPath = ''; el.style.transform = '';
+  });
+}
+
+/* 1 · AURORA — circular bloom from the origin point */
+function playAuroraCover(origin){
+  const c = document.getElementById('curtain');
+  const cx = origin.left + origin.width / 2, cy = origin.top + origin.height / 2;
+  const end = Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy)) + 40;
+  c.classList.add('on');
+  const dur = paceDur(640);
+  c.animate([{ clipPath: `circle(0px at ${cx}px ${cy}px)` }, { clipPath: `circle(${end}px at ${cx}px ${cy}px)` }],
+    { duration: dur, easing: 'cubic-bezier(.7,0,.3,1)', fill: 'forwards' });
+  c.querySelector('.tr-mark').animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1)' }],
+    { duration: paceDur(460), delay: dur * 0.55, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'forwards' });
+  c.querySelector('.tr-label').animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }],
+    { duration: paceDur(380), delay: dur * 0.78, easing: 'ease-out', fill: 'forwards' });
+  return dur + paceDur(120);
+}
+
+/* 2 · F1 RACING — skewed bars sweep left→right, speed streaks zip across */
+function playF1Cover(){
+  const w = document.getElementById('f1-wipe');
+  w.classList.add('on');
+  const bars = [...w.querySelectorAll('.f1-bar')];
+  const stagger = paceDur(48), barDur = paceDur(540);
+  bars.forEach((b, i) => b.animate(
+    [{ transform: 'skewX(-13deg) translateX(-150%)' }, { transform: 'skewX(-13deg) translateX(0)' }],
+    { duration: barDur, delay: i * stagger, easing: 'cubic-bezier(.85,0,.15,1)', fill: 'forwards' }));
+  w.querySelector('.f1-fill').animate(
+    [{ transform: 'translateX(-110%)' }, { transform: 'translateX(0)' }],
+    { duration: paceDur(560), delay: stagger * 2, easing: 'cubic-bezier(.85,0,.15,1)', fill: 'forwards' });
+  w.querySelectorAll('.f1-streak').forEach((s, i) => s.animate(
+    [{ transform: 'translateX(0)', opacity: 0 }, { transform: 'translateX(60vw)', opacity: 1, offset: .35 }, { transform: 'translateX(150vw)', opacity: 0 }],
+    { duration: paceDur(560), delay: i * paceDur(80), easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }));
+  const coverAt = bars.length * stagger + barDur * 0.55;
+  w.querySelector('.f1-center').animate(
+    [{ opacity: 0, transform: 'scale(.78) skewX(7deg)' }, { opacity: 1, transform: 'scale(1) skewX(0)' }],
+    { duration: paceDur(420), delay: coverAt, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'forwards' });
+  return coverAt + paceDur(380);
+}
+
+/* 3 · SLIDE — full-bleed panel rises up to cover */
+function playSlideCover(){
+  const s = document.getElementById('slide-wipe');
+  s.classList.add('on');
+  const dur = paceDur(620);
+  s.animate([{ transform: 'translateY(101%)' }, { transform: 'translateY(0)' }],
+    { duration: dur, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+  s.querySelector('.tr-mark').animate([{ opacity: 0, transform: 'translateY(26px)' }, { opacity: 1, transform: 'translateY(0)' }],
+    { duration: paceDur(440), delay: dur * 0.5, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'forwards' });
+  s.querySelector('.tr-label').animate([{ opacity: 0 }, { opacity: 1 }],
+    { duration: paceDur(340), delay: dur * 0.72, fill: 'forwards' });
+  return dur + paceDur(120);
+}
+
+function playTransition(origin){
+  clearTransitions();
+  if (TWEAKS.transition === 'f1')    return playF1Cover(origin);
+  if (TWEAKS.transition === 'slide') return playSlideCover(origin);
+  return playAuroraCover(origin);
+}
+
+/* ---- finish button → cover → navigate (carry transition + accent across) ---- */
+const goBtn = document.getElementById('ob-go');
+let navigating = false;
+goBtn.addEventListener('click', () => {
+  if (navigating) return; navigating = true;
+  const cover = playTransition(goBtn.getBoundingClientRect());
+  setTimeout(() => { location.href = 'Dashboard.html?intro=1&t=' + TWEAKS.transition + '&pace=' + TWEAKS.pace + '&accent=' + TWEAKS.accent; }, cover + paceDur(240));
+});
+
+/* ====================================================================== *
+   TWEAKS — transition · pace · accent  (host postMessage protocol)
+   ====================================================================== */
+const TWEAKS = /*EDITMODE-BEGIN*/{
+  "transition": "aurora",
+  "pace": "chill",
+  "accent": "signature"
+}/*EDITMODE-END*/;
+function applyTweaks(){
+  root.setAttribute('data-accent', TWEAKS.accent);
+  document.querySelectorAll('[data-tweak]').forEach(grp => {
+    const key = grp.dataset.tweak;
+    grp.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(TWEAKS[key]))));
+  });
+}
+function setTweak(k, v){ TWEAKS[k] = v; try { window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ [k]: v } }, '*'); } catch(e){} applyTweaks(); }
+document.querySelectorAll('[data-tweak]').forEach(grp => grp.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setTweak(grp.dataset.tweak, b.dataset.v))));
+
+/* preview button — replay the chosen transition, auto-clear so user can re-pick */
+const previewBtn = document.getElementById('tweak-preview');
+previewBtn.addEventListener('click', () => {
+  if (navigating) return;
+  const cover = playTransition(previewBtn.getBoundingClientRect());
+  setTimeout(clearTransitions, cover + paceDur(950));
+});
+
+const panel = document.getElementById('tweaks');
+window.addEventListener('message', e => { const t = e?.data?.type; if (t === '__activate_edit_mode') panel.classList.add('open'); else if (t === '__deactivate_edit_mode') panel.classList.remove('open'); });
+try { window.parent.postMessage({ type:'__edit_mode_available' }, '*'); } catch(e){}
+document.getElementById('tweaks-close').addEventListener('click', () => { panel.classList.remove('open'); try { window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*'); } catch(e){} });
+(function(){ const head = document.getElementById('tweaks-drag'); let sx, sy, ox, oy, drag = false;
+  head.addEventListener('mousedown', e => { if (e.target.closest('.x')) return; drag = true; sx = e.clientX; sy = e.clientY; const r = panel.getBoundingClientRect(); ox = r.left; oy = r.top; panel.style.right = 'auto'; e.preventDefault(); });
+  window.addEventListener('mousemove', e => { if (!drag) return; panel.style.left = (ox + e.clientX - sx) + 'px'; panel.style.top = (oy + e.clientY - sy) + 'px'; });
+  window.addEventListener('mouseup', () => drag = false); })();
+
+applyTweaks();
+render();
+</script>
+</body>
+</html>

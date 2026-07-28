@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>กำลังทำข้อสอบ — TGAT2 การคิดอย่างมีเหตุผล Mock #04 — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<style>
+/* FOCUS MODE — no aurora */
+body { overflow: hidden; background: var(--bg-0); }
+.aurora, .noise { display: none; }
+
+/* SUBJECT ACCENT — this exam = TGAT2; ?subj= overrides */
+:root { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); --subj-ink: var(--subj-tgat-fg); --on-subj: oklch(0.24 0.04 80); }
+html[data-subj="math"] { --subj-c: var(--subj-math); --subj-fg: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); --subj-ink: var(--subj-math-fg); --on-subj: #fff; }
+html[data-subj="phys"] { --subj-c: var(--subj-phys); --subj-fg: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); --subj-ink: var(--subj-phys-fg); --on-subj: #fff; }
+html[data-subj="tpat"] { --subj-c: var(--subj-tpat); --subj-fg: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); --subj-ink: var(--subj-tpat-fg); --on-subj: #fff; }
+html[data-subj="tgat"] { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); --subj-ink: var(--subj-tgat-fg); --on-subj: oklch(0.24 0.04 80); }
+/* darken yellow ink on light themes for contrast */
+:root[data-theme="light"]:not([data-subj]), :root[data-theme="petronas-light"]:not([data-subj]),
+:root[data-theme="light"][data-subj="tgat"], :root[data-theme="petronas-light"][data-subj="tgat"] { --subj-ink: oklch(0.52 0.13 72); }
+
+.take-shell { display: flex; flex-direction: column; height: 100vh; }
+
+/* TOP BAR */
+.take-top { flex-shrink: 0; height: 64px; border-bottom: 1px solid var(--line-soft); background: oklch(from var(--bg-0) l c h / 0.75); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 24px; gap: 24px; position: relative; z-index: 20; }
+.take-top .left, .take-top .right { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.take-top .right { justify-content: flex-end; }
+.exit-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color .15s, border-color .15s, background .15s; flex-shrink: 0; }
+.exit-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.exit-btn svg { width: 16px; height: 16px; stroke-width: 2; }
+
+.take-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.take-meta .eyebrow { font-family: "JetBrains Mono"; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-3); display: flex; align-items: center; gap: 8px; }
+.take-meta .eyebrow .live { display: inline-flex; align-items: center; gap: 6px; color: var(--brand-coral); }
+.take-meta .eyebrow .live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: livepulse 2s ease-out infinite; }
+@keyframes livepulse { 0% { box-shadow: 0 0 0 0 oklch(0.74 0.21 35 / 0.5); } 70% { box-shadow: 0 0 0 8px oklch(0.74 0.21 35 / 0); } 100% { box-shadow: 0 0 0 0 oklch(0.74 0.21 35 / 0); } }
+.take-meta h1 { font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: -0.015em; color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+
+/* TIMER */
+.timer { display: inline-flex; align-items: center; gap: 14px; padding: 8px 18px 8px 14px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 14px; font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 22px; letter-spacing: -0.025em; color: var(--fg-0); transition: all .25s cubic-bezier(.2,.8,.2,1); position: relative; }
+.timer .ic { width: 18px; height: 18px; color: var(--fg-2); }
+.timer .lab { font-family: "JetBrains Mono"; font-size: 9.5px; font-weight: 600; letter-spacing: 0.18em; color: var(--fg-3); text-transform: uppercase; display: block; line-height: 1; margin-bottom: 2px; }
+.timer .clk { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.0; }
+.timer.warning { color: var(--warning); border-color: oklch(0.83 0.17 82 / 0.4); background: oklch(0.83 0.17 82 / 0.08); }
+.timer.warning .ic, .timer.warning .lab { color: var(--warning); }
+.timer.critical { color: var(--danger); border-color: oklch(0.66 0.22 25 / 0.5); background: oklch(0.66 0.22 25 / 0.12); animation: tshake 0.9s ease-in-out infinite; }
+.timer.critical .ic, .timer.critical .lab { color: var(--danger); }
+@keyframes tshake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-1px); } 75% { transform: translateX(1px); } }
+
+.sync { display: inline-flex; align-items: center; gap: 8px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--success); letter-spacing: 0.04em; padding: 6px 10px; border-radius: 8px; background: oklch(0.78 0.18 150 / 0.08); border: 1px solid oklch(0.78 0.18 150 / 0.18); }
+.sync svg { width: 12px; height: 12px; }
+.sync.saving { background: oklch(0.74 0.15 235 / 0.08); border-color: oklch(0.74 0.15 235 / 0.18); color: var(--info); }
+.sync.saving svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 920px) { .sync { display: none; } }
+
+.submit-btn { appearance: none; border: 0; font-family: inherit; font-weight: 700; font-size: 13.5px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; height: 38px; border-radius: 10px; background: var(--bg-2); color: var(--fg-0); border: 1px solid var(--line); cursor: pointer; transition: all .2s; letter-spacing: -0.005em; }
+.submit-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.submit-btn svg { width: 14px; height: 14px; stroke-width: 2.4; }
+
+/* PROGRESS */
+.progress-track { flex-shrink: 0; height: 3px; background: var(--bg-2); position: relative; z-index: 19; }
+.progress-fill { height: 100%; background: var(--subj-grad); transition: width .6s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 12px oklch(from var(--subj-c) l c h / 0.55); }
+
+/* BODY */
+.take-body { flex: 1; display: grid; grid-template-columns: 280px 1fr; min-height: 0; }
+
+/* NAVIGATOR */
+.qnav { border-right: 1px solid var(--line-soft); background: oklch(from var(--bg-1) l c h / 0.5); display: flex; flex-direction: column; padding: 28px 24px; gap: 20px; overflow-y: auto; }
+.qnav h2 { font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-3); display: flex; justify-content: space-between; align-items: baseline; }
+.qnav h2 .prog { color: var(--fg-1); letter-spacing: 0.05em; font-size: 11px; }
+.qnav h2 .prog b { color: var(--fg-0); font-weight: 600; }
+
+.qgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.qcell { appearance: none; border: 0; position: relative; aspect-ratio: 1; border-radius: 9px; background: var(--bg-2); border: 1px solid var(--line); color: var(--fg-2); font-family: "JetBrains Mono"; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .18s cubic-bezier(.2,.8,.2,1); display: flex; align-items: center; justify-content: center; }
+.qcell:hover { border-color: var(--fg-2); color: var(--fg-0); transform: translateY(-1px); }
+.qcell.answered { background: var(--subj-grad); color: var(--on-subj); border-color: transparent; box-shadow: 0 4px 12px -4px oklch(from var(--subj-c) l c h / 0.5), 0 0 0 1px oklch(0.99 0.005 285 / 0.12) inset; }
+.qcell.flagged::after { content: ""; position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--warning); border: 1.5px solid var(--bg-1); box-shadow: 0 1px 3px oklch(0 0 0 / 0.4); }
+.qcell.current { outline: 2px solid var(--fg-0); outline-offset: 2px; transform: scale(1.04); z-index: 1; }
+
+.qlegend { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; background: var(--bg-1); border: 1px solid var(--line-soft); }
+.qlegend .row { display: flex; align-items: center; gap: 10px; font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--fg-2); letter-spacing: 0.04em; }
+.qlegend .sw { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; position: relative; border: 1px solid transparent; }
+.qlegend .sw.empty { background: var(--bg-2); border-color: var(--line); }
+.qlegend .sw.done { background: var(--subj-grad); }
+.qlegend .sw.flag { background: var(--bg-2); border-color: var(--line); }
+.qlegend .sw.flag::after { content: ""; position: absolute; top: -2px; right: -2px; width: 6px; height: 6px; border-radius: 50%; background: var(--warning); border: 1px solid var(--bg-1); }
+.qlegend .sw.cur { background: var(--bg-2); outline: 1.5px solid var(--fg-0); outline-offset: 1px; }
+
+.qmini { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; background: var(--bg-1); border: 1px solid var(--line-soft); }
+.qmini .row { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--fg-1); }
+.qmini .row b { font-family: var(--font-display); font-weight: 700; color: var(--fg-0); font-size: 14px; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; }
+
+.flag-btn { appearance: none; border: 0; display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; border-radius: 10px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-1); font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; }
+.flag-btn svg { width: 14px; height: 14px; }
+.flag-btn:hover { background: oklch(0.83 0.17 82 / 0.12); border-color: var(--warning); color: var(--warning); }
+.flag-btn.active { background: oklch(0.83 0.17 82 / 0.14); border-color: oklch(0.83 0.17 82 / 0.4); color: var(--warning); }
+.flag-btn .kbd { margin-left: auto; font-family: "JetBrains Mono"; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--bg-2); border: 1px solid var(--line); color: var(--fg-3); }
+
+/* QUESTION AREA */
+.qmain { overflow-y: auto; }
+.qmain-inner { max-width: 760px; margin: 0 auto; padding: 48px 32px 80px; display: flex; flex-direction: column; gap: 30px; }
+
+.qhead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.qhead .qnum { font-family: "JetBrains Mono"; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-3); }
+.qhead .qnum b { color: var(--fg-1); font-weight: 700; }
+.qhead .subj-chip { display: inline-flex; align-items: center; gap: 7px; font-family: "JetBrains Mono"; font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-2); padding: 4px 10px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--line); }
+.qhead .subj-chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--subj-grad); }
+.qhead .diff { padding: 4px 10px; border-radius: 99px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; border: 1px solid; color: oklch(0.72 0.20 50); border-color: oklch(0.72 0.20 50 / 0.4); background: oklch(0.72 0.20 50 / 0.12); }
+:root[data-theme="light"] .qhead .diff, :root[data-theme="petronas-light"] .qhead .diff { color: oklch(0.62 0.20 50); }
+.qhead .flag-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 99px; background: oklch(0.83 0.17 82 / 0.14); border: 1px solid oklch(0.83 0.17 82 / 0.4); color: var(--warning); font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0; transition: opacity .2s; }
+.qhead .flag-pill.show { opacity: 1; }
+.qhead .flag-pill svg { width: 11px; height: 11px; }
+
+.qtext { font-size: 19px; line-height: 1.65; color: var(--fg-0); font-weight: 400; letter-spacing: -0.005em; max-width: 64ch; text-wrap: pretty; }
+.qtext .eq { font-family: "JetBrains Mono"; font-weight: 500; background: var(--bg-1); border: 1px solid var(--line-soft); border-radius: 6px; padding: 1px 8px; font-size: 16px; color: var(--fg-0); white-space: nowrap; }
+
+.qfigure { background: var(--bg-1); border: 1px solid var(--line-soft); border-radius: 14px; padding: 22px 26px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.qfigure .term { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 18px; background: var(--bg-2); border-radius: 10px; min-width: 56px; }
+.qfigure .term b { font-family: var(--font-display); font-weight: 700; font-size: 26px; color: var(--fg-0); letter-spacing: -0.025em; line-height: 1; font-variant-numeric: tabular-nums; }
+.qfigure .term small { font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.16em; color: var(--fg-3); text-transform: uppercase; }
+.qfigure .sep { color: var(--fg-3); font-family: "JetBrains Mono"; font-size: 18px; }
+.qfigure .dots { color: var(--fg-2); letter-spacing: 0.2em; font-family: "JetBrains Mono"; font-size: 18px; padding: 0 4px; }
+.qfigure .q { font-family: var(--font-display); font-weight: 700; font-size: 26px; color: var(--subj-ink); padding: 14px 18px; background: oklch(from var(--subj-c) l c h / 0.12); border-radius: 10px; border: 1px dashed oklch(from var(--subj-c) l c h / 0.45); min-width: 56px; text-align: center; }
+
+/* CHOICES */
+.choices { display: flex; flex-direction: column; gap: 12px; }
+
+/* FILL-IN numeric grid (อัตนัย xxxx.xx) */
+.numgrid-wrap { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.ng-label { font-size: 13.5px; color: var(--fg-2); }
+.ng-label .mono { font-family: "JetBrains Mono"; background: var(--bg-2); padding: 1px 7px; border-radius: 5px; color: var(--fg-1); }
+.numgrid { display: flex; align-items: center; gap: 8px; }
+.ng-cell { width: 58px; height: 68px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 30px; color: var(--fg-0); background: var(--bg-1); border: 2px solid var(--line); border-radius: 14px; transition: border-color .15s, box-shadow .15s, background .15s, transform .12s; }
+.ng-cell:focus { outline: none; border-color: var(--subj-c); box-shadow: 0 0 0 4px oklch(from var(--subj-c) l c h / 0.18); transform: translateY(-2px); }
+.ng-cell.filled { border-color: oklch(from var(--subj-c) l c h / 0.55); background: oklch(from var(--subj-c) l c h / 0.08); }
+.ng-dot { font-family: var(--font-display); font-weight: 800; font-size: 34px; color: var(--fg-1); padding: 0 2px; }
+.ng-echo { font-size: 13px; color: var(--fg-3); }
+.ng-echo b { font-family: "JetBrains Mono"; font-size: 15px; color: var(--subj-ink, var(--fg-0)); letter-spacing: 0.06em; }
+@media (max-width: 560px) { .ng-cell { width: 44px; height: 56px; font-size: 24px; } }
+.choice { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; padding: 16px 20px; border-radius: 14px; background: var(--bg-1); border: 2px solid var(--line); cursor: pointer; transition: all .18s cubic-bezier(.2,.8,.2,1); position: relative; text-align: left; appearance: none; font: inherit; color: var(--fg-0); width: 100%; }
+.choice:hover { border-color: var(--subj-c); background: var(--bg-2); transform: translateY(-1px); }
+.choice .letter { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-2); border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--fg-1); letter-spacing: -0.025em; flex-shrink: 0; transition: all .18s; }
+.choice .ctext { font-size: 16px; line-height: 1.5; color: var(--fg-0); }
+.choice .ctext .mono { background: var(--bg-2); padding: 1px 7px; border-radius: 5px; font-family: "JetBrains Mono"; font-size: 14px; }
+.choice .kbd-hint { font-family: "JetBrains Mono"; font-size: 10px; padding: 2px 7px; border-radius: 5px; background: var(--bg-2); border: 1px solid var(--line); color: var(--fg-3); opacity: 0.5; transition: opacity .15s; }
+.choice:hover .kbd-hint { opacity: 1; }
+.choice .check { width: 24px; height: 24px; border-radius: 50%; background: oklch(from var(--on-subj) l c h / 0.2); display: none; align-items: center; justify-content: center; flex-shrink: 0; }
+.choice .check svg { width: 14px; height: 14px; color: var(--on-subj); stroke-width: 3; }
+
+.choice[aria-checked="true"] { background: var(--subj-grad); border-color: transparent; color: var(--on-subj); box-shadow: 0 8px 24px -8px oklch(from var(--subj-c) l c h / 0.5), 0 0 0 1px oklch(0.99 0.005 285 / 0.1) inset; }
+.choice[aria-checked="true"]:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -8px oklch(from var(--subj-c) l c h / 0.7), 0 0 0 1px oklch(0.99 0.005 285 / 0.16) inset; }
+.choice[aria-checked="true"] .letter { background: oklch(from var(--on-subj) l c h / 0.22); border-color: oklch(from var(--on-subj) l c h / 0.34); color: var(--on-subj); }
+.choice[aria-checked="true"] .ctext { color: var(--on-subj); }
+.choice[aria-checked="true"] .ctext .mono { background: oklch(from var(--on-subj) l c h / 0.2); color: var(--on-subj); }
+.choice[aria-checked="true"] .check { display: flex; }
+.choice:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--bg-0), 0 0 0 4px var(--subj-c); }
+
+/* BOTTOM NAV */
+.qnav-row { display: flex; justify-content: flex-end; align-items: center; gap: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft); margin-top: 8px; }
+.qnav-row .kbd-hints { display: flex; align-items: center; gap: 16px; font-family: "JetBrains Mono"; font-size: 11px; color: var(--fg-3); letter-spacing: 0.06em; }
+.qnav-row .kbd-hints span { display: inline-flex; align-items: center; gap: 6px; }
+.qnav-row .kbd-hints kbd { font-family: "JetBrains Mono"; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: var(--bg-1); border: 1px solid var(--line); color: var(--fg-2); }
+.qnav-row .nav-buttons { display: flex; gap: 10px; }
+@media (max-width: 760px) { .qnav-row .kbd-hints { display: none; } }
+
+/* MODAL */
+.modal-backdrop { position: fixed; inset: 0; z-index: 200; background: oklch(from var(--bg-0) l c h / 0.7); backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%); display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity .22s; }
+.modal-backdrop.open { display: flex; opacity: 1; }
+.modal { width: min(520px, 96vw); background: var(--bg-1); border: 1px solid var(--glass-line-strong); border-radius: 22px; overflow: hidden; box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.6); transform: translateY(-12px) scale(0.98); opacity: 0; transition: transform .22s cubic-bezier(.2,.8,.2,1), opacity .22s; }
+.modal-backdrop.open .modal { transform: translateY(0) scale(1); opacity: 1; }
+.modal-head { padding: 28px 28px 4px; display: flex; flex-direction: column; gap: 14px; }
+.modal-head .icon-ring { width: 56px; height: 56px; border-radius: 50%; background: oklch(0.83 0.17 82 / 0.14); border: 1px solid oklch(0.83 0.17 82 / 0.3); display: flex; align-items: center; justify-content: center; color: var(--warning); }
+.modal-head .icon-ring svg { width: 26px; height: 26px; stroke-width: 2; }
+.modal-head h3 { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.025em; line-height: 1.2; }
+.modal-head p { color: var(--fg-1); font-size: 14px; line-height: 1.55; }
+.modal-body { padding: 14px 28px 0; }
+.modal-body .ulab { font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 10px; }
+.modal-body .uchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.modal-body .uchips span { padding: 4px 9px; border-radius: 8px; background: var(--bg-2); border: 1px solid var(--line); font-family: "JetBrains Mono"; font-size: 11px; font-weight: 600; color: var(--fg-1); }
+.modal-foot { padding: 22px 28px 28px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.modal-foot .btn { flex: 1; min-width: 0; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: oklch(from var(--danger) calc(l + 0.04) c h); transform: translateY(-1px); }
+
+/* MOBILE */
+@media (max-width: 880px) {
+  .take-body { grid-template-columns: 1fr; }
+  .qnav { display: none; }
+  .qmain-inner { padding: 28px 20px 100px; gap: 24px; }
+  .qtext { font-size: 16.5px; }
+  .qhead .flag-pill { margin-left: 0; }
+  .take-top { grid-template-columns: auto 1fr auto; padding: 0 14px; }
+  .take-meta h1 { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<div class="take-shell" data-screen-label="02 Exam Take">
+
+  <header class="take-top">
+    <div class="left">
+      <button class="exit-btn" id="exit-btn" aria-label="ออกจากข้อสอบ">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+      </button>
+      <div class="take-meta">
+        <div class="eyebrow"><span class="live">Live Mock</span><span>TGAT2 · 60 นาที · 30 ข้อ</span></div>
+        <h1>TGAT2 การคิดอย่างมีเหตุผล Mock #04 — ฉบับล่าสุด พ.ค. 68</h1>
+      </div>
+    </div>
+
+    <div class="center">
+      <div class="timer" id="timer">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div class="clk">
+          <span class="lab">เวลาที่เหลือ</span>
+          <span id="time-text">42:18</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="sync" id="sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg><span id="sync-text">ซิงค์ล่าสุด 14:32</span></div>
+      <button class="submit-btn" id="submit-btn">
+        ส่งคำตอบ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="progress-track"><div class="progress-fill" id="progress" style="width: 40%"></div></div>
+
+  <div class="take-body">
+
+    <!-- NAVIGATOR -->
+    <aside class="qnav">
+      <h2>ทุกข้อ <span class="prog"><b id="answered-count">12</b> / 30</span></h2>
+      <div class="qgrid" id="qgrid"></div>
+
+      <button class="flag-btn" id="flag-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2.2 3.5L16 11H5"/></svg>
+        <span id="flag-text">ปักธงข้อนี้</span>
+      </button>
+
+      <div class="qlegend">
+        <div class="row"><span class="sw empty"></span>ยังไม่ตอบ</div>
+        <div class="row"><span class="sw done"></span>ตอบแล้ว</div>
+        <div class="row"><span class="sw flag"></span>ปักธงทบทวน</div>
+        <div class="row"><span class="sw cur"></span>กำลังทำอยู่</div>
+      </div>
+
+      <div class="qmini">
+        <div class="row">ตอบแล้ว<b id="mini-done">12</b></div>
+        <div class="row">เหลือ<b id="mini-left">18</b></div>
+        <div class="row">ปักธง<b id="mini-flag">2</b></div>
+      </div>
+    </aside>
+
+    <!-- QUESTION -->
+    <main class="qmain">
+      <div class="qmain-inner">
+
+        <div class="qhead">
+          <div class="qnum">ข้อ <b id="qnum">13</b> / 30</div>
+          <span class="subj-chip">เชาว์เชิงปริมาณ</span>
+          <span class="diff">ยาก</span>
+          <span class="flag-pill" id="flag-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2.2 3.5L16 11H5"/></svg>
+            ปักธงไว้
+          </span>
+        </div>
+
+        <p class="qtext">
+          พิจารณาลำดับของตัวเลขชุดต่อไปนี้ ซึ่งสร้างขึ้นจากกฎเดียวกันตลอดทั้งลำดับ — ตัวเลขในตำแหน่งที่ <b>?</b> ควรเป็นค่าใด?
+        </p>
+
+        <div class="qfigure" aria-label="โจทย์ลำดับตัวเลข">
+          <span class="term"><b>3</b><small>n=1</small></span>
+          <span class="sep">,</span>
+          <span class="term"><b>7</b><small>n=2</small></span>
+          <span class="sep">,</span>
+          <span class="term"><b>15</b><small>n=3</small></span>
+          <span class="sep">,</span>
+          <span class="term"><b>31</b><small>n=4</small></span>
+          <span class="sep">,</span>
+          <span class="q">?</span>
+          <span class="dots">,&nbsp;127</span>
+        </div>
+
+        <!-- FILL-IN (อัตนัย) — A-Level numeric grid xxxx.xx · shows on ข้อ 14 -->
+        <div class="numgrid-wrap" id="numgrid-wrap" style="display:none">
+          <div class="ng-label">เติมคำตอบเป็นตัวเลข · รูปแบบ <span class="mono">xxxx.xx</span> (เติม 0 ข้างหน้าถ้าไม่ครบหลัก)</div>
+          <div class="numgrid" id="numgrid">
+            <input class="ng-cell" inputmode="numeric" maxlength="1" data-ng="0" aria-label="หลักพัน" />
+            <input class="ng-cell" inputmode="numeric" maxlength="1" data-ng="1" aria-label="หลักร้อย" />
+            <input class="ng-cell" inputmode="numeric" maxlength="1" data-ng="2" aria-label="หลักสิบ" />
+            <input class="ng-cell" inputmode="numeric" maxlength="1" data-ng="3" aria-label="หลักหน่วย" />
+            <span class="ng-dot">.</span>
+            <input class="ng-cell" inputmode="numeric" maxlength="1" data-ng="4" aria-label="ทศนิยมตำแหน่งที่ 1" />
+            <input class="ng-cell" inputmode="numeric" maxlength="1" data-ng="5" aria-label="ทศนิยมตำแหน่งที่ 2" />
+          </div>
+          <div class="ng-echo" id="ng-echo">คำตอบของคุณ: <b>—</b></div>
+        </div>
+
+        <div class="choices" role="radiogroup" aria-labelledby="qnum">
+          <button class="choice" role="radio" aria-checked="false" data-letter="A">
+            <span class="letter">A</span>
+            <span class="ctext"><span class="mono">47</span> — ใช้ผลต่างคงที่ +16 ต่อพจน์</span>
+            <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+          </button>
+          <button class="choice" role="radio" aria-checked="true" data-letter="B">
+            <span class="letter">B</span>
+            <span class="ctext"><span class="mono">63</span> — ผลต่างทวีคูณ (×2 + 1) ต่อพจน์</span>
+            <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+          </button>
+          <button class="choice" role="radio" aria-checked="false" data-letter="C">
+            <span class="letter">C</span>
+            <span class="ctext"><span class="mono">62</span> — ผลรวม 2 พจน์ก่อนหน้า</span>
+            <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+          </button>
+          <button class="choice" role="radio" aria-checked="false" data-letter="D">
+            <span class="letter">D</span>
+            <span class="ctext"><span class="mono">95</span> — กำลังสองของเลขลำดับลบหนึ่ง</span>
+            <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+          </button>
+          <button class="choice" role="radio" aria-checked="false" data-letter="E">
+            <span class="letter">E</span>
+            <span class="ctext">ไม่มีคำตอบที่ถูกต้อง</span>
+            <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>
+          </button>
+        </div>
+
+        <div class="qnav-row">
+          <div class="nav-buttons">
+            <button class="btn btn-ghost" id="prev-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              ข้อก่อน
+            </button>
+            <button class="btn btn-primary" id="next-btn">
+              ข้อถัดไป
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-backdrop" id="submit-modal" role="dialog" aria-labelledby="submit-title" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="icon-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+      </div>
+      <h3 id="submit-title">ยืนยันการส่งคำตอบ?</h3>
+      <p>เหลือ <b style="color:var(--fg-0);">18 ข้อ</b> ที่ยังไม่ได้ตอบ — เมื่อส่งแล้วจะไม่สามารถกลับมาแก้ได้ แน่ใจมั้ยว่าจะส่งตอนนี้?</p>
+    </div>
+    <div class="modal-body">
+      <div class="ulab">ข้อที่ยังไม่ได้ตอบ</div>
+      <div class="uchips" id="unanswered-chips"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="cancel-submit">ทำต่อ</button>
+      <a class="btn btn-danger" href="Exam Result.html?reveal=1">
+        ส่งเลย
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// THEME persistence
+(function(){
+  const root = document.documentElement;
+  const sv0 = localStorage.getItem('ming-theme') || 'petronas-light';
+  const saved = sv0 === 'dark' ? 'petronas' : sv0 === 'light' ? 'petronas-light' : sv0 === 'classic-dark' ? 'dark' : sv0 === 'classic-light' ? 'light' : sv0;
+  root.setAttribute('data-theme', saved);
+  try { const s = new URLSearchParams(location.search).get('subj'); if (s && ['math','phys','tpat','tgat'].includes(s)) root.setAttribute('data-subj', s); } catch(e){}
+})();
+
+// STATE
+const N = 30;
+// 0 = unanswered, 'A'..'E' = answered
+const answers = Array(N).fill(null);
+const flagged = new Set();
+let current = 12; // 0-indexed (i.e. ข้อ 13)
+
+// seed demo state — 12 answered scattered
+const seeded = [0,1,2,3,5,6,7,9,10,11,12,14];
+seeded.forEach(i => answers[i] = ['A','B','C','D','E'][Math.floor(Math.random()*5)]);
+answers[12] = 'B'; // current question already has selection
+flagged.add(7);
+flagged.add(20);
+
+// BUILD GRID
+const qgrid = document.getElementById('qgrid');
+for (let i = 0; i < N; i++) {
+  const b = document.createElement('button');
+  b.className = 'qcell';
+  b.textContent = String(i + 1).padStart(2, '0');
+  b.dataset.idx = i;
+  b.addEventListener('click', () => goTo(i));
+  qgrid.appendChild(b);
+}
+
+function paintGrid() {
+  [...qgrid.children].forEach((c, i) => {
+    c.classList.toggle('answered', !!answers[i]);
+    c.classList.toggle('flagged', flagged.has(i));
+    c.classList.toggle('current', i === current);
+  });
+  const done = answers.filter(Boolean).length;
+  document.getElementById('answered-count').textContent = done;
+  document.getElementById('mini-done').textContent = done;
+  document.getElementById('mini-left').textContent = N - done;
+  document.getElementById('mini-flag').textContent = flagged.size;
+  document.getElementById('progress').style.width = ((current + 1) / N * 100) + '%';
+}
+
+function paintQuestion() {
+  document.getElementById('qnum').textContent = current + 1;
+  // ข้อ 14 = อัตนัย (fill-in xxxx.xx) demo · ข้ออื่น = ปรนัย
+  const fillMode = current === 13;
+  document.getElementById('numgrid-wrap').style.display = fillMode ? '' : 'none';
+  document.querySelector('.choices').style.display = fillMode ? 'none' : '';
+  document.querySelector('.qtext').innerHTML = fillMode
+    ? 'ร้านค้าแห่งหนึ่งตั้งราคาสินค้าไว้ 250.00 บาท ต่อมาลดราคา 20% แล้วบวกภาษีมูลค่าเพิ่ม 7% จากราคาหลังลด ลูกค้าต้องจ่ายเงินกี่บาท — <b>ตอบเป็นทศนิยม 2 ตำแหน่ง</b>'
+    : 'พิจารณาลำดับของตัวเลขชุดต่อไปนี้ ซึ่งสร้างขึ้นจากกฎเดียวกันตลอดทั้งลำดับ — ตัวเลขในตำแหน่งที่ <b>?</b> ควรเป็นค่าใด?';
+  document.querySelector('.qfigure').style.display = fillMode ? 'none' : '';
+  // sync choice state from answers
+  document.querySelectorAll('.choice').forEach(c => {
+    const isPicked = c.dataset.letter === answers[current];
+    c.setAttribute('aria-checked', isPicked ? 'true' : 'false');
+  });
+  // flag state
+  const isFlagged = flagged.has(current);
+  document.getElementById('flag-pill').classList.toggle('show', isFlagged);
+  document.getElementById('flag-btn').classList.toggle('active', isFlagged);
+  document.getElementById('flag-text').textContent = isFlagged ? 'ปักธงไว้แล้ว' : 'ปักธงข้อนี้';
+}
+
+function goTo(i) {
+  if (i < 0 || i >= N) return;
+  current = i;
+  paintGrid();
+  paintQuestion();
+  // a real app would also fetch question content; for prototype we keep question 13 visible
+}
+
+// FILL-IN numeric grid (ข้อ 14) — xxxx.xx
+const ngCells = [...document.querySelectorAll('.ng-cell')];
+function ngValue(){
+  const d = ngCells.map(c=>c.value || '0');
+  return d[0]+d[1]+d[2]+d[3]+'.'+d[4]+d[5];
+}
+function ngPaint(){
+  ngCells.forEach(c=>c.classList.toggle('filled', !!c.value));
+  const any = ngCells.some(c=>c.value);
+  document.querySelector('#ng-echo b').textContent = any ? ngValue() : '—';
+  if(any){ answers[13] = ngValue(); } else { delete answers[13]; }
+  paintGrid();
+}
+ngCells.forEach((c,i)=>{
+  c.addEventListener('input', ()=>{
+    c.value = c.value.replace(/[^0-9]/g,'').slice(-1);
+    if(c.value && i < ngCells.length-1) ngCells[i+1].focus();
+    ngPaint(); flashSync();
+  });
+  c.addEventListener('keydown', e=>{
+    if(e.key==='Backspace' && !c.value && i>0){ ngCells[i-1].focus(); ngCells[i-1].value=''; ngPaint(); e.preventDefault(); }
+    if(e.key==='ArrowLeft' && i>0) ngCells[i-1].focus();
+    if(e.key==='ArrowRight' && i<ngCells.length-1) ngCells[i+1].focus();
+  });
+});
+
+// CHOICES
+document.querySelectorAll('.choice').forEach(c => {
+  c.addEventListener('click', () => {
+    answers[current] = c.dataset.letter;
+    paintGrid();
+    paintQuestion();
+    flashSync();
+  });
+});
+
+// FLAG
+document.getElementById('flag-btn').addEventListener('click', () => {
+  if (flagged.has(current)) flagged.delete(current);
+  else flagged.add(current);
+  paintGrid();
+  paintQuestion();
+});
+
+// NAV BUTTONS
+document.getElementById('prev-btn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('next-btn').addEventListener('click', () => goTo(current + 1));
+
+// TIMER (counts down from 42:18, just visual)
+let totalSec = 42 * 60 + 18;
+const timerEl = document.getElementById('timer');
+const timeText = document.getElementById('time-text');
+function tickTimer() {
+  totalSec = Math.max(0, totalSec - 1);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  timeText.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  timerEl.classList.toggle('warning', totalSec <= 10 * 60 && totalSec > 5 * 60);
+  timerEl.classList.toggle('critical', totalSec <= 5 * 60);
+}
+setInterval(tickTimer, 1000);
+
+// SYNC indicator — flash "saving" → settle to "saved Xs ago"
+const sync = document.getElementById('sync');
+const syncText = document.getElementById('sync-text');
+let lastSave = new Date();
+function flashSync() {
+  sync.classList.add('saving');
+  sync.querySelector('svg').innerHTML = '<path d="M21 12a9 9 0 1 1-6.2-8.55"/><path d="M21 3v6h-6"/>';
+  syncText.textContent = 'กำลังบันทึก...';
+  setTimeout(() => {
+    lastSave = new Date();
+    sync.classList.remove('saving');
+    sync.querySelector('svg').innerHTML = '<path d="M20 6 9 17l-5-5"/>';
+    updateSyncLabel();
+  }, 700);
+}
+function updateSyncLabel() {
+  if (sync.classList.contains('saving')) return;
+  const sec = Math.floor((Date.now() - lastSave) / 1000);
+  if (sec < 5) syncText.textContent = 'บันทึกแล้ว · ตอนนี้';
+  else if (sec < 60) syncText.textContent = `บันทึกแล้ว · ${sec} วินาทีก่อน`;
+  else {
+    const t = lastSave.toTimeString().slice(0, 5);
+    syncText.textContent = `ซิงค์ล่าสุด ${t}`;
+  }
+}
+setInterval(updateSyncLabel, 1000);
+
+// SUBMIT MODAL
+const submitBtn = document.getElementById('submit-btn');
+const modal = document.getElementById('submit-modal');
+const cancelBtn = document.getElementById('cancel-submit');
+submitBtn.addEventListener('click', () => {
+  // populate unanswered list
+  const unans = [];
+  for (let i = 0; i < N; i++) if (!answers[i]) unans.push(i + 1);
+  const chips = document.getElementById('unanswered-chips');
+  chips.innerHTML = unans.length
+    ? unans.map(n => `<span>${String(n).padStart(2,'0')}</span>`).join('')
+    : '<span style="color:var(--success);border-color:oklch(0.78 0.18 150 / 0.4);">ครบทุกข้อแล้ว! 🎉</span>';
+  // tweak modal subtitle text
+  const subline = modal.querySelector('.modal-head p');
+  if (unans.length === 0) {
+    subline.innerHTML = `ตอบครบทั้ง <b style="color:var(--success);">30 ข้อ</b> แล้ว — ส่งคำตอบและไปดูผลกันเลย`;
+  } else {
+    subline.innerHTML = `เหลือ <b style="color:var(--fg-0);">${unans.length} ข้อ</b> ที่ยังไม่ได้ตอบ — เมื่อส่งแล้วจะไม่สามารถกลับมาแก้ได้ แน่ใจมั้ยว่าจะส่งตอนนี้?`;
+  }
+  modal.classList.add('open');
+});
+cancelBtn.addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+// EXIT
+document.getElementById('exit-btn').addEventListener('click', () => {
+  if (confirm('ออกจากข้อสอบ? คำตอบจะถูกบันทึก แต่เวลายังนับต่อ')) location.href = 'Exams.html';
+});
+
+// INIT
+paintGrid();
+paintQuestion();
+</script>
+</body>
+</html>

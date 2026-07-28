@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ตั้งค่าเว็บ — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-data.css?v=1" />
+<link rel="stylesheet" href="admin-system.css?v=2" />
+<style>
+  /* panel fade on tab switch */
+  @media (prefers-reduced-motion: no-preference){ .set-panel.active { animation:setFade .32s cubic-bezier(.2,.8,.2,1); } }
+  @keyframes setFade { from{opacity:0;transform:translateY(8px)} }
+  .set-tab { transition:background .15s,color .15s; }
+
+  /* banner drag-reorder */
+  .banner-item { cursor:grab; transition:transform .16s, box-shadow .16s, opacity .16s; }
+  .banner-item:hover { transform:translateY(-2px); box-shadow:0 10px 24px -14px oklch(0 0 0 / 0.5); }
+  .banner-item.dragging { opacity:.4; cursor:grabbing; }
+  .banner-item.drop-target { outline:2px dashed var(--brand-magenta); outline-offset:2px; }
+  .banner-item .bdrag { position:absolute; top:7px; left:7px; width:26px; height:26px; border-radius:7px; background:oklch(0.15 0.02 285 / 0.6); color:#fff; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s; }
+  .banner-item:hover .bdrag { opacity:1; }
+  .banner-item .bdrag svg { width:13px; height:13px; }
+
+  /* PromptPay layout + live QR */
+  .pp-layout { display:grid; grid-template-columns:1fr 210px; gap:22px; align-items:start; }
+  @media (max-width:720px){ .pp-layout { grid-template-columns:1fr; } }
+  .pp-fields { display:flex; flex-direction:column; gap:16px; }
+  .qr-card { border-radius:16px; padding:16px; border:1px solid var(--glass-line-strong); background:var(--glass); backdrop-filter:blur(20px) saturate(150%); -webkit-backdrop-filter:blur(20px) saturate(150%); text-align:center; }
+  .qr-card .qr-cap { font-family:"JetBrains Mono"; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--fg-3); margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .qr-card .qr-cap .pp-logo { font-family:var(--font-display); font-weight:800; color:var(--brand-cyan); letter-spacing:0; }
+  .qr-frame { position:relative; width:150px; aspect-ratio:1; margin:0 auto 12px; background:#fff; border-radius:12px; padding:12px; box-shadow:0 8px 24px -12px oklch(0 0 0 / 0.5); }
+  .qr-frame svg { width:100%; height:100%; display:block; }
+  .qr-name { font-family:var(--font-display); font-weight:700; font-size:14px; color:var(--fg-0); }
+  .qr-num { font-family:"JetBrains Mono"; font-size:12px; color:var(--fg-2); margin-top:2px; letter-spacing:.03em; }
+  .qr-live { display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:10.5px; font-family:"JetBrains Mono"; color:var(--success); }
+  .qr-live .d { width:6px; height:6px; border-radius:50%; background:var(--success); animation:qrPulse 2s ease-out infinite; }
+  @keyframes qrPulse { 0%{box-shadow:0 0 0 0 oklch(from var(--success) l c h / 0.6)} 70%{box-shadow:0 0 0 8px oklch(from var(--success) l c h / 0)} 100%{box-shadow:0 0 0 0 oklch(from var(--success) l c h / 0)} }
+
+  /* live hero preview */
+  .hero-prev { position:relative; border-radius:14px; overflow:hidden; padding:26px 24px; min-height:120px; display:flex; flex-direction:column; justify-content:center; gap:8px; background:linear-gradient(120deg, oklch(0.66 0.23 295), oklch(0.68 0.25 5) 55%, oklch(0.78 0.20 50)); color:#fff; }
+  .hero-prev::before { content:""; position:absolute; inset:0; background-image:radial-gradient(oklch(1 0 0 / 0.14) 1px, transparent 1px); background-size:16px 16px; mask-image:radial-gradient(80% 80% at 80% 20%,#000,transparent); }
+  .hero-prev .hp-t { position:relative; font-family:var(--font-display); font-weight:800; font-size:22px; line-height:1.15; letter-spacing:-0.02em; text-shadow:0 2px 16px oklch(0 0 0 / 0.25); }
+  .hero-prev .hp-s { position:relative; font-size:13px; opacity:.92; line-height:1.5; max-width:44ch; }
+  .hero-prev .hp-badge { position:absolute; top:12px; right:14px; font-family:"JetBrains Mono"; font-size:9px; letter-spacing:.14em; text-transform:uppercase; opacity:.7; }
+
+  /* ===== NEON — dark mode ===== */
+  :root[data-theme="petronas"] .set-tab[aria-selected="true"]::before, :root[data-theme="dark"] .set-tab[aria-selected="true"]::before { box-shadow:0 0 12px -1px oklch(from var(--brand-magenta) l c h / 0.8); }
+  :root[data-theme="petronas"] .qr-frame, :root[data-theme="dark"] .qr-frame { box-shadow:0 8px 24px -10px oklch(0 0 0 / 0.6), 0 0 22px -6px oklch(from var(--brand-cyan) l c h / 0.5); }
+  :root[data-theme="petronas"] .hero-prev, :root[data-theme="dark"] .hero-prev { box-shadow:0 0 30px -10px oklch(from var(--brand-magenta) l c h / 0.6); }
+  :root[data-theme="petronas"] .recon-tag, :root[data-theme="dark"] .recon-tag { box-shadow:0 0 14px -5px oklch(from var(--brand-cyan) l c h / 0.6); }
+  :root[data-theme="petronas"] .autosave.saving .d, :root[data-theme="dark"] .autosave.saving .d { box-shadow:0 0 10px 0 oklch(from var(--warning) l c h / 0.8); }
+
+  /* team & permissions */
+  .team-list { display:flex; flex-direction:column; gap:10px; }
+  .team-row { display:grid; grid-template-columns:auto 1fr auto; gap:13px; align-items:center; padding:13px 15px; border-radius:13px; border:1px solid var(--line-soft); background:var(--bg-1); }
+  .team-row .av { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:15px; color:#fff; }
+  .team-row .tinfo b { font-family:var(--font-display); font-weight:600; font-size:14px; color:var(--fg-0); display:block; }
+  .team-row .tinfo span { font-size:12px; color:var(--fg-3); font-family:"JetBrains Mono"; }
+  .team-row .trole { display:flex; align-items:center; gap:8px; }
+  .role-pill { font-family:"JetBrains Mono"; font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:99px; letter-spacing:.04em; }
+  .role-pill.owner { color:var(--brand-magenta); background:oklch(from var(--brand-magenta) l c h / 0.14); border:1px solid oklch(from var(--brand-magenta) l c h / 0.3); }
+  .role-pill.ta { color:var(--brand-cyan); background:oklch(from var(--brand-cyan) l c h / 0.14); border:1px solid oklch(from var(--brand-cyan) l c h / 0.3); }
+  .team-sel { height:34px; border-radius:9px; border:1px solid var(--line); background:var(--bg-2); color:var(--fg-1); font:inherit; font-size:12.5px; padding:0 10px; cursor:pointer; }
+  .team-row .tdel { width:32px; height:32px; border-radius:8px; border:1px solid var(--line); background:var(--bg-2); color:var(--fg-3); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .team-row .tdel:hover { color:var(--danger); border-color:oklch(from var(--danger) l c h / 0.4); }
+  .team-row .tdel svg { width:14px; height:14px; }
+  .team-row.owner .tdel { visibility:hidden; }
+  .perm-note, .recon-tag.wide { display:flex; align-items:center; gap:9px; margin-top:14px; font-size:12px; color:var(--fg-3); }
+  .perm-note svg { width:15px; height:15px; flex-shrink:0; }
+  .perm-note a { color:var(--brand-magenta); text-decoration:none; }
+
+  /* char counters */
+  .ct { float:right; font-family:"JetBrains Mono"; font-size:10.5px; color:var(--fg-3); font-weight:400; }
+  .ct.warn { color:var(--warning); }
+
+  /* OG / social preview */
+  .og-card { border:1px solid var(--line); border-radius:13px; overflow:hidden; max-width:420px; background:var(--bg-1); }
+  .og-img { position:relative; aspect-ratio:1.91/1; }
+  .og-img .bstripe { position:absolute; inset:0; background:repeating-linear-gradient(135deg,var(--bg-2),var(--bg-2) 11px,var(--bg-1) 11px,var(--bg-1) 22px); }
+  .og-replace { position:absolute; inset:0; margin:auto; width:fit-content; height:fit-content; display:flex; align-items:center; gap:7px; padding:8px 13px; border-radius:9px; border:0; background:oklch(0.15 0.02 285 / 0.7); color:#fff; font:inherit; font-size:12px; cursor:pointer; opacity:0; transition:opacity .15s; }
+  .og-img:hover .og-replace { opacity:1; }
+  .og-replace svg { width:14px; height:14px; }
+  .og-body { padding:11px 14px; }
+  .og-url { font-family:"JetBrains Mono"; font-size:11px; color:var(--fg-3); text-transform:uppercase; letter-spacing:.04em; }
+  .og-t { font-family:var(--font-display); font-weight:600; font-size:15px; color:var(--fg-0); margin-top:3px; line-height:1.3; }
+  .og-d { font-size:12.5px; color:var(--fg-2); margin-top:3px; line-height:1.45; }
+
+  /* policy docs */
+  .doc-list { display:flex; flex-direction:column; gap:10px; }
+  .doc-row { display:grid; grid-template-columns:auto 1fr auto auto; gap:13px; align-items:center; padding:13px 15px; border-radius:13px; border:1px solid var(--line-soft); background:var(--bg-1); }
+  .doc-ic { width:38px; height:38px; border-radius:10px; background:var(--bg-2); border:1px solid var(--line-soft); display:flex; align-items:center; justify-content:center; color:var(--fg-2); }
+  .doc-ic svg { width:17px; height:17px; }
+  .doc-tx b { font-family:var(--font-display); font-weight:600; font-size:14px; color:var(--fg-0); display:block; }
+  .doc-tx span { font-size:11.5px; color:var(--fg-3); font-family:"JetBrains Mono"; }
+  .doc-badge { font-family:"JetBrains Mono"; font-size:10px; font-weight:700; padding:3px 9px; border-radius:99px; }
+  .doc-badge.on { color:var(--success); background:oklch(from var(--success) l c h / 0.14); border:1px solid oklch(from var(--success) l c h / 0.3); }
+  .doc-badge.draft { color:var(--warning); background:oklch(from var(--warning) l c h / 0.14); border:1px solid oklch(from var(--warning) l c h / 0.3); }
+
+  /* maintenance big toggle */
+  .big-toggle { display:flex; align-items:center; gap:14px; cursor:pointer; padding:4px 0; }
+  .big-toggle input { position:absolute; opacity:0; pointer-events:none; }
+  .bt-track { flex-shrink:0; width:52px; height:30px; border-radius:99px; background:var(--bg-3); border:1px solid var(--line); position:relative; transition:background .2s; }
+  .bt-thumb { position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 2px 6px oklch(0 0 0 / 0.35); transition:transform .22s cubic-bezier(.2,.8,.2,1); }
+  .big-toggle input:checked + .bt-track { background:var(--danger); border-color:transparent; }
+  .big-toggle input:checked + .bt-track .bt-thumb { transform:translateX(22px); }
+  .bt-tx b { font-family:var(--font-display); font-weight:600; font-size:14px; color:var(--fg-0); display:block; }
+  .bt-tx span { font-size:12px; color:var(--fg-3); }
+  .maint-banner { display:none; align-items:center; gap:10px; margin-top:16px; padding:12px 14px; border-radius:12px; color:var(--danger); background:oklch(from var(--danger) l c h / 0.1); border:1px solid oklch(from var(--danger) l c h / 0.3); font-size:12.5px; }
+  .maint-banner.show { display:flex; animation:setFade .3s cubic-bezier(.2,.8,.2,1); }
+  .maint-banner svg { width:18px; height:18px; flex-shrink:0; }
+
+  :root[data-theme="petronas"] .role-pill.owner, :root[data-theme="dark"] .role-pill.owner { box-shadow:0 0 12px -4px oklch(from var(--brand-magenta) l c h / 0.7); }
+  :root[data-theme="petronas"] .big-toggle input:checked + .bt-track, :root[data-theme="dark"] .big-toggle input:checked + .bt-track { box-shadow:0 0 16px -3px oklch(from var(--danger) l c h / 0.8); }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='settings';</script>
+<div class="adm" id="adm" data-screen-label="Admin · ตั้งค่าเว็บ">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>ตั้งค่าเว็บ</b></nav>
+      <div class="adm-top-actions">
+        <a class="btn btn-ghost btn-sm" href="Landing Page.html" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>ดูหน้าร้าน</a>
+        <a class="btn btn-ghost btn-sm" href="Admin Audit.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>ประวัติ</a>
+        <span class="autosave" id="autosave"><span class="d"></span>บันทึกแล้ว · 15:40</span>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow">SYSTEM · ตั้งค่า</div>
+            <h1>ตั้งค่า<span class="grad">เว็บ</span></h1>
+            <div class="sub">หน้าร้าน · การชำระเงิน · ช่องทางติดต่อ — บันทึกอัตโนมัติทุกการแก้ไข</div>
+          </div>
+        </section>
+
+        <section class="set-grid reveal" data-delay="1">
+          <!-- vertical tabs -->
+          <nav class="set-tabs" role="tablist">
+            <button class="set-tab" role="tab" aria-selected="true" data-panel="store"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M3 9l1.5-5h15L21 9M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/></svg>หน้าร้าน</button>
+            <button class="set-tab" role="tab" aria-selected="false" data-panel="payment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>การชำระเงิน</button>
+            <button class="set-tab" role="tab" aria-selected="false" data-panel="team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>ทีมงาน &amp; สิทธิ์</button>
+            <button class="set-tab" role="tab" aria-selected="false" data-panel="seo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg>SEO &amp; Social</button>
+            <button class="set-tab" role="tab" aria-selected="false" data-panel="policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>นโยบาย &amp; เอกสาร</button>
+            <button class="set-tab" role="tab" aria-selected="false" data-panel="system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.9 2.9M16.2 16.2l2.9 2.9M2 12h4M18 12h4M4.9 19.1l2.9-2.9M16.2 7.8l2.9-2.9"/><circle cx="12" cy="12" r="3"/></svg>ระบบ</button>
+            <button class="set-tab" role="tab" aria-selected="false" data-panel="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>ช่องทางติดต่อ</button>
+          </nav>
+
+          <!-- panels -->
+          <div>
+            <!-- STORE -->
+            <div class="set-panel active" data-panel="store">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>แบนเนอร์หน้าแรก</b><span>รูปสไลด์บนหน้า Landing — แนะนำ 1600×600px</span></div></div>
+                <div class="ss-body">
+                  <div class="banner-grid" id="banners">
+                    <div class="banner-item" draggable="true"><div class="bstripe"></div><button class="bdrag" aria-label="ลาก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><span class="blabel">hero-tcas68.jpg</span><button class="bdel" aria-label="ลบ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+                    <div class="banner-item" draggable="true"><div class="bstripe"></div><button class="bdrag" aria-label="ลาก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><span class="blabel">promo-summer.jpg</span><button class="bdel" aria-label="ลบ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+                    <button class="banner-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><span>เพิ่มแบนเนอร์</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>ข้อความ Hero</b><span>หัวข้อใหญ่บนหน้าแรก</span></div></div>
+                <div class="ss-body">
+                  <div class="field"><label>หัวข้อหลัก</label><input class="inp" id="hero-title" data-save value="ติวกับหมิง พิชิต TCAS ทุกสนามสอบ" /></div>
+                  <div class="field"><label>ข้อความรอง</label><input class="inp" id="hero-sub" data-save value="คอร์สฟิสิกส์–คณิต ม.ปลาย และเตรียมสอบ A-Level / TGAT2 / TPAT3" /></div>
+                  <label style="display:block;font-size:11px;color:var(--fg-3);font-family:'JetBrains Mono';letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">ตัวอย่างสด · หน้าแรก</label>
+                  <div class="hero-prev" id="hero-prev"><span class="hp-badge">LANDING</span><div class="hp-t" id="hp-t"></div><div class="hp-s" id="hp-s"></div></div>
+                </div>
+                <div class="save-bar"><span class="saved-note"><span class="d"></span>บันทึกอัตโนมัติ</span><button class="btn btn-primary btn-sm">บันทึกส่วนนี้</button></div>
+              </div>
+            </div>
+
+            <!-- PAYMENT -->
+            <div class="set-panel" data-panel="payment">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>บัญชี PromptPay</b><span>ใช้สร้าง QR ตอน checkout · ยืนยันการชำระอัตโนมัติผ่านเกตเวย์</span></div></div>
+                <div class="ss-body">
+                  <div class="pp-layout">
+                    <div class="pp-fields">
+                      <div class="field-row">
+                        <div class="field" style="margin-bottom:0"><label>เลขพร้อมเพย์ (เบอร์/บัตรปชช.)</label><input class="inp" id="pp-number" data-save value="0891234567" style="font-family:'JetBrains Mono'" /></div>
+                        <div class="field" style="margin-bottom:0"><label>ชื่อบัญชี</label><input class="inp" id="pp-name" data-save value="ธนภัทร (หมิง) ว." /></div>
+                      </div>
+                      <div class="field" style="margin-bottom:0"><label>คำแนะนำการชำระ <span class="opt">โชว์ตอน checkout</span></label><textarea class="inp" data-save rows="2">สแกน QR แล้วชำระยอดให้ตรงเป๊ะ ระบบยืนยันอัตโนมัติภายในไม่กี่วินาที</textarea></div>
+                    </div>
+                    <div class="qr-card">
+                      <div class="qr-cap"><span class="pp-logo">PromptPay</span> ตัวอย่าง QR</div>
+                      <div class="qr-frame"><svg id="qr-svg" viewBox="0 0 25 25" shape-rendering="crispEdges"></svg></div>
+                      <div class="qr-name" id="qr-name">—</div>
+                      <div class="qr-num" id="qr-num">—</div>
+                      <div class="qr-live"><span class="d"></span>อัปเดตสดตามข้อมูล</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="save-bar"><span class="saved-note"><span class="d"></span>บันทึกอัตโนมัติ</span><button class="btn btn-primary btn-sm">บันทึกส่วนนี้</button></div>
+              </div>
+              <div class="recon-tag" style="display:inline-flex">เกตเวย์: Opn Payments · เชื่อมต่อแล้ว</div>
+            </div>
+
+            <!-- TEAM & PERMISSIONS -->
+            <div class="set-panel" data-panel="team">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>ทีมงาน &amp; สิทธิ์</b><span>ใครเข้าหลังบ้านได้บ้าง · กำหนดสิทธิ์รายคน</span></div><button class="btn btn-primary btn-sm" id="team-add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มทีมงาน</button></div>
+                <div class="ss-body">
+                  <div class="team-list" id="team-list"></div>
+                  <div class="perm-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16v-4M12 8h.01"/><circle cx="12" cy="12" r="9"/></svg>ทุกการเปลี่ยนสิทธิ์จะถูกบันทึกใน <a href="Admin Audit.html">Audit log</a> อัตโนมัติ</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO & SOCIAL -->
+            <div class="set-panel" data-panel="seo">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>SEO &amp; การแชร์</b><span>ชื่อ–คำอธิบายเว็บ และรูปตอนแชร์ลิงก์ใน Line / Facebook</span></div></div>
+                <div class="ss-body">
+                  <div class="field"><label>Meta Title <span class="ct" id="ct-title"></span></label><input class="inp" id="seo-title" data-save maxlength="60" value="mingsmileyface — ติวฟิสิกส์ คณิต พิชิต TCAS" /></div>
+                  <div class="field"><label>Meta Description <span class="ct" id="ct-desc"></span></label><textarea class="inp" id="seo-desc" data-save maxlength="160" rows="2">คอร์สติวฟิสิกส์และคณิต ม.ปลาย พร้อมข้อสอบเสมือนจริง TGAT2 / TPAT3 / A-Level โดยอาจารย์มิ่ง</textarea></div>
+                  <label style="display:block;font-size:11px;color:var(--fg-3);font-family:'JetBrains Mono';letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">ตัวอย่างตอนแชร์ลิงก์</label>
+                  <div class="og-card">
+                    <div class="og-img"><div class="bstripe"></div><button class="og-replace"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>เปลี่ยนรูป OG</button></div>
+                    <div class="og-body"><div class="og-url">mingsmileyface.co</div><div class="og-t" id="og-t"></div><div class="og-d" id="og-d"></div></div>
+                  </div>
+                </div>
+                <div class="save-bar"><span class="saved-note"><span class="d"></span>บันทึกอัตโนมัติ</span><button class="btn btn-primary btn-sm">บันทึกส่วนนี้</button></div>
+              </div>
+            </div>
+
+            <!-- POLICY & DOCS -->
+            <div class="set-panel" data-panel="policy">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>นโยบาย &amp; เอกสาร</b><span>หน้าข้อกำหนดที่ลิงก์จาก footer และหน้า checkout</span></div></div>
+                <div class="ss-body">
+                  <div class="doc-list" id="doc-list">
+                    <div class="doc-row" data-doc="terms"><div class="doc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="doc-tx"><b>ข้อกำหนดการใช้งาน</b><span>อัปเดตล่าสุด 12 พ.ค. 2569</span></div><span class="doc-badge on">เผยแพร่</span><button class="btn btn-ghost btn-sm doc-edit">แก้ไข</button></div>
+                    <div class="doc-row" data-doc="refund"><div class="doc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div><div class="doc-tx"><b>นโยบายการคืนเงิน</b><span>อัปเดตล่าสุด 12 พ.ค. 2569</span></div><span class="doc-badge on">เผยแพร่</span><button class="btn btn-ghost btn-sm doc-edit">แก้ไข</button></div>
+                    <div class="doc-row" data-doc="privacy"><div class="doc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 4 9 8 11 4-2 8-6 8-11V5z"/></svg></div><div class="doc-tx"><b>นโยบายความเป็นส่วนตัว (PDPA)</b><span>ยังไม่เผยแพร่ · ร่าง</span></div><span class="doc-badge draft">ร่าง</span><button class="btn btn-ghost btn-sm doc-edit">แก้ไข</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SYSTEM / MAINTENANCE -->
+            <div class="set-panel" data-panel="system">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>โหมดปิดปรับปรุง</b><span>พักหน้าเว็บชั่วคราวตอนอัปเดต — นักเรียนจะเห็นหน้าแจ้งเตือนแทน</span></div></div>
+                <div class="ss-body">
+                  <label class="big-toggle"><input type="checkbox" id="maint-toggle" /><span class="bt-track"><span class="bt-thumb"></span></span><span class="bt-tx"><b>เปิดโหมดปิดปรับปรุง</b><span>เมื่อเปิด หน้าเว็บฝั่งนักเรียนจะถูกพักทันที (หลังบ้านยังเข้าได้)</span></span></label>
+                  <div class="maint-banner" id="maint-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><span>ขณะนี้เว็บอยู่ในโหมดปิดปรับปรุง — นักเรียนไม่สามารถเข้าใช้งานได้</span></div>
+                  <div class="field" style="margin:16px 0 0"><label>ข้อความที่แสดงให้นักเรียน</label><textarea class="inp" data-save rows="2">ระบบกำลังปรับปรุงชั่วคราว จะกลับมาเปิดให้บริการเร็ว ๆ นี้ 🙏 ขออภัยในความไม่สะดวก</textarea></div>
+                </div>
+                <div class="save-bar"><span class="saved-note"><span class="d"></span>บันทึกอัตโนมัติ</span><button class="btn btn-primary btn-sm">บันทึกส่วนนี้</button></div>
+              </div>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="set-panel" data-panel="contact">
+              <div class="set-section">
+                <div class="ss-head"><div class="ss-title"><b>ช่องทางติดต่อ</b><span>โชว์ในส่วน trust signals และหน้า checkout</span></div></div>
+                <div class="ss-body">
+                  <div class="field"><label>Line Official</label><div class="inp-prefix"><span class="pfx" style="font-size:12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><input class="inp" data-save value="@mingsmile" style="padding-left:38px" /></div></div>
+                  <div class="field-row">
+                    <div class="field"><label>อีเมล</label><input class="inp" data-save value="hello@mingsmile.co" /></div>
+                    <div class="field"><label>เบอร์โทร</label><input class="inp" data-save value="089-123-4567" style="font-family:'JetBrains Mono'" /></div>
+                  </div>
+                </div>
+                <div class="save-bar"><span class="saved-note"><span class="d"></span>บันทึกอัตโนมัติ</span><button class="btn btn-primary btn-sm">บันทึกส่วนนี้</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script>
+(function(){
+  // tabs
+  document.querySelectorAll('.set-tab').forEach(tab=>tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.set-tab').forEach(t=>t.setAttribute('aria-selected','false'));
+    tab.setAttribute('aria-selected','true');
+    const id=tab.dataset.panel;
+    document.querySelectorAll('.set-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel===id));
+  }));
+  // banner delete / add
+  document.getElementById('banners').addEventListener('click', e=>{
+    const del=e.target.closest('.bdel'); if(del){ del.closest('.banner-item').remove(); markSave(); return; }
+    const add=e.target.closest('.banner-add'); if(add){
+      const item=document.createElement('div'); item.className='banner-item'; item.draggable=true;
+      item.innerHTML='<div class="bstripe"></div><button class="bdrag" aria-label="ลาก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></button><span class="blabel">banner-'+(Date.now()%1000)+'.jpg</span><button class="bdel" aria-label="ลบ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>';
+      add.before(item); markSave();
+    }
+  });
+  // banner drag-reorder
+  (function(){
+    const grid=document.getElementById('banners'); let dragEl=null;
+    document.querySelectorAll('.banner-item').forEach(b=>b.draggable=true);
+    grid.addEventListener('dragstart', e=>{ const it=e.target.closest('.banner-item'); if(!it) return; dragEl=it; it.classList.add('dragging'); });
+    grid.addEventListener('dragend', ()=>{ if(dragEl){ dragEl.classList.remove('dragging'); dragEl=null; } grid.querySelectorAll('.drop-target').forEach(x=>x.classList.remove('drop-target')); markSave(); });
+    grid.addEventListener('dragover', e=>{ e.preventDefault(); const over=e.target.closest('.banner-item'); grid.querySelectorAll('.drop-target').forEach(x=>x.classList.remove('drop-target')); if(over&&over!==dragEl){ over.classList.add('drop-target'); } });
+    grid.addEventListener('drop', e=>{ e.preventDefault(); const over=e.target.closest('.banner-item'); if(over&&dragEl&&over!==dragEl){ const items=[...grid.querySelectorAll('.banner-item')]; over.parentNode.insertBefore(dragEl, items.indexOf(over)>items.indexOf(dragEl)?over.nextSibling:over); } });
+  })();
+
+  // ===== live PromptPay QR (decorative, regenerates from the number) =====
+  function qrGen(seed){
+    // deterministic pseudo-random 25×25 with 3 finder patterns
+    let s=0; for(let i=0;i<seed.length;i++) s=(s*31+seed.charCodeAt(i))>>>0; s=s||1;
+    function rnd(){ s=(s*1103515245+12345)&0x7fffffff; return s/0x7fffffff; }
+    const N=25, cells=[];
+    function finder(r,c){ for(let dr=0;dr<7;dr++)for(let dc=0;dc<7;dc++){ const edge=dr===0||dr===6||dc===0||dc===6; const core=dr>=2&&dr<=4&&dc>=2&&dc<=4; cells.push({r:r+dr,c:c+dc,on:edge||core}); } }
+    const skip=(r,c)=>((r<8&&c<8)||(r<8&&c>=N-8)||(r>=N-8&&c<8));
+    let svg='';
+    for(let r=0;r<N;r++)for(let c=0;c<N;c++){ if(skip(r,c)) continue; if(rnd()>0.55) svg+=`<rect x="${c}" y="${r}" width="1" height="1"/>`; }
+    finder(0,0); finder(0,N-7); finder(N-7,0);
+    cells.forEach(m=>{ if(m.on) svg+=`<rect x="${m.c}" y="${m.r}" width="1" height="1"/>`; });
+    return svg;
+  }
+  const qrSvg=document.getElementById('qr-svg'), qrName=document.getElementById('qr-name'), qrNum=document.getElementById('qr-num');
+  const ppNum=document.getElementById('pp-number'), ppName=document.getElementById('pp-name');
+  function fmtPP(v){ v=(v||'').replace(/\D/g,''); return v.length===10?v.replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3'):v.length===13?v.replace(/(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/,'$1-$2-$3-$4-$5'):v; }
+  function updateQR(){ qrSvg.innerHTML='<g fill="#0a0a0a">'+qrGen(ppNum.value||'0')+'</g>'; qrName.textContent=ppName.value||'—'; qrNum.textContent=fmtPP(ppNum.value)||'—'; }
+  ppNum.addEventListener('input', updateQR); ppName.addEventListener('input', updateQR); updateQR();
+
+  // ===== live hero preview =====
+  const hT=document.getElementById('hero-title'), hS=document.getElementById('hero-sub'), pT=document.getElementById('hp-t'), pS=document.getElementById('hp-s');
+  function updateHero(){ pT.textContent=hT.value||'หัวข้อหน้าแรก'; pS.textContent=hS.value||'ข้อความรอง'; }
+  hT.addEventListener('input', updateHero); hS.addEventListener('input', updateHero); updateHero();
+
+  // ===== team & permissions =====
+  const TEAM=[
+    {name:'ธนภัทร (หมิง) ว.', email:'ming@mingsmile.co', ini:'ม', av:'var(--grad-warm)', role:'owner'},
+    {name:'พี่ครู TA', email:'ta@mingsmile.co', ini:'T', av:'var(--grad-cool)', role:'ta'},
+    {name:'ปาริชาติ แสงทอง', email:'paricha@mingsmile.co', ini:'ป', av:'linear-gradient(135deg,oklch(0.7 0.16 320),oklch(0.72 0.15 20))', role:'ta'}
+  ];
+  const ROLE_LABEL={owner:'เจ้าของ', ta:'ผู้ช่วย (TA)'};
+  const teamList=document.getElementById('team-list');
+  function renderTeam(){
+    teamList.innerHTML=TEAM.map((m,i)=>`<div class="team-row ${m.role}">
+      <div class="av" style="background:${m.av}">${m.ini}</div>
+      <div class="tinfo"><b>${m.name}</b><span>${m.email}</span></div>
+      <div class="trole">${m.role==='owner'?'<span class="role-pill owner">เจ้าของ</span>':`<select class="team-sel" data-i="${i}"><option value="ta"${m.role==='ta'?' selected':''}>ผู้ช่วย (TA)</option><option value="owner"${m.role==='owner'?' selected':''}>เจ้าของ</option></select>`}
+        <button class="tdel" data-i="${i}" aria-label="ลบ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    </div>`).join('');
+    teamList.querySelectorAll('.team-sel').forEach(s=>s.addEventListener('change', e=>{ TEAM[+s.dataset.i].role=s.value; renderTeam(); markSave(); }));
+    teamList.querySelectorAll('.tdel').forEach(b=>b.addEventListener('click', ()=>{ TEAM.splice(+b.dataset.i,1); renderTeam(); markSave(); }));
+  }
+  renderTeam();
+  document.getElementById('team-add').addEventListener('click', ()=>{
+    const n=TEAM.length+1;
+    TEAM.push({name:'ทีมงานใหม่ '+n, email:'staff'+n+'@mingsmile.co', ini:'?', av:'var(--grad-cool)', role:'ta'});
+    renderTeam(); markSave();
+  });
+
+  // ===== SEO char counters + live social preview =====
+  const seoT=document.getElementById('seo-title'), seoD=document.getElementById('seo-desc'),
+        ctT=document.getElementById('ct-title'), ctD=document.getElementById('ct-desc'),
+        ogT=document.getElementById('og-t'), ogD=document.getElementById('og-d');
+  function updateSeo(){
+    ctT.textContent=seoT.value.length+'/60'; ctT.classList.toggle('warn', seoT.value.length>=55);
+    ctD.textContent=seoD.value.length+'/160'; ctD.classList.toggle('warn', seoD.value.length>=150);
+    ogT.textContent=seoT.value||'ชื่อเว็บ'; ogD.textContent=seoD.value||'คำอธิบายเว็บ';
+  }
+  seoT.addEventListener('input', updateSeo); seoD.addEventListener('input', updateSeo); updateSeo();
+
+  // ===== maintenance toggle =====
+  const maint=document.getElementById('maint-toggle'), maintBanner=document.getElementById('maint-banner');
+  maint.addEventListener('change', ()=>{ maintBanner.classList.toggle('show', maint.checked); markSave(); });
+  // autosave
+  const pill=document.getElementById('autosave'); let t;
+  function markSave(){ clearTimeout(t); pill.classList.add('saving'); pill.innerHTML='<span class="d"></span>กำลังบันทึก...';
+    t=setTimeout(()=>{ pill.classList.remove('saving'); const n=new Date(); pill.innerHTML='<span class="d"></span>บันทึกแล้ว · '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); },900); }
+  document.querySelectorAll('[data-save]').forEach(el=>el.addEventListener('input', markSave));
+  document.querySelectorAll('.save-bar .btn').forEach(b=>b.addEventListener('click', markSave));
+})();
+</script>
+</body>
+</html>

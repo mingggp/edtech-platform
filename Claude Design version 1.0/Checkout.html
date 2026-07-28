@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ชำระเงิน — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="checkout.css" />
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="checkout" data-state="qr" id="checkout">
+  <!-- ===== FOCUS TOP BAR ===== -->
+  <header class="co-top">
+    <a href="Course Detail.html" class="co-exit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      <span class="lbl-full">ออกจากการชำระเงิน</span>
+    </a>
+    <div class="co-brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+          <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <b>ชำระเงิน</b>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span class="co-secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> <span class="lbl-full">ชำระปลอดภัยผ่าน</span> <span class="gw">Opn Payments</span></span>
+      <div class="theme-toggle" role="tablist" aria-label="Theme">
+        <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+        <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 3-STEP PIPELINE ===== -->
+  <div class="pipeline">
+    <div class="pl-step active" id="pl-1"><span class="num">1</span><span class="lab">สแกนจ่าย<small>Scan</small></span></div>
+    <span class="pl-line" id="pl-line-1"></span>
+    <div class="pl-step" id="pl-2"><span class="num">2</span><span class="lab">ยืนยันอัตโนมัติ<small>Verify</small></span></div>
+    <span class="pl-line" id="pl-line-2"></span>
+    <div class="pl-step" id="pl-3"><span class="num">3</span><span class="lab">เริ่มเรียน<small>Start</small></span></div>
+  </div>
+
+  <!-- ===== QR + POLLING (state: qr) ===== -->
+  <div class="co-body">
+    <!-- LEFT: payment -->
+    <div class="co-main">
+      <div class="pay-card">
+        <div class="pay-head">
+          <div>
+            <h2>สแกนเพื่อชำระเงิน</h2>
+            <p>เปิดแอปธนาคารหรือแอปที่มีพร้อมเพย์ แล้วสแกน QR ด้านล่าง</p>
+          </div>
+          <div class="timer" id="qr-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span class="tt"><small>QR หมดอายุใน</small><b id="qr-clock">15:00</b></span>
+          </div>
+        </div>
+
+        <div class="qr-wrap">
+          <div class="qr-promptpay"><span class="pp">PromptPay</span> · ชำระให้ <span style="color:var(--fg-0);font-weight:600">Mingsmileyface</span></div>
+          <div class="qr-frame" id="qr-frame">
+            <span class="qr-corner tl"></span><span class="qr-corner tr"></span><span class="qr-corner bl"></span><span class="qr-corner br"></span>
+            <canvas id="qr-canvas" width="232" height="232"></canvas>
+            <div class="qr-logo" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none">
+                <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+                <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+                <path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="qr-amount"><span class="cur">฿</span><span id="qr-amount-val">2,500</span>.00</div>
+
+          <div class="poll">
+            <span class="poll-pill"><span class="spin"></span><b>กำลังรอการชำระเงิน<span class="dots"></span></b></span>
+            <span class="poll-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>ระบบจะยืนยันให้อัตโนมัติทันทีที่ชำระสำเร็จ ไม่ต้องส่งสลิป</span>
+          </div>
+
+          <div class="demo-row">
+            <span class="dlabel">เดโม · จำลอง webhook</span>
+            <button class="btn btn-secondary btn-demo" id="demo-paid">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+              จำลองชำระสำเร็จ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: order summary -->
+    <aside class="summary">
+      <div class="sm-title">สรุปคำสั่งซื้อ</div>
+      <div class="sm-course">
+        <div class="sm-thumb"><span class="glow"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4c-2 0-3 1-3 3v10c0 2-1 3-3 3"/><path d="M4 12h6M7 9v6"/></svg></div>
+        <div class="sm-cinfo">
+          <h3>คณิต ม.ปลาย พิชิต A-Level (Full)</h3>
+          <div class="inst"><span class="av">M</span> ครูหมิง · 86 บทเรียน · 42 ชม.</div>
+        </div>
+      </div>
+
+      <div class="coupon">
+        <input type="text" id="coupon-input" placeholder="กรอกโค้ดส่วนลด" />
+        <button class="btn btn-secondary" id="coupon-apply">ใช้โค้ด</button>
+      </div>
+      <div class="coupon-msg" id="coupon-msg"></div>
+
+      <div class="sm-lines">
+        <div class="sm-line"><span>ราคาคอร์ส</span><span class="v">฿2,500.00</span></div>
+        <div class="sm-line discount hidden" id="sm-discount"><span id="sm-discount-lab">ส่วนลด</span><span class="v" id="sm-discount-val">−฿0.00</span></div>
+      </div>
+      <div class="sm-total">
+        <span class="lbl">ยอดสุทธิ</span>
+        <span class="amt"><span class="cur">฿</span><span id="sm-total-val">2,500</span>.00</span>
+      </div>
+
+      <div class="trust">
+        <div class="trust-item s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ยืนยันการชำระอัตโนมัติ ไม่ต้องส่งสลิป</div>
+        <div class="trust-item i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg> จ่ายครั้งเดียว เข้าเรียนได้ตลอดชีพ</div>
+        <div class="trust-item l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ติดปัญหา? ทักแอดมินทาง Line ได้เลย</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== SUCCESS + EXPIRED STAGES ===== -->
+  <div class="co-stage">
+    <!-- VERIFYING (auto webhook confirm) -->
+    <div class="stage-card stage-verify">
+      <div class="stage-inner">
+        <div class="big-ring verify">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="ring-spin" aria-hidden="true"></span>
+        </div>
+        <h1>กำลังยืนยันการชำระเงิน<span class="dots"></span></h1>
+        <p>ระบบได้รับสัญญาณจากเกตเวย์ Opn Payments แล้ว กำลังตรวจสอบยอดและปลดล็อกคอร์สให้คุณอัตโนมัติ</p>
+        <div class="verify-steps">
+          <div class="vstep done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>ได้รับ webhook จากเกตเวย์</div>
+          <div class="vstep active"><span class="vspin"></span>ตรวจสอบยอดชำระตรงกับคำสั่งซื้อ</div>
+          <div class="vstep"><span class="vdot"></span>ปลดล็อกคอร์สเข้าบัญชีของคุณ</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="stage-card stage-success">
+      <div class="stage-inner">
+        <div class="big-ring ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h1>ชำระเงินสำเร็จ 🎉</h1>
+        <p>ขอบคุณที่ไว้วางใจ Mingsmileyface — เราปลดล็อกคอร์สให้คุณเรียบร้อยแล้ว</p>
+        <div class="paid-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ชำระแล้ว ฿<span id="paid-amount">2,500</span>.00 <span class="ref">REF · MNG-2C7F19</span></div>
+
+        <div class="unlocked">
+          <div class="uthumb"><span class="glow"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4c-2 0-3 1-3 3v10c0 2-1 3-3 3"/><path d="M4 12h6M7 9v6"/></svg></div>
+          <div class="uinfo">
+            <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg> ปลดล็อกแล้ว</span>
+            <h3>คณิต ม.ปลาย พิชิต A-Level (Full)</h3>
+            <p>ครูหมิง · 86 บทเรียน · เข้าเรียนได้ตลอดชีพ</p>
+          </div>
+        </div>
+
+        <div class="stage-actions">
+          <a href="Course Detail.html" class="btn btn-primary btn-lg-full" style="text-decoration:none">เริ่มเรียนเลย →</a>
+          <a href="Settings.html#billing" class="btn btn-ghost btn-lg-full" style="text-decoration:none">ดูใบเสร็จ / ประวัติการชำระเงิน</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPIRED -->
+    <div class="stage-card stage-expired">
+      <div class="stage-inner">
+        <div class="big-ring warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h1>QR หมดอายุแล้ว</h1>
+        <p>QR พร้อมเพย์ใช้ได้ภายใน 15 นาทีเพื่อความปลอดภัย ยังไม่มีการตัดเงินจากบัญชีของคุณ — สร้าง QR ใหม่เพื่อชำระต่อได้เลย</p>
+        <div class="stage-actions" style="margin-top:28px">
+          <button class="btn btn-primary btn-lg-full" id="retry-qr">สร้าง QR ใหม่</button>
+          <a href="Course Detail.html" class="btn btn-ghost btn-lg-full" style="text-decoration:none">กลับไปหน้าคอร์ส</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TWEAKS ===== -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp">
+    <div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Demo · สถานะการชำระ</div>
+    <div class="tweak-seg" data-tweak="screen">
+      <button data-v="qr" aria-pressed="true">รอจ่าย</button>
+      <button data-v="verify" aria-pressed="false">ยืนยัน</button>
+      <button data-v="success" aria-pressed="false">สำเร็จ</button>
+      <button data-v="expired" aria-pressed="false">หมดอายุ</button>
+    </div>
+  </div>
+  <div class="tweak-grp" style="margin-bottom:0">
+    <div class="tweak-tog">
+      <span style="color:var(--fg-1)">ยืนยันอัตโนมัติใน 8 วิ</span>
+      <button class="sw" data-tweak="autoResolve" aria-pressed="true" aria-label="Auto resolve"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============== TWEAKS ==============
+const TWEAKS = /*EDITMODE-BEGIN*/{
+  "accent": "signature",
+  "screen": "success",
+  "autoResolve": true
+}/*EDITMODE-END*/;
+const root = document.documentElement;
+const checkout = document.getElementById('checkout');
+
+function applyTweaks(){
+  root.setAttribute('data-accent', TWEAKS.accent);
+  setState(TWEAKS.screen, false);
+  document.querySelectorAll('[data-tweak]').forEach(grp => {
+    const key = grp.dataset.tweak;
+    if (grp.classList.contains('sw')) { grp.setAttribute('aria-pressed', String(!!TWEAKS[key])); return; }
+    grp.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(TWEAKS[key]))));
+  });
+}
+function setTweak(key, val){
+  TWEAKS[key] = val;
+  try { window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ [key]: val } }, '*'); } catch(e){}
+  applyTweaks();
+}
+document.querySelectorAll('.tweak-seg[data-tweak], .tweak-sw[data-tweak]').forEach(grp => {
+  if(grp.classList.contains('tweak-sw') || grp.classList.contains('tweak-seg')){
+    grp.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setTweak(grp.dataset.tweak, b.dataset.v)));
+  }
+});
+document.querySelector('.sw[data-tweak]').addEventListener('click', function(){ setTweak('autoResolve', this.getAttribute('aria-pressed') !== 'true'); });
+const panel = document.getElementById('tweaks');
+window.addEventListener('message', e => {
+  const t = e?.data?.type;
+  if (t === '__activate_edit_mode') panel.classList.add('open');
+  else if (t === '__deactivate_edit_mode') panel.classList.remove('open');
+});
+try { window.parent.postMessage({ type:'__edit_mode_available' }, '*'); } catch(e){}
+document.getElementById('tweaks-close').addEventListener('click', () => { panel.classList.remove('open'); try { window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*'); } catch(e){} });
+(function(){
+  const head = document.getElementById('tweaks-drag'); let sx, sy, ox, oy, drag=false;
+  head.addEventListener('mousedown', e => { if(e.target.closest('.x')) return; drag=true; sx=e.clientX; sy=e.clientY; const r=panel.getBoundingClientRect(); ox=r.left; oy=r.top; panel.style.right='auto'; e.preventDefault(); });
+  window.addEventListener('mousemove', e => { if(!drag) return; panel.style.left=(ox+e.clientX-sx)+'px'; panel.style.top=(oy+e.clientY-sy)+'px'; });
+  window.addEventListener('mouseup', () => drag=false);
+})();
+
+// ============== THEME ==============
+const btnDark = document.getElementById('btn-dark'), btnLight = document.getElementById('btn-light');
+function setTheme(t){ root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t); btnDark.setAttribute('aria-pressed', (t==='petronas'||t==='classic-dark'||t==='dark')); btnLight.setAttribute('aria-pressed', (t==='petronas-light'||t==='classic-light'||t==='light')); try{localStorage.setItem('ming-theme',t);}catch(e){} }
+btnDark.addEventListener('click', () => setTheme('petronas'));
+btnLight.addEventListener('click', () => setTheme('petronas-light'));
+try { const s = localStorage.getItem('ming-theme'); setTheme(s === 'dark' ? 'petronas' : s === 'light' ? 'petronas-light' : (s || 'petronas-light')); } catch(e){}
+
+// ============== QR CANVAS (mock placeholder) ==============
+function drawQR(){
+  const c = document.getElementById('qr-canvas'); if(!c) return; const ctx = c.getContext('2d');
+  const N = 25, size = c.width, m = size / N;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,size,size);
+  ctx.fillStyle = '#0a0a12';
+  let seed = 4242;
+  const rnd = () => { seed = (seed*9301 + 49297) % 233280; return seed/233280; };
+  const finder = (gx,gy) => { for(let y=0;y<7;y++) for(let x=0;x<7;x++){ const edge=x===0||x===6||y===0||y===6; const core=x>=2&&x<=4&&y>=2&&y<=4; if(edge||core) ctx.fillRect((gx+x)*m,(gy+y)*m,m,m); } };
+  const inFinder = (x,y) => (x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9);
+  const inLogo = (x,y) => (x>=9&&x<=15&&y>=9&&y<=15);
+  for(let y=0;y<N;y++) for(let x=0;x<N;x++){ if(inFinder(x,y)||inLogo(x,y)) continue; if(rnd() > 0.52) ctx.fillRect(x*m,y*m,m,m); }
+  finder(0,0); finder(N-7,0); finder(0,N-7);
+}
+drawQR();
+
+// ============== STATE MACHINE ==============
+// States: 'qr' (shows QR + live polling) → 'success' | 'expired'
+// In production: enter 'qr', create a PromptPay charge via the gateway, then
+// listen for the webhook → call setState('success'). On charge expiry → 'expired'.
+const STATES = ['qr','verify','success','expired'];
+let pollTimer = null;     // simulated webhook resolve
+let countdownInt = null;  // QR expiry countdown
+const QR_TTL = 15*60;     // 15 minutes
+let secs = QR_TTL;
+
+const timerEl = document.getElementById('qr-timer'), clockEl = document.getElementById('qr-clock');
+function fmt(s){ return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
+
+function clearTimers(){ clearTimeout(pollTimer); clearInterval(countdownInt); pollTimer = null; countdownInt = null; }
+
+function startQR(){
+  clearTimers();
+  secs = QR_TTL; clockEl.textContent = fmt(secs); timerEl.className = 'timer';
+  // countdown → expired at 0
+  countdownInt = setInterval(() => {
+    secs--; if(secs < 0) secs = 0;
+    clockEl.textContent = fmt(secs);
+    timerEl.className = 'timer' + (secs <= 120 ? ' critical' : secs <= 300 ? ' warning' : '');
+    if(secs <= 0){ setState('expired'); }
+  }, 1000);
+  // simulated gateway webhook → begin verify, then success
+  if(TWEAKS.autoResolve){ pollTimer = setTimeout(() => { if(checkout.dataset.state === 'qr') resolvePaid(); }, 8000); }
+}
+
+function resolvePaid(){ setState('verify'); setTimeout(() => { if(checkout.dataset.state === 'verify') setState('success'); }, 1600); }
+
+function setState(s, fromTweak){
+  if(!STATES.includes(s)) s = 'qr';
+  // sync demo control if changed programmatically (e.g. timeout/webhook)
+  if(TWEAKS.screen !== s){ TWEAKS.screen = s; try { window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ screen: s } }, '*'); } catch(e){}
+    document.querySelectorAll('.tweak-seg[data-tweak="screen"] button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === s)));
+  }
+  checkout.dataset.state = s;
+  // pipeline
+  const set = (el, cls) => { el.className = 'pl-step ' + cls; };
+  const num1 = document.querySelector('#pl-1 .num');
+  if(s === 'qr'){
+    set(document.getElementById('pl-1'),'active'); num1.textContent = '1';
+    document.getElementById('pl-line-1').className = 'pl-line';
+    set(document.getElementById('pl-2'),''); set(document.getElementById('pl-3'),'');
+    startQR();
+  } else if(s === 'verify'){
+    clearTimers();
+    set(document.getElementById('pl-1'),'done'); num1.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('pl-line-1').className = 'pl-line done';
+    set(document.getElementById('pl-2'),'active');
+    set(document.getElementById('pl-3'),'');
+  } else if(s === 'success'){
+    clearTimers();
+    set(document.getElementById('pl-1'),'done'); num1.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('pl-line-1').className = 'pl-line done';
+    set(document.getElementById('pl-2'),'done');
+    document.getElementById('pl-2').querySelector('.num').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('pl-line-2').className = 'pl-line done';
+    set(document.getElementById('pl-3'),'active');
+  } else if(s === 'expired'){
+    clearTimers();
+    set(document.getElementById('pl-1'),'active'); num1.textContent = '1';
+    document.getElementById('pl-2').querySelector('.num').textContent = '2';
+    document.getElementById('pl-line-1').className = 'pl-line';
+    document.getElementById('pl-line-2').className = 'pl-line';
+    set(document.getElementById('pl-2'),''); set(document.getElementById('pl-3'),'');
+  }
+}
+
+document.getElementById('demo-paid').addEventListener('click', resolvePaid);
+document.getElementById('retry-qr').addEventListener('click', () => setState('qr'));
+
+// ============== COUPON ==============
+const COUPONS = { 'MING20': 0.20, 'WELCOME10': 0.10 };
+const PRICE = 2500;
+const couponInput = document.getElementById('coupon-input'), couponMsg = document.getElementById('coupon-msg');
+const smDiscount = document.getElementById('sm-discount'), smDiscountLab = document.getElementById('sm-discount-lab'), smDiscountVal = document.getElementById('sm-discount-val');
+const smTotalVal = document.getElementById('sm-total-val'), qrAmountVal = document.getElementById('qr-amount-val'), paidAmount = document.getElementById('paid-amount');
+function fmtBaht(n){ return n.toLocaleString('en-US'); }
+function applyCoupon(){
+  const code = couponInput.value.trim().toUpperCase();
+  if(!code){ couponMsg.className = 'coupon-msg'; return; }
+  if(COUPONS[code]){
+    const pct = COUPONS[code], disc = PRICE*pct, net = PRICE-disc;
+    smDiscount.classList.remove('hidden');
+    smDiscountLab.textContent = `ส่วนลด (${code})`;
+    smDiscountVal.textContent = '−฿' + fmtBaht(disc) + '.00';
+    smTotalVal.textContent = fmtBaht(net); qrAmountVal.textContent = fmtBaht(net); paidAmount.textContent = fmtBaht(net);
+    couponMsg.className = 'coupon-msg ok show';
+    couponMsg.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ใช้โค้ดสำเร็จ — ลด ' + (pct*100) + '%';
+  } else {
+    smDiscount.classList.add('hidden');
+    smTotalVal.textContent = fmtBaht(PRICE); qrAmountVal.textContent = fmtBaht(PRICE); paidAmount.textContent = fmtBaht(PRICE);
+    couponMsg.className = 'coupon-msg bad show';
+    couponMsg.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg> โค้ดไม่ถูกต้องหรือหมดอายุ';
+  }
+}
+document.getElementById('coupon-apply').addEventListener('click', applyCoupon);
+couponInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyCoupon(); });
+
+applyTweaks();
+</script>
+</body>
+</html>

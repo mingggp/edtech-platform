@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light" data-sb="editorial">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ตั้งค่า — Mingsmileyface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="app-shell.css" />
+<link rel="stylesheet" href="auth.css?v=21" />
+<link rel="stylesheet" href="profile.css?v=5" />
+<link rel="stylesheet" href="notifications.css?v=21" />
+<link rel="stylesheet" href="settings.css?v=2" />
+<link rel="stylesheet" href="sidebar.css?v=12" />
+<script src="sidebar.js?v=12" defer></script>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════════════════╗
+  ║  SETTINGS · DATA CONTRACT (backend ⚠️)                                     ║
+  ╠══════════════════════════════════════════════════════════════════════════╣
+  ║  profile     : { first_name, nick, grade, dek_year, bio, avatar_url }      ║
+  ║  notify      : { master:bool, byType:{lesson,exam,payment,streak,          ║
+  ║                  achievement,social,system : bool},                        ║
+  ║                  streak_reminder:bool, reminder_time:'morning'|'evening'   ║
+  ║                  |'night' }   // in-app only (per brief) — no email/push    ║
+  ║  privacy     : { visibility:'public'|'friends'|'private',                  ║
+  ║                  show_on_leaderboard:bool, show_activity:bool,             ║
+  ║                  allow_cheers:bool, searchable:bool }                       ║
+  ║  appearance  : { theme:'dark'|'light'|'system', accent:'signature'|'cool'  ║
+  ║                  |'warm', daily_goal_min:30|90|120, reduce_motion:bool,    ║
+  ║                  lang:'th'|'en' }                                          ║
+  ║  PATCH /api/me/settings { ...partial }   (autosave, debounced)            ║
+  ║  theme/accent also persisted to localStorage for instant cross-page apply.║
+  ╚══════════════════════════════════════════════════════════════════════════╝
+-->
+
+<div class="app" id="app" data-screen-label="Settings">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sb-toggle" id="sb-toggle" aria-label="พับเมนูข้าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <a href="Dashboard.html" class="sb-logo">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 120 120" fill="none"><path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M34 72 Q60 100 94 72" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></div>
+      <div class="word">mingsmileyface<small>TCAS 70 · ม.6</small></div>
+    </a>
+    <a class="sb-home" data-home-item href="Dashboard.html" title="หน้าหลัก">
+      <span class="tile"><span class="orbit"></span><span class="orbit orbit2"></span><span class="face"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.2V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.2"/><path d="M9.5 21v-6.5h5V21"/></svg></span>
+      <span class="label">หน้าหลัก</span>
+    </a>
+    <nav class="sb-section">
+      <div class="heading">หลัก</div>
+      <a class="sb-item" href="My Courses.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>คอร์สของฉัน</span><span class="count">7</span></a>
+      <a class="sb-item" href="Exams.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg><span>ข้อสอบ</span></a>
+      <a class="sb-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2 9 14"/><path d="m12.5 14.5 8-8M4 22l4-2 12-12-4-4L4 16v6z"/></svg><span>โน้ตของฉัน</span></a>
+    </nav>
+    <nav class="sb-section">
+      <div class="heading">ค้นพบ</div>
+      <a class="sb-item" href="Browse Courses.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span>คอร์สทั้งหมด</span><span class="count">18</span></a>
+      <a class="sb-item" href="Leaderboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16M10 14.66V17c0 .55.47.98.97 1.21C12.15 18.75 13 19.95 13 21M14 14.66V17c0 .55-.47.98-.97 1.21C11.85 18.75 11 19.95 11 21M18 2H6v7a6 6 0 0 0 12 0z"/></svg><span>อันดับ</span></a>
+      <a class="sb-item" href="Public Profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><span>เพื่อน</span><span class="count">42</span></a>
+      <a class="sb-item" href="Achievements.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg><span>ความสำเร็จ</span></a>
+    </nav>
+    <nav class="sb-section">
+      <div class="heading">บัญชี</div>
+      <a class="sb-item active" href="Settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>ตั้งค่า</span></a>
+    </nav>
+    <a class="sb-user" href="Settings.html" style="text-decoration:none" title="ไปที่ตั้งค่า">
+      <div class="av">ปม</div>
+      <div class="info"><b>น้องปาล์ม</b><span>LV 14 · 2,840 XP</span></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev"><path d="m9 18 6-6-6-6"/></svg>
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+    <header class="topbar">
+      <div class="crumb"><a href="Dashboard.html">หน้าหลัก</a><span class="sep">/</span><b>ตั้งค่า</b></div>
+      <div class="top-actions">
+        <button class="search-trigger" aria-label="ค้นหา"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="label">ค้นหา...</span><span class="kbd">⌘K</span></button>
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="Light"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="Dark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+        <button class="icon-btn" data-notif-bell aria-label="การแจ้งเตือน"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+        <button class="top-av" id="top-av" aria-haspopup="menu" aria-expanded="false"><div class="av">ปม</div><div class="name">น้องปาล์ม</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chev" style="color:var(--fg-3)"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="av-catcher" id="av-catcher"></div>
+        <div class="av-menu" id="av-menu" role="menu">
+          <div class="am-head"><span class="av">ปม</span><div class="ai"><b>น้องปาล์ม</b><span>@palm_dek68</span></div></div>
+          <a href="Public Profile.html?me=1" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>ดูโปรไฟล์สาธารณะ</a>
+          <a href="Settings.html" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>ตั้งค่า</a>
+          <div class="am-sep"></div>
+          <a href="Login Signup.html" role="menuitem" class="danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>ออกจากระบบ</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll">
+      <div class="page">
+        <section class="page-head">
+          <div class="titles">
+            <div class="eyebrow">บัญชีของฉัน</div>
+            <h1><span class="grad">ตั้งค่า</span></h1>
+          </div>
+        </section>
+
+        <div class="prof-grid">
+          <!-- desktop vertical tabs -->
+          <nav class="prof-tabs" role="tablist" aria-label="ตั้งค่า">
+            <button class="prof-tab" role="tab" aria-selected="true" data-tab="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg><span>ข้อมูลโปรไฟล์<small>ชื่อ · ระดับชั้น · bio</small></span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="notif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span>การแจ้งเตือน<small>เลือกเรื่องที่อยากรู้</small></span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>ความเป็นส่วนตัว<small>ใครเห็นอะไรได้บ้าง</small></span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="billing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg><span>การชำระเงิน<small>แพ็กเกจ · ประวัติ</small></span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="appearance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 0 0 0 20c.5 0 1-.4 1-1 0-.6-.4-1-.5-1.5-.1-.6.3-1 1-1H16a5 5 0 0 0 5-5c0-5-4-9-9-9z"/></svg><span>ลักษณะ & ธีม<small>ธีม · สีเน้น · เป้าหมาย</small></span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>ความปลอดภัย<small>รหัสผ่าน · อุปกรณ์</small></span></button>
+          </nav>
+          <!-- mobile tabs -->
+          <nav class="prof-tabs-mob" role="tablist" aria-label="ตั้งค่า">
+            <button class="prof-tab" role="tab" aria-selected="true" data-tab="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg><span>โปรไฟล์</span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="notif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span>แจ้งเตือน</span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>ส่วนตัว</span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="billing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg><span>ชำระเงิน</span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="appearance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 0 0 0 20c.5 0 1-.4 1-1 0-.6-.4-1-.5-1.5-.1-.6.3-1 1-1H16a5 5 0 0 0 5-5c0-5-4-9-9-9z"/></svg><span>ลักษณะ</span></button>
+            <button class="prof-tab" role="tab" aria-selected="false" data-tab="security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>ปลอดภัย</span></button>
+          </nav>
+
+          <div class="prof-content">
+            <!-- ============ TAB 1 · PROFILE INFO ============ -->
+            <section class="prof-panel active" id="panel-info">
+              <div class="prof-card">
+                <div class="ph">
+                  <div><h2>ข้อมูลส่วนตัว</h2><p>ข้อมูลนี้ใช้แสดงในโปรไฟล์และใบเซอร์ของคุณ</p></div>
+                  <span class="autosave synced" id="autosave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ซิงค์ล่าสุด 14:32</span>
+                </div>
+                <div class="avatar-row">
+                  <div class="avatar-big" id="avatar-big">
+                    <span id="avatar-letters">ปม</span>
+                    <button class="cam" id="avatar-cam" aria-label="เปลี่ยนรูป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+                  </div>
+                  <div class="avatar-meta">
+                    <h3>รูปโปรไฟล์</h3>
+                    <p>JPG หรือ PNG · แนะนำขนาด 400×400px</p>
+                    <div class="avatar-actions">
+                      <button class="btn btn-secondary" id="change-photo">เปลี่ยนรูป</button>
+                      <button class="btn remove" id="remove-photo">ลบรูป</button>
+                    </div>
+                  </div>
+                </div>
+                <input type="file" id="avatar-input" accept="image/*" hidden />
+                <div class="fld">
+                  <div class="row2">
+                    <div><label for="f-fname">ชื่อจริง</label><input class="inp" id="f-fname" value="ปาลิตา" data-save /></div>
+                    <div><label for="f-nick">ชื่อเล่น</label><input class="inp" id="f-nick" value="ปาล์ม" data-save /></div>
+                  </div>
+                </div>
+                <div class="seg-block">
+                  <label>ระดับชั้น</label>
+                  <div class="segmented" id="grade-seg" role="radiogroup" aria-label="ระดับชั้น">
+                    <button type="button" role="radio" aria-pressed="false" data-v="ม.4">ม.4</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="ม.5">ม.5</button>
+                    <button type="button" role="radio" aria-pressed="true" data-v="ม.6">ม.6</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="อื่นๆ">อื่นๆ</button>
+                  </div>
+                </div>
+                <div class="seg-block">
+                  <label>รุ่น DEK (ปีที่สอบเข้า)</label>
+                  <div class="dek-pills" id="dek-pills" role="radiogroup" aria-label="รุ่น DEK">
+                    <button type="button" role="radio" aria-pressed="true" data-v="DEK70">DEK70</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="DEK71">DEK71</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="DEK72">DEK72</button>
+                  </div>
+                </div>
+                <div class="fld">
+                  <label for="f-bio">แนะนำตัว (Bio)</label>
+                  <textarea class="inp" id="f-bio" maxlength="80" data-save placeholder="เล่าเป้าหมายของคุณสั้นๆ...">เด็กซิ่ล ม.6 ตั้งเป้าคณะวิศวฯ จุฬาฯ 🎯 สู้ๆ ไปด้วยกัน!</textarea>
+                  <div class="fld-foot"><span class="hint">แสดงในโปรไฟล์สาธารณะ</span><span class="char-count" id="bio-count">56 / 80</span></div>
+                </div>
+                <div class="save-bar">
+                  <span class="autosave synced" id="autosave2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> บันทึกอัตโนมัติเปิดอยู่</span>
+                  <button class="btn btn-primary btn-save" id="save-info">บันทึกการเปลี่ยนแปลง</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ============ TAB 2 · NOTIFICATIONS ============ -->
+            <section class="prof-panel" id="panel-notif">
+              <div class="prof-card">
+                <div class="ph"><div><h2>การแจ้งเตือน</h2><p>เลือกเรื่องที่อยากให้เด้งเตือน — ปรับได้ทุกเมื่อ</p></div></div>
+                <div class="set-master">
+                  <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+                  <div class="mt"><b>เปิดการแจ้งเตือนทั้งหมด</b><span>ปิดเพื่อพักทุกการแจ้งเตือนชั่วคราว</span></div>
+                  <button class="switch" id="notif-master" role="switch" aria-checked="true" aria-label="เปิดการแจ้งเตือนทั้งหมด"></button>
+                </div>
+                <div class="set-list" id="notif-types">
+                  <div class="set-row"><span class="set-ic t-lesson"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><div class="set-tx"><b>บทเรียนใหม่ & คำตอบจากครู</b><span>เมื่อมีคลิปใหม่ หรือพี่หมิงตอบคำถาม</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-ntype="lesson" aria-label="บทเรียน"></button></div></div>
+                  <div class="set-row"><span class="set-ic t-exam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg></span><div class="set-tx"><b>ข้อสอบ & ผลคะแนน</b><span>ข้อสอบชุดใหม่ และเมื่อตรวจเสร็จ</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-ntype="exam" aria-label="ข้อสอบ"></button></div></div>
+                  <div class="set-row"><span class="set-ic t-payment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span><div class="set-tx"><b>การชำระเงิน</b><span>ยืนยันชำระสำเร็จ หรือ QR หมดอายุ</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-ntype="payment" aria-label="การชำระเงิน"></button></div></div>
+                  <div class="set-row"><span class="set-ic t-streak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.2 4.2 5 5.2 5 10a5 5 0 1 1-10 0c0-3.2 2-4.2 2-7.2 0 2.2 1.1 3.2 3 3.2-1.1-2.2-1.1-4.2 0-6z"/></svg></span><div class="set-tx"><b>เตือนรักษาสตรีค</b><span>เด้งเตือนก่อนสตรีคจะหลุดในแต่ละวัน</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-ntype="streak" aria-label="สตรีค"></button></div></div>
+                  <div class="set-row"><span class="set-ic t-achievement"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></span><div class="set-tx"><b>ความสำเร็จ & เลเวลอัป</b><span>เมื่อปลดล็อกเหรียญหรือขึ้นเลเวล</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-ntype="achievement" aria-label="ความสำเร็จ"></button></div></div>
+                  <div class="set-row"><span class="set-ic t-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="M16 11h6M19 8v6"/></svg></span><div class="set-tx"><b>เพื่อน & อันดับ</b><span>เพื่อนทักทาย ส่งกำลังใจ หรือแซงอันดับ</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-ntype="social" aria-label="เพื่อน"></button></div></div>
+                  <div class="set-row"><span class="set-ic t-system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><div class="set-tx"><b>ประกาศจากระบบ</b><span>ข่าวสารและการอัปเดตจากทีมงาน</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="false" data-ntype="system" aria-label="ระบบ"></button></div></div>
+                </div>
+              </div>
+
+              <div class="prof-card" id="reminder-card">
+                <div class="ph"><div><h2>เวลาเตือนรายวัน</h2><p>อยากให้เตือนเรียนช่วงไหนของวัน?</p></div></div>
+                <div class="seg-block">
+                  <div class="segmented three" id="remind-seg" role="radiogroup" aria-label="เวลาเตือน">
+                    <button type="button" role="radio" aria-pressed="false" data-v="morning">เช้า · 07:00</button>
+                    <button type="button" role="radio" aria-pressed="true" data-v="evening">เย็น · 18:00</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="night">ก่อนนอน · 21:00</button>
+                  </div>
+                </div>
+                <div class="set-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>ตอนนี้รองรับเฉพาะการแจ้งเตือน <b>ในเว็บ</b> — อีเมลและการแจ้งเตือนบนมือถือกำลังจะมาเร็วๆ นี้</span></div>
+              </div>
+            </section>
+
+            <!-- ============ TAB 3 · PRIVACY ============ -->
+            <section class="prof-panel" id="panel-privacy">
+              <div class="prof-card">
+                <div class="ph"><div><h2>ใครเห็นโปรไฟล์ของคุณได้</h2><p>ควบคุมว่าโปรไฟล์สาธารณะของคุณเปิดให้ใครดู</p></div></div>
+                <div class="vis-grid" id="vis-grid" role="radiogroup" aria-label="การมองเห็นโปรไฟล์">
+                  <button type="button" class="vis-opt" role="radio" aria-pressed="true" data-v="public">
+                    <span class="vch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+                    <span class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>
+                    <b>สาธารณะ</b><span>ทุกคนบนแพลตฟอร์มเห็นได้</span>
+                  </button>
+                  <button type="button" class="vis-opt" role="radio" aria-pressed="false" data-v="friends">
+                    <span class="vch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+                    <span class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+                    <b>เฉพาะเพื่อน</b><span>เฉพาะเพื่อนที่เพิ่มกันไว้</span>
+                  </button>
+                  <button type="button" class="vis-opt" role="radio" aria-pressed="false" data-v="private">
+                    <span class="vch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
+                    <span class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                    <b>ส่วนตัว</b><span>เห็นได้เฉพาะตัวคุณเอง</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="prof-card">
+                <div class="ph"><div><h2>การแสดงข้อมูล</h2><p>เลือกสิ่งที่คนอื่นมองเห็นเกี่ยวกับคุณ</p></div></div>
+                <div class="set-list">
+                  <div class="set-row"><div class="set-tx"><b>แสดงชื่อบนกระดานอันดับ</b><span>ปิดเพื่อแข่งแบบไม่เปิดเผยชื่อ (ยังนับคะแนนปกติ)</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-priv="leaderboard" aria-label="แสดงบนอันดับ"></button></div></div>
+                  <div class="set-row"><div class="set-tx"><b>แสดงกิจกรรมการเรียน</b><span>ให้เพื่อนเห็นว่าคุณกำลังเรียนอะไรอยู่</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-priv="activity" aria-label="แสดงกิจกรรม"></button></div></div>
+                  <div class="set-row"><div class="set-tx"><b>รับกำลังใจจากเพื่อน</b><span>อนุญาตให้เพื่อนส่งสติกเกอร์ให้กำลังใจ</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="true" data-priv="cheers" aria-label="รับกำลังใจ"></button></div></div>
+                  <div class="set-row"><div class="set-tx"><b>ค้นเจอด้วย @handle</b><span>ให้คนอื่นค้นหาคุณจากชื่อผู้ใช้ได้</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="false" data-priv="searchable" aria-label="ค้นเจอได้"></button></div></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ============ TAB · BILLING (merged from Payments) ============ -->
+            <section class="prof-panel" id="panel-billing">
+              <div class="prof-card">
+                <div class="ph">
+                  <div><h2>แพ็กเกจ & การชำระเงิน</h2><p>ประวัติการชำระเงินทั้งหมดของคุณ</p></div>
+                  <div class="pay-sort-seg" id="pay-sort" role="radiogroup" aria-label="เรียงตาม">
+                    <button type="button" role="radio" aria-pressed="true" data-v="date">ล่าสุด</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="amount">ราคาสูงสุด</button>
+                  </div>
+                  <style>
+                  .pay-sort-seg { display: inline-flex; align-items: center; gap: 2px; padding: 4px; border-radius: 11px; background: var(--bg-2); border: 1px solid var(--line-soft); flex-shrink: 0; }
+                  .pay-sort-seg button { appearance: none; border: 0; background: transparent; color: var(--fg-2); font: inherit; font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: color .15s, background .15s; }
+                  .pay-sort-seg button:hover { color: var(--fg-0); }
+                  .pay-sort-seg button[aria-pressed="true"] { color: #fff; background: var(--grad-signature); box-shadow: 0 4px 12px -4px oklch(0.66 0.23 295 / 0.5); }
+                  </style>
+                </div>
+                <div class="set-master" style="background:linear-gradient(120deg,oklch(0.78 0.18 150 / 0.1),oklch(0.66 0.23 295 / 0.06))">
+                  <span class="mi" style="background:linear-gradient(135deg,oklch(0.55 0.20 150),oklch(0.70 0.18 160))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                  <div class="mt"><b>7 คอร์สที่เปิดเรียนอยู่</b><span>จ่ายแล้วรวม ฿11,230 · ทุกคอร์สเข้าถึงได้ตลอดชีพ</span></div>
+                </div>
+                <div class="set-list" id="pay-list"></div>
+                <div class="set-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>ชำระผ่าน <b>PromptPay</b> ยืนยันอัตโนมัติทันที — ไม่ต้องแนบสลิป ไม่ต้องรอตรวจสอบ</span></div>
+              </div>
+            </section>
+
+            <!-- ============ TAB 4 · APPEARANCE (ThemeSelector) ============ -->
+            <section class="prof-panel" id="panel-appearance">
+              <div class="prof-card">
+                <div class="ph"><div><h2>ธีม</h2><p>เลือกโหมดสี — เปลี่ยนทันทีทั้งเว็บ และจำไว้ให้ในครั้งถัดไป</p></div></div>
+                <div class="theme-grid" id="theme-grid" role="radiogroup" aria-label="ธีม">
+                  <button type="button" class="theme-opt t-light" role="radio" aria-pressed="false" data-v="light">
+                    <span class="tp-prev" aria-hidden="true"><span class="tp-side"></span><span class="tp-main"><span class="tp-bar w1"></span><span class="tp-bar w2"></span><span class="tp-accent"></span><span class="tp-bar w3"></span></span></span>
+                    <span class="tp-foot"><b>สว่าง</b><span class="tp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></span>
+                  </button>
+                  <button type="button" class="theme-opt t-dark" role="radio" aria-pressed="true" data-v="dark">
+                    <span class="tp-prev" aria-hidden="true"><span class="tp-side"></span><span class="tp-main"><span class="tp-bar w1"></span><span class="tp-bar w2"></span><span class="tp-accent"></span><span class="tp-bar w3"></span></span></span>
+                    <span class="tp-foot"><b>มืด</b><span class="tp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></span>
+                  </button>
+                  <button type="button" class="theme-opt t-system" role="radio" aria-pressed="false" data-v="system">
+                    <span class="tp-prev" aria-hidden="true"><span class="tp-side"></span><span class="tp-main"><span class="tp-bar w1"></span><span class="tp-bar w2"></span><span class="tp-accent"></span><span class="tp-bar w3"></span></span></span>
+                    <span class="tp-foot"><b>ตามระบบ</b><span class="tp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></span>
+                  </button>
+                  <button type="button" class="theme-opt t-f1" role="radio" aria-pressed="false" data-v="f1">
+                    <span class="tp-prev" aria-hidden="true"><span class="tp-side"></span><span class="tp-main"><span class="tp-bar w1"></span><span class="tp-bar w2"></span><span class="tp-accent"></span><span class="tp-bar w3"></span></span></span>
+                    <span class="tp-foot"><b>F1 นีออน</b><span class="tp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="prof-card">
+                <div class="ph"><div><h2>สีเน้น</h2><p>สีไล่เฉดหลักที่ใช้กับปุ่ม ไฮไลต์ และกราฟ</p></div></div>
+                <div class="accent-grid" id="accent-grid" role="radiogroup" aria-label="สีเน้น">
+                  <button type="button" class="accent-opt" role="radio" aria-pressed="true" data-v="signature" style="background:var(--grad-signature)" aria-label="ซิกเนเจอร์"><span class="ac-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+                  <button type="button" class="accent-opt" role="radio" aria-pressed="false" data-v="cool" style="background:var(--grad-cool)" aria-label="โทนเย็น"><span class="ac-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+                  <button type="button" class="accent-opt" role="radio" aria-pressed="false" data-v="warm" style="background:var(--grad-warm)" aria-label="โทนอุ่น"><span class="ac-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+                </div>
+              </div>
+
+              <div class="prof-card">
+                <div class="ph"><div><h2>เป้าหมายรายวัน</h2><p>ตั้งเวลาเรียนที่อยากทำให้ได้ในแต่ละวัน</p></div></div>
+                <div class="seg-block">
+                  <div class="segmented three" id="goal-seg" role="radiogroup" aria-label="เป้าหมายรายวัน">
+                    <button type="button" role="radio" aria-pressed="true" data-v="30">30 นาที</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="90">1–2 ชม.</button>
+                    <button type="button" role="radio" aria-pressed="false" data-v="120">2 ชม.+</button>
+                  </div>
+                  <div class="goal-slider-row">
+                    <input type="range" id="goal-slider" min="15" max="180" step="5" value="30" aria-label="เป้านาทีต่อวัน" />
+                    <div class="gs-val"><b id="goal-slider-val">30</b> นาที/วัน</div>
+                  </div>
+                </div>
+                <div class="set-list" style="margin-top:6px">
+                  <div class="set-row"><div class="set-tx"><b>ลดการเคลื่อนไหว</b><span>ปิดแอนิเมชันและทรานซิชันที่ไม่จำเป็น</span></div><div class="set-ctl"><button class="switch" role="switch" aria-checked="false" id="reduce-motion" aria-label="ลดการเคลื่อนไหว"></button></div></div>
+                  <div class="set-row"><div class="set-tx"><b>ภาษา</b><span>ภาษาที่ใช้แสดงผลทั้งเว็บ</span></div><div class="set-ctl"><div class="segmented lang2" id="lang-seg" role="radiogroup" aria-label="ภาษา"><button type="button" role="radio" aria-pressed="true" data-v="th">ไทย</button><button type="button" role="radio" aria-pressed="false" data-v="en">EN</button></div></div></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ============ TAB 5 · SECURITY ============ -->
+            <section class="prof-panel" id="panel-security">
+              <div class="prof-card">
+                <div class="ph"><div><h2>เปลี่ยนรหัสผ่าน</h2><p>ใช้รหัสผ่านที่แข็งแรงและไม่ซ้ำกับเว็บอื่น</p></div></div>
+                <div class="fld">
+                  <label for="cur-pass">รหัสผ่านปัจจุบัน</label>
+                  <div class="pwd-field">
+                    <input class="inp" type="password" id="cur-pass" autocomplete="current-password" placeholder="••••••••" />
+                    <button type="button" class="eye" data-eye="cur-pass" aria-label="แสดงรหัสผ่าน"><svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 5A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a13.2 13.2 0 0 1-2.4 3.1M6.6 6.6A13.3 13.3 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4.1-.8"/><path d="M14.1 14.1a3 3 0 0 1-4.2-4.2M2 2l20 20"/></svg></button>
+                  </div>
+                </div>
+                <div class="fld">
+                  <label for="new-pass">รหัสผ่านใหม่</label>
+                  <div class="pwd-field">
+                    <input class="inp" type="password" id="new-pass" autocomplete="new-password" placeholder="อย่างน้อย 8 ตัวอักษร" />
+                    <button type="button" class="eye" data-eye="new-pass" aria-label="แสดงรหัสผ่าน"><svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 5A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a13.2 13.2 0 0 1-2.4 3.1M6.6 6.6A13.3 13.3 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4.1-.8"/><path d="M14.1 14.1a3 3 0 0 1-4.2-4.2M2 2l20 20"/></svg></button>
+                  </div>
+                  <div class="strength" id="pwd-strength" style="margin-top:12px"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="lab">ความแข็งแรง: <b id="pwd-strength-lab">—</b></div></div>
+                </div>
+                <div class="fld">
+                  <label for="conf-pass">ยืนยันรหัสผ่านใหม่</label>
+                  <div class="pwd-field"><input class="inp" type="password" id="conf-pass" autocomplete="new-password" placeholder="พิมพ์อีกครั้ง" /></div>
+                  <div class="fld-foot"><span class="hint" id="match-hint" style="display:none;color:var(--danger)">รหัสผ่านไม่ตรงกัน</span></div>
+                </div>
+                <div class="save-bar">
+                  <span></span>
+                  <button class="btn btn-primary btn-save" id="save-pass" disabled>อัปเดตรหัสผ่าน</button>
+                </div>
+              </div>
+
+              <div class="prof-card">
+                <div class="ph"><div><h2>อุปกรณ์ที่ใช้งานอยู่</h2><p>เครื่องที่เข้าสู่ระบบบัญชีนี้ — ออกจากระบบเครื่องที่ไม่รู้จักได้</p></div></div>
+                <div class="sess">
+                  <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+                  <div class="sinfo"><b>Chrome · macOS</b><span>กรุงเทพฯ · เครื่องนี้</span></div>
+                  <span class="scur">ใช้งานอยู่</span>
+                </div>
+                <div class="sess">
+                  <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M12 18h.01"/></svg></div>
+                  <div class="sinfo"><b>Safari · iPhone 15</b><span>กรุงเทพฯ · 2 ชม.ที่แล้ว</span></div>
+                  <button class="sout">ออกจากระบบ</button>
+                </div>
+                <div class="sess">
+                  <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10M9 16v4M15 16v4"/></svg></div>
+                  <div class="sinfo"><b>Chrome · iPad</b><span>นนทบุรี · เมื่อวาน</span></div>
+                  <button class="sout">ออกจากระบบ</button>
+                </div>
+              </div>
+
+              <div class="danger-zone">
+                <div class="dz-head">
+                  <div class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+                  <h2>โซนอันตราย</h2>
+                </div>
+                <p>การลบบัญชีจะลบความก้าวหน้า คอร์ส และข้อมูลทั้งหมดอย่างถาวร — ไม่สามารถกู้คืนได้</p>
+                <div class="dz-act"><button class="btn btn-danger" id="open-delete">ลบบัญชี</button></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CROP MODAL ===== -->
+<div class="modal-backdrop" id="crop-modal">
+  <div class="modal">
+    <button class="mclose" data-close-crop aria-label="ปิด"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2>ปรับรูปโปรไฟล์</h2>
+    <p>เลื่อนเพื่อซูม รูปจะถูกครอปเป็นวงกลม</p>
+    <div class="crop-area"><img id="crop-img" alt="ตัวอย่าง" /><div class="ring-guide"></div></div>
+    <div class="crop-slider"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6M21 21l-4.3-4.3"/></svg><input type="range" id="crop-zoom" min="100" max="220" value="120" /></div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close-crop>ยกเลิก</button><button class="btn btn-primary" id="crop-save">ใช้รูปนี้</button></div>
+  </div>
+</div>
+
+<!-- ===== DELETE CONFIRM ===== -->
+<div class="modal-backdrop" id="delete-modal">
+  <div class="modal">
+    <button class="mclose" data-close-delete aria-label="ปิด"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2 style="color:var(--danger)">ลบบัญชีถาวร?</h2>
+    <p>การกระทำนี้ย้อนกลับไม่ได้ คอร์สทั้งหมด ความก้าวหน้า และคะแนนสอบจะหายไปทันที</p>
+    <div class="confirm-input">
+      <label>พิมพ์ <b>ลบบัญชี</b> เพื่อยืนยัน</label>
+      <input type="text" id="delete-confirm" placeholder="ลบบัญชี" autocomplete="off" />
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close-delete>ยกเลิก</button><button class="btn btn-danger" id="confirm-delete" style="flex:1;background:var(--danger);color:#fff" disabled>ลบบัญชีถาวร</button></div>
+  </div>
+</div>
+
+<!-- ===== TWEAKS ===== -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp">
+    <div class="gl">สไตล์ Sidebar — Built Different</div>
+    <div class="tweak-seg col" data-tweak="sb">
+      <button data-v="editorial" aria-pressed="true">บรรณาธิการ — ตัวอักษรเด่น</button>
+      <button data-v="console" aria-pressed="false">⌘ คอนโซล — สายเทค</button>
+      <button data-v="soft" aria-pressed="false">ละมุน — การ์ดลอย มน</button>
+      <button data-v="classic" aria-pressed="false">◦ คลาสสิก (แบบเดิม)</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">ปุ่ม “หน้าหลัก” — แสงรอบโลโก้</div>
+    <div class="tweak-seg col" data-tweak="home">
+      <button data-v="orbit" aria-pressed="true">ออร์บิต — แสงวนรอบ</button>
+      <button data-v="aura" aria-pressed="false">ออร่า — เรืองหายใจ</button>
+      <button data-v="solid" aria-pressed="false">◦ เรียบ — ไม่มีแสง</button>
+    </div>
+  </div>
+  <div class="tweak-grp">
+    <div class="gl">Demo · แท็บ</div>
+    <div class="tweak-seg col" data-tweak="tab">
+      <button data-v="info" aria-pressed="true">ข้อมูลโปรไฟล์</button>
+      <button data-v="notif" aria-pressed="false">การแจ้งเตือน</button>
+      <button data-v="privacy" aria-pressed="false">ความเป็นส่วนตัว</button>
+      <button data-v="billing" aria-pressed="false">การชำระเงิน</button>
+      <button data-v="appearance" aria-pressed="false">ลักษณะ & ธีม</button>
+      <button data-v="security" aria-pressed="false">ความปลอดภัย</button>
+    </div>
+  </div>
+  <div class="tweak-grp" style="margin-bottom:0">
+    <div class="gl">สีเน้น</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+</div>
+<style>
+.tweaks { position: fixed; top: 20px; right: 20px; z-index: 400; width: 240px; background: var(--glass-strong); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid var(--glass-line-strong); border-radius: 18px; box-shadow: var(--shadow-2); padding: 16px; display: none; font-size: 13px; }
+.tweaks.open { display: block; }
+.tweaks-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; cursor: grab; }
+.tweaks-head b { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
+.tweaks-head .x { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-2); cursor: pointer; }
+.tweak-grp { margin-bottom: 14px; }
+.tweak-grp .gl { font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 8px; }
+.tweak-seg { display: flex; gap: 4px; padding: 3px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 10px; }
+.tweak-seg.col { flex-direction: column; }
+.tweak-seg button { flex: 1; appearance: none; border: 0; background: transparent; color: var(--fg-1); font: inherit; font-size: 12px; font-weight: 500; padding: 8px 4px; border-radius: 7px; cursor: pointer; transition: all .15s; }
+.tweak-seg button[aria-pressed="true"] { background: var(--bg-3); color: var(--fg-0); box-shadow: var(--shadow-1); }
+.tweak-sw { display: flex; gap: 8px; }
+.tweak-sw button { width: 30px; height: 30px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; padding: 0; }
+.tweak-sw button[aria-pressed="true"] { border-color: var(--fg-0); }
+:root[data-accent="cool"] { --grad-signature: var(--grad-cool); }
+:root[data-accent="warm"] { --grad-signature: var(--grad-warm); }
+:root[data-reduce-motion="1"] * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+</style>
+
+<script src="people.js"></script>
+<script>
+/* ===== Billing tab: full payment history + sort ===== */
+(function(){
+  const PAY = [
+    { t:'A-Level ฟิสิกส์ มั่นใจเต็ม 100', subj:'phys', d:'9 พ.ค. 2568',  ts:20250509, amt:1890, m:'PromptPay' },
+    { t:'ตะลุยโจทย์ TGAT2 ฉบับเต็ม',      subj:'tgat', d:'2 พ.ค. 2568',  ts:20250502, amt:1290, m:'PromptPay' },
+    { t:'A-Level คณิต 1 ตั้งแต่ 0',        subj:'math', d:'18 เม.ย. 2568', ts:20250418, amt:1890, m:'PromptPay' },
+    { t:'ฟิสิกส์ ม.ปลาย เข้มข้น (ม.5)',    subj:'phys', d:'2 มี.ค. 2568',  ts:20250302, amt:1590, m:'PromptPay' },
+    { t:'แพ็กเกจ คณิต + ฟิสิกส์ A-Level',  subj:'math', d:'14 ก.พ. 2568', ts:20250214, amt:2990, m:'PromptPay' },
+    { t:'TPAT3 ความถนัดวิทย์–เทคโนฯ ครบจบ', subj:'tpat', d:'25 ม.ค. 2568', ts:20250125, amt:990,  m:'PromptPay', exp:true },
+    { t:'คณิต ม.ปลาย ปูพื้นแน่น (ม.4)',    subj:'math', d:'6 ม.ค. 2568',  ts:20250106, amt:1590, m:'PromptPay' },
+  ];
+  const BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+  const list = document.getElementById('pay-list');
+  let sort = 'date';
+  function render(){
+    const rows = PAY.slice().sort((a,b)=> sort==='amount' ? b.amt-a.amt : b.ts-a.ts);
+    list.innerHTML = rows.map(p=>`
+      <div class="set-row">
+        <span class="set-ic subj-${p.subj}">${BOOK}</span>
+        <div class="set-tx"><b>${p.t}</b><span>${p.d} · ${p.m}</span></div>
+        <div class="set-ctl" style="gap:10px">
+          <b style="font-family:'Bricolage Grotesque';font-size:14px;color:var(--fg-0)">฿${p.amt.toLocaleString()}</b>
+          ${p.exp ? '<span class="nt-tag warn">หมดอายุ</span>' : '<span class="nt-tag ok">สำเร็จ</span>'}
+        </div>
+      </div>`).join('');
+  }
+  document.querySelectorAll('#pay-sort button').forEach(b=>b.addEventListener('click', ()=>{
+    document.querySelectorAll('#pay-sort button').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    sort = b.dataset.v; render();
+  }));
+  render();
+})();
+</script>
+<script src="notifications.js"></script>
+<script>
+const root = document.documentElement;
+const btnDark = document.getElementById('btn-dark'), btnLight = document.getElementById('btn-light');
+const mq = window.matchMedia('(prefers-color-scheme: light)');
+
+/* theme preference: 'dark' | 'light' | 'system' (resolved for the attribute — แบรนด์หลัก = Petronas) */
+function resolveTheme(pref){
+  if (pref === 'system') return mq.matches ? 'petronas-light' : 'petronas';
+  if (pref === 'dark') return 'petronas';
+  if (pref === 'light') return 'petronas-light';
+  return pref; /* classic-dark / classic-light / f1 ฯลฯ ผ่านตรง */
+}
+function applyTheme(pref){
+  const t = resolveTheme(pref);
+  root.setAttribute('data-theme', t === 'classic-dark' ? 'dark' : t === 'classic-light' ? 'light' : t);
+  btnDark.setAttribute('aria-pressed', String((t === 'petronas' || t === 'classic-dark' || t === 'dark')));
+  btnLight.setAttribute('aria-pressed', String((t === 'petronas-light' || t === 'classic-light' || t === 'light')));
+  try { localStorage.setItem('ming-theme', t); localStorage.setItem('ming-theme-pref', pref); } catch(e){}
+  // sync the ThemeSelector cards
+  document.querySelectorAll('#theme-grid .theme-opt').forEach(o => o.setAttribute('aria-pressed', String(o.dataset.v === pref)));
+}
+let themePref = 'light';
+try {
+  themePref = localStorage.getItem('ming-theme-pref') || (function(){
+    const t = localStorage.getItem('ming-theme');
+    if (t === 'petronas' || t === 'classic-dark' || t === 'dark') return 'dark';
+    if (t === 'petronas-light' || t === 'classic-light' || t === 'light') return 'light';
+    return t || 'light';
+  })();
+} catch(e){}
+applyTheme(themePref);
+mq.addEventListener('change', () => { if (themePref === 'system') applyTheme('system'); });
+btnDark.addEventListener('click', () => { themePref = 'dark'; applyTheme('dark'); });
+btnLight.addEventListener('click', () => { themePref = 'light'; applyTheme('light'); });
+document.getElementById('sb-toggle').addEventListener('click', () => document.getElementById('app').classList.toggle('collapsed'));
+
+/* ===== top-av profile menu ===== */
+(function(){
+  const av = document.getElementById('top-av'), menu = document.getElementById('av-menu'), catcher = document.getElementById('av-catcher');
+  function open(){ menu.classList.add('open'); catcher.classList.add('open'); av.classList.add('menu-open'); av.setAttribute('aria-expanded','true'); }
+  function close(){ menu.classList.remove('open'); catcher.classList.remove('open'); av.classList.remove('menu-open'); av.setAttribute('aria-expanded','false'); }
+  av.addEventListener('click', e => { e.stopPropagation(); menu.classList.contains('open') ? close() : open(); });
+  catcher.addEventListener('click', close);
+  window.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+})();
+
+/* ThemeSelector cards */
+document.querySelectorAll('#theme-grid .theme-opt').forEach(o => o.addEventListener('click', () => { themePref = o.dataset.v; applyTheme(themePref); }));
+
+/* ===== TABS ===== */
+function selectTab(tab){
+  document.querySelectorAll('.prof-tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === tab)));
+  ['info','notif','privacy','billing','appearance','security'].forEach(id =>
+    document.getElementById('panel-' + id).classList.toggle('active', id === tab));
+}
+document.querySelectorAll('.prof-tab').forEach(t => t.addEventListener('click', () => setTweak('tab', t.dataset.tab)));
+/* deep-link เข้าแท็บได้ทุกตัว เช่น Settings.html#notif / #billing (ใช้จาก
+   กระดิ่งแจ้งเตือนใน sidebar.js และการ์ดแจ้งเตือนใน notifications.js) */
+(function(){
+  const TABS = ['info','notif','privacy','billing','appearance','security'];
+  function fromHash(){
+    const h = (location.hash || '').replace('#','');
+    if (TABS.includes(h)) selectTab(h);
+  }
+  fromHash();
+  window.addEventListener('hashchange', fromHash);
+})();
+
+/* ===== generic radio groups ===== */
+function wireRadio(id, onChange){
+  document.querySelectorAll('#' + id + ' button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true'); if(onChange) onChange(b.dataset.v);
+  }));
+}
+wireRadio('grade-seg', v => {
+  /* grade ↔ DEK link: ม.6 = DEK70, ม.5 = DEK71, ม.4 = DEK72 (อื่นๆ ไม่บังคับ) */
+  const map = { 'ม.6': 'DEK70', 'ม.5': 'DEK71', 'ม.4': 'DEK72' };
+  const dek = map[v];
+  if (dek) document.querySelectorAll('#dek-pills button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === dek)));
+  triggerSave();
+});
+wireRadio('dek-pills', triggerSave);
+wireRadio('remind-seg', triggerSave);
+/* goal: buttons ↔ slider two-way sync */
+const goalSlider = document.getElementById('goal-slider');
+const goalSliderVal = document.getElementById('goal-slider-val');
+function paintGoalSlider(v){
+  goalSliderVal.textContent = v;
+  goalSlider.style.setProperty('--fill', ((v - goalSlider.min) / (goalSlider.max - goalSlider.min) * 100) + '%');
+}
+function goalBtnFor(v){ return v < 60 ? '30' : v < 120 ? '90' : '120'; }
+wireRadio('goal-seg', v => {
+  goalSlider.value = v;
+  paintGoalSlider(+v);
+  triggerSave();
+});
+goalSlider.addEventListener('input', () => {
+  const v = +goalSlider.value;
+  paintGoalSlider(v);
+  const btn = goalBtnFor(v);
+  document.querySelectorAll('#goal-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === btn)));
+});
+goalSlider.addEventListener('change', triggerSave);
+paintGoalSlider(+goalSlider.value);
+wireRadio('lang-seg', triggerSave);
+
+/* visibility radio cards */
+document.querySelectorAll('#vis-grid .vis-opt').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#vis-grid .vis-opt').forEach(x => x.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true'); triggerSave();
+}));
+
+/* accent picker (in-page) + sync tweaks swatch */
+document.querySelectorAll('#accent-grid .accent-opt').forEach(b => b.addEventListener('click', () => { setTweak('accent', b.dataset.v); }));
+
+/* ===== toggle switches (role=switch) ===== */
+function toggleSwitch(sw){ const on = sw.getAttribute('aria-checked') === 'true'; sw.setAttribute('aria-checked', String(!on)); return !on; }
+/* notification master gates the type list */
+const master = document.getElementById('notif-master'), typeList = document.getElementById('notif-types'), reminderCard = document.getElementById('reminder-card');
+function syncMaster(){ const on = master.getAttribute('aria-checked') === 'true'; typeList.classList.toggle('muted', !on); reminderCard.classList.toggle('muted', !on); }
+master.addEventListener('click', () => { toggleSwitch(master); syncMaster(); triggerSave(); });
+document.querySelectorAll('.switch:not(#notif-master)').forEach(sw => sw.addEventListener('click', () => { toggleSwitch(sw); triggerSave(); }));
+syncMaster();
+
+/* reduce motion */
+const reduceMotion = document.getElementById('reduce-motion');
+reduceMotion.addEventListener('click', () => { const on = toggleSwitch(reduceMotion); root.setAttribute('data-reduce-motion', on ? '1' : '0'); });
+
+/* ===== BIO counter ===== */
+const bio = document.getElementById('f-bio'), bioCount = document.getElementById('bio-count');
+function updBio(){ const n = bio.value.length; bioCount.textContent = n + ' / 80'; bioCount.classList.toggle('warn', n >= 72); }
+bio.addEventListener('input', () => { updBio(); triggerSave(); }); updBio();
+
+/* ===== AUTOSAVE ===== */
+const autosave = document.getElementById('autosave');
+let saveTimer = null;
+function setSync(state, text){ autosave.className = 'autosave ' + state; autosave.innerHTML = (state==='saving' ? '<span class="spin"></span>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') + ' ' + text; }
+function triggerSave(){
+  setSync('saving', 'กำลังบันทึก...');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { const t = new Date(); const hh = String(t.getHours()).padStart(2,'0'), mm = String(t.getMinutes()).padStart(2,'0'); setSync('synced', 'บันทึกแล้ว · ' + hh + ':' + mm); }, 900);
+}
+document.querySelectorAll('[data-save]').forEach(el => el.addEventListener('input', triggerSave));
+document.getElementById('save-info').addEventListener('click', triggerSave);
+
+/* ===== AVATAR ===== */
+const avatarInput = document.getElementById('avatar-input');
+const avatarBig = document.getElementById('avatar-big');
+const cropModal = document.getElementById('crop-modal'), cropImg = document.getElementById('crop-img'), cropZoom = document.getElementById('crop-zoom');
+function openPicker(){ avatarInput.click(); }
+document.getElementById('change-photo').addEventListener('click', openPicker);
+document.getElementById('avatar-cam').addEventListener('click', openPicker);
+avatarInput.addEventListener('change', e => { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => { cropImg.src = ev.target.result; cropZoom.value = 120; cropImg.style.transform='scale(1.2)'; cropModal.classList.add('open'); }; r.readAsDataURL(f); });
+cropZoom.addEventListener('input', () => { cropImg.style.transform = 'scale(' + (cropZoom.value/100) + ')'; });
+document.getElementById('crop-save').addEventListener('click', () => { avatarBig.innerHTML = '<img src="' + cropImg.src + '" style="transform:scale(' + (cropZoom.value/100) + ')"/>' + avatarBig.querySelector('.cam').outerHTML; rewireCam(); cropModal.classList.remove('open'); triggerSave(); });
+function rewireCam(){ const cam = document.getElementById('avatar-cam'); if(cam) cam.addEventListener('click', openPicker); }
+document.querySelectorAll('[data-close-crop]').forEach(b => b.addEventListener('click', () => cropModal.classList.remove('open')));
+cropModal.addEventListener('click', e => { if(e.target === cropModal) cropModal.classList.remove('open'); });
+document.getElementById('remove-photo').addEventListener('click', () => { avatarBig.innerHTML = '<span id="avatar-letters">ปม</span>' + avatarBig.querySelector('.cam').outerHTML; rewireCam(); triggerSave(); });
+
+/* ===== PASSWORD ===== */
+document.querySelectorAll('.eye[data-eye]').forEach(btn => btn.addEventListener('click', () => { const inp = document.getElementById(btn.dataset.eye); const show = inp.type === 'password'; inp.type = show ? 'text' : 'password'; btn.classList.toggle('shown', show); }));
+const newPass = document.getElementById('new-pass'), confPass = document.getElementById('conf-pass'), curPass = document.getElementById('cur-pass');
+const pwdStrength = document.getElementById('pwd-strength'), pwdStrengthLab = document.getElementById('pwd-strength-lab');
+const matchHint = document.getElementById('match-hint'), savePass = document.getElementById('save-pass');
+const labels = ['','อ่อนไป','พอใช้','ดี','แข็งแรง'];
+function evalPass(){
+  const v = newPass.value; let s = 0;
+  if(v.length >= 8) s++; if(/[0-9]/.test(v)) s++; if(/[A-Z]/.test(v)) s++; if(/[^A-Za-z0-9]/.test(v)) s++;
+  if(v.length === 0) s = 0;
+  pwdStrength.className = 'strength' + (s ? ' s'+s : ''); pwdStrengthLab.textContent = labels[s] || '—';
+  const match = confPass.value.length > 0 && confPass.value === v;
+  matchHint.style.display = (confPass.value.length > 0 && !match) ? 'block' : 'none';
+  savePass.disabled = !(curPass.value.length > 0 && v.length >= 8 && match);
+}
+[newPass, confPass, curPass].forEach(i => i.addEventListener('input', evalPass));
+savePass.addEventListener('click', () => { savePass.textContent = 'บันทึกแล้ว ✓'; savePass.disabled = true; setTimeout(() => { savePass.textContent = 'อัปเดตรหัสผ่าน'; newPass.value=confPass.value=curPass.value=''; evalPass(); }, 1800); });
+document.querySelectorAll('.sout').forEach(b => b.addEventListener('click', function(){ const s = this.closest('.sess'); s.style.transition='opacity .3s,transform .3s'; s.style.opacity='0'; s.style.transform='translateX(10px)'; setTimeout(()=>s.remove(),300); }));
+
+/* ===== DELETE ACCOUNT ===== */
+const deleteModal = document.getElementById('delete-modal'), deleteConfirm = document.getElementById('delete-confirm'), confirmDelete = document.getElementById('confirm-delete');
+document.getElementById('open-delete').addEventListener('click', () => { deleteConfirm.value=''; confirmDelete.disabled=true; deleteModal.classList.add('open'); });
+deleteConfirm.addEventListener('input', () => { confirmDelete.disabled = deleteConfirm.value.trim() !== 'ลบบัญชี'; });
+document.querySelectorAll('[data-close-delete]').forEach(b => b.addEventListener('click', () => deleteModal.classList.remove('open')));
+deleteModal.addEventListener('click', e => { if(e.target === deleteModal) deleteModal.classList.remove('open'); });
+confirmDelete.addEventListener('click', () => { confirmDelete.textContent = 'กำลังลบ...'; setTimeout(() => { window.location.href = 'Login Signup.html'; }, 1200); });
+
+/* ===== TWEAKS ===== */
+const TWEAKS = /*EDITMODE-BEGIN*/{
+  "tab": "info",
+  "accent": "signature",
+  "sb": "soft",
+  "home": "aura"
+}/*EDITMODE-END*/;
+function applyTweaks(){
+  root.setAttribute('data-accent', TWEAKS.accent);
+  root.setAttribute('data-sb', TWEAKS.sb);
+  root.setAttribute('data-home', TWEAKS.home || 'orbit');
+  selectTab(TWEAKS.tab);
+  // sync in-page accent picker
+  document.querySelectorAll('#accent-grid .accent-opt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === TWEAKS.accent)));
+  document.querySelectorAll('[data-tweak]').forEach(grp => {
+    const key = grp.dataset.tweak;
+    grp.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(TWEAKS[key]))));
+  });
+}
+function setTweak(k,v){ TWEAKS[k]=v; try{ window.parent.postMessage({type:'__edit_mode_set_keys',edits:{[k]:v}},'*'); }catch(e){} applyTweaks(); }
+document.querySelectorAll('[data-tweak]').forEach(grp => grp.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setTweak(grp.dataset.tweak, b.dataset.v))));
+const panel = document.getElementById('tweaks');
+window.addEventListener('message', e => { const t=e?.data?.type; if(t==='__activate_edit_mode') panel.classList.add('open'); else if(t==='__deactivate_edit_mode') panel.classList.remove('open'); });
+try { window.parent.postMessage({ type:'__edit_mode_available' }, '*'); } catch(e){}
+document.getElementById('tweaks-close').addEventListener('click', () => { panel.classList.remove('open'); try{ window.parent.postMessage({type:'__edit_mode_dismissed'},'*'); }catch(e){} });
+(function(){ const head=document.getElementById('tweaks-drag'); let sx,sy,ox,oy,drag=false; head.addEventListener('mousedown', e=>{ if(e.target.closest('.x')) return; drag=true; sx=e.clientX; sy=e.clientY; const r=panel.getBoundingClientRect(); ox=r.left; oy=r.top; panel.style.right='auto'; e.preventDefault(); }); window.addEventListener('mousemove', e=>{ if(!drag) return; panel.style.left=(ox+e.clientX-sx)+'px'; panel.style.top=(oy+e.clientY-sy)+'px'; }); window.addEventListener('mouseup', ()=>drag=false); })();
+
+applyTweaks();
+</script>
+</body>
+</html>

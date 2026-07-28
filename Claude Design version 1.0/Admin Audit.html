@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="th" data-theme="petronas-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Audit log — Ming Studio (หลังบ้าน)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="brand.css?v=10" />
+<link rel="stylesheet" href="admin.css?v=8" />
+<link rel="stylesheet" href="admin-content.css?v=6" />
+<link rel="stylesheet" href="admin-data.css?v=1" />
+<link rel="stylesheet" href="admin-system.css?v=2" />
+<style>
+  /* ===== CALENDAR RANGE PICKER (shared pattern w/ Payments) ===== */
+  .cal-wrap { position:relative; }
+  /* keep the filter row (and its calendar popup) above the audit-feed card */
+  .audit-filters { position:relative; z-index:60; }
+  .chip-filter.cal-btn[data-active="1"] { color:#fff; background:var(--grad-signature); border-color:transparent; }
+  .chip-filter.cal-btn[data-active="1"] svg { color:#fff; }
+  .cal-pop { position:absolute; top:calc(100% + 8px); left:0; z-index:400; width:264px; padding:14px; border-radius:16px; border:1px solid var(--glass-line-strong); background:var(--glass-strong); backdrop-filter:blur(40px) saturate(160%); -webkit-backdrop-filter:blur(40px) saturate(160%); box-shadow:0 20px 50px -18px oklch(0 0 0 / 0.6); display:none; }
+  .cal-pop.open { display:block; animation:calPop .18s cubic-bezier(.2,.8,.2,1); }
+  @keyframes calPop { from{opacity:0;transform:translateY(-6px)} }
+  .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .cal-nav b { font-family:var(--font-display); font-weight:700; font-size:14px; color:var(--fg-0); }
+  .cal-nav button { width:28px; height:28px; border-radius:8px; border:1px solid var(--line); background:var(--bg-1); color:var(--fg-2); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .cal-nav button:hover { color:var(--fg-0); border-color:var(--fg-3); }
+  .cal-nav button svg { width:14px; height:14px; }
+  .cal-dow { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
+  .cal-dow span { text-align:center; font-family:"JetBrains Mono"; font-size:9px; color:var(--fg-3); padding:4px 0; }
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .cal-cell { position:relative; aspect-ratio:1; border:0; background:transparent; color:var(--fg-1); font:inherit; font-size:12px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .12s,color .12s; }
+  .cal-cell.empty { pointer-events:none; }
+  .cal-cell:not(.empty):hover { background:var(--bg-2); }
+  .cal-cell.in-range { background:oklch(from var(--brand-magenta) l c h / 0.14); border-radius:0; }
+  .cal-cell.edge { background:var(--grad-signature); color:#fff; font-weight:700; }
+  .cal-cell.edge.start { border-radius:8px 0 0 8px; }
+  .cal-cell.edge.end { border-radius:0 8px 8px 0; }
+  .cal-cell.edge.single { border-radius:8px; }
+  .cal-cell.has-tx::after { content:""; position:absolute; margin-top:15px; width:4px; height:4px; border-radius:50%; background:var(--brand-cyan); }
+  .cal-cell.edge.has-tx::after { background:#fff; }
+  .cal-foot { display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid var(--line-soft); }
+  .cal-hint { font-size:11px; color:var(--fg-3); }
+  .cal-clear { border:0; background:transparent; color:var(--brand-magenta); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+
+  /* ===== staggered reveal for audit items ===== */
+  @media (prefers-reduced-motion: no-preference){
+    .audit-item { animation:auditIn .42s cubic-bezier(.2,.8,.2,1) both; }
+    .audit-item:nth-child(2){animation-delay:.03s}.audit-item:nth-child(3){animation-delay:.06s}
+    .audit-item:nth-child(4){animation-delay:.09s}.audit-item:nth-child(5){animation-delay:.12s}
+    .audit-item:nth-child(6){animation-delay:.15s}.audit-item:nth-child(7){animation-delay:.18s}
+    .audit-item:nth-child(8){animation-delay:.21s}.audit-item:nth-child(n+9){animation-delay:.24s}
+  }
+  @keyframes auditIn { from{opacity:0;transform:translateX(-10px)} }
+  .audit-item { transition:background .16s; border-radius:12px; }
+  .audit-item:hover { background:oklch(from var(--fg-0) l c h / 0.03); }
+  .audit-item:hover .audit-diff { border-color:oklch(from var(--brand-magenta) l c h / 0.25); }
+
+  /* ===== NEON — dark mode glow ===== */
+  :root[data-theme="petronas"] .audit-dot, :root[data-theme="dark"] .audit-dot { box-shadow:0 0 14px -2px currentColor; }
+  :root[data-theme="petronas"] .audit-dot.create, :root[data-theme="dark"] .audit-dot.create { color:var(--success); }
+  :root[data-theme="petronas"] .audit-dot.delete, :root[data-theme="dark"] .audit-dot.delete { color:var(--danger); }
+  :root[data-theme="petronas"] .audit-dot.publish, :root[data-theme="dark"] .audit-dot.publish { color:var(--brand-cyan); }
+  :root[data-theme="petronas"] .chip-filter.on, :root[data-theme="dark"] .chip-filter.on,
+  :root[data-theme="petronas"] .chip-filter.cal-btn[data-active="1"], :root[data-theme="dark"] .chip-filter.cal-btn[data-active="1"] { box-shadow:0 0 16px -3px oklch(from var(--brand-magenta) l c h / 0.7); }
+  :root[data-theme="petronas"] .tabs button[aria-pressed="true"], :root[data-theme="dark"] .tabs button[aria-pressed="true"] { box-shadow:0 0 16px -4px oklch(from var(--brand-magenta) l c h / 0.6); }
+  :root[data-theme="petronas"] .cal-cell.edge, :root[data-theme="dark"] .cal-cell.edge { box-shadow:0 0 14px -3px oklch(from var(--brand-magenta) l c h / 0.75); }
+  :root[data-theme="petronas"] .afilter, :root[data-theme="dark"] .afilter { box-shadow:0 0 12px -4px oklch(from var(--brand-magenta) l c h / 0.5); }
+  :root[data-theme="petronas"] .diff-new, :root[data-theme="dark"] .diff-new { text-shadow:0 0 10px oklch(from var(--success) l c h / 0.5); }
+
+  /* clickable rows + chevron */
+  .audit-item { grid-template-columns:40px 1fr auto !important; cursor:pointer; align-items:start; padding:6px 8px 6px 0; }
+  .audit-chev { align-self:center; color:var(--fg-3); opacity:0; transform:translateX(-4px); transition:opacity .16s, transform .16s, color .16s; padding-right:4px; }
+  .audit-chev svg { width:16px; height:16px; }
+  .audit-item:hover .audit-chev { opacity:1; transform:translateX(0); color:var(--brand-magenta); }
+
+  /* summary strip: top-actor cell */
+  .sv-actor .actor-chip { display:inline-flex; align-items:center; font-family:var(--font-display); font-weight:700; }
+  .sv-actor .av { border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-weight:700; }
+
+  /* drawer detail bits */
+  .dw-meta { display:flex; flex-direction:column; gap:1px; border:1px solid var(--line-soft); border-radius:12px; overflow:hidden; }
+  .dw-meta-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 13px; background:var(--bg-1); }
+  .dw-meta-row:nth-child(odd){ background:var(--bg-2); }
+  .dw-meta-row .mk { font-family:"JetBrains Mono"; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-3); }
+  .dw-meta-row .mv { font-size:12.5px; color:var(--fg-0); font-weight:500; text-align:right; }
+  .dw-actions { display:flex; gap:8px; margin-top:6px; }
+  .dw-actions .btn { flex:1; justify-content:center; }
+  .btn-danger-soft { background:oklch(from var(--danger) l c h / 0.12); color:var(--danger); border:1px solid oklch(from var(--danger) l c h / 0.3); }
+  .btn-danger-soft:hover { background:oklch(from var(--danger) l c h / 0.2); }
+
+  /* toast */
+  .adm-toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); z-index:600; display:flex; align-items:center; gap:10px; padding:13px 18px; border-radius:13px; border:1px solid var(--glass-line-strong); background:var(--glass-strong); backdrop-filter:blur(30px) saturate(160%); -webkit-backdrop-filter:blur(30px) saturate(160%); box-shadow:0 18px 44px -16px oklch(0 0 0 / 0.6); font-size:13px; color:var(--fg-0); opacity:0; pointer-events:none; transition:opacity .25s, transform .25s cubic-bezier(.2,.8,.2,1); }
+  .adm-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .adm-toast svg { width:16px; height:16px; color:var(--success); }
+  :root[data-theme="petronas"] .adm-toast, :root[data-theme="dark"] .adm-toast { box-shadow:0 18px 44px -16px oklch(0 0 0 / 0.6), 0 0 22px -6px oklch(from var(--brand-magenta) l c h / 0.4); }
+
+  /* ===== risk highlight ===== */
+  .audit-item.risk .audit-dot { box-shadow:0 0 0 2px oklch(from var(--danger) l c h / 0.4); }
+  .risk-flag { display:inline-flex; align-items:center; gap:4px; margin-left:6px; padding:2px 8px; border-radius:99px; font-family:"JetBrains Mono"; font-size:10px; font-weight:700; letter-spacing:.04em; color:var(--danger); background:oklch(from var(--danger) l c h / 0.12); border:1px solid oklch(from var(--danger) l c h / 0.32); vertical-align:middle; white-space:nowrap; }
+  .risk-flag svg { width:11px; height:11px; }
+  .dw-risk { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:12px; margin-bottom:18px; color:var(--danger); background:oklch(from var(--danger) l c h / 0.1); border:1px solid oklch(from var(--danger) l c h / 0.3); font-size:12.5px; line-height:1.5; }
+  .dw-risk svg { width:18px; height:18px; flex-shrink:0; margin-top:1px; }
+  .dw-risk b { display:block; font-family:var(--font-display); font-weight:700; font-size:13px; margin-bottom:1px; }
+  :root[data-theme="petronas"] .audit-item.risk .audit-dot, :root[data-theme="dark"] .audit-item.risk .audit-dot { box-shadow:0 0 0 2px oklch(from var(--danger) l c h / 0.5), 0 0 16px -2px oklch(from var(--danger) l c h / 0.7); }
+  :root[data-theme="petronas"] .risk-flag, :root[data-theme="dark"] .risk-flag { box-shadow:0 0 12px -3px oklch(from var(--danger) l c h / 0.6); }
+  /* risk summary card */
+  .sum.sum-risk { border-color:oklch(from var(--danger) l c h / 0.3); background:linear-gradient(oklch(from var(--danger) l c h / 0.06),oklch(from var(--danger) l c h / 0.06)), var(--glass); cursor:pointer; }
+  .sum.sum-risk .sv { color:var(--danger); }
+  .sum.sum-risk.active { box-shadow:0 0 0 2px oklch(from var(--danger) l c h / 0.5) inset; }
+  :root[data-theme="petronas"] .sum.sum-risk, :root[data-theme="dark"] .sum.sum-risk { box-shadow:0 0 18px -6px oklch(from var(--danger) l c h / 0.5); }
+  @media (max-width:1080px){ #audit-sum { grid-template-columns:repeat(2,1fr) !important; } }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<script>window.__ADMIN_ACTIVE='audit';</script>
+<div class="adm" id="adm" data-screen-label="Admin · Audit log">
+
+  <aside class="adm-sb" id="adm-sb"></aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <nav class="adm-crumb"><a href="Admin Overview.html">หลังบ้าน</a><span class="sep">/</span><b>Audit log</b></nav>
+      <div class="adm-top-actions">
+        <button class="adm-search" id="cmdk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="lbl">ค้นหา · คำสั่ง</span><span class="kbd">⌘K</span></button>
+        <div class="tt" role="group" aria-label="ธีม">
+          <button data-set="light" aria-pressed="false" id="btn-light" aria-label="สว่าง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+          <button data-set="dark" aria-pressed="true" id="btn-dark" aria-label="มืด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+      <div class="adm-page">
+
+        <section class="adm-head reveal">
+          <div class="titles">
+            <div class="eyebrow">SYSTEM · AUDIT</div>
+            <h1>Audit <span class="grad">log</span></h1>
+            <div class="sub">ประวัติการกระทำในหลังบ้าน · ใครทำอะไรเมื่อไหร่ พร้อม diff ก่อน→หลัง</div>
+          </div>
+          <div class="adm-head-actions">
+            <button class="btn btn-ghost btn-sm" id="export"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>ส่งออก CSV</button>
+          </div>
+        </section>
+
+        <!-- SUMMARY STRIP -->
+        <section class="sum-strip reveal" data-delay="1" id="audit-sum" style="margin-bottom:16px;grid-template-columns:repeat(5,1fr)">
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-magenta)"></span>กิจกรรมวันนี้</div><div class="sv" id="sum-today">0<span class="unit">รายการ</span></div></div>
+          <div class="sum sum-risk" id="sum-risk-card"><div class="sl"><span class="di" style="background:var(--danger)"></span>การกระทำเสี่ยง</div><div class="sv" id="sum-risk">0<span class="unit">ครั้ง</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--warning)"></span>แก้ไข</div><div class="sv" id="sum-edit">0<span class="unit">ครั้ง</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--danger)"></span>ลบข้อมูล</div><div class="sv" id="sum-delete">0<span class="unit">ครั้ง</span></div></div>
+          <div class="sum"><div class="sl"><span class="di" style="background:var(--brand-cyan)"></span>แอคทีฟสุด</div><div class="sv sv-actor" id="sum-actor" style="font-size:19px">—</div></div>
+        </section>
+        <section class="reveal audit-filters" data-delay="1">
+          <div class="filterbar" style="margin-bottom:12px">
+            <div class="tb-search" style="max-width:300px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="search" placeholder="ค้นหา object, การกระทำ, ผู้ใช้..." /></div>
+
+            <div class="cal-wrap" data-filter="range">
+              <button class="chip-filter cal-btn" id="f-date-btn" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>ช่วงวันที่<span class="val" id="range-val"></span></button>
+              <div class="cal-pop" id="cal-pop" role="dialog" aria-label="เลือกช่วงวันที่">
+                <div class="cal-nav"><button id="cal-prev" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><b id="cal-title"></b><button id="cal-next" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                <div class="cal-dow"><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span><span>อา</span></div>
+                <div class="cal-grid" id="cal-grid"></div>
+                <div class="cal-foot"><span class="cal-hint" id="cal-hint">เลือกวันเริ่ม</span><button class="cal-clear" id="cal-clear">ล้าง</button></div>
+              </div>
+            </div>
+
+            <div class="fdrop" data-filter="objtype">
+              <button class="chip-filter" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7L9.4 4.5A2 2 0 0 0 8 4H5a2 2 0 0 0-2 2z"/></svg>ประเภท</button>
+              <div class="fdrop-menu">
+                <button data-v="all" class="sel">ทั้งหมด<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+                <button data-v="course">คอร์ส<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+                <button data-v="exam">ข้อสอบ<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+                <button data-v="coupon">คูปอง<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+                <button data-v="settings">ตั้งค่า<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+                <button data-v="user">นักเรียน<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              </div>
+            </div>
+
+            <div class="fdrop" data-filter="actor">
+              <button class="chip-filter" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>ผู้กระทำ</button>
+              <div class="fdrop-menu" id="actor-menu">
+                <button data-v="all" class="sel">ทั้งหมด<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span></button>
+              </div>
+            </div>
+
+            <div class="grow"></div>
+            <span class="result-count" id="result-count"></span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div class="tabs" id="tabs" role="tablist">
+              <button data-filter="all" aria-pressed="true">ทั้งหมด</button>
+              <button data-filter="edit" aria-pressed="false">แก้ไข</button>
+              <button data-filter="create" aria-pressed="false">สร้าง</button>
+              <button data-filter="delete" aria-pressed="false">ลบ</button>
+              <button data-filter="publish" aria-pressed="false">เผยแพร่</button>
+              <button data-filter="login" aria-pressed="false">เข้าระบบ</button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+          </div>
+        </section>
+
+        <section class="adm-card reveal" data-delay="2" style="padding:22px 22px 6px">
+          <div class="audit-feed" id="audit-feed"></div>
+        </section>
+        <div id="no-result" style="display:none"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-ov" id="drawer-ov"></div>
+<aside class="drawer" id="drawer" aria-label="รายละเอียดการกระทำ">
+  <div class="dw-head"><b style="font-family:'Bricolage Grotesque';font-weight:700;font-size:15px">รายละเอียดการกระทำ</b><button class="x" id="dw-close" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="dw-body" id="dw-body"></div>
+</aside>
+
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-head" id="tweaks-drag"><b>Tweaks</b><button class="x" id="tweaks-close" aria-label="ปิด">✕</button></div>
+  <div class="tweak-grp"><div class="gl">Accent</div>
+    <div class="tweak-sw" data-tweak="accent">
+      <button data-v="signature" aria-pressed="true" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.68 0.25 5),oklch(0.78 0.20 50))" aria-label="Signature"></button>
+      <button data-v="cool" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.66 0.23 295),oklch(0.80 0.16 205))" aria-label="Cool"></button>
+      <button data-v="warm" aria-pressed="false" style="background:linear-gradient(115deg,oklch(0.68 0.25 5),oklch(0.86 0.20 130))" aria-label="Warm"></button>
+    </div>
+  </div>
+  <div class="tweak-grp"><div class="gl">ความหนาแน่น</div>
+    <div class="tweak-seg" data-tweak="density"><button data-v="comfortable" aria-pressed="true">สบายตา</button><button data-v="compact" aria-pressed="false">กระชับ</button></div>
+  </div>
+</div>
+
+<script>window.__TWEAKS_DEFAULTS = { accent:'signature', density:'comfortable' };</script>
+<script src="admin-shell.js?v=3"></script>
+<script src="admin-common.js?v=5"></script>
+<script>
+(function(){
+  const NOW = new Date('2026-05-31T16:00:00');
+  const DAY = 864e5;
+  function at(daysAgo, hh, mm){ const d=new Date(NOW.getTime()-daysAgo*DAY); d.setHours(hh,mm,0,0); return d; }
+  // ip + objType + actor variety; ts is a real Date
+  const LOG=[
+    {action:'edit', actor:'หมิง', role:'เจ้าของ', objType:'course', obj:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', what:'แก้ราคาคอร์ส', ts:at(0,15,32), ip:'171.96.x.x', diff:[{k:'ราคา', old:'฿2,490', new:'฿1,800'},{k:'ราคาก่อนลด', old:'—', new:'฿2,490'}]},
+    {action:'publish', actor:'หมิง', role:'เจ้าของ', objType:'course', obj:'ฟิสิกส์ ม.ปลาย เนื้อหาครบทุกเทอม', what:'เปลี่ยนสถานะคอร์ส', ts:at(0,14,8), ip:'171.96.x.x', diff:[{k:'สถานะ', old:'ฉบับร่าง', new:'เผยแพร่'}]},
+    {action:'create', actor:'หมิง', role:'เจ้าของ', objType:'coupon', obj:'คูปอง TCAS68', what:'สร้างคูปองใหม่', ts:at(0,11,20), ip:'171.96.x.x', diff:[{k:'ส่วนลด', old:null, new:'฿300'},{k:'จำกัดสิทธิ์', old:null, new:'150 ครั้ง'},{k:'วันหมดอายุ', old:null, new:'15 ก.ค. 2569'}]},
+    {action:'edit', actor:'พี่ครู TA', role:'ผู้ช่วย', objType:'exam', obj:'ชุดข้อสอบ A-Level ฟิสิกส์ #1', what:'แก้เฉลยข้อ 14', ts:at(1,20,45), ip:'49.228.x.x', diff:[{k:'เฉลยข้อ 14', old:'ข้อ ค', new:'ข้อ ข'},{k:'คำอธิบาย', old:'(ว่าง)', new:'ใช้กฎอนุรักษ์โมเมนตัม...'}]},
+    {action:'edit', actor:'หมิง', role:'เจ้าของ', objType:'settings', obj:'ตั้งค่า · การชำระเงิน', what:'แก้คำแนะนำการโอน', ts:at(1,18,30), ip:'171.96.x.x', diff:[{k:'คำแนะนำ', old:'โอนแล้วแจ้งแอดมิน', new:'ระบบยืนยันอัตโนมัติ'}]},
+    {action:'edit', actor:'พี่ครู TA', role:'ผู้ช่วย', objType:'user', obj:'ปาริชาติ แสงทอง', what:'เลื่อนสิทธิ์เป็นผู้ดูแล', ts:at(1,10,12), ip:'49.228.x.x', diff:[{k:'บทบาท', old:'นักเรียน', new:'ผู้ดูแล'}]},
+    {action:'delete', actor:'หมิง', role:'เจ้าของ', objType:'coupon', obj:'คูปอง OLDPROMO', what:'ลบคูปองหมดอายุ', ts:at(2,9,15), ip:'171.96.x.x', diff:[{k:'โค้ด', old:'OLDPROMO (−15%)', new:null}]},
+    {action:'login', actor:'หมิง', role:'เจ้าของ', objType:'settings', obj:'หลังบ้าน', what:'เข้าสู่ระบบ', ts:at(2,9,2), ip:'171.96.x.x', diff:null},
+    {action:'create', actor:'หมิง', role:'เจ้าของ', objType:'exam', obj:'TGAT2 การคิดอย่างมีเหตุผล ชุด 3', what:'สร้างชุดข้อสอบ', ts:at(3,16,40), ip:'171.96.x.x', diff:[{k:'จำนวนข้อ', old:null, new:'40 ข้อ'},{k:'ผูกคอร์ส', old:null, new:'TGAT2'}]},
+    {action:'delete', actor:'พี่ครู TA', role:'ผู้ช่วย', objType:'exam', obj:'ชุดข้อสอบเก่า · คณิต 2567', what:'ลบชุดข้อสอบที่เลิกใช้', ts:at(8,13,5), ip:'49.228.x.x', diff:[{k:'ชุดข้อสอบ', old:'คณิต 2567 (25 ข้อ)', new:null}]},
+    {action:'edit', actor:'หมิง', role:'เจ้าของ', objType:'course', obj:'TPAT3 ความถนัด วิทย์–เทคโน–วิศวะ', what:'แก้คำอธิบายคอร์ส', ts:at(12,11,48), ip:'171.96.x.x', diff:[{k:'คำอธิบาย', old:'ติว TPAT3 ครบ', new:'ติว TPAT3 ครบ พร้อมข้อสอบเสมือนจริง'}]},
+    {action:'publish', actor:'หมิง', role:'เจ้าของ', objType:'course', obj:'A-Level คณิต ประยุกต์ ครบทุกบท', what:'เผยแพร่คอร์ส', ts:at(20,9,30), ip:'171.96.x.x', diff:[{k:'สถานะ', old:'ฉบับร่าง', new:'เผยแพร่'}]}
+  ];
+  const IC={
+    create:'<path d="M12 5v14M5 12h14"/>',
+    edit:'<path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    delete:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    publish:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+    login:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>'
+  };
+  const AVC={'หมิง':'var(--grad-warm)','พี่ครู TA':'var(--grad-cool)'};
+  const OBJLABEL={course:'คอร์ส', exam:'ข้อสอบ', coupon:'คูปอง', settings:'ตั้งค่า', user:'นักเรียน'};
+  const ACTIONLABEL={edit:'แก้ไข', create:'สร้าง', delete:'ลบ', publish:'เผยแพร่', login:'เข้าระบบ'};
+
+  let filters={action:'all', range:'all', objtype:'all', actor:'all'}, q='', customRange=null, riskOnly=false;
+  const FLABEL={range:'วันที่', objtype:'ประเภท', actor:'ผู้กระทำ'};
+  const feed=document.getElementById('audit-feed'), noResult=document.getElementById('no-result');
+
+  // lightweight toast
+  window.__toast = window.__toast || function(msg){
+    let t=document.getElementById('adm-toast');
+    if(!t){ t=document.createElement('div'); t.id='adm-toast'; t.className='adm-toast'; document.body.appendChild(t); }
+    t.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>'+msg;
+    requestAnimationFrame(()=>t.classList.add('show'));
+    clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2600);
+  };
+
+  // populate actor menu dynamically
+  const actors=[...new Set(LOG.map(l=>l.actor))];
+  const actorMenu=document.getElementById('actor-menu');
+  actors.forEach(a=>{ const b=document.createElement('button'); b.dataset.v=a; b.innerHTML=a+'<span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>'; actorMenu.appendChild(b); });
+
+  function dayMsOf(ts){ return Date.UTC(ts.getFullYear(), ts.getMonth(), ts.getDate()); }
+  function inRange(ts){
+    if(customRange){ const d=dayMsOf(ts); return d>=customRange.from && d<=customRange.to; }
+    return true;
+  }
+  function fmtTime(ts){
+    const sameDay=ts.toDateString()===NOW.toDateString();
+    const yest=new Date(NOW.getTime()-DAY).toDateString()===ts.toDateString();
+    const hhmm=String(ts.getHours()).padStart(2,'0')+':'+String(ts.getMinutes()).padStart(2,'0');
+    const dstr=ts.getDate()+' '+['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][ts.getMonth()]+' '+(ts.getFullYear()+543);
+    return (sameDay?'วันนี้':yest?'เมื่อวาน':dstr)+' · '+hhmm;
+  }
+  function dayGroup(ts){
+    if(ts.toDateString()===NOW.toDateString()) return 'วันนี้';
+    if(new Date(NOW.getTime()-DAY).toDateString()===ts.toDateString()) return 'เมื่อวาน';
+    const diff=Math.floor((NOW-ts)/DAY);
+    if(diff<7) return '7 วันที่ผ่านมา';
+    if(diff<30) return '30 วันที่ผ่านมา';
+    return 'ก่อนหน้านี้';
+  }
+  function diffVal(d){
+    if(d.old===null) return `<span class="diff-arr">เพิ่ม</span><span class="diff-new">${d.new}</span>`;
+    if(d.new===null) return `<span class="diff-old">${d.old}</span><span class="diff-arr">ลบ</span>`;
+    return `<span class="diff-old">${d.old}</span><span class="diff-arr">→</span><span class="diff-new">${d.new}</span>`;
+  }
+  function diffText(l){ return (l.diff||[]).map(d=>d.k+' '+(d.old||'')+' '+(d.new||'')).join(' '); }
+  // high-risk: deletes, promoting to admin, price/payment changes
+  function riskOf(l){
+    if(l.action==='delete') return 'ลบข้อมูล';
+    if(l.objType==='user' && /ผู้ดูแล/.test(diffText(l))) return 'เพิ่มสิทธิ์แอดมิน';
+    if((l.objType==='course'||l.objType==='coupon') && /ราคา|ส่วนลด/.test(diffText(l))) return 'กระทบราคา';
+    if(l.objType==='settings' && /ชำระ|โอน|เงิน/.test(diffText(l)+l.what)) return 'การเงิน';
+    return null;
+  }
+  function filtered(){
+    return LOG.filter(l=>{
+      if(riskOnly && !riskOf(l)) return false;
+      if(filters.action!=='all' && l.action!==filters.action) return false;
+      if(filters.objtype!=='all' && l.objType!==filters.objtype) return false;
+      if(filters.actor!=='all' && l.actor!==filters.actor) return false;
+      if(!inRange(l.ts)) return false;
+      if(q && !(l.obj+l.what+l.actor+(OBJLABEL[l.objType]||'')).toLowerCase().includes(q.toLowerCase())) return false;
+      return true;
+    });
+  }
+  function render(){
+    const vis=filtered();
+    document.getElementById('result-count').textContent = vis.length+' รายการ';
+    renderActiveFilters();
+    if(!vis.length){ feed.parentElement.style.display='none'; noResult.style.display='block';
+      noResult.innerHTML='<div class="adm-empty"><div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg></div><h3>ไม่พบประวัติ</h3><p>ลองเปลี่ยนตัวกรองหรือคำค้น</p></div>'; return; }
+    feed.parentElement.style.display=''; noResult.style.display='none';
+    let html='', lastGroup='';
+    vis.forEach(l=>{
+      const g=dayGroup(l.ts);
+      if(g!==lastGroup){ html+=`<div class="audit-daygroup">${g}</div>`; lastGroup=g; }
+      const risk=riskOf(l);
+      html+=`<div class="audit-item${risk?' risk':''}" data-idx="${LOG.indexOf(l)}" role="button" tabindex="0">
+        <div class="audit-dot ${l.action}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[l.action]}</svg></div>
+        <div class="audit-body">
+          <div class="audit-line"><span class="actor-chip"><span class="av" style="background:${AVC[l.actor]||'var(--grad-cool)'}">${l.actor[0]}</span><b>${l.actor}</b></span> ${l.what} · <span class="obj">${l.obj}</span> <span class="objtype-tag">${OBJLABEL[l.objType]||''}</span>${risk?`<span class="risk-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>${risk}</span>`:''}</div>
+          <div class="audit-time">${fmtTime(l.ts)} · IP ${l.ip}</div>
+          ${l.diff?`<div class="audit-diff">${l.diff.map(d=>`<div class="diff-row"><div class="dk">${d.k}</div><div class="dv">${diffVal(d)}</div></div>`).join('')}</div>`:''}
+        </div>
+        <div class="audit-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+      </div>`;
+    });
+    feed.innerHTML=html;
+    feed.querySelectorAll('.audit-item').forEach(it=>{
+      const open=()=>openDrawer(+it.dataset.idx);
+      it.addEventListener('click', open);
+      it.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+    });
+    updateSummary();
+  }
+
+  // ===== summary strip =====
+  function updateSummary(){
+    const today=LOG.filter(l=>dayMsOf(l.ts)===dayMsOf(NOW)).length;
+    document.getElementById('sum-today').innerHTML=today+'<span class="unit">รายการ</span>';
+    document.getElementById('sum-risk').innerHTML=LOG.filter(l=>riskOf(l)).length+'<span class="unit">ครั้ง</span>';
+    document.getElementById('sum-edit').innerHTML=LOG.filter(l=>l.action==='edit').length+'<span class="unit">ครั้ง</span>';
+    document.getElementById('sum-delete').innerHTML=LOG.filter(l=>l.action==='delete').length+'<span class="unit">ครั้ง</span>';
+    const tally={}; LOG.forEach(l=>tally[l.actor]=(tally[l.actor]||0)+1);
+    const top=Object.entries(tally).sort((a,b)=>b[1]-a[1])[0];
+    document.getElementById('sum-actor').innerHTML = top ? `<span class="actor-chip" style="gap:7px"><span class="av" style="background:${AVC[top[0]]||'var(--grad-cool)'};width:22px;height:22px;font-size:11px">${top[0][0]}</span>${top[0]}</span>` : '—';
+  }
+
+  // ===== detail drawer =====
+  const GOTO={course:'Admin Courses.html', exam:'Admin Exams.html', coupon:'Admin Coupons.html', settings:'Admin Site.html', user:'Admin Users.html'};
+  const drawer=document.getElementById('drawer'), drawerOv=document.getElementById('drawer-ov'), dwBody=document.getElementById('dw-body');
+  function openDrawer(idx){
+    const l=LOG[idx]; if(!l) return;
+    const full=String(l.ts.getDate())+' '+['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][l.ts.getMonth()]+' '+(l.ts.getFullYear()+543)+' · '+String(l.ts.getHours()).padStart(2,'0')+':'+String(l.ts.getMinutes()).padStart(2,'0')+' น.';
+    const sess='sess_'+(l.ip.replace(/\D/g,'')||'0000').slice(0,4)+'…'+String(idx*7+13).padStart(2,'0');
+    const diffHtml = l.diff ? `<div class="dw-sec"><div class="dw-sec-h">การเปลี่ยนแปลง <span>${l.diff.length} รายการ</span></div><div class="audit-diff" style="margin-top:0">${l.diff.map(d=>`<div class="diff-row"><div class="dk">${d.k}</div><div class="dv">${diffVal(d)}</div></div>`).join('')}</div></div>` : '<div class="dw-sec"><div class="dw-sec-h">การเปลี่ยนแปลง</div><p style="font-size:13px;color:var(--fg-3)">— ไม่มีข้อมูลที่เปลี่ยน (เช่น การเข้าระบบ)</p></div>';
+    const canRevert = l.diff && (l.action==='edit'||l.action==='delete'||l.action==='create');
+    const risk=riskOf(l);
+    const riskBanner = risk ? `<div class="dw-risk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><span><b>การกระทำความเสี่ยงสูง · ${risk}</b>ควรตรวจสอบก่อนยืนยัน</span></div>` : '';
+    dwBody.innerHTML = `
+      <div class="dw-id"><div class="av" style="background:${AVC[l.actor]||'var(--grad-cool)'}">${l.actor[0]}</div>
+        <div><b>${l.actor}</b><span>${l.role}</span></div></div>
+      <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:18px"><span class="audit-dot ${l.action}" style="width:30px;height:30px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[l.action]}</svg></span><div><div style="font-family:'Bricolage Grotesque';font-weight:700;font-size:15px;color:var(--fg-0)">${l.what}</div><div style="font-size:12.5px;color:var(--fg-2)">${l.obj}</div></div></div>
+      ${riskBanner}
+      ${diffHtml}
+      <div class="dw-sec"><div class="dw-sec-h">ข้อมูลเชิงเทคนิค</div>
+        <div class="dw-meta">
+          ${metaRow('เวลา', full)}
+          ${metaRow('ประเภท', OBJLABEL[l.objType]||'—')}
+          ${metaRow('IP', l.ip)}
+          ${metaRow('Session', sess)}
+          ${metaRow('อุปกรณ์', 'เว็บแอดมิน · Chrome / macOS')}
+        </div></div>
+      <div class="dw-actions">
+        <a class="btn btn-ghost btn-sm" href="${GOTO[l.objType]||'Admin Overview.html'}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>ไปที่ ${OBJLABEL[l.objType]||'object'}</a>
+        ${canRevert?`<button class="btn btn-danger-soft btn-sm" id="dw-revert" data-idx="${idx}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6M3 13a9 9 0 1 0 3-7.7L3 8"/></svg>ย้อนการกระทำนี้</button>`:''}
+      </div>`;
+    const rv=document.getElementById('dw-revert');
+    if(rv) rv.addEventListener('click', ()=>revert(+rv.dataset.idx));
+    drawer.classList.add('open'); drawerOv.classList.add('open');
+  }
+  function metaRow(k,v){ return `<div class="dw-meta-row"><span class="mk">${k}</span><span class="mv">${v}</span></div>`; }
+  function closeDrawer(){ drawer.classList.remove('open'); drawerOv.classList.remove('open'); }
+  document.getElementById('dw-close').addEventListener('click', closeDrawer);
+  drawerOv.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
+
+  // ===== revert an action (creates a new compensating audit entry) =====
+  function revert(idx){
+    const l=LOG[idx]; if(!l||!l.diff) return;
+    const reverseAction = l.action==='delete'?'create' : l.action==='create'?'delete' : 'edit';
+    const reverseWhat = l.action==='delete'?'กู้คืน: '+l.what : l.action==='create'?'ยกเลิก: '+l.what : 'ย้อนการแก้ไข: '+l.what;
+    const ts=new Date(NOW.getTime()+60000);
+    LOG.unshift({ action:reverseAction, actor:'หมิง', role:'เจ้าของ', objType:l.objType, obj:l.obj, what:reverseWhat, ts, ip:'171.96.x.x',
+      diff: l.diff.map(d=>({k:d.k, old:d.new, new:d.old})), reverted:true });
+    closeDrawer();
+    if(window.__toast) window.__toast('ย้อนการกระทำเรียบร้อย · บันทึกลง audit log แล้ว');
+    render();
+  }
+  function renderActiveFilters(){
+    const el=document.getElementById('active-filters');
+    const parts=[];
+    if(customRange) parts.push({k:'range', label:'วันที่: '+customRange.label});
+    if(filters.objtype!=='all') parts.push({k:'objtype', label:'ประเภท: '+OBJLABEL[filters.objtype]});
+    if(filters.actor!=='all') parts.push({k:'actor', label:'ผู้กระทำ: '+filters.actor});
+    if(!parts.length){ el.innerHTML=''; return; }
+    el.innerHTML = parts.map(p=>`<span class="afilter">${p.label}<button data-clear="${p.k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>`).join('')+'<button class="clear-all" id="clear-all">ล้างทั้งหมด</button>';
+    el.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click', ()=>{ const k=b.dataset.clear; if(k==='range'){ calClear(); return; } filters[k]='all'; syncChips(); render(); }));
+    const ca=document.getElementById('clear-all'); if(ca) ca.addEventListener('click', ()=>{ filters={action:filters.action, range:'all', objtype:'all', actor:'all'}; calClear(); syncChips(); });
+  }
+  function syncChips(){
+    document.querySelectorAll('.fdrop').forEach(fd=>{
+      const key=fd.dataset.filter, chip=fd.querySelector('.chip-filter');
+      const isOn = filters[key]!=='all';
+      chip.classList.toggle('on', !!isOn);
+      fd.querySelectorAll('.fdrop-menu > button[data-v]').forEach(b=>b.classList.toggle('sel', b.dataset.v===filters[key]));
+    });
+    const rv=document.getElementById('range-val');
+    if(rv) rv.textContent = customRange ? ' · '+customRange.label : '';
+  }
+
+  // action tabs
+  document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click', ()=>{
+    document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); filters.action=b.dataset.filter; render();
+  }));
+  // dropdowns
+  document.querySelectorAll('.fdrop').forEach(fd=>{
+    const key=fd.dataset.filter, chip=fd.querySelector('[data-toggle]'), menu=fd.querySelector('.fdrop-menu');
+    chip.addEventListener('click', e=>{ e.stopPropagation(); document.querySelectorAll('.fdrop-menu').forEach(m=>{ if(m!==menu) m.classList.remove('open'); }); menu.classList.toggle('open'); });
+    menu.querySelectorAll(':scope > button[data-v]').forEach(b=>b.addEventListener('click', ()=>{ filters[key]=b.dataset.v; if(key==='range') customRange=null; menu.classList.remove('open'); syncChips(); render(); }));
+    menu.addEventListener('click', e=>{ if(e.target.closest('input,#apply-range')) e.stopPropagation(); });
+  });
+  document.addEventListener('click', ()=>{ document.querySelectorAll('.fdrop-menu').forEach(m=>m.classList.remove('open')); calPop.classList.remove('open'); calBtn.setAttribute('aria-expanded','false'); });
+  // ===== calendar range picker (day-level, same UX as Payments) =====
+  const activityDays=new Set(LOG.map(l=>dayMsOf(l.ts)));
+  let rangeStart=null, rangeEnd=null;
+  const calBtn=document.getElementById('f-date-btn'), calPop=document.getElementById('cal-pop'),
+        calGrid=document.getElementById('cal-grid'), calTitle=document.getElementById('cal-title'), calHint=document.getElementById('cal-hint');
+  const TH=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  let vY=2026, vM=4, pick=null;
+  function calFmt(ms){ const d=new Date(ms); return d.getUTCDate()+' '+TH[d.getUTCMonth()]; }
+  function calDraw(){
+    calTitle.textContent=TH[vM]+' '+(vY+543);
+    const first=new Date(Date.UTC(vY,vM,1)), lead=(first.getUTCDay()+6)%7, dim=new Date(Date.UTC(vY,vM+1,0)).getUTCDate();
+    let h='';
+    for(let i=0;i<lead;i++) h+='<button class="cal-cell empty"></button>';
+    for(let d=1;d<=dim;d++){ const ms=Date.UTC(vY,vM,d); let c='cal-cell';
+      if(activityDays.has(ms)) c+=' has-tx';
+      if(rangeStart!==null && ms>=rangeStart && ms<=rangeEnd){ c+=(rangeStart===rangeEnd)?' edge single':(ms===rangeStart?' edge start':ms===rangeEnd?' edge end':' in-range'); }
+      h+=`<button class="${c}" data-ms="${ms}">${d}</button>`;
+    }
+    calGrid.innerHTML=h;
+    calGrid.querySelectorAll('.cal-cell:not(.empty)').forEach(b=>b.addEventListener('click',()=>calPick(+b.dataset.ms)));
+  }
+  function calPick(ms){
+    // click the same single day again to cancel
+    if(pick===null && rangeStart!==null && ms===rangeStart && ms===rangeEnd){ rangeStart=rangeEnd=null; calHint.textContent='เลือกวันเริ่ม'; calSync(); calDraw(); render(); return; }
+    if(pick!==null && ms===pick){ pick=null; rangeStart=rangeEnd=null; calHint.textContent='เลือกวันเริ่ม'; calSync(); calDraw(); render(); return; }
+    if(pick===null){ pick=ms; rangeStart=ms; rangeEnd=ms; calHint.textContent='เลือกอีกวันเพื่อทำเป็นช่วง · กดวันเดิมซ้ำเพื่อยกเลิก'; }
+    else { if(ms<pick){ rangeStart=ms; rangeEnd=pick; } else { rangeStart=pick; rangeEnd=ms; } pick=null; calHint.textContent='เลือกวันเริ่ม'; }
+    calSync(); calDraw(); render();
+  }
+  function calSync(){
+    if(rangeStart===null){ customRange=null; calBtn.dataset.active='0'; }
+    else { customRange={from:rangeStart, to:rangeEnd, label: rangeStart===rangeEnd ? calFmt(rangeStart) : calFmt(rangeStart)+' – '+calFmt(rangeEnd)}; calBtn.dataset.active='1'; }
+    const rv=document.getElementById('range-val'); if(rv) rv.textContent = customRange ? ' · '+customRange.label : '';
+  }
+  function calClear(){ rangeStart=rangeEnd=pick=null; calHint.textContent='เลือกวันเริ่ม'; calSync(); calDraw(); render(); }
+  calBtn.addEventListener('click',e=>{ e.stopPropagation(); const o=calPop.classList.toggle('open'); calBtn.setAttribute('aria-expanded',String(o)); if(o) calDraw(); });
+  calPop.addEventListener('click',e=>e.stopPropagation());
+  document.getElementById('cal-prev').addEventListener('click',()=>{ vM--; if(vM<0){vM=11;vY--;} calDraw(); });
+  document.getElementById('cal-next').addEventListener('click',()=>{ vM++; if(vM>11){vM=0;vY++;} calDraw(); });
+  document.getElementById('cal-clear').addEventListener('click',calClear);
+
+  document.getElementById('search').addEventListener('input', e=>{ q=e.target.value.trim(); render(); });
+  document.getElementById('sum-risk-card').addEventListener('click', ()=>{
+    riskOnly=!riskOnly;
+    document.getElementById('sum-risk-card').classList.toggle('active', riskOnly);
+    render();
+  });
+  document.getElementById('export').addEventListener('click', ()=>{
+    const rows=[['เวลา','ผู้กระทำ','การกระทำ','ประเภท','object','รายละเอียด','IP']].concat(
+      filtered().map(l=>[fmtTime(l.ts), l.actor, ACTIONLABEL[l.action], OBJLABEL[l.objType]||'', l.obj, l.diff?l.diff.map(d=>d.k+':'+(d.old||'+')+'→'+(d.new||'-')).join(' / '):l.what, l.ip]));
+    const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'})); a.download='audit-log.csv'; a.click();
+  });
+
+  syncChips(); render();
+})();
+</script>
+</body>
+</html>
