@@ -540,6 +540,8 @@ body { overflow: hidden; }
   </div>
 </div>
 
+<script src="subjects.js"></script>
+<script src="courses.js"></script>
 <script>
 // ============== THEME ==============
 const root = document.documentElement;
@@ -595,23 +597,10 @@ const SORTS = [
 ];
 function tagFor(c){ return LEVELABLE.includes(c.subj) ? SUBJLABEL[c.subj]+' · '+(LEVELTAG[c.level]||'') : SUBJLABEL[c.subj]; }
 
-const COURSES = [
-  { id:'amath-calculus', subj:'math', level:'alevel', name:'แคลคูลัส · ขั้นเทพ', meta:'24 บท · ม.6 · พี่หมิง', rating:4.9, reviews:412, hours:'18 ชม.', lessons:'24 บท', students:'1,820', now:2490, old:3990, ribbon:'hot' },
-  { id:'amath-alevel1', subj:'math', level:'alevel', name:'A-Level คณิต 1 · ฉบับเก็บคะแนน', meta:'22 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:564, hours:'20 ชม.', lessons:'22 บท', students:'1,640', now:1990, old:2990, ribbon:'rec' },
-  { id:'math-trig', subj:'math', level:'m5', name:'ตรีโกณมิติ ม.5 เทอม 1', meta:'10 บท · ม.5 · พี่หมิง', rating:5.0, reviews:682, hours:'7 ชม.', lessons:'10 บท', students:'3,140', free:true, ribbon:'free' },
-  { id:'math-func', subj:'math', level:'m4', name:'ฟังก์ชัน & ลอการิทึม', meta:'12 บท · ม.4 · พี่หมิง', rating:4.9, reviews:204, hours:'9 ชม.', lessons:'12 บท', students:'1,360', now:1190, ribbon:'rec' },
-  { id:'math-stats', subj:'math', level:'m6', name:'ความน่าจะเป็นและสถิติ', meta:'14 บท · ม.6 · พี่หมิง', rating:4.8, reviews:312, hours:'11 ชม.', lessons:'14 บท', students:'1,124', now:1790 },
-  { id:'aphys-full', subj:'phys', level:'alevel', name:'A-Level ฟิสิกส์ · ครบสนามสอบ', meta:'24 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:498, hours:'21 ชม.', lessons:'24 บท', students:'1,510', now:2290, old:3490, ribbon:'hot' },
-  { id:'aphys-mechanics', subj:'phys', level:'alevel', name:'กลศาสตร์ & โมเมนตัม · A-Level', meta:'18 บท · เตรียมสอบ · พี่หมิง', rating:4.8, reviews:276, hours:'15 ชม.', lessons:'18 บท', students:'928', now:1990 },
-  { id:'phys-kinematics', subj:'phys', level:'m4', name:'จลนศาสตร์เบื้องต้น', meta:'12 บท · ม.4 · พี่หมิง', rating:4.8, reviews:168, hours:'9 ชม.', lessons:'12 บท', students:'742', now:1290, ribbon:'rec' },
-  { id:'phys-electric', subj:'phys', level:'m5', name:'ไฟฟ้าสถิตและกระแส', meta:'16 บท · ม.5 · พี่หมิง', rating:4.7, reviews:238, hours:'12 ชม.', lessons:'16 บท', students:'962', now:1790, old:2490 },
-  { id:'phys-wave', subj:'phys', level:'m6', name:'คลื่นและเสียง · เต็มรูป', meta:'14 บท · ม.6 · พี่หมิง', rating:4.8, reviews:204, hours:'12 ชม.', lessons:'14 บท', students:'786', now:1890 },
-  { id:'tpat3-latest', subj:'tpat3', name:'ตะลุย TPAT3 ปีล่าสุด', meta:'20 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:722, hours:'22 ชม.', lessons:'20 บท', students:'2,180', now:2290, old:3490, ribbon:'hot' },
-  { id:'tpat3-logic', subj:'tpat3', name:'TPAT3 · ตรรกะวิศวกร', meta:'14 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:388, hours:'12 ชม.', lessons:'14 บท', students:'1,420', now:1890 },
-  { id:'tpat3-mock', subj:'tpat3', name:'ข้อสอบจำลอง TPAT3 · 5 ชุด', meta:'5 ชุด · เตรียมสอบ · พี่หมิง', rating:4.8, reviews:212, hours:'16 ชม.', lessons:'5 ชุด', students:'684', now:1490, ribbon:'new' },
-  { id:'tgat2-logic', subj:'tgat2', name:'TGAT2 · การคิดอย่างมีเหตุผล', meta:'20 บท · เตรียมสอบ · พี่หมิง', rating:4.9, reviews:528, hours:'16 ชม.', lessons:'20 บท', students:'1,580', now:1990, old:2890, ribbon:'rec' }
-];
-
+const COURSES = window.Courses.LIST.map(function (c) {
+  /* ชื่อฟิลด์เดิมของหน้านี้ (now/old) — ข้อมูลจริงมาจาก courses.js */
+  return Object.assign({}, c, { now: c.priceNow, old: c.priceOld });
+});
 let activeSubj = 'all', activeLevel = 'all', activeSort = 'rec';
 function filtered(){
   return COURSES.filter(c => {

@@ -733,6 +733,8 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Anuphan:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="sidebar.css?v=12" />
 <script src="sidebar.js?v=12" defer></script>
+<script src="subjects.js"></script>
+<script src="courses.js"></script>
 </head>
 <body>
 
@@ -1210,20 +1212,24 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
 <script>
 // ===== Course data binding (from ?c=<id>) =====================================
 // Keeps the rich detail layout; swaps the identifying fields per course.
-const COURSE_DB = {
-  'tgat2-logic':   { subj:'tgat2', glyph:'∑', subject:'TGAT2 · การคิดอย่างมีเหตุผล', badge:'แนะนำ', title:'TGAT2<br/>การคิดอย่าง<span class="grad">มีเหตุผล</span>', tagline:'เจาะ TGAT2 ส่วนการคิดอย่างมีตรรกะและตัวเลข — จับแพตเทิร์นข้อสอบจริง ทำทันเวลา ทุกพาร์ต.', rating:'4.9', reviews:'528 รีวิว', students:'1,580', level:'เตรียมสอบ · TCAS', lessonsLong:'20 บทเรียน', hours:'16 ชม.', lessons:'20 บท', statLevel:'เตรียมสอบ', priceNow:1990, priceOld:2890 },
-  'tpat3-latest':  { subj:'tpat3', glyph:'∂', subject:'TPAT3 · ความถนัดวิทย์', badge:'BESTSELLER', title:'ตะลุย TPAT3<br/><span class="grad">ปีล่าสุด</span>', tagline:'รวมแนวข้อสอบ TPAT3 ปีล่าสุดทุกพาร์ต — ฟิสิกส์ เคมีพื้นฐานการคำนวณ ตรรกะ และมิติสัมพันธ์ พร้อมเฉลยละเอียด.', rating:'4.9', reviews:'722 รีวิว', students:'2,180', level:'เตรียมสอบ · TCAS', lessonsLong:'20 บทเรียน', hours:'22 ชม.', lessons:'20 บท', statLevel:'เตรียมสอบ', priceNow:2290, priceOld:3490 },
-  'tpat3-logic':   { subj:'tpat3', glyph:'⌬', subject:'TPAT3 · ตรรกะ', badge:'แนะนำ', title:'TPAT3<br/>ตรรกะ<span class="grad">วิศวกร</span>', tagline:'ฝึกการคิดเชิงตรรกะและมิติสัมพันธ์แบบที่ TPAT3 ชอบออก — เห็นโจทย์ปุ๊บรู้วิธีคิดปั๊บ.', rating:'4.9', reviews:'388 รีวิว', students:'1,420', level:'เตรียมสอบ · TCAS', lessonsLong:'14 บทเรียน', hours:'12 ชม.', lessons:'14 บท', statLevel:'เตรียมสอบ', priceNow:1890 },
-  'tpat3-mock':    { subj:'tpat3', glyph:'⊕', subject:'TPAT3 · MOCK', badge:'NEW', title:'ข้อสอบจำลอง<br/>TPAT3 · <span class="grad">5 ชุด</span>', tagline:'ซ้อมจริงด้วยชุดข้อสอบจำลอง 5 ชุด จับเวลาเหมือนสนามจริง พร้อมเฉลยรายข้อและวิเคราะห์จุดอ่อน.', rating:'4.8', reviews:'212 รีวิว', students:'684', level:'เตรียมสอบ · TCAS', lessonsLong:'5 ชุดข้อสอบ', hours:'16 ชม.', lessons:'5 ชุด', statLevel:'เตรียมสอบ', priceNow:1490 },
-  'amath-calculus':{ subj:'math', glyph:'∫', subject:'คณิต · A-LEVEL', badge:'BESTSELLER', title:'แคลคูลัส<br/>ฉบับเข้าใจ <span class="grad">ภายใน 30 วัน</span>', tagline:'เริ่มจากศูนย์ — ไล่ขั้นจาก ลิมิต → อนุพันธ์ → ปริพันธ์ → โจทย์รวมแนวข้อสอบ. คอร์สที่นักเรียนพี่หมิงสอบติด <b style="color:#fff;font-weight:600">วิศวะ จุฬาฯ</b> มากที่สุดในปีที่ผ่านมา.', rating:'4.9', reviews:'412 รีวิว', students:'1,820', level:'ม.6 · เตรียมสอบ', lessonsLong:'24 บทเรียน', hours:'18 ชม.', lessons:'24 บท', statLevel:'ม.6', priceNow:2490, priceOld:3990 },
-  'amath-alevel1': { subj:'math', glyph:'∫', subject:'คณิต · A-LEVEL คณิต 1', badge:'แนะนำ', title:'A-Level คณิต 1<br/><span class="grad">ฉบับเก็บคะแนน</span>', tagline:'ครบทุกบทที่ออกใน A-Level คณิตประยุกต์ 1 — เน้นโจทย์เก็บคะแนนและเทคนิคทำเร็ว.', rating:'4.9', reviews:'564 รีวิว', students:'1,640', level:'เตรียมสอบ · TCAS', lessonsLong:'22 บทเรียน', hours:'20 ชม.', lessons:'22 บท', statLevel:'เตรียมสอบ', priceNow:1990, priceOld:2990 },
-  'aphys-full':    { subj:'phys', glyph:'Φ', subject:'ฟิสิกส์ · A-LEVEL', badge:'BESTSELLER', title:'A-Level ฟิสิกส์<br/>ครบ<span class="grad">สนามสอบ</span>', tagline:'ครบทุกบทของ A-Level ฟิสิกส์ — กลศาสตร์ ไฟฟ้า คลื่น ความร้อน ฟิสิกส์ยุคใหม่ พร้อมโจทย์ข้อสอบจริง.', rating:'4.9', reviews:'498 รีวิว', students:'1,510', level:'เตรียมสอบ · TCAS', lessonsLong:'24 บทเรียน', hours:'21 ชม.', lessons:'24 บท', statLevel:'เตรียมสอบ', priceNow:2290, priceOld:3490 },
-  'aphys-mechanics':{ subj:'phys', glyph:'Φ', subject:'ฟิสิกส์ · A-LEVEL', badge:'', title:'กลศาสตร์ &amp; โมเมนตัม<br/><span class="grad">A-Level</span>', tagline:'เจาะลึกกลศาสตร์และโมเมนตัมสำหรับ A-Level ฟิสิกส์ — เข้าใจหลักการ ทำโจทย์ยากได้.', rating:'4.8', reviews:'276 รีวิว', students:'928', level:'เตรียมสอบ · TCAS', lessonsLong:'18 บทเรียน', hours:'15 ชม.', lessons:'18 บท', statLevel:'เตรียมสอบ', priceNow:1990 },
-  'math-trig':     { subj:'math', glyph:'π', subject:'คณิต · ม.5', badge:'ฟรี', title:'ตรีโกณมิติ<br/>ม.5 <span class="grad">เทอม 1</span>', tagline:'ปูพื้นตรีโกณมิติให้แน่นตั้งแต่ในห้องเรียน — คอร์สฟรีให้ลองสัมผัสวิธีสอนของพี่หมิงก่อน.', rating:'5.0', reviews:'682 รีวิว', students:'3,140', level:'ม.5 · ในเทอม', lessonsLong:'10 บทเรียน', hours:'7 ชม.', lessons:'10 บท', statLevel:'ม.5', free:true },
-  'math-stats':    { subj:'math', glyph:'π', subject:'คณิต · ม.6', badge:'', title:'ความน่าจะเป็น<br/>และ<span class="grad">สถิติ</span>', tagline:'เก็บครบความน่าจะเป็นและสถิติ ม.6 — เข้าใจคอนเซปต์ ไม่ใช่ท่องสูตร พร้อมโจทย์หลากหลาย.', rating:'4.8', reviews:'312 รีวิว', students:'1,124', level:'ม.6 · ในเทอม', lessonsLong:'14 บทเรียน', hours:'11 ชม.', lessons:'14 บท', statLevel:'ม.6', priceNow:1790 },
-  'phys-electric': { subj:'phys', glyph:'g', subject:'ฟิสิกส์ · ม.5', badge:'', title:'ไฟฟ้าสถิต<br/>และ<span class="grad">กระแส</span>', tagline:'เข้าใจไฟฟ้าสถิตและไฟฟ้ากระแสแบบเห็นภาพ — ปูพื้นแน่นก่อนต่อ A-Level และ TPAT3.', rating:'4.7', reviews:'238 รีวิว', students:'962', level:'ม.5 · ในเทอม', lessonsLong:'16 บทเรียน', hours:'12 ชม.', lessons:'16 บท', statLevel:'ม.5', priceNow:1790, priceOld:2490 },
-  'phys-wave':     { subj:'phys', glyph:'g', subject:'ฟิสิกส์ · ม.6', badge:'', title:'คลื่นและเสียง<br/><span class="grad">เต็มรูป</span>', tagline:'ครบเรื่องคลื่นกล คลื่นเสียง และปรากฏการณ์ที่ออกสอบบ่อย — เข้าใจตั้งแต่ในห้องเรียน.', rating:'4.8', reviews:'204 รีวิว', students:'786', level:'ม.6 · ในเทอม', lessonsLong:'14 บทเรียน', hours:'12 ชม.', lessons:'14 บท', statLevel:'ม.6', priceNow:1890 }
-};
+const COURSE_DB = {};
+window.Courses.LIST.forEach(function (c) {
+  /* หน้านี้ต้องการข้อความสำเร็จรูป — แปลงจากข้อมูลดิบใน courses.js */
+  COURSE_DB[c.id] = {
+    subj: c.subj, glyph: c.glyph,
+    subject: c.detail.subject, badge: c.detail.badge,
+    title: c.detail.title, tagline: c.detail.tagline,
+    rating: c.rating.toFixed(1),
+    reviews: c.reviews + ' \u0e23\u0e35\u0e27\u0e34\u0e27',
+    students: c.students,
+    level: c.detail.levelText,
+    lessonsLong: c.detail.lessonsLong,
+    hours: c.hours, lessons: c.lessons,
+    statLevel: c.detail.statLevel,
+    free: !!c.free,
+    priceNow: c.priceNow, priceOld: c.priceOld
+  };
+});
 function baht(n){ return '฿' + n.toLocaleString('en-US'); }
 function setText(id, txt){ var el = document.getElementById(id); if (el) el.textContent = txt; }
 function setHTML(id, html){ var el = document.getElementById(id); if (el) el.innerHTML = html; }
