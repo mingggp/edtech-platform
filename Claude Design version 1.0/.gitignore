@@ -4,8 +4,8 @@
 # ภาพ screenshot ที่ใช้ตรวจงานแต่ละ batch (~162 ไฟล์ 4.6 MB)
 screenshots/
 
-# ไฟล์ที่อัปโหลดเข้า Claude Design ระหว่างออกแบบ ไม่มีโค้ดไหนอ้างถึง (~25 ไฟล์ 5.2 MB)
-uploads/
+# uploads/ = เก็บไว้ใน git (รูปอ้างอิงงานออกแบบ + มาสคอต + โลโก้มหาลัย)
+# หมายเหตุ: pasted-17837941*.png 7 ไฟล์ ซ้ำกับ assets/uni-*.png ทุกประการ
 
 # state/thumbnail ของเครื่องมือออกแบบ
 .thumbnail/
