@@ -26,8 +26,8 @@
   var SUBJ = {
     math:  { c: 'var(--subj-math)',  fg: 'var(--subj-math-fg)',  grad: 'var(--subj-math-grad)' },
     phys:  { c: 'var(--subj-phys)',  fg: 'var(--subj-phys-fg)',  grad: 'var(--subj-phys-grad)' },
-    tpat3: { c: 'var(--subj-tpat)',  fg: 'var(--subj-tpat-fg)',  grad: 'var(--subj-tpat-grad)' },
-    tgat2: { c: 'var(--subj-tgat)',  fg: 'var(--subj-tgat-fg)',  grad: 'var(--subj-tgat-grad)' }
+    tpat3: { c: 'var(--subj-tpat3)',  fg: 'var(--subj-tpat3-fg)',  grad: 'var(--subj-tpat3-grad)' },
+    tgat2: { c: 'var(--subj-tgat2)',  fg: 'var(--subj-tgat2-fg)',  grad: 'var(--subj-tgat2-grad)' }
   };
   try {
     var qs = new URLSearchParams(location.search).get('subj');

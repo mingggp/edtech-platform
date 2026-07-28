@@ -132,8 +132,8 @@ body { overflow: hidden; }
 /* canonical subject color recipes */
 .subj.math  { --subj-grad: var(--subj-math-grad); --subj-shadow: oklch(from var(--subj-math) l c h / 0.5); }
 .subj.phys  { --subj-grad: var(--subj-phys-grad); --subj-shadow: oklch(from var(--subj-phys) l c h / 0.5); }
-.subj.tpat3 { --subj-grad: var(--subj-tpat-grad); --subj-shadow: oklch(from var(--subj-tpat) l c h / 0.5); }
-.subj.tgat2 { --subj-grad: var(--subj-tgat-grad); --subj-shadow: oklch(from var(--subj-tgat) l c h / 0.5); }
+.subj.tpat3 { --subj-grad: var(--subj-tpat3-grad); --subj-shadow: oklch(from var(--subj-tpat3) l c h / 0.5); }
+.subj.tgat2 { --subj-grad: var(--subj-tgat2-grad); --subj-shadow: oklch(from var(--subj-tgat2) l c h / 0.5); }
 
 /* ============== LEVEL SUB-FILTER (math/phys only) ============== */
 .level-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--line-soft); background: var(--bg-1); }
@@ -213,8 +213,8 @@ body { overflow: hidden; }
 /* canonical subject thumbs */
 .t-math  { background: var(--subj-math-grad); }
 .t-phys  { background: var(--subj-phys-grad); }
-.t-tpat3 { background: var(--subj-tpat-grad); }
-.t-tgat2 { background: var(--subj-tgat-grad); }
+.t-tpat3 { background: var(--subj-tpat3-grad); }
+.t-tgat2 { background: var(--subj-tgat2-grad); }
 
 /* ============== BUNDLES ZONE ============== */
 #bundles { margin-top: 16px; padding-top: 38px; border-top: 1px solid var(--line); }
@@ -269,8 +269,8 @@ body { overflow: hidden; }
 .bcard[data-subj]::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 2; background: var(--accent-grad); }
 .bcard[data-subj="math"]  { --accent-grad: var(--subj-math-grad); --accent: var(--subj-math); }
 .bcard[data-subj="phys"]  { --accent-grad: var(--subj-phys-grad); --accent: var(--subj-phys); }
-.bcard[data-subj="tpat3"] { --accent-grad: var(--subj-tpat-grad); --accent: var(--subj-tpat); }
-.bcard[data-subj="tgat2"] { --accent-grad: var(--subj-tgat-grad); --accent: var(--subj-tgat); }
+.bcard[data-subj="tpat3"] { --accent-grad: var(--subj-tpat3-grad); --accent: var(--subj-tpat3); }
+.bcard[data-subj="tgat2"] { --accent-grad: var(--subj-tgat2-grad); --accent: var(--subj-tgat2); }
 .bcard[data-subj] .bc-tier { color: var(--accent); }
 .bcard[data-subj] .bc-count b { color: var(--accent); }
 .bcard[data-subj] .btn-secondary { background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); border-color: color-mix(in oklab, var(--accent) 32%, transparent); }
@@ -571,7 +571,7 @@ try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark'
 /* subjects: exactly 4 (math/physics each cover every level) */
 const SUBJECTS = [
   { key:'all',   label:'ทั้งหมด',  en:'ALL SUBJECTS' },
-  { key:'math',  label:'คณิต',     en:'MATH' },
+  { key:'math',  label:'คณิต',     en:'math' },
   { key:'phys',  label:'ฟิสิกส์',   en:'PHYSICS' },
   { key:'tpat3', label:'TPAT3',    en:'ENGINEERING' },
   { key:'tgat2', label:'TGAT2',    en:'APTITUDE' }
@@ -679,7 +679,7 @@ function renderLevels(){
 }
 function applyBleed(){
   const page = document.getElementById('page');
-  const map = { math:'var(--subj-math)', phys:'var(--subj-phys)', tpat3:'var(--subj-tpat)', tgat2:'var(--subj-tgat)' };
+  const map = { math:'var(--subj-math)', phys:'var(--subj-phys)', tpat3:'var(--subj-tpat3)', tgat2:'var(--subj-tgat2)' };
   if (map[activeSubj]) page.style.setProperty('--bleed-from', map[activeSubj]);
   else page.style.removeProperty('--bleed-from');
 }
@@ -749,8 +749,8 @@ const BUNDLE_DEFS = {
   m6:    { tier:'ม.6', name:'ม.6 ครบชุด', desc:'รวมทุกวิชาเนื้อหาระดับ ม.6', match:(c)=>c.level==='m6', off:0.22 },
   math:  { tier:'คณิต', name:'คณิต ครบทุกระดับ', desc:'คณิต ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='math', off:0.25, subj:'math' },
   phys:  { tier:'ฟิสิกส์', name:'ฟิสิกส์ ครบทุกระดับ', desc:'ฟิสิกส์ ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='phys', off:0.25, subj:'phys' },
-  tpat3: { tier:'TPAT3', name:'TPAT3 ครบชุด', desc:'ตะลุย TPAT3 ครบทุกคอร์ส', match:(c)=>c.subj==='tpat3', off:0.22, subj:'tpat3' },
-  tgat2: { tier:'TGAT2', name:'TGAT2 ครบชุด', desc:'TGAT2 ครบทุกคอร์ส', match:(c)=>c.subj==='tgat2', off:0.15, subj:'tgat2' },
+  tpat3: { tier:'tpat3', name:'TPAT3 ครบชุด', desc:'ตะลุย TPAT3 ครบทุกคอร์ส', match:(c)=>c.subj==='tpat3', off:0.22, subj:'tpat3' },
+  tgat2: { tier:'tgat2', name:'TGAT2 ครบชุด', desc:'TGAT2 ครบทุกคอร์ส', match:(c)=>c.subj==='tgat2', off:0.15, subj:'tgat2' },
   all:   { tier:'ALL ACCESS', name:'เหมาหมด ทุกคอร์ส', desc:'ทุกคอร์สที่มีตอนนี้ + ที่จะเพิ่มตลอดปี', match:(c)=>true, off:0.35, featured:true }
 };
 const BUNDLE_TIERS = [

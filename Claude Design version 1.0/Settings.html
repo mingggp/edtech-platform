@@ -483,17 +483,18 @@
 :root[data-reduce-motion="1"] * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 </style>
 
+<script src="subjects.js"></script>
 <script src="people.js"></script>
 <script>
 /* ===== Billing tab: full payment history + sort ===== */
 (function(){
   const PAY = [
     { t:'A-Level ฟิสิกส์ มั่นใจเต็ม 100', subj:'phys', d:'9 พ.ค. 2568',  ts:20250509, amt:1890, m:'PromptPay' },
-    { t:'ตะลุยโจทย์ TGAT2 ฉบับเต็ม',      subj:'tgat', d:'2 พ.ค. 2568',  ts:20250502, amt:1290, m:'PromptPay' },
+    { t:'ตะลุยโจทย์ TGAT2 ฉบับเต็ม',      subj:'tgat2', d:'2 พ.ค. 2568',  ts:20250502, amt:1290, m:'PromptPay' },
     { t:'A-Level คณิต 1 ตั้งแต่ 0',        subj:'math', d:'18 เม.ย. 2568', ts:20250418, amt:1890, m:'PromptPay' },
     { t:'ฟิสิกส์ ม.ปลาย เข้มข้น (ม.5)',    subj:'phys', d:'2 มี.ค. 2568',  ts:20250302, amt:1590, m:'PromptPay' },
     { t:'แพ็กเกจ คณิต + ฟิสิกส์ A-Level',  subj:'math', d:'14 ก.พ. 2568', ts:20250214, amt:2990, m:'PromptPay' },
-    { t:'TPAT3 ความถนัดวิทย์–เทคโนฯ ครบจบ', subj:'tpat', d:'25 ม.ค. 2568', ts:20250125, amt:990,  m:'PromptPay', exp:true },
+    { t:'TPAT3 ความถนัดวิทย์–เทคโนฯ ครบจบ', subj:'tpat3', d:'25 ม.ค. 2568', ts:20250125, amt:990,  m:'PromptPay', exp:true },
     { t:'คณิต ม.ปลาย ปูพื้นแน่น (ม.4)',    subj:'math', d:'6 ม.ค. 2568',  ts:20250106, amt:1590, m:'PromptPay' },
   ];
   const BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';

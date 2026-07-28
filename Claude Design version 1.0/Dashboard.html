@@ -600,8 +600,8 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
 .last-lesson:hover { transform: translateY(-2px); border-color: oklch(from var(--subj-c) l c h / 0.5); box-shadow: 0 14px 34px -18px oklch(from var(--subj-c) l c h / 0.5); }
 .last-lesson[data-subj="math"] { --subj-c: var(--subj-math); --subj-grad: var(--subj-math-grad); }
 .last-lesson[data-subj="phys"] { --subj-c: var(--subj-phys); --subj-grad: var(--subj-phys-grad); }
-.last-lesson[data-subj="tpat"] { --subj-c: var(--subj-tpat); --subj-grad: var(--subj-tpat-grad); }
-.last-lesson[data-subj="tgat"] { --subj-c: var(--subj-tgat); --subj-grad: var(--subj-tgat-grad); }
+.last-lesson[data-subj="tpat3"] { --subj-c: var(--subj-tpat3); --subj-grad: var(--subj-tpat3-grad); }
+.last-lesson[data-subj="tgat2"] { --subj-c: var(--subj-tgat2); --subj-grad: var(--subj-tgat2-grad); }
 .ll-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
 .ll-title { font-size: 13.5px; font-weight: 600; color: var(--fg-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .2s; }
 .last-lesson:hover .ll-title { color: var(--fg-0); }
@@ -1314,8 +1314,8 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
 .mc-thumb.phys { background: var(--subj-phys-grad); }
 .mc-thumb.chem { background: linear-gradient(140deg, oklch(0.50 0.20 40), oklch(0.60 0.22 50), oklch(0.70 0.18 80)); }
 .mc-thumb.bio  { background: linear-gradient(140deg, oklch(0.45 0.18 145), oklch(0.55 0.20 130), oklch(0.66 0.18 115)); }
-.mc-thumb.tgat { background: var(--subj-tgat-grad); }
-.mc-thumb.tpat { background: var(--subj-tpat-grad); }
+.mc-thumb.tgat { background: var(--subj-tgat2-grad); }
+.mc-thumb.tpat { background: var(--subj-tpat3-grad); }
 
 /* course subject filter */
 .course-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -1325,8 +1325,8 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
 .cf-chip[data-subj="all"][aria-pressed="true"]  { background: var(--grad-signature); }
 .cf-chip[data-subj="math"][aria-pressed="true"] { background: var(--subj-math-grad); }
 .cf-chip[data-subj="phys"][aria-pressed="true"] { background: var(--subj-phys-grad); }
-.cf-chip[data-subj="tpat"][aria-pressed="true"] { background: var(--subj-tpat-grad); }
-.cf-chip[data-subj="tgat"][aria-pressed="true"] { background: var(--subj-tgat-grad); color: oklch(0.28 0.06 70); }
+.cf-chip[data-subj="tpat3"][aria-pressed="true"] { background: var(--subj-tpat3-grad); }
+.cf-chip[data-subj="tgat2"][aria-pressed="true"] { background: var(--subj-tgat2-grad); color: oklch(0.28 0.06 70); }
 .mc-card[hidden] { display: none; }
 
 /* drag-to-scroll affordance */
@@ -1958,9 +1958,9 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
         var INDEX = [
           { cat:'คอร์ส', t:'คณิต ครูหมิง', s:'A-Level · ม.4 ม.5 ม.6', href:'Browse Courses.html', bg:'var(--subj-math-grad)', ic:'course', kw:'math คณิตศาสตร์ a-level alevel' },
           { cat:'คอร์ส', t:'ฟิสิกส์ ครูหมิง', s:'A-Level · ม.4 ม.5 ม.6', href:'Browse Courses.html', bg:'var(--subj-phys-grad)', ic:'course', kw:'physics ฟิสิกส์' },
-          { cat:'คอร์ส', t:'TPAT3 ครูหมิง', s:'วิทย์ เทคโนโลยี วิศวกรรม', href:'Browse Courses.html', bg:'var(--subj-tpat-grad)', ic:'course', kw:'tpat3 tpat วิศวะ' },
-          { cat:'คอร์ส', t:'TGAT2 ครูหมิง', s:'การคิดอย่างมีเหตุผล', href:'Browse Courses.html', bg:'var(--subj-tgat-grad)', ic:'course', kw:'tgat2 tgat เหตุผล' },
-          { cat:'ข้อสอบ', t:'คลังข้อสอบ', s:'ทำข้อสอบจับเวลา + เฉลยละเอียด', href:'Exams.html', bg:'var(--subj-tpat-grad)', ic:'exam', kw:'exam ข้อสอบ เฉลย mock' },
+          { cat:'คอร์ส', t:'TPAT3 ครูหมิง', s:'วิทย์ เทคโนโลยี วิศวกรรม', href:'Browse Courses.html', bg:'var(--subj-tpat3-grad)', ic:'course', kw:'tpat3 tpat วิศวะ' },
+          { cat:'คอร์ส', t:'TGAT2 ครูหมิง', s:'การคิดอย่างมีเหตุผล', href:'Browse Courses.html', bg:'var(--subj-tgat2-grad)', ic:'course', kw:'tgat2 tgat เหตุผล' },
+          { cat:'ข้อสอบ', t:'คลังข้อสอบ', s:'ทำข้อสอบจับเวลา + เฉลยละเอียด', href:'Exams.html', bg:'var(--subj-tpat3-grad)', ic:'exam', kw:'exam ข้อสอบ เฉลย mock' },
           { cat:'เครื่องมือ', t:'คำนวณ TCAS', s:'เช็กโอกาสติด + จัด 10 อันดับ', href:'TCAS.html', bg:'var(--grad-cool)', ic:'page', kw:'tcas โอกาสติด อันดับ คำนวณ' },
           { cat:'หน้า', t:'คอร์สของฉัน', s:'7 คอร์สที่เรียนอยู่', href:'My Courses.html', bg:'var(--grad-signature)', ic:'page', kw:'my courses เรียน' },
           { cat:'หน้า', t:'คอร์สทั้งหมด', s:'ดูคอร์สทุกวิชา', href:'Browse Courses.html', bg:'var(--grad-signature)', ic:'page', kw:'browse ทั้งหมด สมัคร' },
@@ -2295,7 +2295,7 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
                 <div class="tooltip">
                   <b>วันจันทร์ที่ 12 · 3ชม. 18น.</b>
                   <div class="row"><span><span class="swatch" style="background:var(--subj-math)"></span>คณิต</span><span class="v">1ชม. 50น.</span></div>
-                  <div class="row"><span><span class="swatch" style="background:var(--subj-tpat)"></span>TPAT3</span><span class="v">1ชม. 28น.</span></div>
+                  <div class="row"><span><span class="swatch" style="background:var(--subj-tpat3)"></span>TPAT3</span><span class="v">1ชม. 28น.</span></div>
                   <div class="total"><b>รวม</b><span class="v">3ชม. 18น.</span></div>
                 </div>
                 <div class="val">3:18</div>
@@ -2316,7 +2316,7 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
               <div class="chart-day">
                 <div class="tooltip">
                   <b>วันพุธที่ 14 · 2ชม. 38น.</b>
-                  <div class="row"><span><span class="swatch" style="background:var(--subj-tpat)"></span>TPAT3</span><span class="v">1ชม. 24น.</span></div>
+                  <div class="row"><span><span class="swatch" style="background:var(--subj-tpat3)"></span>TPAT3</span><span class="v">1ชม. 24น.</span></div>
                   <div class="row"><span><span class="swatch" style="background:var(--subj-math)"></span>คณิต</span><span class="v">1ชม. 14น.</span></div>
                   <div class="total"><b>รวม</b><span class="v">2ชม. 38น.</span></div>
                 </div>
@@ -2339,7 +2339,7 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
                 <div class="tooltip">
                   <b>วันศุกร์ที่ 16 · 2ชม. 14น. (กำลังนับ)</b>
                   <div class="row"><span><span class="swatch" style="background:var(--subj-math)"></span>คณิต</span><span class="v">1ชม. 20น.</span></div>
-                  <div class="row"><span><span class="swatch" style="background:var(--subj-tpat)"></span>TPAT3</span><span class="v">54 นาที</span></div>
+                  <div class="row"><span><span class="swatch" style="background:var(--subj-tpat3)"></span>TPAT3</span><span class="v">54 นาที</span></div>
                   <div class="total"><b>เหลือถึงเป้า</b><span class="v">46 นาที</span></div>
                 </div>
                 <div class="val">2:14 · กำลังนับ</div>
@@ -2458,8 +2458,8 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
               <button class="cf-chip" data-subj="all" aria-pressed="true">ทั้งหมด</button>
               <button class="cf-chip" data-subj="math" aria-pressed="false">คณิต</button>
               <button class="cf-chip" data-subj="phys" aria-pressed="false">ฟิสิกส์</button>
-              <button class="cf-chip" data-subj="tpat" aria-pressed="false">TPAT3</button>
-              <button class="cf-chip" data-subj="tgat" aria-pressed="false">TGAT2</button>
+              <button class="cf-chip" data-subj="tpat3" aria-pressed="false">TPAT3</button>
+              <button class="cf-chip" data-subj="tgat2" aria-pressed="false">TGAT2</button>
             </div>
           </div>
           <div class="actions">
@@ -2484,7 +2484,7 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
               </div>
             </a>
 
-            <a href="#" class="mc-card" data-subj="tgat">
+            <a href="#" class="mc-card" data-subj="tgat2">
               <div class="mc-thumb tgat">
                 <span class="glyph">∴</span>
                 <span class="tag">TGAT2 · การคิดอย่างมีเหตุผล</span>
@@ -2526,7 +2526,7 @@ a.idc-goal:hover { border-color: oklch(from var(--goal-c, var(--brand-violet)) l
               </div>
             </a>
 
-            <a href="#" class="mc-card" data-subj="tpat">
+            <a href="#" class="mc-card" data-subj="tpat3">
               <div class="mc-thumb tpat">
                 <span class="glyph">⚙</span>
                 <span class="tag">TPAT3 · วิศวะฯ-วิทย์</span>
@@ -2915,8 +2915,8 @@ try{
       ['var(--subj-math)', 'var(--brand-cyan)'],
       ['var(--brand-magenta)', 'var(--brand-coral)'],
       ['var(--subj-phys)', 'var(--brand-magenta)'],
-      ['var(--subj-tgat)', 'var(--brand-coral)'],
-      ['var(--subj-tpat)', 'var(--subj-phys)']
+      ['var(--subj-tgat2)', 'var(--brand-coral)'],
+      ['var(--subj-tpat3)', 'var(--subj-phys)']
     ];
     let i = 0;
     const setPair = () => {
@@ -3092,10 +3092,10 @@ try{
   const weekHTML = body.innerHTML;   // authored markup = ชุดสัปดาห์
   const goalHTML = '<div class="chart-grid" aria-hidden="true"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>';
   const MONTH = [
-    { l:'สัปดาห์ 1', h:16.5, subj:[['คณิต',7.2],['ฟิสิกส์',5.1],['TPAT3',4.2]] },
-    { l:'สัปดาห์ 2', h:21.3, subj:[['คณิต',8.4],['ฟิสิกส์',6.6],['TGAT2',6.3]] },
-    { l:'สัปดาห์ 3', h:18.9, subj:[['คณิต',7.0],['TPAT3',6.4],['ฟิสิกส์',5.5]] },
-    { l:'สัปดาห์นี้', h:17.4, subj:[['คณิต',7.8],['ฟิสิกส์',5.2],['TPAT3',4.4]], now:true }
+    { l:'สัปดาห์ 1', h:16.5, subj:[['คณิต',7.2],['ฟิสิกส์',5.1],['tpat3',4.2]] },
+    { l:'สัปดาห์ 2', h:21.3, subj:[['คณิต',8.4],['ฟิสิกส์',6.6],['tgat2',6.3]] },
+    { l:'สัปดาห์ 3', h:18.9, subj:[['คณิต',7.0],['tpat3',6.4],['ฟิสิกส์',5.5]] },
+    { l:'สัปดาห์นี้', h:17.4, subj:[['คณิต',7.8],['ฟิสิกส์',5.2],['tpat3',4.4]], now:true }
   ];
   const ALL = [
     { l:'ก.พ.', h:38 }, { l:'มี.ค.', h:52 }, { l:'เม.ย.', h:61 },
@@ -3352,8 +3352,8 @@ document.querySelectorAll('.tab-row').forEach(group => {
 <script>
 (function(){
   const NOTIFS = [
-    { ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>', bg:'var(--subj-tpat-grad)', t:'ข้อสอบ <b>TPAT3 ชุดใหม่</b> ปล่อยแล้ว 3 ชุด', when:'5 นาทีที่แล้ว', unread:true },
-    { ic:'<svg viewBox="0 0 24 24" fill="#fff"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>', bg:'var(--subj-tgat-grad)', t:'ปลดล็อกเหรียญ <b>เรียนครบ 7 วันติด</b> 🔥', when:'2 ชม. ที่แล้ว', unread:true },
+    { ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>', bg:'var(--subj-tpat3-grad)', t:'ข้อสอบ <b>TPAT3 ชุดใหม่</b> ปล่อยแล้ว 3 ชุด', when:'5 นาทีที่แล้ว', unread:true },
+    { ic:'<svg viewBox="0 0 24 24" fill="#fff"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>', bg:'var(--subj-tgat2-grad)', t:'ปลดล็อกเหรียญ <b>เรียนครบ 7 วันติด</b> 🔥', when:'2 ชม. ที่แล้ว', unread:true },
     { ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M16 11h6M19 8v6M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>', bg:'var(--grad-cool)', t:'<b>น้องเฟิร์น</b> ขอเพิ่มเป็นเพื่อน', when:'เมื่อวาน' },
     { ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>', bg:'var(--subj-phys-grad)', t:'คลาสสด <b>ฟิสิกส์ กลศาสตร์</b> เริ่ม 20:00 คืนนี้', when:'พรุ่งนี้' }
   ];
@@ -3393,6 +3393,7 @@ document.querySelectorAll('.tab-row').forEach(group => {
 })();
 </script>
 
+<script src="subjects.js"></script>
 <script src="people.js"></script>
 <script src="peek.js"></script>
 <script src="site-config.js"></script>

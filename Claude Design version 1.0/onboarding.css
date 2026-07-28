@@ -103,8 +103,8 @@
 .goal-card[aria-pressed="false"]:hover { filter: saturate(0.85) brightness(0.92); }
 
 /* subject palettes — canonical subject brand colors (brand.css --subj-*) */
-.goal-card.s-tgat  { --subj-grad: var(--subj-tgat-grad); --subj-shadow: oklch(0.78 0.15 82 / 0.5); }
-.goal-card.s-tpat3 { --subj-grad: var(--subj-tpat-grad); --subj-shadow: oklch(0.52 0.16 22 / 0.5); }
+.goal-card.s-tgat2  { --subj-grad: var(--subj-tgat2-grad); --subj-shadow: oklch(0.78 0.15 82 / 0.5); }
+.goal-card.s-tpat3 { --subj-grad: var(--subj-tpat3-grad); --subj-shadow: oklch(0.52 0.16 22 / 0.5); }
 .goal-card.s-math  { --subj-grad: var(--subj-math-grad); --subj-shadow: oklch(0.58 0.16 250 / 0.5); }
 .goal-card.s-phys  { --subj-grad: var(--subj-phys-grad); --subj-shadow: oklch(0.62 0.22 340 / 0.5); }
 
@@ -115,8 +115,8 @@
 .score-row { --sr-c: var(--brand-magenta); }
 .score-row.s-math  { --sr-c: var(--subj-math); }
 .score-row.s-phys  { --sr-c: var(--subj-phys); }
-.score-row.s-tpat3 { --sr-c: var(--subj-tpat); }
-.score-row.s-tgat  { --sr-c: var(--subj-tgat); }
+.score-row.s-tpat3 { --sr-c: var(--subj-tpat3); }
+.score-row.s-tgat2  { --sr-c: var(--subj-tgat2); }
 .score-row .sr-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
 .score-row .sr-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--fg-0); display: flex; align-items: center; gap: 8px; }
 .score-row .sr-name::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--sr-c); }
@@ -317,8 +317,8 @@
 .rec-body .rec-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 6px; }
 .rec-body .rec-price { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--fg-0); letter-spacing: -0.01em; }
 .rec-body .rec-price .old { font-size: 12px; color: var(--fg-3); text-decoration: line-through; font-weight: 500; margin-right: 6px; }
-.rec-card.s-tgat  .rec-thumb { --rec-grad: var(--subj-tgat-grad); }
-.rec-card.s-tpat3 .rec-thumb { --rec-grad: var(--subj-tpat-grad); }
+.rec-card.s-tgat2  .rec-thumb { --rec-grad: var(--subj-tgat2-grad); }
+.rec-card.s-tpat3 .rec-thumb { --rec-grad: var(--subj-tpat3-grad); }
 .rec-card.s-math  .rec-thumb { --rec-grad: var(--subj-math-grad); }
 .rec-card.s-phys  .rec-thumb { --rec-grad: var(--subj-phys-grad); }
 

@@ -279,8 +279,8 @@
   const MIX=[
     {nm:'คณิต', v:26800, c:'var(--subj-math)'},
     {nm:'ฟิสิกส์', v:24300, c:'var(--subj-phys)'},
-    {nm:'TPAT3', v:18900, c:'var(--subj-tpat)'},
-    {nm:'TGAT2', v:12810, c:'var(--subj-tgat)'}
+    {nm:'TPAT3', v:18900, c:'var(--subj-tpat3)'},
+    {nm:'TGAT2', v:12810, c:'var(--subj-tgat2)'}
   ];
   const totV=MIX.reduce((s,m)=>s+m.v,0);
   const ring=document.getElementById('rmx-ring'), C=2*Math.PI*46; let off=0;

@@ -21,8 +21,8 @@
   ╠══════════════════════════════════════════════════════════════════════════╣
   ║  User.onboarded        : boolean        // gate: redirect new signups here ║
   ║                                         //  until true; set true on finish ║
-  ║  User.goal_exams        : string[]      // subset of ['TGAT2','TPAT3',     ║
-  ║                                         //  'MATH','PHYS']                 ║
+  ║  User.goal_exams        : string[]      // subset of ['tgat2','tpat3',     ║
+  ║                                         //  'math','phys']                 ║
   ║  User.goal_scores       : {[exam]:int}  // 0–100 คะแนนเป้าต่อวิชา         ║
   ║                                         //  มีเฉพาะวิชาที่เลือกใน goal_exams  ║
   ║  User.goal_target       : string|null   // free text e.g.                  ║
@@ -81,25 +81,25 @@
         <div class="ob-field">
           <div class="fl">วิชาที่จะสอบ <span class="opt">เลือกได้หลายอัน</span></div>
           <div class="goal-grid" id="goal-grid" role="group" aria-label="วิชาที่จะสอบ">
-            <button type="button" class="goal-card s-math" data-v="MATH" aria-pressed="false">
+            <button type="button" class="goal-card s-math" data-v="math" aria-pressed="false">
               <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16M9 4l-3 16M15 4l3 16M4 12h16M3 20h18"/></svg></span>
               <span class="gc-name">คณิต</span>
               <span class="gc-sub">ม.ปลาย · A-Level</span>
               <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
             </button>
-            <button type="button" class="goal-card s-phys" data-v="PHYS" aria-pressed="false">
+            <button type="button" class="goal-card s-phys" data-v="phys" aria-pressed="false">
               <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg></span>
               <span class="gc-name">ฟิสิกส์</span>
               <span class="gc-sub">ม.ปลาย · A-Level</span>
               <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
             </button>
-            <button type="button" class="goal-card s-tpat3" data-v="TPAT3" aria-pressed="false">
+            <button type="button" class="goal-card s-tpat3" data-v="tpat3" aria-pressed="false">
               <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg></span>
               <span class="gc-name">TPAT3</span>
               <span class="gc-sub">วิศวะฯ-วิทย์-เทคโนโลยี</span>
               <span class="gc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></span>
             </button>
-            <button type="button" class="goal-card s-tgat" data-v="TGAT2" aria-pressed="false">
+            <button type="button" class="goal-card s-tgat2" data-v="tgat2" aria-pressed="false">
               <span class="gc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
               <span class="gc-name">TGAT2</span>
               <span class="gc-sub">การคิดอย่างมีเหตุผล</span>
@@ -249,12 +249,12 @@ back.addEventListener('click', () => { if (state.step > 1) { state.step--; rende
 
 /* ---- step 2: multi-select subjects (+ per-subject target score) ---- */
 // canonical subject order + meta (matches brand: คณิต ฟิสิกส์ TPAT3 TGAT2)
-const SUBJ_ORDER = ['MATH', 'PHYS', 'TPAT3', 'TGAT2'];
+const SUBJ_ORDER = ['math', 'phys', 'tpat3', 'tgat2'];
 const SUBJ_META = {
-  MATH:  { label: 'คณิต',   cls: 's-math'  },
-  PHYS:  { label: 'ฟิสิกส์', cls: 's-phys'  },
-  TPAT3: { label: 'TPAT3',  cls: 's-tpat3' },
-  TGAT2: { label: 'TGAT2',  cls: 's-tgat'  }
+  math:  { label: 'คณิต',   cls: 's-math'  },
+  phys:  { label: 'ฟิสิกส์', cls: 's-phys'  },
+  tpat3: { label: 'TPAT3',  cls: 's-tpat3' },
+  tgat2: { label: 'TGAT2',  cls: 's-tgat2'  }
 };
 const DEFAULT_SCORE = 75;
 const scoreField = document.getElementById('score-field');

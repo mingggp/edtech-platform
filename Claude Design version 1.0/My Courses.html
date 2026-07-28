@@ -143,9 +143,9 @@ body { overflow: hidden; }
 .chip[aria-pressed="true"] { color: var(--fg-0); border-color: transparent; background: var(--bg-3); box-shadow: var(--shadow-1); }
 .chip[aria-pressed="true"].math { background: oklch(from var(--subj-math) l c h / 0.16); border-color: oklch(from var(--subj-math) l c h / 0.4); color: var(--subj-math-fg); }
 .chip[aria-pressed="true"].phys { background: oklch(from var(--subj-phys) l c h / 0.16); border-color: oklch(from var(--subj-phys) l c h / 0.4); color: var(--subj-phys-fg); }
-.chip[aria-pressed="true"].tpat3 { background: oklch(from var(--subj-tpat) l c h / 0.16); border-color: oklch(from var(--subj-tpat) l c h / 0.4); color: var(--subj-tpat-fg); }
-.chip[aria-pressed="true"].tgat { background: oklch(from var(--subj-tgat) l c h / 0.16); border-color: oklch(from var(--subj-tgat) l c h / 0.45); color: var(--subj-tgat-fg); }
-.chip.math .dot { background: var(--subj-math); } .chip.phys .dot { background: var(--subj-phys); } .chip.tpat3 .dot { background: var(--subj-tpat); } .chip.tgat .dot { background: var(--subj-tgat); }
+.chip[aria-pressed="true"].tpat3 { background: oklch(from var(--subj-tpat3) l c h / 0.16); border-color: oklch(from var(--subj-tpat3) l c h / 0.4); color: var(--subj-tpat3-fg); }
+.chip[aria-pressed="true"].tgat { background: oklch(from var(--subj-tgat2) l c h / 0.16); border-color: oklch(from var(--subj-tgat2) l c h / 0.45); color: var(--subj-tgat2-fg); }
+.chip.math .dot { background: var(--subj-math); } .chip.phys .dot { background: var(--subj-phys); } .chip.tpat3 .dot { background: var(--subj-tpat3); } .chip.tgat .dot { background: var(--subj-tgat2); }
 
 .segment { display: inline-flex; padding: 4px; background: var(--bg-1); border: 1px solid var(--line); border-radius: 12px; gap: 2px; margin-left: auto; }
 .segment button { appearance: none; border: 0; background: transparent; color: var(--fg-2); padding: 8px 16px; border-radius: 8px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: color .15s, background .15s; white-space: nowrap; }
@@ -187,8 +187,8 @@ body { overflow: hidden; }
 .lc-prog .track i { display: block; height: 100%; border-radius: 99px; background: var(--subj-grad, var(--grad-signature)); }
 .lc.s-math .lc-prog .track i { background: var(--subj-math-grad); }
 .lc.s-phys .lc-prog .track i { background: var(--subj-phys-grad); }
-.lc.s-tpat3 .lc-prog .track i { background: var(--subj-tpat-grad); }
-.lc.s-tgat .lc-prog .track i { background: var(--subj-tgat-grad); }
+.lc.s-tpat3 .lc-prog .track i { background: var(--subj-tpat3-grad); }
+.lc.s-tgat2 .lc-prog .track i { background: var(--subj-tgat2-grad); }
 .lc.done-card .lc-prog .track i { background: linear-gradient(115deg, oklch(0.62 0.18 150), oklch(0.74 0.18 135)); }
 .lc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
 .lc-foot .resume-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--brand-magenta); }
@@ -221,8 +221,8 @@ body { overflow: hidden; }
 /* subject thumb recipes */
 .thumb-math { background: var(--subj-math-grad); }
 .thumb-phys { background: var(--subj-phys-grad); }
-.thumb-tpat3 { background: var(--subj-tpat-grad); }
-.thumb-tgat { background: var(--subj-tgat-grad); }
+.thumb-tpat3 { background: var(--subj-tpat3-grad); }
+.thumb-tgat { background: var(--subj-tgat2-grad); }
 
 /* ============== COMMAND PALETTE ============== */
 .cmdk-backdrop { position: fixed; inset: 0; background: oklch(from var(--bg-0) l c h / 0.6); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; opacity: 0; transition: opacity .2s; }
@@ -469,7 +469,7 @@ body { overflow: hidden; }
             <button class="chip math" aria-pressed="false" data-subject="math"><span class="dot"></span>คณิต</button>
             <button class="chip phys" aria-pressed="false" data-subject="phys"><span class="dot"></span>ฟิสิกส์</button>
             <button class="chip tpat3" aria-pressed="false" data-subject="tpat3"><span class="dot"></span>TPAT3</button>
-            <button class="chip tgat" aria-pressed="false" data-subject="tgat"><span class="dot"></span>TGAT2</button>
+            <button class="chip tgat" aria-pressed="false" data-subject="tgat2"><span class="dot"></span>TGAT2</button>
           </div>
           <div class="segment" id="status-segment" role="group" aria-label="สถานะการเรียน">
             <button aria-pressed="true" data-status="all">ทั้งหมด</button>
@@ -498,7 +498,7 @@ body { overflow: hidden; }
           </a>
 
           <!-- 2 · TGAT2 · 88% -->
-          <a href="Course Contents.html?c=tgat2-logic" class="lc s-tgat" data-subject="tgat" data-status="learning">
+          <a href="Course Contents.html?c=tgat2-logic" class="lc s-tgat2" data-subject="tgat2" data-status="learning">
             <div class="lc-thumb"><div class="lc-thumb-inner thumb-tgat">
               <span class="glyph">∴</span><span class="tag">TGAT2 · การคิดอย่างมีเหตุผล</span>
             </div>
@@ -714,7 +714,7 @@ try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark'
 })();
 
 // ============== LIBRARY FILTERS ==============
-const SUBJECT_LABELS = { all: 'ทั้งหมด', math: 'คณิต', phys: 'ฟิสิกส์', tpat3: 'TPAT3', tgat: 'TGAT2' };
+const SUBJECT_LABELS = { all: 'ทั้งหมด', math: 'คณิต', phys: 'ฟิสิกส์', tpat3: 'TPAT3', tgat2: 'TGAT2' };
 const STATUS_LABELS = { all: 'ทั้งหมด', learning: 'กำลังเรียน', done: 'เรียนจบแล้ว' };
 const libState = { subject: 'all', status: 'all' };
 

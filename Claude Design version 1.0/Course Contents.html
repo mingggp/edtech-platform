@@ -499,8 +499,8 @@ try{ const saved = localStorage.getItem('ming-theme'); setTheme(saved === 'dark'
 const SUBJ = {
   math:  { grad:'var(--subj-math-grad)', c:'var(--subj-math)', fg:'var(--subj-math-fg, var(--subj-math))' },
   phys:  { grad:'var(--subj-phys-grad)', c:'var(--subj-phys)', fg:'var(--subj-phys-fg, var(--subj-phys))' },
-  tpat3: { grad:'var(--subj-tpat-grad)', c:'var(--subj-tpat)', fg:'var(--subj-tpat-fg, var(--subj-tpat))' },
-  tgat:  { grad:'var(--subj-tgat-grad)', c:'var(--subj-tgat)', fg:'var(--subj-tgat-fg, var(--subj-tgat))' },
+  tpat3: { grad:'var(--subj-tpat3-grad)', c:'var(--subj-tpat3)', fg:'var(--subj-tpat3-fg, var(--subj-tpat3))' },
+  tgat2:  { grad:'var(--subj-tgat2-grad)', c:'var(--subj-tgat2)', fg:'var(--subj-tgat2-fg, var(--subj-tgat2))' },
 };
 function L(t, dur, st, kind, p){ return { t, dur, st: st||'t', kind: kind||'video', p: p }; }
 
@@ -516,7 +516,7 @@ const COURSE_DB = {
     ]
   },
   'tgat2-logic': {
-    subj:'tgat', cat:'TGAT2 · การคิดอย่างมีเหตุผล', title:'ตะลุยโจทย์ TGAT2', hours:'12 ชม.', progress:88,
+    subj:'tgat2', cat:'TGAT2 · การคิดอย่างมีเหตุผล', title:'ตะลุยโจทย์ TGAT2', hours:'12 ชม.', progress:88,
     chapters:[
       { t:'พื้นฐานการคิดเชิงตรรกะ', ls:[ L('รู้จักข้อสอบ TGAT2','28น','d'), L('อนุกรมและแบบรูป','40น','d'), L('เงื่อนไขเชิงตรรกะ','38น','d'), L('Quiz','18น','d','quiz') ] },
       { t:'การคิดอย่างมีเหตุผล', ls:[ L('ตารางเงื่อนไข','44น','d'), L('การสรุปความ','40น','d'), L('โจทย์ผสมหลายเงื่อนไข','42น','d'), L('เทคนิคตัดช้อยส์','30น','c',null,55) ] },

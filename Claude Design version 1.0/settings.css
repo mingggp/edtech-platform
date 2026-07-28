@@ -147,5 +147,5 @@
 /* ---- billing rows: subject brand colors ---- */
 .set-ic.subj-math { background: linear-gradient(135deg, oklch(from var(--subj-math) calc(l + 0.06) c h), var(--subj-math)) !important; color: #fff !important; }
 .set-ic.subj-phys { background: linear-gradient(135deg, oklch(from var(--subj-phys) calc(l + 0.06) c h), var(--subj-phys)) !important; color: #fff !important; }
-.set-ic.subj-tgat { background: linear-gradient(135deg, oklch(from var(--subj-tgat) calc(l + 0.06) c h), var(--subj-tgat)) !important; color: #fff !important; }
-.set-ic.subj-tpat { background: linear-gradient(135deg, oklch(from var(--subj-tpat) calc(l + 0.06) c h), var(--subj-tpat)) !important; color: #fff !important; }
+.set-ic.subj-tgat2 { background: linear-gradient(135deg, oklch(from var(--subj-tgat2) calc(l + 0.06) c h), var(--subj-tgat2)) !important; color: #fff !important; }
+.set-ic.subj-tpat3 { background: linear-gradient(135deg, oklch(from var(--subj-tpat3) calc(l + 0.06) c h), var(--subj-tpat3)) !important; color: #fff !important; }

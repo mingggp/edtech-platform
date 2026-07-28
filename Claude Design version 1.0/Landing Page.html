@@ -127,7 +127,7 @@ nav {
 .hero-fx .haze { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; mix-blend-mode: screen; }
 .hero-fx .haze.h1 { width: 540px; height: 540px; left: -8%; top: -14%; background: radial-gradient(circle, var(--subj-math) 0%, transparent 68%); animation: heroDrift 24s ease-in-out infinite; }
 .hero-fx .haze.h2 { width: 460px; height: 460px; right: 2%; top: 2%; background: radial-gradient(circle, var(--subj-phys) 0%, transparent 68%); opacity: 0.5; animation: heroDrift 30s ease-in-out infinite reverse; }
-.hero-fx .haze.h3 { width: 380px; height: 380px; left: 38%; bottom: -22%; background: radial-gradient(circle, var(--subj-tgat) 0%, transparent 70%); opacity: 0.32; animation: heroDrift 27s ease-in-out infinite; }
+.hero-fx .haze.h3 { width: 380px; height: 380px; left: 38%; bottom: -22%; background: radial-gradient(circle, var(--subj-tgat2) 0%, transparent 70%); opacity: 0.32; animation: heroDrift 27s ease-in-out infinite; }
 /* Petronas theme: cool green→blue hero hazes (override the subject hues so the vibe stays calm) */
 :root[data-theme="petronas"] .hero-fx .haze.h1 { background: radial-gradient(circle, oklch(0.76 0.14 186) 0%, transparent 68%); opacity: 0.6; }
 :root[data-theme="petronas"] .hero-fx .haze.h2 { background: radial-gradient(circle, oklch(0.80 0.11 228) 0%, transparent 68%); opacity: 0.5; }
@@ -263,8 +263,8 @@ nav {
 .hero-subjects b { -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero-subjects .sj-math { background-image: var(--subj-math-grad); }
 .hero-subjects .sj-phys { background-image: var(--subj-phys-grad); }
-.hero-subjects .sj-tpat { background-image: var(--subj-tpat-grad); }
-.hero-subjects .sj-tgat { background-image: var(--subj-tgat-grad); }
+.hero-subjects .sj-tpat { background-image: var(--subj-tpat3-grad); }
+.hero-subjects .sj-tgat { background-image: var(--subj-tgat2-grad); }
 .hero h1 .underline::after {
   content: "";
   position: absolute;
@@ -997,8 +997,8 @@ nav {
 .lane-col[data-hidden] { display: none; }
 .lane-col.s-math { --accent: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); }
 .lane-col.s-phys { --accent: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); }
-.lane-col.s-tpat { --accent: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); }
-.lane-col.s-tgat { --accent: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); }
+.lane-col.s-tpat3 { --accent: var(--subj-tpat3-fg); --subj-grad: var(--subj-tpat3-grad); }
+.lane-col.s-tgat2 { --accent: var(--subj-tgat2-fg); --subj-grad: var(--subj-tgat2-grad); }
 
 .lane-col-head { display: flex; align-items: center; gap: 12px; padding: 18px 16px 15px; border-bottom: 1px solid var(--line-soft); position: relative; z-index: 2; overflow: hidden; }
 .lane-col-head::before { content: ""; position: absolute; inset: 0; background: var(--subj-grad); opacity: 0.12; z-index: -2; }
@@ -1948,7 +1948,7 @@ footer {
           </a>
         </div></div>
       </div>
-      <div class="lane-col s-tpat" data-lane="tpat">
+      <div class="lane-col s-tpat3" data-lane="tpat3">
         <div class="lane-col-head">
           <span class="lane-glyph tpat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
           <div class="lane-titles">
@@ -1983,7 +1983,7 @@ footer {
           </a>
         </div></div>
       </div>
-      <div class="lane-col s-tgat" data-lane="tgat">
+      <div class="lane-col s-tgat2" data-lane="tgat2">
         <div class="lane-col-head">
           <span class="lane-glyph tgat">∴</span>
           <div class="lane-titles">

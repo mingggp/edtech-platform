@@ -110,8 +110,8 @@ body { overflow: hidden; }
   .subj-row { animation: srIn .55s cubic-bezier(.2,.8,.2,1) backwards; }
   .subj-row[data-subj="math"] { animation-delay: .05s; }
   .subj-row[data-subj="phys"] { animation-delay: .15s; }
-  .subj-row[data-subj="tpat"] { animation-delay: .25s; }
-  .subj-row[data-subj="tgat"] { animation-delay: .35s; }
+  .subj-row[data-subj="tpat3"] { animation-delay: .25s; }
+  .subj-row[data-subj="tgat2"] { animation-delay: .35s; }
   @keyframes srIn { from { opacity: 0; transform: translateY(16px); } }
   .sr-track .exam { animation: srCard .5s cubic-bezier(.2,.8,.2,1) backwards; }
   .sr-track .exam:nth-child(1) { animation-delay: .18s; }
@@ -153,7 +153,7 @@ body { overflow: hidden; }
 /* ============================================================
    FEATURED EXAM STRIP — dark glass cover, subject-tinted aura
    ============================================================ */
-.featured { position: relative; border-radius: 26px; overflow: hidden; display: grid; grid-template-columns: 1.05fr 1.45fr; min-height: 264px; border: 1px solid var(--glass-line-strong); --feat: var(--subj-tgat); --feat-grad: var(--subj-tgat-grad); }
+.featured { position: relative; border-radius: 26px; overflow: hidden; display: grid; grid-template-columns: 1.05fr 1.45fr; min-height: 264px; border: 1px solid var(--glass-line-strong); --feat: var(--subj-tgat2); --feat-grad: var(--subj-tgat2-grad); }
 .featured .cover { position: relative; color: #fff; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background: linear-gradient(150deg, oklch(0.20 0.03 285), oklch(0.13 0.02 285)); }
 .featured .cover::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(oklch(0.99 0.005 285 / 0.14) 1px, transparent 1px); background-size: 22px 22px; mask-image: radial-gradient(80% 80% at 70% 30%, #000, transparent); pointer-events: none; }
 .featured .cover::after { content: ""; position: absolute; right: -100px; top: -100px; width: 340px; height: 340px; border-radius: 50%; background: var(--feat-grad); opacity: 0.5; filter: blur(40px); }
@@ -179,11 +179,11 @@ body { overflow: hidden; }
    ============================================================ */
 [data-subj="math"]  { --subj-c: var(--subj-math); --subj-fg: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); }
 [data-subj="phys"]  { --subj-c: var(--subj-phys); --subj-fg: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); }
-[data-subj="tpat"]  { --subj-c: var(--subj-tpat); --subj-fg: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); }
-[data-subj="tgat"]  { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); }
+[data-subj="tpat3"]  { --subj-c: var(--subj-tpat3); --subj-fg: var(--subj-tpat3-fg); --subj-grad: var(--subj-tpat3-grad); }
+[data-subj="tgat2"]  { --subj-c: var(--subj-tgat2); --subj-fg: var(--subj-tgat2-fg); --subj-grad: var(--subj-tgat2-grad); }
 /* subject ink = readable label color on glass in every theme */
 :root[data-theme="light"] [data-subj], :root[data-theme="petronas-light"] [data-subj] { --subj-ink: oklch(from var(--subj-c) calc(l - 0.10) calc(c + 0.02) h); }
-:root[data-theme="light"] [data-subj="tgat"], :root[data-theme="petronas-light"] [data-subj="tgat"] { --subj-ink: oklch(0.52 0.13 72); }
+:root[data-theme="light"] [data-subj="tgat2"], :root[data-theme="petronas-light"] [data-subj="tgat2"] { --subj-ink: oklch(0.52 0.13 72); }
 [data-subj] { --subj-ink: var(--subj-fg); }
 
 /* ============================================================
@@ -444,7 +444,7 @@ body { overflow: hidden; }
         </section>
 
         <!-- PINNED BY ADMIN -->
-        <section class="featured" id="featured" aria-label="ข้อสอบที่แอดมินปักหมุด" data-subj="tgat">
+        <section class="featured" id="featured" aria-label="ข้อสอบที่แอดมินปักหมุด" data-subj="tgat2">
           <div class="cover">
             <div class="row">
               <span class="live"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(45deg);"><path d="M16 3a1 1 0 0 1 .707 1.707L15 6.414V13l3.293 3.293A1 1 0 0 1 17.586 18H13v3a1 1 0 1 1-2 0v-3H6.414a1 1 0 0 1-.707-1.707L9 13V6.414L7.293 4.707A1 1 0 0 1 8 3h8z"/></svg>แอดมินปักหมุด</span>
@@ -916,7 +916,7 @@ body { overflow: hidden; }
         </section>
 
         <!-- ROW · TPAT3 -->
-        <section class="subj-row" data-subj="tpat" data-screen-label="ข้อสอบ TPAT3">
+        <section class="subj-row" data-subj="tpat3" data-screen-label="ข้อสอบ TPAT3">
           <div class="sr-head">
             <span class="sr-dot"></span>
             <h2>TPAT3</h2>
@@ -924,7 +924,7 @@ body { overflow: hidden; }
             <span class="sr-ct">4 ชุด</span>
           </div>
           <div class="sr-track">
-            <article class="exam" data-subj="tpat" data-status="todo">
+            <article class="exam" data-subj="tpat3" data-status="todo">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TPAT3</span>
@@ -943,7 +943,7 @@ body { overflow: hidden; }
               </a>
             </div>
           </article>
-            <article class="exam" data-subj="tpat" data-status="todo">
+            <article class="exam" data-subj="tpat3" data-status="todo">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TPAT3</span>
@@ -962,7 +962,7 @@ body { overflow: hidden; }
               </a>
             </div>
           </article>
-            <article class="exam" data-subj="tpat" data-status="todo">
+            <article class="exam" data-subj="tpat3" data-status="todo">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TPAT3</span>
@@ -981,7 +981,7 @@ body { overflow: hidden; }
               </a>
             </div>
           </article>
-            <article class="exam" data-subj="tpat" data-status="todo">
+            <article class="exam" data-subj="tpat3" data-status="todo">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TPAT3</span>
@@ -1004,7 +1004,7 @@ body { overflow: hidden; }
         </section>
 
         <!-- ROW · TGAT2 -->
-        <section class="subj-row" data-subj="tgat" data-screen-label="ข้อสอบ TGAT2">
+        <section class="subj-row" data-subj="tgat2" data-screen-label="ข้อสอบ TGAT2">
           <div class="sr-head">
             <span class="sr-dot"></span>
             <h2>TGAT2</h2>
@@ -1012,7 +1012,7 @@ body { overflow: hidden; }
             <span class="sr-ct">5 ชุด</span>
           </div>
           <div class="sr-track">
-            <article class="exam" data-subj="tgat" data-status="redo">
+            <article class="exam" data-subj="tgat2" data-status="redo">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TGAT2</span>
@@ -1041,7 +1041,7 @@ body { overflow: hidden; }
               </button>
             </div>
           </article>
-            <article class="exam" data-subj="tgat" data-status="done">
+            <article class="exam" data-subj="tgat2" data-status="done">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TGAT2</span>
@@ -1070,7 +1070,7 @@ body { overflow: hidden; }
               </button>
             </div>
           </article>
-            <article class="exam" data-subj="tgat" data-status="done">
+            <article class="exam" data-subj="tgat2" data-status="done">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TGAT2</span>
@@ -1099,7 +1099,7 @@ body { overflow: hidden; }
               </button>
             </div>
           </article>
-            <article class="exam" data-subj="tgat" data-status="todo">
+            <article class="exam" data-subj="tgat2" data-status="todo">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TGAT2</span>
@@ -1118,7 +1118,7 @@ body { overflow: hidden; }
               </a>
             </div>
           </article>
-            <article class="exam" data-subj="tgat" data-status="done">
+            <article class="exam" data-subj="tgat2" data-status="done">
             <div class="body">
               <div class="meta-top">
                 <span class="subj-chip">TGAT2</span>
@@ -1179,7 +1179,7 @@ body { overflow: hidden; }
   if (!p || !p.id || p.id === 'e4') return;   // ไม่ปัก/ยกเลิก/ค่าเริ่มต้น = TGAT2 Mock #04 (markup เดิม)
   const feat = document.getElementById('featured');
   if (!feat) return;
-  feat.setAttribute('data-subj', p.subj || 'tgat');
+  feat.setAttribute('data-subj', p.subj || 'tgat2');
   const st = feat.querySelector('.subj-tag'); if (st) st.textContent = p.tag || '';
   const big = feat.querySelector('.cover .big'); if (big) big.innerHTML = '<small>' + (p.small || '') + '</small>' + (p.big || p.name);
   const h2 = feat.querySelector('.body h2'); if (h2) h2.textContent = p.name;
@@ -1251,7 +1251,7 @@ body { overflow: hidden; }
 
   // ===== subject-unlock access model =====
   // ซื้อคอร์สวิชาใดก็ตาม 1 คอร์ส = ทำข้อสอบวิชานั้นได้ทั้งหมด (ตาม My Courses: คณิต+ฟิสิกส์+TGAT2)
-  const OWNED_SUBJ = ['math','phys','tgat'];
+  const OWNED_SUBJ = ['math','phys','tgat2'];
   const SUBJ_TH = { math:'คณิต', phys:'ฟิสิกส์', tpat:' TPAT3', tgat:' TGAT2' };
   document.querySelectorAll('.sr-track .exam').forEach(card => {
     const subj = card.dataset.subj;
@@ -1267,7 +1267,7 @@ body { overflow: hidden; }
   document.querySelectorAll('.sr-track .exam').forEach(card => {
     const subj = card.dataset.subj;
     const locked = card.classList.contains('locked');
-    const href = locked ? 'Browse Courses.html' : ('Exam Detail.html' + (subj && subj !== 'tgat' ? ('?subj=' + subj) : ''));
+    const href = locked ? 'Browse Courses.html' : ('Exam Detail.html' + (subj && subj !== 'tgat2' ? ('?subj=' + subj) : ''));
     card.querySelectorAll('.foot .btn').forEach(btn => {
       if (btn.tagName === 'A') { btn.setAttribute('href', href); }
       else { btn.addEventListener('click', () => { location.href = href; }); btn.style.cursor = 'pointer'; }

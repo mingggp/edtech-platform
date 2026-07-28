@@ -23,6 +23,23 @@ Rules:
 - Never add เคมี, ชีววิทยา, ภาษาอังกฤษ, or any subject outside this list.
 - **Priority display order** whenever the 4 subjects are listed (filters, tabs, dashboards, cards): **คณิต → ฟิสิกส์ → TPAT3 → TGAT2** (an "all" option may precede them).
 
+### Subject keys — ONE vocabulary, no exceptions
+`subjects.js` is the **single source of truth**. Read from it; never hard-code a subject list.
+
+| key (code / DB / URL / `data-subj`) | label (what students see) |
+|---|---|
+| `math` | คณิต |
+| `phys` | ฟิสิกส์ |
+| `tpat3` | TPAT3 |
+| `tgat2` | TGAT2 |
+
+- Keys are **always lowercase**. `TPAT3`, `tpat`, `tgat`, `amath`, `aphys`, `MATH` are all **dead** — do not reintroduce them.
+- **Never render a key directly.** Use `Subjects.label(key)` — a key that leaks to the screen shows "tpat3" to a student.
+- CSS tokens follow the key: `--subj-math` `--subj-phys` `--subj-tpat3` `--subj-tgat2` (+ `-fg`, `-grad`).
+- Helper class names follow the key too: `.s-math` `.s-phys` `.s-tpat3` `.s-tgat2`, `.subj-*` likewise.
+- **Not subject keys** (leave alone): `tcas.js` uses `group:'tgat'` / `group:'tpat'` for the *exam family* (TGAT1–3, TPAT1–5), and `id:'tgat-tpat'` is a countdown widget. These are a different concept.
+- Level filter values (math/phys only): `m4` `m5` `m6` `alevel`.
+
 ## Subject brand colors (use on every page that splits the 4 subjects)
 Canonical tokens live in `brand.css` (`--subj-*` / `--subj-*-grad`). Always use them — never invent new per-subject colors.
 - **คณิต** → blue / ฟ้าน้ำเงิน (`--subj-math`)

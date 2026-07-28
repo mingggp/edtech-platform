@@ -46,8 +46,8 @@
   var COURSE_LANES = [
     { id: 'math', label: 'คณิต' },
     { id: 'phys', label: 'ฟิสิกส์' },
-    { id: 'tpat', label: 'TPAT3' },
-    { id: 'tgat', label: 'TGAT2' }
+    { id: 'tpat3', label: 'TPAT3' },
+    { id: 'tgat2', label: 'TGAT2' }
   ];
   var SPEEDS = { slow: 14, medium: 24, fast: 42 }; // px / second
 

@@ -17,13 +17,13 @@ body { overflow-x: hidden; background: var(--bg-0); }
 .aurora, .noise { display: none; }
 
 /* SUBJECT ACCENT — this exam = TGAT2; ?subj= overrides */
-:root { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); --subj-ink: var(--subj-tgat-fg); --on-subj: oklch(0.24 0.04 80); }
+:root { --subj-c: var(--subj-tgat2); --subj-fg: var(--subj-tgat2-fg); --subj-grad: var(--subj-tgat2-grad); --subj-ink: var(--subj-tgat2-fg); --on-subj: oklch(0.24 0.04 80); }
 html[data-subj="math"] { --subj-c: var(--subj-math); --subj-fg: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); --subj-ink: var(--subj-math-fg); --on-subj: #fff; }
 html[data-subj="phys"] { --subj-c: var(--subj-phys); --subj-fg: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); --subj-ink: var(--subj-phys-fg); --on-subj: #fff; }
-html[data-subj="tpat"] { --subj-c: var(--subj-tpat); --subj-fg: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); --subj-ink: var(--subj-tpat-fg); --on-subj: #fff; }
-html[data-subj="tgat"] { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); --subj-ink: var(--subj-tgat-fg); --on-subj: oklch(0.24 0.04 80); }
+html[data-subj="tpat3"] { --subj-c: var(--subj-tpat3); --subj-fg: var(--subj-tpat3-fg); --subj-grad: var(--subj-tpat3-grad); --subj-ink: var(--subj-tpat3-fg); --on-subj: #fff; }
+html[data-subj="tgat2"] { --subj-c: var(--subj-tgat2); --subj-fg: var(--subj-tgat2-fg); --subj-grad: var(--subj-tgat2-grad); --subj-ink: var(--subj-tgat2-fg); --on-subj: oklch(0.24 0.04 80); }
 :root[data-theme="light"]:not([data-subj]), :root[data-theme="petronas-light"]:not([data-subj]),
-:root[data-theme="light"][data-subj="tgat"], :root[data-theme="petronas-light"][data-subj="tgat"] { --subj-ink: oklch(0.52 0.13 72); }
+:root[data-theme="light"][data-subj="tgat2"], :root[data-theme="petronas-light"][data-subj="tgat2"] { --subj-ink: oklch(0.52 0.13 72); }
 
 /* ============================================================
    PHASE A — REVEAL TAKEOVER (fullscreen blackout)
@@ -576,7 +576,7 @@ html[data-subj="tgat"] { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-
 
 // SUBJECT ACCENT override via ?subj=
 (function(){
-  try { const s = new URLSearchParams(location.search).get('subj'); if (s && ['math','phys','tpat','tgat'].includes(s)) document.documentElement.setAttribute('data-subj', s); } catch(e){}
+  try { const s = new URLSearchParams(location.search).get('subj'); if (s && ['math','phys','tpat3','tgat2'].includes(s)) document.documentElement.setAttribute('data-subj', s); } catch(e){}
 })();
 
 // ===== SCORE CONFIG (read from ?score=) =====

@@ -270,13 +270,13 @@ body {
   --subj-phys-fg: oklch(0.77 0.21 340);
   --subj-phys-grad: linear-gradient(135deg, oklch(0.52 0.25 305), oklch(0.64 0.28 338) 52%, oklch(0.76 0.23 358));
 
-  --subj-tpat: oklch(0.54 0.20 18);
-  --subj-tpat-fg: oklch(0.67 0.21 18);
-  --subj-tpat-grad: linear-gradient(135deg, oklch(0.44 0.20 22), oklch(0.55 0.23 12) 52%, oklch(0.66 0.21 2));
+  --subj-tpat3: oklch(0.54 0.20 18);
+  --subj-tpat3-fg: oklch(0.67 0.21 18);
+  --subj-tpat3-grad: linear-gradient(135deg, oklch(0.44 0.20 22), oklch(0.55 0.23 12) 52%, oklch(0.66 0.21 2));
 
-  --subj-tgat: oklch(0.80 0.17 82);
-  --subj-tgat-fg: oklch(0.83 0.16 84);
-  --subj-tgat-grad: linear-gradient(135deg, oklch(0.74 0.18 66), oklch(0.82 0.19 82) 52%, oklch(0.89 0.17 96));
+  --subj-tgat2: oklch(0.80 0.17 82);
+  --subj-tgat2-fg: oklch(0.83 0.16 84);
+  --subj-tgat2-grad: linear-gradient(135deg, oklch(0.74 0.18 66), oklch(0.82 0.19 82) 52%, oklch(0.89 0.17 96));
 }
 
 img, svg { display: block; max-width: 100%; }

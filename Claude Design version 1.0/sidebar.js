@@ -295,8 +295,8 @@
       var avEl = actions.querySelector(".top-av");
       actions.insertBefore(np, avEl || null);
       var NOTIFS = [
-        { ic: svgIc('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>').replace('currentColor', '#fff').replace('currentColor', '#fff'), bg: 'var(--subj-tpat-grad)', t: 'ข้อสอบ <b>TPAT3 ชุดใหม่</b> ปล่อยแล้ว 3 ชุด', when: '5 นาทีที่แล้ว', unread: true },
-        { ic: '<svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>', bg: 'var(--subj-tgat-grad)', t: 'ปลดล็อกเหรียญ <b>เรียนครบ 7 วันติด</b> 🔥', when: '2 ชม. ที่แล้ว', unread: true },
+        { ic: svgIc('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>').replace('currentColor', '#fff').replace('currentColor', '#fff'), bg: 'var(--subj-tpat3-grad)', t: 'ข้อสอบ <b>TPAT3 ชุดใหม่</b> ปล่อยแล้ว 3 ชุด', when: '5 นาทีที่แล้ว', unread: true },
+        { ic: '<svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>', bg: 'var(--subj-tgat2-grad)', t: 'ปลดล็อกเหรียญ <b>เรียนครบ 7 วันติด</b> 🔥', when: '2 ชม. ที่แล้ว', unread: true },
         { ic: svgIc('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>').replace('currentColor', '#fff').replace('currentColor', '#fff'), bg: 'var(--subj-phys-grad)', t: 'คลาสสด <b>ฟิสิกส์ กลศาสตร์</b> เริ่ม 20:00 คืนนี้', when: 'พรุ่งนี้' }
       ];
       var pop = document.createElement("div");
@@ -345,9 +345,9 @@
     var INDEX = [
       { cat: 'คอร์ส', t: 'คณิต ครูหมิง', s: 'A-Level · ม.4 ม.5 ม.6', href: 'Browse Courses.html', bg: 'var(--subj-math-grad)', ic: 'course', kw: 'math คณิตศาสตร์ a-level alevel' },
       { cat: 'คอร์ส', t: 'ฟิสิกส์ ครูหมิง', s: 'A-Level · ม.4 ม.5 ม.6', href: 'Browse Courses.html', bg: 'var(--subj-phys-grad)', ic: 'course', kw: 'physics ฟิสิกส์' },
-      { cat: 'คอร์ส', t: 'TPAT3 ครูหมิง', s: 'วิทย์ เทคโนโลยี วิศวกรรม', href: 'Browse Courses.html', bg: 'var(--subj-tpat-grad)', ic: 'course', kw: 'tpat3 tpat วิศวะ' },
-      { cat: 'คอร์ส', t: 'TGAT2 ครูหมิง', s: 'การคิดอย่างมีเหตุผล', href: 'Browse Courses.html', bg: 'var(--subj-tgat-grad)', ic: 'course', kw: 'tgat2 tgat เหตุผล' },
-      { cat: 'ข้อสอบ', t: 'คลังข้อสอบ', s: 'ทำข้อสอบจับเวลา + เฉลยละเอียด', href: 'Exams.html', bg: 'var(--subj-tpat-grad)', ic: 'exam', kw: 'exam ข้อสอบ เฉลย mock' },
+      { cat: 'คอร์ส', t: 'TPAT3 ครูหมิง', s: 'วิทย์ เทคโนโลยี วิศวกรรม', href: 'Browse Courses.html', bg: 'var(--subj-tpat3-grad)', ic: 'course', kw: 'tpat3 tpat วิศวะ' },
+      { cat: 'คอร์ส', t: 'TGAT2 ครูหมิง', s: 'การคิดอย่างมีเหตุผล', href: 'Browse Courses.html', bg: 'var(--subj-tgat2-grad)', ic: 'course', kw: 'tgat2 tgat เหตุผล' },
+      { cat: 'ข้อสอบ', t: 'คลังข้อสอบ', s: 'ทำข้อสอบจับเวลา + เฉลยละเอียด', href: 'Exams.html', bg: 'var(--subj-tpat3-grad)', ic: 'exam', kw: 'exam ข้อสอบ เฉลย mock' },
       { cat: 'เครื่องมือ', t: 'คำนวณ TCAS', s: 'เช็กโอกาสติด + จัด 10 อันดับ', href: 'TCAS.html', bg: 'var(--grad-cool)', ic: 'page', kw: 'tcas โอกาสติด อันดับ คำนวณ' },
       { cat: 'หน้า', t: 'คอร์สของฉัน', s: '7 คอร์สที่เรียนอยู่', href: 'My Courses.html', bg: 'var(--grad-signature)', ic: 'page', kw: 'my courses เรียน' },
       { cat: 'หน้า', t: 'คอร์สทั้งหมด', s: 'ดูคอร์สทุกวิชา', href: 'Browse Courses.html', bg: 'var(--grad-signature)', ic: 'page', kw: 'browse ทั้งหมด สมัคร' },

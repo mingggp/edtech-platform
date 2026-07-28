@@ -29,13 +29,13 @@
 .filter-chip .cdot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
 .filter-chip[data-subj="math"] .cdot  { background: var(--subj-math-grad); }
 .filter-chip[data-subj="phys"] .cdot  { background: var(--subj-phys-grad); }
-.filter-chip[data-subj="tpat3"] .cdot { background: var(--subj-tpat-grad); }
-.filter-chip[data-subj="tgat2"] .cdot { background: var(--subj-tgat-grad); }
+.filter-chip[data-subj="tpat3"] .cdot { background: var(--subj-tpat3-grad); }
+.filter-chip[data-subj="tgat2"] .cdot { background: var(--subj-tgat2-grad); }
 .filter-chip[aria-pressed="true"] .cdot { background: oklch(1 0 0 / 0.92); }
 .filter-chip[aria-pressed="true"][data-subj="math"]  { background: var(--subj-math-grad); box-shadow: 0 8px 22px -8px var(--subj-math); }
 .filter-chip[aria-pressed="true"][data-subj="phys"]  { background: var(--subj-phys-grad); box-shadow: 0 8px 22px -8px var(--subj-phys); }
-.filter-chip[aria-pressed="true"][data-subj="tpat3"] { background: var(--subj-tpat-grad); box-shadow: 0 8px 22px -8px var(--subj-tpat); }
-.filter-chip[aria-pressed="true"][data-subj="tgat2"] { background: var(--subj-tgat-grad); box-shadow: 0 8px 22px -8px var(--subj-tgat); }
+.filter-chip[aria-pressed="true"][data-subj="tpat3"] { background: var(--subj-tpat3-grad); box-shadow: 0 8px 22px -8px var(--subj-tpat3); }
+.filter-chip[aria-pressed="true"][data-subj="tgat2"] { background: var(--subj-tgat2-grad); box-shadow: 0 8px 22px -8px var(--subj-tgat2); }
 
 /* level sub-filter — appears only for คณิต / ฟิสิกส์ */
 .level-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: -16px 0 30px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line-soft); background: var(--bg-1); }
@@ -149,8 +149,8 @@
 .cc-foot .go svg { width: 16px; height: 16px; }
 
 /* subject thumb gradients — canonical subject brand colors */
-.t-tgat2 { background: var(--subj-tgat-grad); }
-.t-tpat3 { background: var(--subj-tpat-grad); }
+.t-tgat2 { background: var(--subj-tgat2-grad); }
+.t-tpat3 { background: var(--subj-tpat3-grad); }
 .t-math  { background: var(--subj-math-grad); }
 .t-phys  { background: var(--subj-phys-grad); }
 
@@ -240,8 +240,8 @@
 .bcard[data-subj]::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent-grad, var(--accent)); z-index: 2; }
 .bcard[data-subj="math"]  { --accent-grad: var(--subj-math-grad); --accent: var(--subj-math); }
 .bcard[data-subj="phys"]  { --accent-grad: var(--subj-phys-grad); --accent: var(--subj-phys); }
-.bcard[data-subj="tpat3"] { --accent-grad: var(--subj-tpat-grad); --accent: var(--subj-tpat); }
-.bcard[data-subj="tgat2"] { --accent-grad: var(--subj-tgat-grad); --accent: var(--subj-tgat); }
+.bcard[data-subj="tpat3"] { --accent-grad: var(--subj-tpat3-grad); --accent: var(--subj-tpat3); }
+.bcard[data-subj="tgat2"] { --accent-grad: var(--subj-tgat2-grad); --accent: var(--subj-tgat2); }
 .bcard[data-subj] .bc-tier { color: var(--accent); }
 .bcard[data-subj] .bc-count b { color: var(--accent); }
 .bcard[data-subj] .btn-secondary { background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); border-color: color-mix(in oklab, var(--accent) 32%, transparent); }
@@ -540,8 +540,8 @@ const BUNDLE_DEFS = {
   m6:    { tier:'ม.6',        name:'ม.6 ครบชุด',     desc:'รวมทุกวิชาเนื้อหาระดับ ม.6', match:(c)=>c.level==='m6', off:0.22 },
   math:  { tier:'คณิต',      name:'คณิต ครบทุกระดับ', desc:'คณิต ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='math', off:0.25, subj:'math' },
   phys:  { tier:'ฟิสิกส์',    name:'ฟิสิกส์ ครบทุกระดับ', desc:'ฟิสิกส์ ม.4–ม.6 + A-Level ครบ', match:(c)=>c.subj==='phys', off:0.25, subj:'phys' },
-  tpat3: { tier:'TPAT3',      name:'TPAT3 ครบชุด',   desc:'ตะลุย TPAT3 ครบทุกคอร์ส', match:(c)=>c.subj==='tpat3', off:0.22, subj:'tpat3' },
-  tgat2: { tier:'TGAT2',      name:'TGAT2 ครบชุด',   desc:'TGAT2 ครบทุกคอร์ส', match:(c)=>c.subj==='tgat2', off:0.15, subj:'tgat2' },
+  tpat3: { tier:'tpat3',      name:'TPAT3 ครบชุด',   desc:'ตะลุย TPAT3 ครบทุกคอร์ส', match:(c)=>c.subj==='tpat3', off:0.22, subj:'tpat3' },
+  tgat2: { tier:'tgat2',      name:'TGAT2 ครบชุด',   desc:'TGAT2 ครบทุกคอร์ส', match:(c)=>c.subj==='tgat2', off:0.15, subj:'tgat2' },
   all:   { tier:'ALL ACCESS', name:'เหมาหมด ทุกคอร์ส', desc:'ทุกคอร์สที่มีตอนนี้ + ที่จะเพิ่มตลอดปี', match:(c)=>true, off:0.35, featured:true }
 };
 const BUNDLE_TIERS = [

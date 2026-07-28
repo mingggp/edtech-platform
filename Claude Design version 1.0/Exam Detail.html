@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="brand.css?v=10" />
 <style>
 /* default subject accent for this exam = TGAT2; ?subj= overrides */
-:root { --subj-c: var(--subj-tgat); --subj-fg: var(--subj-tgat-fg); --subj-grad: var(--subj-tgat-grad); --on-subj: oklch(0.24 0.04 80); }
+:root { --subj-c: var(--subj-tgat2); --subj-fg: var(--subj-tgat2-fg); --subj-grad: var(--subj-tgat2-grad); --on-subj: oklch(0.24 0.04 80); }
 :root[data-theme="light"], :root[data-theme="petronas-light"] { --subj-ink: oklch(0.52 0.13 72); }
 :root { --subj-ink: var(--subj-fg); }
 html[data-subj="math"]  { --subj-c: var(--subj-math); --subj-fg: var(--subj-math-fg); --subj-grad: var(--subj-math-grad); --subj-ink: var(--subj-math-fg); --on-subj: #fff; }
 html[data-subj="phys"]  { --subj-c: var(--subj-phys); --subj-fg: var(--subj-phys-fg); --subj-grad: var(--subj-phys-grad); --subj-ink: var(--subj-phys-fg); --on-subj: #fff; }
-html[data-subj="tpat"]  { --subj-c: var(--subj-tpat); --subj-fg: var(--subj-tpat-fg); --subj-grad: var(--subj-tpat-grad); --subj-ink: var(--subj-tpat-fg); --on-subj: #fff; }
+html[data-subj="tpat3"]  { --subj-c: var(--subj-tpat3); --subj-fg: var(--subj-tpat3-fg); --subj-grad: var(--subj-tpat3-grad); --subj-ink: var(--subj-tpat3-fg); --on-subj: #fff; }
 :root[data-theme="light"] html[data-subj="math"], :root[data-theme="petronas-light"] html[data-subj="math"] { --subj-ink: oklch(from var(--subj-math) calc(l - 0.08) c h); }
 
 body { overflow: hidden; }
@@ -630,7 +630,7 @@ body { overflow: hidden; }
 (function(){
   try {
     const s = new URLSearchParams(location.search).get('subj');
-    if (s && ['math','phys','tpat','tgat'].includes(s)) document.documentElement.setAttribute('data-subj', s);
+    if (s && ['math','phys','tpat3','tgat2'].includes(s)) document.documentElement.setAttribute('data-subj', s);
   } catch(e){}
 })();
 

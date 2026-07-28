@@ -7,20 +7,22 @@
   const ICON = {
     physics:'<path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4"/>',
     math:'<path d="m12 20 9-9M3 11l9-9M3 11v6.5A2.5 2.5 0 0 0 5.5 20H12"/>',
-    tgat:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    tgat2:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
     grad:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/>'
   };
   const COURSES = [
-    { id:'c1', title:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS70', subject:'ฟิสิกส์', level:'A-Level', grade:'ม.6 · เตรียมสอบ', price:1800, was:2490, students:312, lessons:48, hours:18, status:'published', grad:'var(--subj-phys-grad)', icon:ICON.grad },
-    { id:'c2', title:'A-Level คณิต ประยุกต์ ครบทุกบท', subject:'คณิต', level:'A-Level', grade:'ม.6 · เตรียมสอบ', price:1500, was:2290, students:248, lessons:52, hours:20, status:'published', grad:'var(--subj-math-grad)', icon:ICON.math },
-    { id:'c3', title:'TPAT3 ความถนัด วิทย์–เทคโน–วิศวะ', subject:'TPAT3', level:null, grade:'ม.5–ม.6', price:1900, was:null, students:204, lessons:36, hours:15, status:'published', grad:'var(--subj-tpat-grad)', icon:ICON.physics },
-    { id:'c4', title:'TGAT2 การคิดอย่างมีเหตุผล', subject:'TGAT2', level:null, grade:'ม.6 · เตรียมสอบ', price:2000, was:2890, students:186, lessons:30, hours:12, status:'published', grad:'var(--subj-tgat-grad)', icon:ICON.tgat },
-    { id:'c5', title:'คณิต ม.ปลาย เนื้อหาครบทุกเทอม', subject:'คณิต', level:'ม.ปลาย', grade:'ม.4–ม.6', price:1900, was:null, students:171, lessons:64, hours:26, status:'published', grad:'var(--subj-math-grad)', icon:ICON.math },
-    { id:'c6', title:'ฟิสิกส์ ม.ปลาย เนื้อหาครบทุกเทอม', subject:'ฟิสิกส์', level:'ม.ปลาย', grade:'ม.4–ม.6', price:2000, was:null, students:0, lessons:12, hours:5, status:'draft', grad:'var(--subj-phys-grad)', icon:ICON.physics }
+    { id:'c1', title:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS70', subject:'phys', level:'A-Level', grade:'ม.6 · เตรียมสอบ', price:1800, was:2490, students:312, lessons:48, hours:18, status:'published', grad:'var(--subj-phys-grad)', icon:ICON.grad },
+    { id:'c2', title:'A-Level คณิต ประยุกต์ ครบทุกบท', subject:'math', level:'A-Level', grade:'ม.6 · เตรียมสอบ', price:1500, was:2290, students:248, lessons:52, hours:20, status:'published', grad:'var(--subj-math-grad)', icon:ICON.math },
+    { id:'c3', title:'TPAT3 ความถนัด วิทย์–เทคโน–วิศวะ', subject:'tpat3', level:null, grade:'ม.5–ม.6', price:1900, was:null, students:204, lessons:36, hours:15, status:'published', grad:'var(--subj-tpat3-grad)', icon:ICON.physics },
+    { id:'c4', title:'TGAT2 การคิดอย่างมีเหตุผล', subject:'tgat2', level:null, grade:'ม.6 · เตรียมสอบ', price:2000, was:2890, students:186, lessons:30, hours:12, status:'published', grad:'var(--subj-tgat2-grad)', icon:ICON.tgat },
+    { id:'c5', title:'คณิต ม.ปลาย เนื้อหาครบทุกเทอม', subject:'math', level:'ม.ปลาย', grade:'ม.4–ม.6', price:1900, was:null, students:171, lessons:64, hours:26, status:'published', grad:'var(--subj-math-grad)', icon:ICON.math },
+    { id:'c6', title:'ฟิสิกส์ ม.ปลาย เนื้อหาครบทุกเทอม', subject:'phys', level:'ม.ปลาย', grade:'ม.4–ม.6', price:2000, was:null, students:0, lessons:12, hours:5, status:'draft', grad:'var(--subj-phys-grad)', icon:ICON.physics }
   ];
 
   const grid = document.getElementById('grid');
   const noResult = document.getElementById('no-result');
+  /* คีย์วิชา -> ข้อความที่คนเห็น (subjects.js) */
+  const SL = (k) => (window.Subjects ? window.Subjects.label(k) : k);
   let q='', fSubject='all', fStatus='all', fGrades=[];
 
   /* levels each course serves (ม.4/ม.5/ม.6/A-Level) */
@@ -40,7 +42,7 @@
       <div class="cc-cover" style="background:${c.grad}">
         <span class="cc-status">${pill}</span>
         <span class="cover-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg></span>
-        <span class="badge-subj">${c.subject}${c.level ? ' · ' + c.level : ''}</span>
+        <span class="badge-subj">${SL(c.subject)}${c.level ? ' · ' + c.level : ''}</span>
       </div>
       <div class="cc-body">
         <h3>${c.title}</h3>
@@ -62,7 +64,7 @@
       if(fSubject!=='all' && c.subject!==fSubject) return false;
       if(fStatus!=='all' && c.status!==fStatus) return false;
       if(fGrades.length && !(LEVELS[c.id]||[]).some(lv=>fGrades.includes(lv))) return false;
-      if(q && !c.title.toLowerCase().includes(q.toLowerCase()) && !c.subject.toLowerCase().includes(q.toLowerCase())) return false;
+      if(q && !c.title.toLowerCase().includes(q.toLowerCase()) && !SL(c.subject).toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
     if(vis.length===0){

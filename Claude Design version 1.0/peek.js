@@ -97,7 +97,7 @@
     E["pk-streak"]().innerHTML = (p.streak || 0) + '<span class="u">วัน</span>';
     E["pk-lv"]().textContent = "Lv " + p.lv;
     E["pk-badges"]().textContent = p.badges;
-    E["pk-subj"]().textContent = p.subj;
+    E["pk-subj"]().textContent = p.subjLabel || (window.Subjects ? window.Subjects.label(p.subj) : p.subj);
 
     // footer links to THIS person
     var msg = E["pk-msg"](), full = E["pk-full"]();

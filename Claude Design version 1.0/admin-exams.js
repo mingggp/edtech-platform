@@ -3,21 +3,21 @@
    ========================================================================== */
 (function(){
   const SUBJ = {
-    'TGAT2':   {grad:'var(--subj-tgat-grad)', chip:'oklch(0.78 0.15 82 / 0.16)', chipC:'var(--subj-tgat-fg)'},
-    'TPAT3':   {grad:'var(--subj-tpat-grad)', chip:'oklch(0.62 0.18 22 / 0.18)', chipC:'var(--subj-tpat-fg)'},
-    'คณิต':    {grad:'var(--subj-math-grad)', chip:'oklch(0.58 0.16 250 / 0.18)', chipC:'var(--subj-math-fg)'},
-    'ฟิสิกส์': {grad:'var(--subj-phys-grad)', chip:'oklch(0.62 0.22 340 / 0.16)', chipC:'var(--subj-phys-fg)'}
+    'tgat2':   {grad:'var(--subj-tgat2-grad)', chip:'oklch(0.78 0.15 82 / 0.16)', chipC:'var(--subj-tgat2-fg)'},
+    'tpat3':   {grad:'var(--subj-tpat3-grad)', chip:'oklch(0.62 0.18 22 / 0.18)', chipC:'var(--subj-tpat3-fg)'},
+    'math':    {grad:'var(--subj-math-grad)', chip:'oklch(0.58 0.16 250 / 0.18)', chipC:'var(--subj-math-fg)'},
+    'phys':    {grad:'var(--subj-phys-grad)', chip:'oklch(0.62 0.22 340 / 0.16)', chipC:'var(--subj-phys-fg)'}
   };
   const ICON = '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/>';
   const EXAMS = [
-    {id:'e1', name:'A-Level ฟิสิกส์ · ชุดเสมือนจริง #1', subject:'ฟิสิกส์', level:'A-Level', questions:30, course:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', attempts:842},
-    {id:'e2', name:'A-Level ฟิสิกส์ · ชุดเสมือนจริง #2', subject:'ฟิสิกส์', level:'A-Level', questions:30, course:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', attempts:610},
-    {id:'e3', name:'A-Level คณิต · ตะลุยโจทย์แคลคูลัส', subject:'คณิต', level:'A-Level', questions:25, course:'A-Level คณิต ประยุกต์ ครบทุกบท', attempts:528},
-    {id:'e4', free:true, name:'TGAT2 · การคิดอย่างมีเหตุผล ชุด 3', subject:'TGAT2', level:null, questions:40, course:'TGAT2 การคิดอย่างมีเหตุผล', attempts:466},
-    {id:'e5', name:'TPAT3 · ความถนัดวิทย์ ชุดรวม', subject:'TPAT3', level:null, questions:35, course:'TPAT3 ความถนัด วิทย์–เทคโน–วิศวะ', attempts:391},
-    {id:'e6', name:'คณิต ม.ปลาย · ลำดับและอนุกรม', subject:'คณิต', level:'ม.ปลาย', questions:20, course:'คณิต ม.ปลาย เนื้อหาครบทุกเทอม', attempts:284},
-    {id:'e7', free:true, name:'ฟิสิกส์ ม.ปลาย · กลศาสตร์เบื้องต้น', subject:'ฟิสิกส์', level:'ม.ปลาย', questions:18, course:null, attempts:201},
-    {id:'e8', name:'A-Level ฟิสิกส์ · ไฟฟ้าและแม่เหล็ก', subject:'ฟิสิกส์', level:'A-Level', questions:16, course:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', attempts:160}
+    {id:'e1', name:'A-Level ฟิสิกส์ · ชุดเสมือนจริง #1', subject:'phys', level:'A-Level', questions:30, course:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', attempts:842},
+    {id:'e2', name:'A-Level ฟิสิกส์ · ชุดเสมือนจริง #2', subject:'phys', level:'A-Level', questions:30, course:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', attempts:610},
+    {id:'e3', name:'A-Level คณิต · ตะลุยโจทย์แคลคูลัส', subject:'math', level:'A-Level', questions:25, course:'A-Level คณิต ประยุกต์ ครบทุกบท', attempts:528},
+    {id:'e4', free:true, name:'TGAT2 · การคิดอย่างมีเหตุผล ชุด 3', subject:'tgat2', level:null, questions:40, course:'TGAT2 การคิดอย่างมีเหตุผล', attempts:466},
+    {id:'e5', name:'TPAT3 · ความถนัดวิทย์ ชุดรวม', subject:'tpat3', level:null, questions:35, course:'TPAT3 ความถนัด วิทย์–เทคโน–วิศวะ', attempts:391},
+    {id:'e6', name:'คณิต ม.ปลาย · ลำดับและอนุกรม', subject:'math', level:'ม.ปลาย', questions:20, course:'คณิต ม.ปลาย เนื้อหาครบทุกเทอม', attempts:284},
+    {id:'e7', free:true, name:'ฟิสิกส์ ม.ปลาย · กลศาสตร์เบื้องต้น', subject:'phys', level:'ม.ปลาย', questions:18, course:null, attempts:201},
+    {id:'e8', name:'A-Level ฟิสิกส์ · ไฟฟ้าและแม่เหล็ก', subject:'phys', level:'A-Level', questions:16, course:'A-Level ฟิสิกส์ พิชิตข้อสอบ TCAS68', attempts:160}
   ];
   /* ---- premium confirm modal (แทน alert confirm) ---- */
   const CF_ICONS = {
@@ -63,7 +63,8 @@
     e7:{tag:'ฟิสิกส์ · ม.ปลาย', small:'พื้นฐาน', big:'กลศาสตร์<br>เบื้องต้น', mins:35, avg:'11 / 18'},
     e8:{tag:'ฟิสิกส์ · A-Level', small:'เฉพาะบท', big:'ไฟฟ้า<br>แม่เหล็ก', mins:45, avg:'9 / 16'}
   };
-  const SUBJ_KEY = { 'คณิต':'math', 'ฟิสิกส์':'phys', 'TPAT3':'tpat', 'TGAT2':'tgat' };
+  /* e.subject เป็นคีย์อยู่แล้ว (ดู subjects.js) — เก็บ helper ไว้แปลงเป็น label ตอนแสดงผล */
+  const SL = (k) => (window.Subjects ? window.Subjects.label(k) : k);
   function getPin(){ try { const p = JSON.parse(localStorage.getItem(PIN_KEY) || 'null'); return p ? (p.id || null) : 'e4'; } catch(_) { return 'e4'; } }
   async function setPin(id){
     const e = EXAMS.find(x => x.id === id);
@@ -78,7 +79,7 @@
       body: '<b>' + e.name + '</b> จะขึ้นเป็นการ์ดใหญ่บนหน้าข้อสอบของนักเรียน — ปักได้ทีละ 1 ชุด ชุดที่ปักอยู่เดิมจะถูกแทนที่' })) return;
     const m = PIN_META[id] || {};
     try { localStorage.setItem(PIN_KEY, JSON.stringify({
-      id, name: e.name, subj: SUBJ_KEY[e.subject] || 'tgat', tag: m.tag || e.subject,
+      id, name: e.name, subj: e.subject, tag: m.tag || SL(e.subject),
       small: m.small || '', big: m.big || e.name, mins: m.mins || 60,
       questions: e.questions, attempts: e.attempts, avg: m.avg || ''
     })); } catch(_){}
@@ -95,10 +96,10 @@
     const pinned = getPin() === e.id;
     const access = e.free
       ? '<span class="acc-badge free">ฟรี · ทุกคนทำได้</span>'
-      : '<span class="acc-badge subj">ปลดล็อกด้วยคอร์สวิชา ' + e.subject + '</span>';
+      : '<span class="acc-badge subj">ปลดล็อกด้วยคอร์สวิชา ' + SL(e.subject) + '</span>';
     return `<tr data-id="${e.id}">
       <td><div class="ex-name"><div class="ic" style="background:${s.grad}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON}</svg></div><div><b>${e.name}${pinned ? ' <span class="pin-badge">ปักหมุด</span>' : ''}</b><span>แก้ไขล่าสุด ${e.id==='e1'?'วันนี้':'สัปดาห์นี้'}</span></div></div></td>
-      <td><span class="subj-chip" style="background:${s.chip};color:${s.chipC}">${e.subject}${e.level ? ' · ' + e.level : ''}</span></td>
+      <td><span class="subj-chip" style="background:${s.chip};color:${s.chipC}">${SL(e.subject)}${e.level ? ' · ' + e.level : ''}</span></td>
       <td><span class="num-cell">${e.questions}</span> <span style="font-size:11px;color:var(--fg-3)">ข้อ</span></td>
       <td>${access}</td>
       <td><span class="num-cell">${e.attempts.toLocaleString()}</span></td>
@@ -118,7 +119,7 @@
       : '<span class="acc-badge subj">ปลดล็อกด้วยคอร์ส</span>';
     return `<article class="exc" data-id="${e.id}">
       <div class="top"><div class="ic" style="background:${s.grad}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON}</svg></div><h3>${e.name}</h3></div>
-      <div class="meta"><span class="subj-chip" style="background:${s.chip};color:${s.chipC}">${e.subject}${e.level ? ' · ' + e.level : ''}</span>${access}${pinned ? '<span class="pin-badge">ปักหมุด</span>' : ''}</div>
+      <div class="meta"><span class="subj-chip" style="background:${s.chip};color:${s.chipC}">${SL(e.subject)}${e.level ? ' · ' + e.level : ''}</span>${access}${pinned ? '<span class="pin-badge">ปักหมุด</span>' : ''}</div>
       <div class="stat-row"><span><b>${e.questions}</b> ข้อ</span><span><b>${e.attempts.toLocaleString()}</b> ครั้งที่ทำ</span></div>
     </article>`;
   }
