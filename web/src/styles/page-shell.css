@@ -1,0 +1,26 @@
+/* ==========================================================================
+   Mingsmileyface · Page Shell — เปลือกหน้าจอที่หน้าฝั่งนักเรียนใช้ร่วมกัน
+   --------------------------------------------------------------------------
+   กฎในไฟล์นี้คือส่วนที่ทั้ง 10 หน้าเคยเขียนไว้ใน <style> ของตัวเอง "เหมือนกันเป๊ะ"
+   ย้ายมารวมที่นี่เพื่อให้แก้ที่เดียวแล้วเปลี่ยนทุกหน้า
+
+   ครอบคลุม: คอลัมน์เนื้อหา · แถบบน · ปุ่มไอคอน · เบรดครัมบ์ · สกรอลบาร์
+   ไม่แตะ sidebar เลย (sidebar.css + sidebar.js ดูแลอยู่)
+
+   ลำดับโหลด:  brand.css -> page-shell.css -> [css เฉพาะหน้า] -> <style> ในหน้า
+   ค่าที่หน้าไหนต้องการต่างไป ยังเขียนทับใน <style> ของหน้านั้นได้ตามเดิม
+   (เช่น .topbar padding / .icon-btn ขนาด ที่แต่ละหน้าปรับเอง)
+   ========================================================================== */
+
+.main-col { display: flex; flex-direction: column; overflow: hidden; }
+.topbar { height: 64px; flex-shrink: 0; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; gap: 16px; backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); position: relative; z-index: 5; }
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--fg-1); transition: color .15s, border-color .15s, background .15s; }
+.icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-2); }
+.crumb .sep { color: var(--fg-3); }
+.crumb b { color: var(--fg-0); font-weight: 500; }
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent; }
+.scroll::-webkit-scrollbar { width: 10px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }

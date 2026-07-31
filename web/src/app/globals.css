@@ -1,183 +1,151 @@
-@import "tailwindcss";
-@plugin "tailwindcss-animate";
+@import 'tailwindcss';
+
+/* จำกัดขอบเขตที่ Tailwind ไล่สแกนหาคลาส
+   ค่าเริ่มต้นของ Tailwind 4 คือไล่จาก git root ขึ้นไป ซึ่งในโปรเจกต์นี้จะกิน
+   ทั้ง `Claude Design version 1.0/` (16 MB, 46 หน้า HTML) และ backend/
+   ทำให้ build ช้ามากโดยไม่ได้ประโยชน์อะไร */
+@source "../";
+
+@import '../styles/brand.css';
+@import '../styles/page-shell.css';
 
 /* ==========================================================================
-   Design tokens — แก้ที่นี่ที่เดียวเพื่อปรับ theme ทั้งเว็บ
+   Layout primitives ของ app shell
+   --------------------------------------------------------------------------
+   ตัวแปรสีทั้งหมดมาจาก brand.css — ห้ามฮาร์ดโค้ดสีในไฟล์นี้
+   ถ้าต้องใช้สีใหม่ ให้เพิ่มเป็น token ใน brand.css ก่อน
    ========================================================================== */
-@theme {
-  /* Brand — Indigo สื่อความรู้/ความเชื่อมั่น เหมาะกับเด็ก ม.ปลาย */
-  --color-brand-50: oklch(0.97 0.02 270);
-  --color-brand-100: oklch(0.93 0.05 270);
-  --color-brand-200: oklch(0.86 0.10 270);
-  --color-brand-300: oklch(0.77 0.16 270);
-  --color-brand-400: oklch(0.68 0.22 270);
-  --color-brand-500: oklch(0.58 0.24 270);
-  --color-brand-600: oklch(0.50 0.24 270);
-  --color-brand-700: oklch(0.42 0.20 270);
-  --color-brand-800: oklch(0.34 0.16 270);
-  --color-brand-900: oklch(0.26 0.10 270);
 
-  /* Accent — Amber สำหรับ CTA, badge, achievement */
-  --color-accent-400: oklch(0.85 0.18 75);
-  --color-accent-500: oklch(0.78 0.20 75);
-  --color-accent-600: oklch(0.69 0.20 75);
-
-  /* Radii */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.75rem;
-
-  /* Font (โหลดจาก next/font ใน layout.tsx) */
-  --font-sans: var(--font-inter), "IBM Plex Sans Thai", system-ui, sans-serif;
-  --font-display: var(--font-plus-jakarta), var(--font-inter), system-ui, sans-serif;
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--fg-0);
+  font-family: 'IBM Plex Sans Thai', 'Bai Jamjuree', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ==========================================================================
-   shadcn/ui token mapping  (light + dark)
-   ========================================================================== */
-:root {
-  --background: oklch(0.99 0.005 270);
-  --foreground: oklch(0.18 0.02 270);
-
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 270);
-
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 270);
-
-  --primary: var(--color-brand-600);
-  --primary-foreground: oklch(0.99 0 0);
-
-  --secondary: oklch(0.96 0.02 270);
-  --secondary-foreground: var(--color-brand-700);
-
-  --muted: oklch(0.96 0.005 270);
-  --muted-foreground: oklch(0.45 0.02 270);
-
-  --accent: var(--color-accent-500);
-  --accent-foreground: oklch(0.18 0.05 75);
-
-  --destructive: oklch(0.58 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-
-  --border: oklch(0.91 0.01 270);
-  --input: oklch(0.91 0.01 270);
-  --ring: var(--color-brand-500);
-
-  --radius: var(--radius-lg);
+/* ---- โครง 2 คอลัมน์ ---- */
+.app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+  height: 100vh;
+  transition: grid-template-columns .26s var(--ease-spring, cubic-bezier(.2,.8,.2,1));
 }
+.app:has(.sidebar[data-collapsed]) { grid-template-columns: 84px 1fr; }
+@media (max-width: 860px) { .app { grid-template-columns: 84px 1fr; } }
 
-.dark {
-  --background: oklch(0.16 0.02 270);
-  --foreground: oklch(0.97 0.01 270);
-
-  --card: oklch(0.20 0.025 270);
-  --card-foreground: oklch(0.97 0.01 270);
-
-  --popover: oklch(0.20 0.025 270);
-  --popover-foreground: oklch(0.97 0.01 270);
-
-  --primary: var(--color-brand-400);
-  --primary-foreground: oklch(0.16 0.02 270);
-
-  --secondary: oklch(0.26 0.03 270);
-  --secondary-foreground: oklch(0.97 0.01 270);
-
-  --muted: oklch(0.24 0.02 270);
-  --muted-foreground: oklch(0.70 0.02 270);
-
-  --accent: var(--color-accent-400);
-  --accent-foreground: oklch(0.18 0.05 75);
-
-  --destructive: oklch(0.65 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-
-  --border: oklch(0.30 0.02 270);
-  --input: oklch(0.30 0.02 270);
-  --ring: var(--color-brand-400);
+/* ---- sidebar ---- */
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px 14px;
+  border-right: 1px solid var(--line-soft);
+  overflow: hidden auto;
 }
-
-/* expose tokens เป็น Tailwind utilities */
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+.sb-toggle {
+  position: absolute; top: 16px; right: 10px;
+  width: 26px; height: 26px; border-radius: 8px;
+  display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--line); background: var(--bg-1); color: var(--fg-2);
+  opacity: 0; transition: opacity .2s, color .15s;
 }
+.sidebar:hover .sb-toggle, .sb-toggle:focus-visible { opacity: 1; }
+.sb-toggle svg { width: 14px; height: 14px; }
 
-/* ==========================================================================
-   Base
-   ========================================================================== */
-@layer base {
-  * {
-    border-color: var(--border);
-  }
-  html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-sans);
-  }
-
-  /* Hero title style — ใช้ class .display */
-  .display {
-    font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
+.sb-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+.sb-logo .mark {
+  width: 38px; height: 38px; flex: 0 0 auto; border-radius: 12px;
+  background: var(--grad-signature); display: grid; place-items: center;
 }
+.sb-logo .mark svg { width: 24px; height: 24px; }
+.sb-logo .word {
+  font-weight: 700; font-size: 15px; letter-spacing: -.01em;
+  display: flex; flex-direction: column; white-space: nowrap;
+}
+.sb-logo .word small { font-size: 11px; font-weight: 500; color: var(--fg-3); }
 
-/* ==========================================================================
-   Utilities
-   ========================================================================== */
-@layer utilities {
-  .gradient-brand {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-brand-500),
-      var(--color-brand-700)
-    );
-  }
-  .gradient-hero {
-    background-image: radial-gradient(
-        80% 60% at 50% -10%,
-        oklch(0.68 0.22 270 / 0.35),
-        transparent 60%
-      ),
-      radial-gradient(
-        60% 40% at 90% 110%,
-        oklch(0.78 0.20 75 / 0.25),
-        transparent 60%
-      );
-  }
-  .text-balance {
-    text-wrap: balance;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    scrollbar-width: none;
-  }
+.sb-group { display: flex; flex-direction: column; gap: 4px; }
+.sb-group .heading {
+  font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--fg-3); padding: 6px 10px 2px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 11px; border-radius: 12px;
+  color: var(--fg-1); text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.sb-item:hover { background: var(--bg-2); color: var(--fg-0); }
+.sb-item[data-active] {
+  background: var(--glass-strong, var(--bg-2));
+  color: var(--fg-0);
+  box-shadow: inset 0 0 0 1px var(--glass-line-strong);
+}
+.sb-item svg { width: 19px; height: 19px; flex: 0 0 auto; }
+.sb-item .text { display: flex; flex-direction: column; min-width: 0; }
+.sb-item .text b { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sb-item .text small { font-size: 11px; color: var(--fg-3); white-space: nowrap; }
+.sb-item .ct {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px;
+  background: var(--brand-magenta); color: #fff;
+}
+.sb-foot { margin-top: auto; }
+
+/* พับแล้วเหลือแต่ไอคอน */
+.sidebar[data-collapsed] .sb-logo .word,
+.sidebar[data-collapsed] .sb-group .heading,
+.sidebar[data-collapsed] .sb-item .text,
+.sidebar[data-collapsed] .sb-item .ct { display: none; }
+.sidebar[data-collapsed] .sb-item { justify-content: center; padding: 11px; }
+.sidebar[data-collapsed] .sb-toggle { opacity: 1; }
+
+/* ---- แถบบน + เนื้อหา (ส่วนที่เหลือมาจาก page-shell.css) ---- */
+.topbar { padding: 0 28px; }
+.page { margin: 0 auto; width: 100%; }
+.page-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.page-head .titles { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.page-head .eyebrow {
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3);
+}
+.page-head h1 {
+  margin: 0; font-family: var(--font-display, inherit);
+  font-size: clamp(26px, 2.6vw, 34px); letter-spacing: -.02em;
+}
+.page-head .meta { font-size: 13.5px; color: var(--fg-2); }
+
+/* ---- เมนูโปรไฟล์ ---- */
+.top-av { position: relative; }
+.top-av > summary { list-style: none; cursor: pointer; }
+.top-av > summary::-webkit-details-marker { display: none; }
+.top-av .av {
+  display: block; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--grad-signature);
+}
+.av-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
+  min-width: 210px; padding: 6px; border-radius: 14px;
+  border: 1px solid var(--glass-line-strong);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.av-menu a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 10px;
+  font-size: 13.5px; color: var(--fg-1); text-decoration: none;
+}
+.av-menu a:hover { background: var(--bg-2); color: var(--fg-0); }
+.av-menu a svg { width: 16px; height: 16px; }
+.av-menu a.danger { color: var(--danger, oklch(.65 .2 25)); }
+
+/* ---- การ์ดพื้นฐาน ---- */
+.card {
+  padding: 22px; border-radius: 18px;
+  border: 1px solid var(--line); background: var(--bg-1);
 }

@@ -1,30 +1,39 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "next-themes";
-import { useState, type ReactNode } from "react";
-import { Toaster } from "@/components/ui/toaster";
+/**
+ * Provider ทั้งหมดของแอป — เพิ่มตัวใหม่ที่นี่ที่เดียว
+ *
+ * QueryClient สร้างใน useState เพื่อให้แต่ละ request ฝั่ง server ได้ cache
+ * ของตัวเอง ไม่ปนกันระหว่างผู้ใช้ (bug คลาสสิกของ Next.js App Router)
+ */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState, type ReactNode } from 'react';
+
+import { ThemeProvider } from './theme-provider';
 
 export function Providers({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(
+  const [qc] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 นาที — ลด refetch ระหว่าง navigate
+            // ข้อมูลส่วนใหญ่ไม่ต้องสดวินาทีต่อวินาที ลดการยิงซ้ำตอนสลับแท็บ
+            staleTime: 30_000,
             refetchOnWindowFocus: false,
-            retry: 1,
+            retry: (count, err) => {
+              // token หมดอายุ/ไม่มีสิทธิ์ → retry ไปก็เท่านั้น
+              const status = (err as { status?: number })?.status;
+              if (status === 401 || status === 403 || status === 404) return false;
+              return count < 2;
+            },
           },
         },
-      })
+      }),
   );
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <Toaster />
-      </QueryClientProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={qc}>
+      <ThemeProvider>{children}</ThemeProvider>
+    </QueryClientProvider>
   );
 }
