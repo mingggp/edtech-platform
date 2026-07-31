@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, model_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator
 from typing import List, Optional, Any, Dict
 from datetime import datetime
 
@@ -196,6 +196,10 @@ class ProgressUpdate(BaseModel):
 
 class StudyTimeCreate(BaseModel):
     minutes: int
+
+class DailyGoalUpdate(BaseModel):
+    """เป้าหมายรายวัน (นาที) — จำกัดช่วงไว้กันค่าเพี้ยนจาก client"""
+    minutes: int = Field(ge=5, le=600)
 
 # --- Friends ---
 class FriendRead(BaseModel):

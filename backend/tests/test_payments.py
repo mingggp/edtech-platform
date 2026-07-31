@@ -170,6 +170,23 @@ def test_admin_list_hides_awaiting(db_session, course):
     assert all(p.status != "awaiting" for p in rows)
 
 
+def test_paid_triggers_notification_and_badge(client, db_session, course):
+    """จ่ายสำเร็จต้องได้แจ้งเตือน + ปลดเหรียญ 'ป๋าเปย์' และยิงซ้ำต้องไม่แจ้งซ้ำ"""
+    from app import gamification as gm, achievements_seed
+    achievements_seed.seed(db_session)
+    h = _login(client)
+    ref = client.post("/payments/checkout", json={"course_id": course.id}, headers=h).json()["ref"]
+    body = {"ref": ref, "status": "paid", "amount": 1990.0}
+    sig = {"X-Signature": WEBHOOK_SECRET}
+    client.post("/payments/webhook", json=body, headers=sig)
+    client.post("/payments/webhook", json=body, headers=sig)
+
+    user = crud.get_user_by_email(db_session, "test@example.com")
+    pays = [n for n in gm.list_notifications(db_session, user.id) if n.type == "payment"]
+    assert len(pays) == 1, "webhook ยิงซ้ำต้องไม่แจ้งเตือนซ้ำ"
+    assert "payer" in gm.unlocked_ids(db_session, user.id)
+
+
 def test_stats_count_only_paid(db_session, course):
     user = crud.get_user_by_email(db_session, "test@example.com")
     paid = crud.create_payment_intent(db_session, user.id, course.id, 1990.0)

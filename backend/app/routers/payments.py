@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from ..database import get_db
-from .. import schemas, crud, models
+from .. import schemas, crud, models, achievements_seed
+from .. import gamification as gm
 from ..auth import get_current_user, require_admin
 from ..promptpay import make_qr_image
 from ..config import UPLOAD_DIR, MY_PROMPTPAY_ID
@@ -125,6 +126,16 @@ def payment_webhook(
             raise HTTPException(404, "ไม่พบรายการชำระเงิน")
         if r is False:
             raise HTTPException(400, "ยอดเงินไม่ตรงกับรายการ")
+
+        # แจ้งเตือน + เช็คเหรียญ (ป๋าเปย์) — ผูก dedupe กับ ref เผื่อ webhook ยิงซ้ำ
+        user = db.query(models.User).get(r.user_id)
+        if user:
+            course = crud.get_course(db, r.course_id)
+            gm.notify(db, user, "payment", "ชำระเงินสำเร็จ",
+                      f"คอร์ส {course.title if course else ''} · ฿{r.amount:,.0f} — เปิดเรียนให้แล้ว เริ่มได้เลย",
+                      href="Settings.html#billing", dedupe_key=f"paid:{r.provider_ref}")
+            db.commit()
+            achievements_seed.check_all(db, user)
         return {"status": "ok", "payment_status": r.status}
 
     p = crud.get_payment_by_ref(db, body.ref)

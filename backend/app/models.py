@@ -1,4 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, DateTime, Text
+from sqlalchemy import (
+    Column, Integer, String, Boolean, ForeignKey, Float, DateTime, Date, Text,
+    UniqueConstraint, Index,
+)
 from sqlalchemy.orm import relationship
 from .database import Base
 from datetime import datetime
@@ -15,6 +18,19 @@ class User(Base):
     role = Column(String, default="student")
     
     total_minutes = Column(Integer, default=0)
+
+    # ---- กีม (XP / เลเวล / สตรีค) --------------------------------------
+    # ค่าพวกนี้เป็น "ยอดสรุป" เพื่อให้หน้า Dashboard/Leaderboard อ่านเร็ว
+    # ความจริงอยู่ที่ xp_events + daily_activity — คำนวณกลับได้เสมอ
+    # (ดู gamification.recalc_user_totals ถ้าข้อมูลเพี้ยน)
+    xp_total = Column(Integer, default=0, nullable=False)
+    level = Column(Integer, default=1, nullable=False)
+    streak_current = Column(Integer, default=0, nullable=False)
+    streak_best = Column(Integer, default=0, nullable=False)
+    streak_freezes = Column(Integer, default=2, nullable=False)   # ตัวกันสตรีคหลุด
+    daily_goal_minutes = Column(Integer, default=30, nullable=False)
+    last_active_day = Column(Date, nullable=True)                 # วันที่ล่าสุด (เวลาไทย)
+
     last_login = Column(DateTime, default=datetime.utcnow)
     is_online = Column(Boolean, default=False)
     current_activity = Column(String, nullable=True)
@@ -265,4 +281,101 @@ class AuditLog(Base):
     actor_id = Column(Integer, nullable=True)
     target_id = Column(Integer, nullable=True)
     data = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# ===========================================================================
+#  กีม — XP · สตรีค · เหรียญ · แจ้งเตือน
+#  หมายเหตุสำคัญ: "วัน" ในระบบนี้คือวันตามเวลาไทย (UTC+7) เสมอ
+#  ดู gamification.th_today() — ห้ามใช้ datetime.utcnow().date() ตรง ๆ
+#  ไม่งั้นสตรีคจะตัดตอน 7 โมงเช้าแทนที่จะเป็นเที่ยงคืน
+# ===========================================================================
+
+class XpEvent(Base):
+    """บันทึกทุกครั้งที่ได้ XP — เป็นแหล่งความจริง ยอดรวมใน User คือสรุป
+
+    (source, source_key) ต้องไม่ซ้ำต่อผู้ใช้ 1 คน เพื่อกัน XP เด้งซ้ำ
+    เช่น ดูบทเรียนเดิมจบรอบสอง หรือ client ยิง API ซ้ำ
+      source='lesson'  source_key='42'
+      source='exam'    source_key='result:918'
+      source='streak'  source_key='2026-07-28'
+    """
+    __tablename__ = "xp_events"
+    __table_args__ = (
+        UniqueConstraint("user_id", "source", "source_key", name="uq_xp_once"),
+        Index("ix_xp_user_created", "user_id", "created_at"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    source = Column(String, nullable=False)
+    source_key = Column(String, nullable=False)
+    amount = Column(Integer, nullable=False)
+    note = Column(String, nullable=True)              # ข้อความที่โชว์ในไทม์ไลน์ XP
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class DailyActivity(Base):
+    """สรุปการเรียนราย "วันไทย" — ใช้ทำสตรีค เป้าหมายรายวัน และ leaderboard
+
+    goal_minutes เก็บค่าเป้าหมาย ณ วันนั้น (ไม่ใช่อ่านจาก User ตอนแสดงผล)
+    ไม่งั้นพอผู้ใช้เปลี่ยนเป้าหมาย ประวัติย้อนหลังจะเปลี่ยนตามไปด้วย
+    """
+    __tablename__ = "daily_activity"
+    __table_args__ = (
+        UniqueConstraint("user_id", "day", name="uq_daily_once"),
+        Index("ix_daily_day_user", "day", "user_id"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    day = Column(Date, nullable=False)               # วันตามเวลาไทย
+    minutes = Column(Integer, default=0, nullable=False)
+    xp = Column(Integer, default=0, nullable=False)
+    goal_minutes = Column(Integer, default=30, nullable=False)
+    met_goal = Column(Boolean, default=False, nullable=False)
+    freeze_used = Column(Boolean, default=False, nullable=False)   # วันนี้ถูกกันหลุดไว้
+
+
+class Achievement(Base):
+    """แคตตาล็อกเหรียญ — id ต้องตรงกับ data-badge ใน Achievements.html"""
+    __tablename__ = "achievements"
+    id = Column(String, primary_key=True)            # newbie, hotstreak, ...
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    tier = Column(String, default="common")          # common | rare | epic | legend
+    icon = Column(String, nullable=True)
+    category = Column(String, default="General")
+    sort_order = Column(Integer, default=0)
+
+
+class UserAchievement(Base):
+    """เหรียญที่ปลดล็อกแล้ว — unique กันปลดซ้ำและเก็บวันที่ไว้โชว์"""
+    __tablename__ = "user_achievements"
+    __table_args__ = (
+        UniqueConstraint("user_id", "achievement_id", name="uq_badge_once"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    achievement_id = Column(String, ForeignKey("achievements.id"), index=True)
+    unlocked_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Notification(Base):
+    """แจ้งเตือนในเว็บ — type ตรงกับที่ notifications.js ใช้
+
+    dedupe_key กันแจ้งซ้ำ เช่น เตือน "สตรีคใกล้หลุด" วันละครั้งพอ
+    ใช้ค่า None ได้ถ้าไม่ต้องกันซ้ำ (SQLite/Postgres ยอมให้ NULL ซ้ำได้ใน unique)
+    """
+    __tablename__ = "notifications"
+    __table_args__ = (
+        UniqueConstraint("user_id", "dedupe_key", name="uq_notif_dedupe"),
+        Index("ix_notif_user_created", "user_id", "created_at"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    type = Column(String, nullable=False)            # payment|streak|achievement|exam|lesson|social|system
+    title = Column(String, nullable=False)
+    body = Column(String, nullable=True)
+    href = Column(String, nullable=True)
+    dedupe_key = Column(String, nullable=True)
+    read_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
