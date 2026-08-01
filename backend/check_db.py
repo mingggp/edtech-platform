@@ -23,7 +23,19 @@ def main():
     url = str(engine.url)
     if "@" in url:                       # ซ่อนรหัสผ่าน
         url = url.split("://")[0] + "://***@" + url.split("@")[-1]
-    print(f"\nฐานข้อมูล: {url}\n")
+    print(f"\nฐานข้อมูล: {url}")
+
+    # เตือนถ้ากำลังตรวจ SQLite ทั้งที่ .env ตั้งเป็นอย่างอื่น
+    # (เคยเกิดบั๊กนี้จริง — สคริปต์อ่าน .env ไม่เจอเลยตกไปใช้ sqlite แล้วรายงานผิดฐาน)
+    env_url = os.getenv("DATABASE_URL")
+    if env_url and env_url.split("://")[0] != str(engine.url).split("://")[0]:
+        print(f"⚠️  ไม่ตรงกับ DATABASE_URL ใน environment ({env_url.split('://')[0]}://…)")
+    if str(engine.url).startswith("sqlite") and os.path.exists(".env"):
+        with open(".env", encoding="utf-8") as f:
+            if "postgresql" in f.read():
+                print("⚠️  .env ตั้งเป็น PostgreSQL แต่สคริปต์นี้กำลังใช้ SQLite")
+                print("    แปลว่า .env ไม่ถูกโหลด — ตรวจ app/__init__.py")
+    print()
 
     insp = inspect(engine)
     try:
