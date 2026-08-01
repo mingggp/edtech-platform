@@ -674,21 +674,51 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
 
 .detail-shell { --subj-c: var(--brand-violet, oklch(0.66 0.23 295)); position: relative; }
 
-/* ---- พื้นหลังไล่สี: คลุมทั้งหน้า ไม่เว้นบน/ข้าง ---- */
+/* ---- พื้นหลังไล่สี ----
+   คลุมเฉพาะพื้นที่เนื้อหา ไม่ล้ำไปโดน sidebar/topbar
+   .detail-shell อยู่ใน .page ซึ่งมี padding 32px รอบ (ล่าง 80px)
+   จึงยืดออกด้วย inset ติดลบให้เต็มพื้นที่ .page พอดี */
 .hero-bg {
-  position: fixed;                /* คลุมทั้ง viewport ไม่ใช่แค่หัวหน้า */
-  inset: 0;
+  position: absolute;
+  inset: -32px -32px -80px -32px;
   height: auto;
+  border-radius: inherit;
   background:
-    radial-gradient(120% 70% at 78% -10%, oklch(from var(--subj-c) calc(l + 0.06) c h / 0.55), transparent 62%),
-    linear-gradient(178deg, oklch(from var(--subj-c) l c h / 0.34) 0%, transparent 46%);
-  z-index: -1;
+    radial-gradient(120% 62% at 78% -8%, oklch(from var(--subj-c) calc(l + 0.06) c h / 0.55), transparent 62%),
+    linear-gradient(178deg, oklch(from var(--subj-c) l c h / 0.34) 0%, transparent 44%);
+  z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 }
+.detail-shell > *:not(.hero-bg) { position: relative; z-index: 1; }
 .hero-bg::after {
-  background: linear-gradient(180deg, transparent 34%, var(--bg-0) 88%);
+  background: linear-gradient(180deg, transparent 32%, var(--bg-0) 82%);
 }
 .hero-bg .glyph { display: none; }   /* ใช้ลายน้ำในการ์ดแทน */
+
+/* โหมดสว่าง: สีวิชาจางไปจนตัวหนังสือขาวอ่านไม่ออก -> เพิ่มความเข้มและอิ่มสี
+   โหมดมืดใช้ค่าด้านบนตามเดิม (หมิงบอกว่าโอเคแล้ว) */
+:root[data-theme="light"] .hero-bg,
+:root[data-theme="petronas-light"] .hero-bg {
+  background:
+    radial-gradient(120% 64% at 78% -8%,
+      oklch(from var(--subj-c) calc(l - 0.10) calc(c + 0.05) h / 0.96), transparent 66%),
+    linear-gradient(178deg,
+      oklch(from var(--subj-c) calc(l - 0.06) calc(c + 0.04) h / 0.88) 0%,
+      oklch(from var(--subj-c) l c h / 0.34) 30%,
+      transparent 52%);
+}
+:root[data-theme="light"] .hero-bg::after,
+:root[data-theme="petronas-light"] .hero-bg::after {
+  background: linear-gradient(180deg, transparent 26%, var(--bg-0) 76%);
+}
+/* ตัวหนังสือบนแถบสีต้องขาวจัดทั้งสองโหมด */
+:root[data-theme="light"] .hero-text h1,
+:root[data-theme="petronas-light"] .hero-text h1 { color: #fff; }
+:root[data-theme="light"] .hero-text .tagline,
+:root[data-theme="petronas-light"] .hero-text .tagline { color: oklch(1 0 0 / 0.9); }
+:root[data-theme="light"] .back-link,
+:root[data-theme="petronas-light"] .back-link { color: oklch(1 0 0 / 0.86); }
 
 /* ---- ป้ายเดียวพอ ---- */
 .hero-tags { margin-bottom: 14px; }
@@ -762,29 +792,34 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
    ผู้สอน — การ์ดเล็ก ไม่กินพื้นที่
    สีเดิมฮาร์ดโค้ดเป็นม่วง ทำให้คอร์สฟิสิกส์/TPAT3 สีเพี้ยน -> ผูกกับสีวิชา
    ========================================================================== */
+/* ---- การ์ดผู้สอน: รูปชิดซ้ายสุด เต็มความสูงการ์ด ข้อมูลอยู่ขวา ---- */
 .instr-block {
-  grid-template-columns: 68px 1fr;
-  gap: 16px;
-  padding: 16px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;                     /* ให้รูปชิดขอบซ้ายจริง ๆ */
+  padding: 0;
+  overflow: hidden;
   border-radius: 18px;
-  align-items: center;
   margin-top: 16px;
 }
 .instr-photo {
-  width: 68px; height: 68px;
-  border-radius: 16px;
+  flex: 0 0 104px;
+  width: 104px;
+  height: auto;               /* ยืดเต็มความสูงการ์ด */
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
   background: linear-gradient(150deg,
     oklch(from var(--subj-c) calc(l - 0.06) c h),
     oklch(from var(--subj-c) calc(l + 0.10) c calc(h + 22)));
 }
-.instr-info h3 { font-size: 16px; margin: 0; }
-.instr-info p { font-size: 13px; line-height: 1.55; color: var(--fg-2); margin: 6px 0 0; }
-.instr-chip {
-  display: inline-block; margin-top: 4px;
-  font-size: 11.5px; padding: 3px 9px; border-radius: 99px;
-  background: oklch(from var(--subj-c) l c h / 0.16);
-  color: oklch(from var(--subj-c) calc(l + 0.18) c h);
-  border: 1px solid oklch(from var(--subj-c) l c h / 0.3);
+.instr-info { padding: 16px 18px; display: flex; flex-direction: column; justify-content: center; }
+.instr-info h3 { font-size: 16.5px; margin: 0; }
+.instr-info p { font-size: 13px; line-height: 1.55; color: var(--fg-2); margin: 7px 0 0; }
+
+@media (max-width: 720px) {
+  .instr-photo { flex-basis: 84px; width: 84px; }
+  .instr-info { padding: 14px 15px; }
 }
 
 /* ==========================================================================
@@ -849,3 +884,10 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
 }
 .enroll-cover .cc-wm svg { width: 100%; height: 100%; stroke-width: 1.15; }
 .enroll:hover .cc-wm { transform: translate(-6px,-6px) rotate(-5deg); opacity: 0.3; }
+
+/* ไอคอนคลิปวิดีโอใช้สีเดียวกับไอคอนแบบฝึกหัด (หมิงขอ) */
+.lesson .icon,
+.lesson .icon.quiz {
+  background: oklch(0.78 0.16 82 / 0.18);
+  color: oklch(0.72 0.15 82);
+}

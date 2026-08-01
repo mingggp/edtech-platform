@@ -249,27 +249,25 @@ function SubjectCard({
       aria-pressed={active}
       onClick={onClick}
     >
-      {/* การ์ด 4 วิชา: โลโก้เป็นลายน้ำด้านหลัง
-          การ์ด "ทั้งหมด": คงไอคอนในกล่องมุมบนแบบเดิม (หมิงขอให้เหมือนอันเก่า) */}
-      {id === 'all' ? (
-        <div className="subj-ico"><SubjectIcon id={id} /></div>
-      ) : (
+      {/* 4 วิชามีโลโก้เป็นลายน้ำ ส่วนการ์ด "ทั้งหมด" ไม่มีโลโก้ */}
+      {id !== 'all' ? (
         <span className="subj-wm" aria-hidden="true"><SubjectIcon id={id} /></span>
-      )}
+      ) : null}
       <div className="check">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12" />
         </svg>
       </div>
-      <div>
+      {/* จำนวนคอร์ส — เป็นลูกโดยตรงของ .subj เพื่อให้ position:absolute
+          อ้างอิงตัวการ์ด ถ้าซ้อนอยู่ใน div ข้างล่างจะไปเกาะ div นั้นแทน
+          แล้วลอยไปอยู่กลาง ๆ ล่างการ์ด (บั๊กที่หมิงทัก) */}
+      <span className="subj-count">{count}</span>
+      <div className="subj-text">
         {/* ชื่อไทย (คณิต/ฟิสิกส์/ทั้งหมด) เล็กกว่าชื่ออังกฤษ 2px
             เพราะฟอนต์ไทยตัวโตกว่าที่ขนาดเท่ากัน */}
         <div className="subj-name" data-script={isThai ? 'thai' : undefined}>{label}</div>
-        <div className="subj-meta">
-          <span>{en}</span>
-          <span className="count">{count}</span>
-        </div>
+        <div className="subj-meta"><span>{en}</span></div>
       </div>
     </button>
   );

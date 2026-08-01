@@ -151,8 +151,7 @@ export function CourseDetail({ courseId }: { courseId: number }) {
             <div className="instr-block">
               <div className="instr-photo" aria-hidden="true" />
               <div className="instr-info">
-                <h3>พี่หมิง</h3>
-                <div className="instr-chip">คณิต · ฟิสิกส์ · TPAT3 · TGAT2</div>
+                <h3>พี่หมิง (Mingsmileyface)</h3>
                 <p>สอน ม.ปลายและเตรียมสอบเข้ามหาวิทยาลัย เน้นให้เข้าใจที่มา ไม่ใช่ท่องสูตร</p>
               </div>
             </div>
