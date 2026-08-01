@@ -91,11 +91,30 @@ def _guard(force: bool):
     sys.exit(1)
 
 
+def _stamp_alembic_head():
+    """บอก alembic ว่าฐานข้อมูลตอนนี้อยู่เวอร์ชันล่าสุดแล้ว
+
+    ทำไมต้องมี: create_all() สร้างตารางตาม models.py ตรง ๆ โดยไม่ผ่าน alembic
+    แปลว่าตารางในฐานข้อมูล "ใหม่" แต่ตาราง alembic_version ยังชี้เวอร์ชันเก่า
+    พอรัน `alembic upgrade head` ทีหลังมันจะพยายามสร้างตารางที่มีอยู่แล้ว
+    -> DuplicateTable error (เคยเกิดจริงมาแล้ว)
+    """
+    try:
+        from alembic import command
+        from alembic.config import Config
+        cfg = Config(os.path.join(os.path.dirname(os.path.abspath(__file__)), "alembic.ini"))
+        command.stamp(cfg, "head")
+        print("🔖 stamp alembic เป็นเวอร์ชันล่าสุดแล้ว")
+    except Exception as e:                      # ไม่ให้ seed ล้มเพราะเรื่องนี้
+        print(f"⚠️  stamp alembic ไม่สำเร็จ ({e}) — ถ้าเจอ DuplicateTable ให้รัน `alembic stamp head` เอง")
+
+
 def init_db(force: bool = False):
     _guard(force)
     print("🗑️  ล้างข้อมูลเก่าและสร้างตารางใหม่...")
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    _stamp_alembic_head()
 
     db = SessionLocal()
     try:
