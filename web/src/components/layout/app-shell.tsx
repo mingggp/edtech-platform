@@ -17,20 +17,18 @@ export interface AppShellProps {
   children: ReactNode;
   /** เบรดครัมบ์บนแถบบน */
   crumb?: ReactNode;
-  /** ความกว้างสูงสุดของเนื้อหา — แต่ละหน้าไม่เท่ากันได้ */
-  maxWidth?: number;
 }
 
-export function AppShell({ children, crumb, maxWidth = 1100 }: AppShellProps) {
+export function AppShell({ children, crumb }: AppShellProps) {
   return (
     <div className="app">
       <Sidebar groups={APP_NAV} />
       <div className="main-col">
         <Topbar crumb={crumb} />
         <div className="scroll">
-          <main className="page" style={{ maxWidth }}>
-            {children}
-          </main>
+          {/* ไม่ใส่ style inline ที่นี่ — ความกว้าง/ระยะห่างให้ CSS ของแต่ละหน้า
+              คุมเอง (inline style ชนะ CSS เสมอ จะทำให้หน้าปรับเองไม่ได้) */}
+          <main className="page">{children}</main>
         </div>
       </div>
     </div>

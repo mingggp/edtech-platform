@@ -106,7 +106,20 @@ body {
 
 /* ---- แถบบน + เนื้อหา (ส่วนที่เหลือมาจาก page-shell.css) ---- */
 .topbar { padding: 0 28px; }
-.page { margin: 0 auto; width: 100%; }
+
+/* .page = พื้นที่เนื้อหาของแต่ละหน้า
+   ตั้งค่ากลางไว้เท่าที่ทุกหน้าเหมือนกัน — padding / gap / max-width
+   ให้ CSS ของแต่ละหน้าเขียนทับเอง (ดีไซน์แต่ละหน้ากว้างไม่เท่ากัน)
+   ⚠️ ต้องเป็น flex + gap ไม่งั้นทุกส่วนในหน้าจะชิดติดกันหมด */
+.page {
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 32px 32px 80px;
+}
 .page-head {
   display: flex; align-items: center; justify-content: space-between;
   gap: 20px; flex-wrap: wrap;

@@ -94,7 +94,11 @@ export function CoursesBrowser() {
   }
 
   return (
-    <div style={bleed}>
+    /* display:contents ทำให้ div นี้หายไปจาก layout — ลูก ๆ กลายเป็นลูกของ
+       .page โดยตรง จะได้ gap 32px ตามดีไซน์
+       ถ้าไม่ทำแบบนี้ div จะกลายเป็นลูกตัวเดียวของ .page แล้ว gap ไม่ทำงาน
+       ทุกส่วนในหน้าจะชิดติดกันหมด */
+    <div style={{ display: 'contents', ...bleed }}>
       <PageHeader
         eyebrow="คอร์สเรียน"
         title="เลือกวิชาที่อยากเก่ง"

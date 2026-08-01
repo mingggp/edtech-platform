@@ -28,9 +28,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* ฟอนต์ชุดเดียวกับที่โฟลเดอร์ดีไซน์โหลด — ถ้าขาดตัวใดตัวหนึ่ง
+            ตัวอักษรจะเพี้ยนจากที่ออกแบบไว้ โดยเฉพาะภาษาอังกฤษกับตัวเลข
+              Bricolage Grotesque = หัวข้อใหญ่ (--font-display)
+              IBM Plex Sans        = อังกฤษเนื้อความ
+              IBM Plex Sans Thai   = ไทยเนื้อความ
+              JetBrains Mono       = ตัวเลข/ป้ายกำกับ
+              Bai Jamjuree         = โหมดฟอนต์ทางเลือก
+              Chakra Petch / Kanit / Anuphan / Space Grotesk = ธีมทางเลือก */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Bai+Jamjuree:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Kanit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         />
       </head>
       <body>
