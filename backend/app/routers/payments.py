@@ -10,7 +10,7 @@ from .. import schemas, crud, models, achievements_seed
 from .. import gamification as gm
 from ..auth import get_current_user, require_admin
 from ..promptpay import make_qr_image
-from ..config import UPLOAD_DIR, MY_PROMPTPAY_ID
+from ..config import UPLOAD_DIR, MY_PROMPTPAY_ID, settings
 
 # secret ที่ใช้ตรวจ webhook จากเกตเวย์ — ถ้าไม่ตั้ง endpoint จะปฏิเสธทุก request
 PAYMENT_WEBHOOK_SECRET = os.getenv("PAYMENT_WEBHOOK_SECRET", "")
@@ -19,12 +19,65 @@ router = APIRouter(prefix="", tags=["payments"])
 
 @router.post("/users/me/courses")
 def enroll(course_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
-    crud.create_enrollment(db, u.id, course_id)
-    return {"status": "ok"}
+    """ลงทะเบียนเรียนด้วยตัวเอง — ใช้ได้กับคอร์สฟรีเท่านั้น
 
-@router.get("/users/me/courses", response_model=List[schemas.EnrollmentRead])
-def my_c(db: Session = Depends(get_db), u=Depends(get_current_user)):
-    return crud.get_my_courses(db, u.id)
+    ⚠️ ช่องโหว่ที่เพิ่งอุด: เดิม endpoint นี้เรียก create_enrollment ทันที
+    โดยไม่เช็คราคาเลย ใครล็อกอินแล้วยิง POST /users/me/courses?course_id=1
+    ก็ได้คอร์สราคา 2,490 ไปฟรี ๆ โดยไม่ต้องจ่ายสักบาท
+
+    คอร์สที่มีราคาต้องผ่าน /payments/checkout -> webhook เท่านั้น
+    """
+    c = crud.get_course(db, course_id)
+    if not c:
+        raise HTTPException(404, "ไม่พบคอร์สนี้")
+    if not c.is_active:
+        raise HTTPException(400, "คอร์สนี้ยังไม่เปิดให้ลงทะเบียน")
+    if (c.price or 0) > 0:
+        raise HTTPException(402, "คอร์สนี้ต้องชำระเงินก่อน")
+    if crud.get_enrollment(db, u.id, course_id):
+        raise HTTPException(400, "คุณลงทะเบียนคอร์สนี้ไปแล้ว")
+
+    crud.create_enrollment(db, u.id, course_id)
+    user = db.query(models.User).get(u.id)
+    if user:
+        achievements_seed.check_all(db, user)
+    return {"status": "ok", "course_id": course_id}
+
+
+@router.post("/payments/{ref}/simulate-paid")
+def simulate_paid(ref: str, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    """จำลองว่าจ่ายเงินสำเร็จ — ใช้ทดสอบตอนพัฒนาเท่านั้น
+
+    ทำไมไม่ให้หน้าเว็บยิง /payments/webhook ตรง ๆ:
+    webhook ต้องใช้ PAYMENT_WEBHOOK_SECRET ถ้าเอา secret ไปไว้ในเบราว์เซอร์
+    ใครเปิด DevTools ก็เห็น แล้วปลดคอร์สฟรีได้ทั้งเว็บ
+
+    endpoint นี้จึงไม่ต้องใช้ secret แต่:
+      • ปิดสนิทเมื่อ ENV=production
+      • ทำได้เฉพาะรายการของตัวเองเท่านั้น
+    """
+    if settings.is_production:
+        raise HTTPException(404, "ไม่พบเส้นทางนี้")
+
+    p = crud.get_payment_by_ref(db, ref)
+    if not p or p.user_id != u.id:
+        raise HTTPException(404, "ไม่พบรายการชำระเงิน")
+    if p.status == "expired":
+        raise HTTPException(400, "รายการนี้หมดอายุแล้ว สร้าง QR ใหม่ก่อน")
+
+    r = crud.mark_payment_paid(db, ref, charge_id=f"SIMULATED-{ref}")
+    user = db.query(models.User).get(p.user_id)
+    if user:
+        course = crud.get_course(db, p.course_id)
+        gm.notify(db, user, "payment", "ชำระเงินสำเร็จ",
+                  f"คอร์ส {course.title if course else ''} · ฿{p.amount:,.0f} — เปิดเรียนให้แล้ว",
+                  href="Settings.html#billing", dedupe_key=f"paid:{p.provider_ref}")
+        db.commit()
+        achievements_seed.check_all(db, user)
+    return {"status": "ok", "payment_status": r.status if r else p.status}
+
+# GET /users/me/courses อยู่ที่ routers/users.py (คืนความคืบหน้าการเรียนมาด้วย)
+# เดิมประกาศไว้ทั้งสองไฟล์ ตัวที่นี่ถูกบังไม่เคยทำงานเลย จึงลบทิ้ง
 
 @router.get("/users/me/payments", response_model=List[schemas.PaymentRead])
 def my_payments(db: Session = Depends(get_db), u=Depends(get_current_user)):

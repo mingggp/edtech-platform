@@ -4,7 +4,7 @@
  * กติกา: component ห้ามเขียน path เป็น string เอง ให้เรียกผ่านฟังก์ชันในนี้
  * เวลา backend เปลี่ยน path จะได้แก้ที่เดียวและ TypeScript ฟ้องให้ครบ
  */
-import { api, tokenStore } from './client';
+import { API_BASE, api, tokenStore } from './client';
 import type {
   AppNotification, Chapter, Checkout, Course, Gamification, LeaderboardPeriod,
   LeaderboardRow, Payment, Token, User, XpEvent,
@@ -52,6 +52,15 @@ export const payments = {
     api.post<{ code: string; discount_type: string; discount_value: number }>(
       '/coupons/validate', { code },
     ),
+  /** URL รูป QR พร้อมเพย์ — ต้องเป็น absolute เพราะ <img> โหลดเอง ไม่ผ่าน client.ts */
+  qrUrl: (amount: number, ref: string) =>
+    `${API_BASE}/payments/qr?amount=${encodeURIComponent(amount)}&ref=${encodeURIComponent(ref)}`,
+  /** จำลองว่าจ่ายแล้ว — backend ปิดตายเมื่อ ENV=production */
+  simulatePaid: (ref: string) =>
+    api.post<{ status: string; payment_status: string }>(`/payments/${ref}/simulate-paid`),
+  /** ลงทะเบียนคอร์สฟรี — backend ปฏิเสธถ้าคอร์สมีราคา */
+  enrollFree: (course_id: number) =>
+    api.post<{ status: string; course_id: number }>(`/users/me/courses?course_id=${course_id}`),
 };
 
 /* ------------------------------------------------------------------- กีม */

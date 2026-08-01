@@ -89,14 +89,16 @@ def get_public_profile_api(user_id: int, db: Session = Depends(get_db), u=Depend
     return profile
 
 # --- Course Enrollment & Progress ---
-@router.post("/me/courses")
-def enroll_my_course(course_id: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
-    course = crud.get_course(db, course_id)
-    if not course:
-        raise HTTPException(404, "Course not found")
-    # For now, allow free enrollment.
-    crud.enroll_course(db, u.id, course_id)
-    return {"message": "Enrolled successfully"}
+#
+# ⚠️ POST /users/me/courses ถูกย้ายไปอยู่ที่ routers/payments.py แล้ว
+#
+# เดิมมีสองที่: ที่นี่ (users.py) กับ payments.py — path เดียวกันเป๊ะ
+# users.router ถูก include ก่อน ตัวนี้จึงชนะเสมอ และตัวนี้ "ลงทะเบียนให้เลย
+# โดยไม่เช็คราคา" (คอมเมนต์เดิมเขียนว่า "For now, allow free enrollment")
+# ผลคือใครล็อกอินแล้วยิง POST /users/me/courses?course_id=1 ก็ได้คอร์ส
+# ราคา 2,490 ไปฟรี ๆ  แถมตอนแก้ที่ payments.py ก็ไม่มีผลอะไรเลยเพราะโดนบัง
+#
+# ห้ามประกาศ path นี้ซ้ำที่นี่อีก — มี test_no_duplicate_routes คอยจับ
 
 @router.get("/me/courses")
 def my_enrolled_courses(db: Session = Depends(get_db), u=Depends(get_current_user)):

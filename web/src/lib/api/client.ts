@@ -55,24 +55,52 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * ดึงข้อความ error ออกจาก body
+ *
+ * backend ตัวนี้มี exception handler ของตัวเองใน main.py ที่ตอบเป็น
+ *     { success: false, error: "ข้อความ" }
+ * ไม่ใช่ { detail: "..." } แบบมาตรฐานของ FastAPI
+ *
+ * เดิมโค้ดนี้อ่านแต่ `detail` -> ข้อความจริงไม่เคยถึงผู้ใช้เลย
+ * นักเรียนเห็นแค่ "เกิดข้อผิดพลาด (400)" แทนที่จะเห็น
+ * "คุณลงทะเบียนคอร์สนี้ไปแล้ว"  (เจอตอนทดสอบ end-to-end)
+ *
+ * รองรับทั้ง 3 รูปแบบ เผื่อ backend เปลี่ยนกลับไปใช้มาตรฐานในอนาคต
+ */
+function pickMessage(body: unknown): string | null {
+  if (typeof body === 'string') return body || null;
+  if (!body || typeof body !== 'object') return null;
+  const b = body as Record<string, unknown>;
+
+  // pydantic validation — { error: 'Validation Error', details: [{msg}] }
+  if (Array.isArray(b.details)) {
+    const msgs = b.details.map((d) => (d as { msg?: string })?.msg).filter(Boolean);
+    if (msgs.length) return msgs.join(', ');
+  }
+  for (const key of ['error', 'detail', 'message'] as const) {
+    const v = b[key];
+    if (typeof v === 'string' && v.trim()) return v;
+    if (Array.isArray(v)) {
+      const msgs = v.map((d) => (d as { msg?: string })?.msg).filter(Boolean);
+      if (msgs.length) return msgs.join(', ');
+    }
+  }
+  return null;
+}
+
 async function parseError(res: Response): Promise<ApiError> {
-  let detail: unknown;
+  let body: unknown;
   let message = `เกิดข้อผิดพลาด (${res.status})`;
   try {
-    const body = await res.json();
-    detail = body?.detail ?? body;
-    if (typeof detail === 'string') {
-      message = detail;
-    } else if (Array.isArray(detail)) {
-      // pydantic validation error
-      message = detail.map((d) => d?.msg).filter(Boolean).join(', ') || message;
-    }
+    body = await res.json();
+    message = pickMessage(body) ?? message;
   } catch {
     /* body ไม่ใช่ JSON — ใช้ข้อความ default */
   }
+  // 401 มีความหมายเดียวเสมอ ทับข้อความจาก backend ให้เข้าใจง่าย
   if (res.status === 401) message = 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่';
-  if (res.status === 503) message = message || 'ระบบยังไม่พร้อมใช้งาน';
-  return new ApiError(res.status, message, detail);
+  return new ApiError(res.status, message, body);
 }
 
 /* refresh token ที่กำลังทำงานอยู่ — ให้ทุก request ที่ 401 พร้อมกันรอตัวเดียวกัน */

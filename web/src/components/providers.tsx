@@ -9,6 +9,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 
+import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from './theme-provider';
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -33,7 +34,10 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={qc}>
-      <ThemeProvider>{children}</ThemeProvider>
+      <ThemeProvider>
+        {/* AuthProvider ต้องอยู่ใน QueryClientProvider เพราะใช้ useQuery */}
+        <AuthProvider>{children}</AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
