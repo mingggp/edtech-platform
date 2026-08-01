@@ -29,6 +29,8 @@ export interface Subject {
   label: string;
   /** ชื่อเต็มไว้ใช้ที่ต้องการความชัดเจน */
   full: string;
+  /** ข้อความอังกฤษตัวเล็กใต้ชื่อวิชาบนการ์ดเลือกวิชา */
+  en: string;
   tagline: string;
   /** มีตัวกรองระดับ (ม.4/5/6/A-Level) ได้ไหม */
   hasLevels: boolean;
@@ -44,6 +46,7 @@ export const SUBJECTS: readonly Subject[] = [
     id: 'math',
     label: 'คณิต',
     full: 'คณิตศาสตร์',
+    en: 'MATH',
     tagline: 'ครบทุกระดับ ม.ปลาย + A-Level',
     hasLevels: true,
     color: 'var(--subj-math)',
@@ -55,6 +58,7 @@ export const SUBJECTS: readonly Subject[] = [
     id: 'phys',
     label: 'ฟิสิกส์',
     full: 'ฟิสิกส์',
+    en: 'PHYSICS',
     tagline: 'ครบทุกระดับ ม.ปลาย + A-Level',
     hasLevels: true,
     color: 'var(--subj-phys)',
@@ -66,6 +70,7 @@ export const SUBJECTS: readonly Subject[] = [
     id: 'tpat3',
     label: 'TPAT3',
     full: 'TPAT3 ความถนัดวิทยาศาสตร์ เทคโนโลยี วิศวกรรมศาสตร์',
+    en: 'ENGINEERING',
     tagline: 'ความถนัดวิทย์ · เทคโนฯ · วิศวะ',
     hasLevels: false,
     color: 'var(--subj-tpat3)',
@@ -77,6 +82,7 @@ export const SUBJECTS: readonly Subject[] = [
     id: 'tgat2',
     label: 'TGAT2',
     full: 'TGAT2 การคิดอย่างมีเหตุผล',
+    en: 'APTITUDE',
     tagline: 'การคิดอย่างมีเหตุผล',
     hasLevels: false,
     color: 'var(--subj-tgat2)',
