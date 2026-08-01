@@ -6,7 +6,7 @@
  */
 import { api, tokenStore } from './client';
 import type {
-  AppNotification, Checkout, Course, Gamification, LeaderboardPeriod,
+  AppNotification, Chapter, Checkout, Course, Gamification, LeaderboardPeriod,
   LeaderboardRow, Payment, Token, User, XpEvent,
 } from './types';
 
@@ -35,6 +35,8 @@ export const auth = {
 export const courses = {
   list: () => api.get<Course[]>('/courses', { anonymous: true }),
   get: (id: number) => api.get<Course>(`/courses/${id}`, { anonymous: true }),
+  /** สารบัญคอร์ส — บท + บทเรียนย่อย */
+  chapters: (id: number) => api.get<Chapter[]>(`/courses/${id}/chapters`, { anonymous: true }),
   mine: () => api.get<Course[]>('/users/me/courses'),
 };
 

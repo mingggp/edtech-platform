@@ -82,6 +82,10 @@ class Course(Base):
     # tpat3 / tgat2 ต้องเป็น None
     level = Column(String, index=True, nullable=True)
 
+    # ป้ายการตลาดบนการ์ดคอร์ส — แอดมินเลือกเอง ไม่ได้คำนวณจากอะไร
+    #   hot = ขายดี · new = มาใหม่ · rec = แนะนำ · free = เรียนฟรี · None = ไม่มีป้าย
+    ribbon = Column(String, nullable=True)
+
     category = Column(String, default="General")      # legacy — ใช้ subject แทน
     thumbnail = Column(String, nullable=True)
     highlights = Column(String, nullable=True) 
@@ -94,12 +98,37 @@ class Course(Base):
     chapters = relationship("Chapter", back_populates="course", cascade="all, delete-orphan")
     enrollments = relationship("Enrollment", back_populates="course")
 
+    # ------------------------------------------------------------------
+    # ค่าที่คำนวณจากข้อมูลที่มีอยู่ — ไม่ต้องกรอกเอง ไม่มีวันไม่ตรงกับของจริง
+    #
+    # ⚠️ property พวกนี้ต้องโหลด relationship ก่อน ถ้าไม่ eager load
+    #    การ list คอร์ส 14 ตัวจะยิง query เพิ่มอีกหลายสิบครั้ง (N+1)
+    #    -> crud.list_courses ใส่ selectinload ไว้แล้ว
+    # ------------------------------------------------------------------
+
     @property
-    def total_lessons(self):
-        if not self.chapters: return 0
+    def total_lessons(self) -> int:
+        """จำนวนบทเรียนทั้งหมดในคอร์ส"""
+        if not self.chapters:
+            return 0
         return sum(len(ch.lessons) for ch in self.chapters)
-    
-    
+
+    @property
+    def total_minutes(self) -> int:
+        """ความยาวรวมของคอร์ส (นาที) — บวกจาก Lesson.duration ทุกบท
+
+        Lesson.duration เก็บเป็น "นาที" (ดู config.get_youtube_duration)
+        """
+        if not self.chapters:
+            return 0
+        return sum((l.duration or 0) for ch in self.chapters for l in ch.lessons)
+
+    @property
+    def student_count(self) -> int:
+        """จำนวนคนที่ลงเรียนคอร์สนี้"""
+        return len(self.enrollments or [])
+
+
 class Chapter(Base):
     __tablename__ = "chapters"
     id = Column(Integer, primary_key=True, index=True)

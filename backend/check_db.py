@@ -50,8 +50,19 @@ def main():
             ver = c.execute(text("SELECT version_num FROM alembic_version")).scalar()
     except Exception:
         ver = None
+    # อ่านเวอร์ชันล่าสุดจาก alembic เอง — ห้ามเขียนค่าตายตัวไว้ตรงนี้
+    # (เคยเขียนไว้แล้วลืมอัปเดตตอนเพิ่ม migration ใหม่ สคริปต์ตรวจเลยเตือนผิด)
+    head = None
+    try:
+        from alembic.config import Config
+        from alembic.script import ScriptDirectory
+        here = os.path.dirname(os.path.abspath(__file__))
+        head = ScriptDirectory.from_config(Config(os.path.join(here, "alembic.ini"))).get_current_head()
+    except Exception:
+        pass
+
     print(f"alembic คิดว่าอยู่เวอร์ชัน: {ver or '(ไม่มีตาราง alembic_version)'}")
-    print("เวอร์ชันล่าสุดในโค้ด:      c7d8e9f0a1b2\n")
+    print(f"เวอร์ชันล่าสุดในโค้ด:      {head or '(อ่านไม่ได้)'}\n")
 
     # ---- เทียบตาราง/คอลัมน์ ----
     missing_tables, missing_cols = [], []
@@ -67,7 +78,7 @@ def main():
 
     if not missing_tables and not missing_cols:
         print("✅ ตารางในฐานข้อมูลตรงกับโค้ดครบทุกอย่าง")
-        if ver != "c7d8e9f0a1b2":
+        if head and ver != head:
             print("⚠️  แต่ alembic จดเวอร์ชันไม่ตรง — แก้ด้วย: alembic stamp head")
         n = 0
         try:

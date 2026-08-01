@@ -141,26 +141,38 @@ def admin_update_user(db: Session, user: models.User, payload: schemas.AdminUser
 #  COURSES & CONTENT
 # ==========================================
 
+def _course_query(db: Session):
+    """query คอร์สพร้อมโหลดของที่ property ต้องใช้มาให้ครบในทีเดียว
+
+    Course.total_lessons / total_minutes / student_count อ่านจาก relationship
+    ถ้าไม่ eager load ตรงนี้ การดึงคอร์ส 14 ตัวจะยิง query เพิ่มอีก ~40 ครั้ง
+    (N+1) — ตอนนี้ยังไม่รู้สึก แต่พอคอร์สเยอะจะช้าชัดเจน
+    """
+    from sqlalchemy.orm import selectinload
+    return db.query(models.Course).options(
+        selectinload(models.Course.chapters).selectinload(models.Chapter.lessons),
+        selectinload(models.Course.enrollments),
+    )
+
+
 def list_courses(db: Session, skip: int = 0, limit: int = 100, active_only: bool = False):
-    qs = db.query(models.Course)
+    qs = _course_query(db)
     if active_only:
         qs = qs.filter(models.Course.is_active == True)
     return qs.order_by(models.Course.id.desc()).offset(skip).limit(limit).all()
 
 def get_course(db: Session, course_id: int):
-    return db.query(models.Course).filter(models.Course.id == course_id).first()
+    return _course_query(db).filter(models.Course.id == course_id).first()
 
 def create_course(db: Session, p: schemas.CourseCreate):
-    c = models.Course(
-        title=p.title,
-        description=p.description,
-        price=p.price,
-        thumbnail=p.thumbnail,
-        category=p.category,
-        target_audience=p.target_audience, 
-        highlights=p.highlights,
-        is_active=p.is_active
-    )
+    """สร้างคอร์สจากทุกฟิลด์ใน schema
+
+    เดิมไล่เขียนทีละฟิลด์ พอเพิ่ม subject/level/price_old ลงใน schema แล้ว
+    ลืมมาเพิ่มตรงนี้ -> สร้างคอร์สผ่าน Admin แล้ววิชาหายเงียบ ๆ ไม่มี error
+    เปลี่ยนมาอ่านจาก model_dump() เพื่อไม่ให้ลืมได้อีก
+    """
+    data = p.model_dump()
+    c = models.Course(**{k: v for k, v in data.items() if hasattr(models.Course, k)})
     db.add(c)
     db.commit()
     db.refresh(c)
@@ -168,19 +180,20 @@ def create_course(db: Session, p: schemas.CourseCreate):
     return c
 
 def update_course(db: Session, course_id: int, p: schemas.CourseUpdate):
+    """อัปเดตเฉพาะฟิลด์ที่ส่งมา (exclude_unset) — ฟิลด์ที่ไม่ส่งจะไม่ถูกแตะ
+
+    ใช้ exclude_unset แทนการเช็ค `is not None` ทีละตัว เพราะแบบเดิม
+    ล้างค่าเป็น null ไม่ได้ (เช่นอยากเอาริบบิ้นออก ส่ง null มาก็ไม่มีผล)
+    """
     c = get_course(db, course_id)
-    if not c: return None
+    if not c:
+        return None
     old_snapshot = _serialize(c)
-    
-    if p.title is not None: c.title = p.title
-    if p.description is not None: c.description = p.description
-    if p.price is not None: c.price = p.price
-    if p.thumbnail is not None: c.thumbnail = p.thumbnail
-    if p.category is not None: c.category = p.category
-    if p.target_audience is not None: c.target_audience = p.target_audience
-    if p.highlights is not None: c.highlights = p.highlights
-    if p.is_active is not None: c.is_active = p.is_active
-    
+
+    for k, v in p.model_dump(exclude_unset=True).items():
+        if hasattr(models.Course, k):
+            setattr(c, k, v)
+
     db.commit()
     db.refresh(c)
     add_audit(db, "update_course", None, c.id, old_snapshot, c)

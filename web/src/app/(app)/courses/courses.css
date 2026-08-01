@@ -45,20 +45,17 @@
 .subj::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, oklch(0 0 0 / 0.35)); opacity: 0.4; pointer-events: none; }
 .subj > * { position: relative; z-index: 1; }
 .subj:hover { transform: translateY(-3px); box-shadow: 0 16px 40px -12px var(--subj-shadow, oklch(0.66 0.23 295 / 0.45)); }
-.subj:hover .subj-ico { transform: translate(3px, -3px); }
-.subj .subj-ico { width: 28px; height: 28px; border-radius: 8px; background: oklch(0.99 0.005 285 / 0.18); backdrop-filter: blur(20px); border: 1px solid oklch(0.99 0.005 285 / 0.22); display: flex; align-items: center; justify-content: center; transition: transform .28s cubic-bezier(.2,.8,.2,1); }
-.subj .subj-ico svg { width: 16px; height: 16px; color: #fff; }
+/* หมายเหตุ: กฎของ .subj-ico ถูกลบออกแล้ว เพราะไอคอนในกล่องมุมบนไม่มีแล้ว
+   (ย้ายไปเป็นลายน้ำ .subj-wm ท้ายไฟล์) — ไม่เก็บ CSS ที่ไม่มี element ใช้
+   บทเรียนจาก sidebar เก่าที่ตายแล้วแต่ยังกอง CSS ไว้ 43% ของไฟล์ */
 .subj .subj-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; line-height: 1.05; }
 .subj .subj-meta { font-family: "JetBrains Mono"; font-size: 9.5px; letter-spacing: 0.06em; opacity: 0.86; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; margin-top: 3px; }
 .subj .subj-meta .count { background: oklch(0.99 0.005 285 / 0.16); border: 1px solid oklch(0.99 0.005 285 / 0.22); padding: 2px 8px; border-radius: 99px; font-weight: 600; }
 .subj[aria-pressed="true"] { outline: 2px solid var(--fg-0); outline-offset: 3px; transform: scale(1.02); box-shadow: 0 16px 40px -12px var(--subj-shadow, oklch(0.66 0.23 295 / 0.55)), 0 0 0 1px oklch(0.99 0.005 285 / 0.2) inset; }
 .subj .check { position: absolute; top: 11px; right: 11px; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: oklch(0.30 0.18 295); display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.5); transition: opacity .2s, transform .25s cubic-bezier(.2,.8,.2,1); z-index: 2; }
 .subj[aria-pressed="true"] .check { opacity: 1; transform: scale(1); }
-.subj[aria-pressed="true"] .subj-ico { display: none; }
 .subj.all { background: linear-gradient(135deg, var(--bg-2), var(--bg-1)); color: var(--fg-0); border-color: var(--line); --subj-shadow: oklch(0 0 0 / 0.35); }
 .subj.all::before { opacity: 0.18; }
-.subj.all .subj-ico { background: var(--bg-3); border-color: var(--line); color: var(--fg-1); }
-.subj.all .subj-ico svg { color: var(--fg-1); }
 .subj.all[aria-pressed="true"] .check { background: var(--fg-0); color: var(--bg-0); }
 /* canonical subject color recipes */
 .subj.math  { --subj-grad: var(--subj-math-grad); --subj-shadow: oklch(from var(--subj-math) l c h / 0.5); }
@@ -277,62 +274,58 @@
 @media (prefers-reduced-motion: reduce) { .cc-skeleton { animation: none; } }
 
 /* ==========================================================================
-   ปรับสัดส่วนการ์ดเลือกวิชา  (หมิงทักว่าไอคอนกับชื่อวิชาชิดกัน + ชื่อไม่เด่น)
+   การ์ดเลือกวิชา — ปรับตามที่หมิงสั่ง
    --------------------------------------------------------------------------
-   เขียนทับค่าจากดีไซน์เดิมไว้ตรงนี้ เพื่อให้เห็นชัดว่าอะไรถูกเปลี่ยน
-   อยากกลับไปแบบเดิม = ลบบล็อกนี้ทิ้งได้เลย
+   ขนาดการ์ดเท่าเดิมทุกอย่าง (สูง 86px · padding 13/15 · gap 12)
+   เปลี่ยนแค่ 2 เรื่อง:
+     1. ชื่อวิชาใหญ่ขึ้นมาก  16px -> 22–30px  ให้เป็นพระเอกของการ์ด
+     2. ไอคอนวิชาไม่อยู่ในกล่องเล็กมุมบนแล้ว ย้ายไปเป็นลายน้ำจาง ๆ ด้านหลัง
+        (แนวเดียวกับตัวอักษร ∫ Φ ⌬ ∑ ที่เป็นลายน้ำบนการ์ดคอร์ส)
 
-   เดิม: การ์ดสูง 86px · ไอคอน 28px · ชื่อวิชา 16px
-         ไอคอนกับชื่อห่างกันแค่ ~20px ทั้งที่การ์ดกว้าง ~270px
-   ใหม่: การ์ดสูง 132px · ไอคอน 46px · ชื่อวิชาใหญ่ขึ้นเท่าตัว
-         ให้ชื่อวิชาเป็นพระเอกของการ์ด ไอคอนเป็นตัวประกอบ
+   อยากกลับไปแบบเดิม = ลบบล็อกนี้ทิ้ง
    ========================================================================== */
 
-.subject-grid { gap: 14px; }
+/* ไม่มีไอคอนด้านบนแล้ว ดันข้อความลงไปชิดล่างเพื่อให้ลายน้ำมีที่หายใจด้านบน */
+.subj { justify-content: flex-end; }
 
-.subj {
-  min-height: 132px;
-  padding: 18px 18px 16px;
-  border-radius: 18px;
-  gap: 12px;                       /* กันไอคอนกับข้อความติดกันเวลาการ์ดเตี้ยลง */
+/* ---- ลายน้ำ ---- */
+.subj .subj-wm {
+  position: absolute;
+  right: -16px;
+  top: 50%;
+  transform: translateY(-52%);
+  width: 108px;
+  height: 108px;
+  z-index: 0;                     /* ทับกฎ .subj > * { z-index: 1 } ด้านบน */
+  opacity: 0.17;
+  pointer-events: none;
+  color: currentColor;            /* การ์ด "ทั้งหมด" ตัวหนังสือเข้ม ลายน้ำจะเข้มตาม */
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s;
 }
-
-.subj .subj-ico {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+.subj .subj-wm svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.25;             /* เส้นบางลง ไม่ให้ลายน้ำแย่งสายตาชื่อวิชา */
 }
-.subj .subj-ico svg { width: 24px; height: 24px; }
+.subj:hover .subj-wm { transform: translateY(-52%) translate(-4px, -3px); opacity: 0.24; }
+.subj[aria-pressed="true"] .subj-wm { opacity: 0.26; }
 
+/* ---- ชื่อวิชา: พระเอกของการ์ด ---- */
 .subj .subj-name {
-  /* ใหญ่ขึ้นตามความกว้างจอ แต่ไม่เกินขอบการ์ด */
-  font-size: clamp(21px, 1.7vw, 27px);
-  line-height: 1.08;
+  font-size: clamp(22px, 1.9vw, 30px);
+  line-height: 1.02;
+  /* กันชื่อยาวไปทับลายน้ำ */
+  max-width: calc(100% - 46px);
 }
 
-.subj .subj-meta {
-  font-size: 10.5px;
-  margin-top: 8px;
-  gap: 10px;
-}
-.subj .subj-meta .count { padding: 3px 10px; }
+.subj .subj-meta { margin-top: 5px; max-width: calc(100% - 46px); }
 
-.subj .check { width: 26px; height: 26px; top: 15px; right: 15px; }
-
-/* ตอนเลือกวิชา ไอคอนเดิมใช้ display:none ทำให้ข้อความกระโดดขึ้นไปติดขอบบน
-   เปลี่ยนเป็นซ่อนแบบยังกินพื้นที่เท่าเดิม การ์ดจะได้ไม่ขยับ */
-.subj[aria-pressed="true"] .subj-ico {
-  display: flex;
-  visibility: hidden;
-}
-
-/* จอแคบ: การ์ดเหลือ 3 คอลัมน์แล้ว ลดขนาดลงหน่อยไม่ให้ชื่อยาวตกบรรทัด */
+/* จอแคบลง ลายน้ำเล็กลงตามไม่ให้ล้นการ์ด */
 @media (max-width: 1280px) {
-  .subj { min-height: 122px; }
-  .subj .subj-name { font-size: clamp(19px, 2.2vw, 24px); }
+  .subj .subj-wm { width: 96px; height: 96px; }
+  .subj .subj-name { font-size: clamp(20px, 2.4vw, 26px); }
 }
 @media (max-width: 720px) {
-  .subj { min-height: 116px; padding: 16px; }
-  .subj .subj-ico { width: 42px; height: 42px; }
-  .subj .subj-name { font-size: 21px; }
+  .subj .subj-wm { width: 92px; height: 92px; right: -12px; }
+  .subj .subj-name { font-size: 24px; }
 }

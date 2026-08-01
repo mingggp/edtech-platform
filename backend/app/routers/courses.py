@@ -17,10 +17,24 @@ def list_c(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 @router.get("/courses/{id}", response_model=schemas.CourseRead)
 def get_c(id: int, db: Session = Depends(get_db)):
-    return crud.get_course(db, id)
+    """คอร์สเดียว — ถ้าไม่มีต้องตอบ 404
+
+    เดิม return None ตรง ๆ ทำให้ FastAPI serialize ไม่ผ่านแล้วตอบ 500
+    หน้าเว็บเลยแยกไม่ออกว่า "ไม่มีคอร์สนี้" กับ "เซิร์ฟเวอร์พัง"
+    """
+    c = crud.get_course(db, id)
+    if not c:
+        raise HTTPException(404, "ไม่พบคอร์สนี้")
+    return c
 
 @router.get("/courses/{id}/chapters", response_model=List[schemas.ChapterWithLessons])
 def get_c_chapters(id: int, db: Session = Depends(get_db)):
+    """สารบัญคอร์ส — คอร์สไม่มีอยู่ก็ต้อง 404 ไม่ใช่คืน list ว่าง
+
+    ถ้าคืน [] หน้าเว็บจะขึ้นว่า "ยังไม่ได้เพิ่มบทเรียน" ทั้งที่จริงคือไม่มีคอร์สนี้
+    """
+    if not crud.get_course(db, id):
+        raise HTTPException(404, "ไม่พบคอร์สนี้")
     return crud.get_course_chapters(db, id)
 
 # admin routes

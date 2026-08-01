@@ -21,18 +21,47 @@ import { LEVELS, SUBJECTS, getSubject, subjectLabel } from '@/config/subjects';
 import type { LevelId, SubjectId } from '@/config/subjects';
 import { courses as coursesApi } from '@/lib/api/endpoints';
 import type { Course } from '@/lib/api/types';
-import { baht } from '@/lib/format';
+import { baht, duration } from '@/lib/format';
 
 type SubjectFilter = SubjectId | 'all';
 type LevelFilter = LevelId | 'all';
-type SortKey = 'rec' | 'priceasc' | 'pricedesc' | 'newest';
+type SortKey = 'rec' | 'popular' | 'priceasc' | 'pricedesc' | 'newest';
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: 'rec', label: 'แนะนำ' },
   { key: 'newest', label: 'ใหม่ล่าสุด' },
+  { key: 'popular', label: 'ยอดนิยม' },
   { key: 'priceasc', label: 'ราคาน้อยไปมาก' },
   { key: 'pricedesc', label: 'ราคามากไปน้อย' },
 ];
+
+/** ข้อความบนป้าย — คีย์ (hot/new/…) ไม่เอาขึ้นจอ */
+const RIBBON_LABEL: Record<NonNullable<Course['ribbon']>, string> = {
+  hot: 'ขายดี',
+  new: 'มาใหม่',
+  rec: 'แนะนำ',
+  free: 'ฟรี',
+};
+
+/* ไอคอนเล็กในแถบสถิติ — ยกมาจาก IC ใน Browse Courses.html */
+const IconBook = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+  </svg>
+);
+const IconClock = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" />
+  </svg>
+);
+const IconUser = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+  </svg>
+);
 
 export function CoursesBrowser() {
   const [subject, setSubject] = useState<SubjectFilter>('all');
@@ -75,6 +104,7 @@ export function CoursesBrowser() {
     switch (sort) {
       case 'priceasc': r.sort((a, b) => a.price - b.price); break;
       case 'pricedesc': r.sort((a, b) => b.price - a.price); break;
+      case 'popular': r.sort((a, b) => b.student_count - a.student_count); break;
       case 'newest':
         r.sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? ''));
         break;
@@ -217,7 +247,8 @@ function SubjectCard({
       aria-pressed={active}
       onClick={onClick}
     >
-      <div className="subj-ico"><SubjectIcon id={id} /></div>
+      {/* โลโก้วิชาเป็นลายน้ำด้านหลัง ไม่ใช่ไอคอนในกล่อง — ดู .subj-wm ใน courses.css */}
+      <span className="subj-wm" aria-hidden="true"><SubjectIcon id={id} /></span>
       <div className="check">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
@@ -269,6 +300,9 @@ function CourseCard({ course: c, index }: { course: Course; index: number }) {
         <div className={`cc-thumb-inner t-${c.subject ?? 'math'}`}>
           <span className="glyph">{subj?.glyph ?? '∫'}</span>
           {c.target_audience ? <span className="tag">{c.target_audience}</span> : null}
+          {c.ribbon ? (
+            <span className={`ribbon ${c.ribbon}`}>{RIBBON_LABEL[c.ribbon]}</span>
+          ) : null}
         </div>
         <div className="meta">
           <div className="name">{c.title}</div>
@@ -277,8 +311,27 @@ function CourseCard({ course: c, index }: { course: Course; index: number }) {
       </div>
 
       <div className="cc-body">
+        {/* แสดงเฉพาะค่าที่มีจริง — ค่าที่ยังเป็น 0 แปลว่ายังไม่มีข้อมูล
+            ซ่อนไว้ดีกว่าโชว์ "0 บท" หรือ "0 คน" ที่ดูเหมือนคอร์สร้าง */}
         <div className="stats">
-          {c.total_lessons > 0 ? <div className="item">{c.total_lessons} บท</div> : null}
+          {c.total_lessons > 0 ? (
+            <div className="item">
+              <IconBook />
+              {c.total_lessons} บท
+            </div>
+          ) : null}
+          {c.total_minutes > 0 ? (
+            <div className="item">
+              <IconClock />
+              {duration(c.total_minutes)}
+            </div>
+          ) : null}
+          {c.student_count > 0 ? (
+            <div className="item">
+              <IconUser />
+              {c.student_count.toLocaleString('en-US')}
+            </div>
+          ) : null}
         </div>
         <div className="cc-foot">
           {isFree ? (

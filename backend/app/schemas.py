@@ -74,6 +74,8 @@ SUBJECTS = ("math", "phys", "tpat3", "tgat2")
 LEVELS = ("m4", "m5", "m6", "alevel")
 # วิชาที่มีระดับย่อยได้
 LEVELABLE = ("math", "phys")
+# ป้ายบนการ์ดคอร์ส — แอดมินเลือกเอง (ไม่ได้คำนวณ)
+RIBBONS = ("hot", "new", "rec", "free")
 
 
 def _check_subject_level(subject, level):
@@ -86,6 +88,11 @@ def _check_subject_level(subject, level):
             raise ValueError(f"{subject} ไม่มีระดับย่อย (ใช้ได้เฉพาะ {LEVELABLE})")
 
 
+def _check_ribbon(ribbon):
+    if ribbon is not None and ribbon not in RIBBONS:
+        raise ValueError(f"ribbon ต้องเป็นหนึ่งใน {RIBBONS} หรือเว้นว่าง")
+
+
 class CourseBase(BaseModel):
     title: str
     description: str
@@ -93,6 +100,7 @@ class CourseBase(BaseModel):
     price_old: Optional[float] = None
     subject: Optional[str] = None          # math | phys | tpat3 | tgat2
     level: Optional[str] = None            # m4 | m5 | m6 | alevel (เฉพาะ math/phys)
+    ribbon: Optional[str] = None           # hot | new | rec | free
     category: str
     thumbnail: Optional[str] = None
     target_audience: Optional[str] = None
@@ -102,6 +110,7 @@ class CourseBase(BaseModel):
     @model_validator(mode="after")
     def _validate(self):
         _check_subject_level(self.subject, self.level)
+        _check_ribbon(self.ribbon)
         return self
 
 class CourseCreate(CourseBase):
@@ -114,6 +123,7 @@ class CourseUpdate(BaseModel):
     price_old: Optional[float] = None
     subject: Optional[str] = None
     level: Optional[str] = None
+    ribbon: Optional[str] = None
     category: Optional[str] = None
     thumbnail: Optional[str] = None
     target_audience: Optional[str] = None
@@ -123,13 +133,17 @@ class CourseUpdate(BaseModel):
     @model_validator(mode="after")
     def _validate(self):
         _check_subject_level(self.subject, self.level)
+        _check_ribbon(self.ribbon)
         return self
 
 class CourseRead(CourseBase):
     id: int
-    total_lessons: int = 0
+    # ค่าคำนวณจาก models.Course — ไม่มีในตาราง ไม่ต้องกรอก
+    total_lessons: int = 0        # จำนวนบท
+    total_minutes: int = 0        # ความยาวรวม (นาที)
+    student_count: int = 0        # จำนวนคนที่ลงเรียน
     created_at: Optional[datetime] = None
-    
+
     class Config:
         from_attributes = True
 

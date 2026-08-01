@@ -33,6 +33,10 @@ export interface User {
 }
 
 /* -------------------------------------------------------------- courses */
+
+/** ป้ายบนการ์ดคอร์ส — แอดมินตั้งเอง ไม่ได้คำนวณ */
+export type Ribbon = 'hot' | 'new' | 'rec' | 'free';
+
 export interface Course {
   id: number;
   title: string;
@@ -42,11 +46,18 @@ export interface Course {
   /** อาจเป็น null สำหรับคอร์สเก่าที่ยังไม่ได้ระบุวิชา */
   subject: SubjectId | null;
   level: LevelId | null;
+  ribbon: Ribbon | null;
   thumbnail: string | null;
   highlights: string | null;
   target_audience: string | null;
   is_active: boolean;
+  /* ---- ค่าที่ backend คำนวณให้ ไม่มีในตาราง ---- */
+  /** จำนวนบทเรียน */
   total_lessons: number;
+  /** ความยาวรวมของคอร์ส (นาที) */
+  total_minutes: number;
+  /** จำนวนคนที่ลงเรียนแล้ว */
+  student_count: number;
   created_at: string | null;
 }
 
