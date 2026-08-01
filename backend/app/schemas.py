@@ -139,7 +139,9 @@ class CourseUpdate(BaseModel):
 class CourseRead(CourseBase):
     id: int
     # ค่าคำนวณจาก models.Course — ไม่มีในตาราง ไม่ต้องกรอก
-    total_lessons: int = 0        # จำนวนบท
+    total_lessons: int = 0        # จำนวนบทเรียนทั้งหมด
+    total_videos: int = 0         # เฉพาะคลิปวิดีโอ
+    total_exercises: int = 0      # เฉพาะแบบฝึกหัด
     total_minutes: int = 0        # ความยาวรวม (นาที)
     student_count: int = 0        # จำนวนคนที่ลงเรียน
     created_at: Optional[datetime] = None
@@ -167,12 +169,22 @@ class ChapterUpdate(BaseModel):
     title: Optional[str] = None
     order: Optional[int] = None
 
+LESSON_KINDS = ("video", "quiz", "doc")
+
+
 class LessonBase(BaseModel):
     title: str
+    kind: str = "video"           # video | quiz | doc
     youtube_id: str
     duration: int
     order: int
     doc_url: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _validate_kind(self):
+        if self.kind not in LESSON_KINDS:
+            raise ValueError(f"kind ต้องเป็นหนึ่งใน {LESSON_KINDS}")
+        return self
 
 class LessonCreate(LessonBase):
     pass

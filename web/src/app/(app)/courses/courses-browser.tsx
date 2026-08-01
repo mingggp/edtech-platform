@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { PageHeader } from '@/components/layout/app-shell';
 import { SubjectIcon } from '@/components/layout/subject-icons';
-import { LEVELS, SUBJECTS, getSubject, subjectLabel } from '@/config/subjects';
+import { LEVELS, SUBJECTS, getSubject, levelLabel, subjectLabel } from '@/config/subjects';
 import type { LevelId, SubjectId } from '@/config/subjects';
 import { courses as coursesApi } from '@/lib/api/endpoints';
 import type { Course } from '@/lib/api/types';
@@ -238,6 +238,8 @@ function SubjectCard({
   active: boolean;
   onClick: () => void;
 }) {
+  /* ชื่อวิชาที่เป็นภาษาไทยต้องเล็กกว่าอังกฤษ 2px ให้ดูสมดุลกัน */
+  const isThai = /[฀-๿]/.test(label);
   return (
     <button
       type="button"
@@ -247,8 +249,13 @@ function SubjectCard({
       aria-pressed={active}
       onClick={onClick}
     >
-      {/* โลโก้วิชาเป็นลายน้ำด้านหลัง ไม่ใช่ไอคอนในกล่อง — ดู .subj-wm ใน courses.css */}
-      <span className="subj-wm" aria-hidden="true"><SubjectIcon id={id} /></span>
+      {/* การ์ด 4 วิชา: โลโก้เป็นลายน้ำด้านหลัง
+          การ์ด "ทั้งหมด": คงไอคอนในกล่องมุมบนแบบเดิม (หมิงขอให้เหมือนอันเก่า) */}
+      {id === 'all' ? (
+        <div className="subj-ico"><SubjectIcon id={id} /></div>
+      ) : (
+        <span className="subj-wm" aria-hidden="true"><SubjectIcon id={id} /></span>
+      )}
       <div className="check">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
@@ -256,7 +263,9 @@ function SubjectCard({
         </svg>
       </div>
       <div>
-        <div className="subj-name">{label}</div>
+        {/* ชื่อไทย (คณิต/ฟิสิกส์/ทั้งหมด) เล็กกว่าชื่ออังกฤษ 2px
+            เพราะฟอนต์ไทยตัวโตกว่าที่ขนาดเท่ากัน */}
+        <div className="subj-name" data-script={isThai ? 'thai' : undefined}>{label}</div>
         <div className="subj-meta">
           <span>{en}</span>
           <span className="count">{count}</span>
@@ -288,6 +297,11 @@ function CourseCard({ course: c, index }: { course: Course; index: number }) {
   const isFree = c.price <= 0;
   const discount =
     !isFree && c.price_old ? Math.round((1 - c.price / c.price_old) * 100) : 0;
+  /* ป้ายระดับ: เอาแค่ ม.4 / ม.5 / ม.6 / TCAS
+     ไม่เอา "ในเทอม" "เตรียมสอบ" ที่ติดมากับ target_audience */
+  const levelTag = c.level
+    ? c.level === 'alevel' ? 'TCAS' : levelLabel(c.level)
+    : (c.subject === 'tpat3' || c.subject === 'tgat2' ? 'TCAS' : null);
 
   return (
     <Link
@@ -298,10 +312,19 @@ function CourseCard({ course: c, index }: { course: Course; index: number }) {
     >
       <div className="cc-thumb">
         <div className={`cc-thumb-inner t-${c.subject ?? 'math'}`}>
-          <span className="glyph">{subj?.glyph ?? '∫'}</span>
-          {c.target_audience ? <span className="tag">{c.target_audience}</span> : null}
+          {/* โลโก้วิชาเป็นลายน้ำ — ชุดเดียวกับการ์ดเลือกวิชา */}
+          <span className="cc-wm" aria-hidden="true">
+            <SubjectIcon id={c.subject ?? 'math'} />
+          </span>
+          {/* ป้ายระดับมุมซ้ายบน — ตัวอักษรลอย ไม่มีกล่อง มีขีดสั้นคั่น */}
+          {levelTag ? (
+            <span className="lvl-mark">
+              <i aria-hidden="true" />
+              {levelTag}
+            </span>
+          ) : null}
           {c.ribbon ? (
-            <span className={`ribbon ${c.ribbon}`}>{RIBBON_LABEL[c.ribbon]}</span>
+            <span className={`ribbon-flag ${c.ribbon}`}>{RIBBON_LABEL[c.ribbon]}</span>
           ) : null}
         </div>
         <div className="meta">

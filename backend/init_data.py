@@ -168,14 +168,24 @@ def init_db(force: bool = False):
             ch = models.Chapter(course_id=course.id, title="บทนำ", order=1)
             db.add(ch)
             db.commit()
+            # 2 คลิป + 1 แบบฝึกหัด ต่อบท เพื่อให้เห็นตัวเลขแยกกันบนหน้าเว็บ
             for i in (1, 2):
                 db.add(models.Lesson(
                     chapter_id=ch.id,
                     title=f"EP.{i} {c['title']}",
+                    kind="video",
                     youtube_id="dQw4w9WgXcQ",     # placeholder — เปลี่ยนเป็นคลิปจริงทีหลัง
                     duration=20,
                     order=i,
                 ))
+            db.add(models.Lesson(
+                chapter_id=ch.id,
+                title="แบบฝึกหัดท้ายบท",
+                kind="quiz",
+                youtube_id="",
+                duration=0,
+                order=3,
+            ))
         db.commit()
 
         print("🎟️  สร้างคูปอง...")

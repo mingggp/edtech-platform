@@ -2,18 +2,20 @@
 
 /**
  * หน้ารายละเอียดคอร์ส — แปลงจาก 'Claude Design version 1.0/Course Detail.html'
+ * แล้วปรับตามที่หมิงสั่ง (ดูบล็อกท้าย course-detail.css)
  *
- * โครง 2 คอลัมน์: เนื้อหาซ้าย + การ์ดลงทะเบียนขวา (ดู course-detail.css)
+ *   • พื้นหลังไล่สีใช้สีประจำวิชา คลุมทั้งหน้า (เดิมฮาร์ดโค้ดม่วงและเว้นขอบ)
+ *   • ป้ายหัวเรื่องเหลือแค่ริบบิ้นอันเดียว ตัดแถวสถิติใต้หัวเรื่องออก
+ *   • ตัดส่วน "สิ่งที่จะได้" แบบรายการยาวออก ย้ายไปเป็นกล่องในการ์ดลงทะเบียน
+ *   • สารบัญกดเปิด/ปิดได้ มีจังหวะไล่โผล่
+ *   • การ์ดผู้สอนเล็กลง
  *
- * ส่วนที่ยังไม่แสดงเพราะฐานข้อมูลยังไม่มีข้อมูล:
- *   ★ เรตติ้ง · จำนวนรีวิว   -> ตาราง Rating มีแล้วแต่ยังไม่มีหน้าให้รีวิว
- *   ตัวอย่างวิดีโอ 90 วินาที  -> ยังไม่มีฟิลด์เก็บคลิปตัวอย่าง
- *   "เหลือ 5 วัน ราคาขึ้น"   -> ยังไม่มีระบบโปรโมชันมีกำหนดเวลา
- * เลือกซ่อนแทนใส่ค่าปลอม — เหตุผลเดียวกับหน้ารายการคอร์ส
+ * ยังไม่แสดง: เรตติ้ง · รีวิว · ตัวอย่างวิดีโอ (ฐานข้อมูลยังไม่มี)
  */
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 
+import { SubjectIcon } from '@/components/layout/subject-icons';
 import { getSubject, levelLabel } from '@/config/subjects';
 import { courses as coursesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
@@ -26,6 +28,13 @@ const RIBBON_LABEL: Record<NonNullable<Course['ribbon']>, string> = {
   rec: 'แนะนำ',
   free: 'เรียนฟรี',
 };
+
+const Check = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
 
 export function CourseDetail({ courseId }: { courseId: number }) {
   const course = useQuery({
@@ -52,17 +61,15 @@ export function CourseDetail({ courseId }: { courseId: number }) {
   const subj = c.subject ? getSubject(c.subject) : undefined;
   const isFree = c.price <= 0;
   const discount = !isFree && c.price_old ? Math.round((1 - c.price / c.price_old) * 100) : 0;
-  /* highlights เก็บเป็นข้อความหลายบรรทัด บรรทัดละข้อ */
-  const highlights = (c.highlights ?? '')
-    .split('\n')
-    .map((s) => s.replace(/^[✅✓•\-\s]+/, '').trim())
-    .filter(Boolean);
+
+  /* สีทั้งหน้าผูกกับวิชา — พื้นหลัง สารบัญ การ์ดผู้สอน ใช้ตัวแปรเดียวกัน */
+  const shellStyle = subj
+    ? ({ ['--subj-c' as string]: subj.color } as React.CSSProperties)
+    : undefined;
 
   return (
-    <div className="detail-shell">
-      <div className="hero-bg" aria-hidden="true">
-        <span className="glyph">{subj?.glyph ?? '∫'}</span>
-      </div>
+    <div className="detail-shell" style={shellStyle}>
+      <div className="hero-bg" aria-hidden="true" />
 
       {/* ---------------- ซ้าย: หัวเรื่อง + เนื้อหา ---------------- */}
       <div className="left-col">
@@ -74,66 +81,18 @@ export function CourseDetail({ courseId }: { courseId: number }) {
         </Link>
 
         <div className="hero-text">
-          <div className="hero-tags">
-            {c.ribbon ? <span className="hero-tag solid">{RIBBON_LABEL[c.ribbon]}</span> : null}
-            {subj ? (
-              <span className="hero-tag">
-                {subj.label}
-                {c.level ? ` · ${levelLabel(c.level)}` : ''}
-              </span>
-            ) : null}
-            {c.target_audience ? <span className="hero-tag">{c.target_audience}</span> : null}
-          </div>
+          {/* ป้ายเดียว — อันเดียวกับที่ขึ้นบนการ์ดในหน้าค้นหาคอร์ส */}
+          {c.ribbon ? (
+            <div className="hero-tags">
+              <span className="hero-tag solid">{RIBBON_LABEL[c.ribbon]}</span>
+            </div>
+          ) : null}
 
           <h1>{c.title}</h1>
           {c.description ? <p className="tagline">{c.description}</p> : null}
-
-          <div className="meta-row">
-            {c.student_count > 0 ? (
-              <span><b>{c.student_count.toLocaleString('en-US')}</b> นักเรียน</span>
-            ) : (
-              <span>เปิดรับสมัครแล้ว</span>
-            )}
-            {c.total_lessons > 0 ? (
-              <>
-                <span className="dot-sep" />
-                <span><b>{c.total_lessons}</b> บทเรียน</span>
-              </>
-            ) : null}
-            {c.total_minutes > 0 ? (
-              <>
-                <span className="dot-sep" />
-                <span>{duration(c.total_minutes)}</span>
-              </>
-            ) : null}
-          </div>
         </div>
 
         <div className="body">
-          {c.description ? (
-            <section className="section">
-              <h2>เกี่ยวกับคอร์ส</h2>
-              <div className="about-text"><p>{c.description}</p></div>
-            </section>
-          ) : null}
-
-          {highlights.length > 0 ? (
-            <section className="section">
-              <h2>สิ่งที่จะได้</h2>
-              <div className="learn-grid">
-                {highlights.map((h, i) => (
-                  <div className="learn-item" key={i}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <div className="text">{h}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ) : null}
-
           <section className="section">
             <h2>เนื้อหา</h2>
             {chapters.isPending ? (
@@ -162,10 +121,18 @@ export function CourseDetail({ courseId }: { courseId: number }) {
                       <div className="lessons">
                         {ch.lessons.map((l) => (
                           <div className="lesson" key={l.id}>
-                            <div className="icon">
-                              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M8 5v14l11-7L8 5z" />
-                              </svg>
+                            <div className={`icon${l.kind === 'quiz' ? ' quiz' : ''}`}>
+                              {l.kind === 'quiz' ? (
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"
+                                     aria-hidden="true">
+                                  <path d="M9 11l2 2 4-4" /><rect x="3" y="4" width="18" height="16" rx="2.5" />
+                                </svg>
+                              ) : (
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                  <path d="M8 5v14l11-7L8 5z" />
+                                </svg>
+                              )}
                             </div>
                             <span className="name">{l.title}</span>
                             {l.duration ? <span className="duration">{duration(l.duration)}</span> : null}
@@ -184,12 +151,9 @@ export function CourseDetail({ courseId }: { courseId: number }) {
             <div className="instr-block">
               <div className="instr-photo" aria-hidden="true" />
               <div className="instr-info">
-                <h3>พี่หมิง (Mingsmileyface)</h3>
-                <div className="instr-chip">ติวเตอร์คณิต · ฟิสิกส์ · TPAT3 · TGAT2</div>
-                <p>
-                  สอนคณิตและฟิสิกส์ระดับ ม.ปลาย พร้อมเตรียมสอบเข้ามหาวิทยาลัย
-                  เน้นให้เข้าใจที่มา ไม่ใช่ท่องสูตร
-                </p>
+                <h3>พี่หมิง</h3>
+                <div className="instr-chip">คณิต · ฟิสิกส์ · TPAT3 · TGAT2</div>
+                <p>สอน ม.ปลายและเตรียมสอบเข้ามหาวิทยาลัย เน้นให้เข้าใจที่มา ไม่ใช่ท่องสูตร</p>
               </div>
             </div>
           </section>
@@ -200,7 +164,9 @@ export function CourseDetail({ courseId }: { courseId: number }) {
       <aside className="right-col">
         <div className="enroll">
           <div className="enroll-cover">
-            <span className="glyph">{subj?.glyph ?? '∫'}</span>
+            <span className="cc-wm" aria-hidden="true">
+              <SubjectIcon id={c.subject ?? 'math'} />
+            </span>
           </div>
 
           <div className="enroll-body">
@@ -227,14 +193,20 @@ export function CourseDetail({ courseId }: { courseId: number }) {
             </div>
 
             <div className="enroll-stats">
-              <Stat label="เนื้อหา" value={c.total_minutes > 0 ? duration(c.total_minutes) : '—'} />
-              <Stat label="บทเรียน" value={c.total_lessons > 0 ? `${c.total_lessons} บท` : '—'} />
-              <Stat label="ระดับ" value={c.level ? levelLabel(c.level) : (subj?.label ?? '—')} />
+              <div className="st-head">สิ่งที่จะได้</div>
+              <Stat value={c.total_lessons} unit="บทเรียน" />
+              <Stat value={c.total_videos} unit="คลิปวิดีโอ" />
+              <Stat value={c.total_minutes} unit="นาทีเรียน" />
+              <Stat value={c.total_exercises} unit="แบบฝึกหัด" />
             </div>
 
             <div className="enroll-guarantees">
-              <span>เข้าเรียนได้ทันทีหลังชำระเงิน</span>
-              <span>ยืนยันการชำระอัตโนมัติ ไม่ต้องส่งสลิป</span>
+              <div className="item"><Check />เข้าเรียนได้ทันทีหลังชำระเงิน</div>
+              <div className="item"><Check />ยืนยันการชำระอัตโนมัติ ไม่ต้องส่งสลิป</div>
+              <div className="item"><Check />ดูซ้ำได้ไม่จำกัดจำนวนครั้ง</div>
+              {c.level ? (
+                <div className="item"><Check />ตรงหลักสูตร {levelLabel(c.level)}</div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -243,11 +215,12 @@ export function CourseDetail({ courseId }: { courseId: number }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+/** กล่องตัวเลขในส่วน "สิ่งที่จะได้" — 0 ก็ยังแสดง เพราะเป็นตารางเทียบ 4 ช่อง */
+function Stat({ value, unit }: { value: number; unit: string }) {
   return (
     <div className="item">
-      <div className="val">{value}</div>
-      <div className="lab">{label}</div>
+      <div className="val">{value.toLocaleString('en-US')}</div>
+      <div className="lab">{unit}</div>
     </div>
   );
 }

@@ -274,58 +274,185 @@
 @media (prefers-reduced-motion: reduce) { .cc-skeleton { animation: none; } }
 
 /* ==========================================================================
-   การ์ดเลือกวิชา — ปรับตามที่หมิงสั่ง
+   การ์ดเลือกวิชา
    --------------------------------------------------------------------------
-   ขนาดการ์ดเท่าเดิมทุกอย่าง (สูง 86px · padding 13/15 · gap 12)
-   เปลี่ยนแค่ 2 เรื่อง:
-     1. ชื่อวิชาใหญ่ขึ้นมาก  16px -> 22–30px  ให้เป็นพระเอกของการ์ด
-     2. ไอคอนวิชาไม่อยู่ในกล่องเล็กมุมบนแล้ว ย้ายไปเป็นลายน้ำจาง ๆ ด้านหลัง
-        (แนวเดียวกับตัวอักษร ∫ Φ ⌬ ∑ ที่เป็นลายน้ำบนการ์ดคอร์ส)
-
-   อยากกลับไปแบบเดิม = ลบบล็อกนี้ทิ้ง
+   ขนาดการ์ดเท่าดีไซน์เดิม เปลี่ยนเฉพาะ:
+     • ชื่อวิชาใหญ่ขึ้น (ไทยเล็กกว่าอังกฤษ 2px — ฟอนต์ไทยตัวโตกว่า)
+     • 4 วิชาใช้โลโก้เป็นลายน้ำด้านหลัง
+     • การ์ด "ทั้งหมด" คงไอคอนในกล่องแบบเดิม
+     • ตัวเลขจำนวนคอร์สย้ายไปมุมขวาล่าง
    ========================================================================== */
 
-/* ไม่มีไอคอนด้านบนแล้ว ดันข้อความลงไปชิดล่างเพื่อให้ลายน้ำมีที่หายใจด้านบน */
 .subj { justify-content: flex-end; }
 
-/* ---- ลายน้ำ ---- */
+/* ---- ไอคอนในกล่อง (เหลือแค่การ์ด "ทั้งหมด") ---- */
+.subj .subj-ico {
+  position: absolute; top: 13px; left: 15px;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--bg-3); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+}
+.subj .subj-ico svg { width: 16px; height: 16px; color: var(--fg-1); }
+.subj:hover .subj-ico { transform: translate(3px, -3px); }
+.subj[aria-pressed="true"] .subj-ico { visibility: hidden; }
+
+/* ---- ลายน้ำโลโก้วิชา (4 วิชา) ---- */
 .subj .subj-wm {
-  position: absolute;
-  right: -16px;
-  top: 50%;
+  position: absolute; right: -16px; top: 50%;
   transform: translateY(-52%);
-  width: 108px;
-  height: 108px;
-  z-index: 0;                     /* ทับกฎ .subj > * { z-index: 1 } ด้านบน */
-  opacity: 0.17;
-  pointer-events: none;
-  color: currentColor;            /* การ์ด "ทั้งหมด" ตัวหนังสือเข้ม ลายน้ำจะเข้มตาม */
+  width: 108px; height: 108px;
+  z-index: 0;                     /* ทับกฎ .subj > * { z-index: 1 } */
+  opacity: 0.17; pointer-events: none; color: currentColor;
   transition: transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s;
 }
-.subj .subj-wm svg {
-  width: 100%;
-  height: 100%;
-  stroke-width: 1.25;             /* เส้นบางลง ไม่ให้ลายน้ำแย่งสายตาชื่อวิชา */
-}
-.subj:hover .subj-wm { transform: translateY(-52%) translate(-4px, -3px); opacity: 0.24; }
+.subj .subj-wm svg { width: 100%; height: 100%; stroke-width: 1.25; }
+.subj:hover .subj-wm { transform: translateY(-52%) translate(-4px,-3px); opacity: 0.24; }
 .subj[aria-pressed="true"] .subj-wm { opacity: 0.26; }
 
-/* ---- ชื่อวิชา: พระเอกของการ์ด ---- */
+/* ---- ชื่อวิชา ---- */
 .subj .subj-name {
   font-size: clamp(22px, 1.9vw, 30px);
   line-height: 1.02;
-  /* กันชื่อยาวไปทับลายน้ำ */
-  max-width: calc(100% - 46px);
+  max-width: calc(100% - 52px);
+}
+.subj .subj-name[data-script="thai"] { font-size: clamp(20px, 1.75vw, 28px); }
+
+/* ---- แถวล่าง: ชื่ออังกฤษซ้าย · จำนวนคอร์สชิดมุมขวาล่าง ---- */
+.subj .subj-meta {
+  margin-top: 5px;
+  padding-right: 46px;            /* เว้นที่ให้ตัวเลขที่ลอยอยู่มุมขวา */
+  justify-content: flex-start;
+}
+.subj .subj-meta .count {
+  position: absolute;
+  right: 12px; bottom: 11px;
+  background: oklch(0.99 0.005 285 / 0.26);
+  border-color: oklch(0.99 0.005 285 / 0.34);
+  color: oklch(1 0 0 / 0.96);
+  font-size: 11px;
+  padding: 3px 10px;
+}
+.subj.all .subj-meta .count {
+  background: var(--bg-3);
+  border-color: var(--line);
+  color: var(--fg-0);
 }
 
-.subj .subj-meta { margin-top: 5px; max-width: calc(100% - 46px); }
-
-/* จอแคบลง ลายน้ำเล็กลงตามไม่ให้ล้นการ์ด */
 @media (max-width: 1280px) {
   .subj .subj-wm { width: 96px; height: 96px; }
   .subj .subj-name { font-size: clamp(20px, 2.4vw, 26px); }
+  .subj .subj-name[data-script="thai"] { font-size: clamp(18px, 2.2vw, 24px); }
 }
 @media (max-width: 720px) {
   .subj .subj-wm { width: 92px; height: 92px; right: -12px; }
   .subj .subj-name { font-size: 24px; }
+  .subj .subj-name[data-script="thai"] { font-size: 22px; }
+}
+
+/* ==========================================================================
+   การ์ดคอร์ส — ป้ายระดับ · ริบบิ้น · โลโก้วิชา
+   --------------------------------------------------------------------------
+   แทนที่ .tag (กล่องมุมซ้ายบน) กับ .ribbon (pill มุมขวาบน) ของดีไซน์เดิม
+   ========================================================================== */
+
+/* ---- โลโก้วิชาเป็นลายน้ำบนปกคอร์ส (แทนตัวอักษร ∫ Φ ⌬ ∑) ---- */
+.cc-thumb .cc-wm {
+  position: absolute;
+  right: -14px; bottom: -20px;
+  width: 104px; height: 104px;
+  color: #fff; opacity: 0.2;
+  pointer-events: none; z-index: 0;
+  transition: transform .32s cubic-bezier(.2,.8,.2,1), opacity .32s;
+}
+.cc-thumb .cc-wm svg { width: 100%; height: 100%; stroke-width: 1.2; }
+.cc:hover .cc-wm { transform: translate(-5px,-5px) rotate(-4deg); opacity: 0.3; }
+
+/* ---- ป้ายระดับมุมซ้ายบน ----
+   ไม่เป็นกล่อง: ตัวอักษรลอยบนปก มีขีดสั้นนำหน้าเหมือนเครื่องหมายบอกหมวด
+   ตัวหนา ระยะห่างตัวอักษรกว้าง อ่านง่ายบนพื้นสีเข้ม */
+.cc-thumb .lvl-mark {
+  position: absolute; top: 13px; left: 15px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em;
+  color: oklch(1 0 0 / 0.95);
+  text-shadow: 0 1px 6px oklch(0 0 0 / 0.45);
+}
+.cc-thumb .lvl-mark i {
+  width: 16px; height: 2px; border-radius: 2px;
+  background: oklch(1 0 0 / 0.85);
+  transition: width .3s cubic-bezier(.2,.8,.2,1);
+}
+.cc:hover .lvl-mark i { width: 26px; }
+
+/* ---- ริบบิ้นมุมขวาบน ----
+   ริบบิ้นผ้าจริง: แถบห้อยลงมาจากขอบบน ปลายล่างบากเป็นหางปลา
+   ใช้ clip-path ทำหาง ไม่ต้องใช้รูป */
+.cc-thumb .ribbon-flag {
+  position: absolute; top: -2px; right: 16px; z-index: 3;
+  padding: 9px 11px 15px;
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff; white-space: nowrap;
+  background: var(--grad-signature);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  box-shadow: 0 8px 20px -8px oklch(0 0 0 / 0.55);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.cc:hover .ribbon-flag { transform: translateY(3px); }
+.cc-thumb .ribbon-flag.hot  { background: linear-gradient(160deg, oklch(0.68 0.25 5), oklch(0.78 0.20 50)); }
+.cc-thumb .ribbon-flag.new  { background: linear-gradient(160deg, oklch(0.72 0.16 200), oklch(0.80 0.16 190)); color: oklch(0.18 0.05 220); }
+.cc-thumb .ribbon-flag.rec  { background: linear-gradient(160deg, oklch(0.58 0.20 288), oklch(0.68 0.20 305)); }
+.cc-thumb .ribbon-flag.free { background: linear-gradient(160deg, oklch(0.78 0.20 50), oklch(0.86 0.20 130)); color: oklch(0.20 0.06 50); }
+
+/* ==========================================================================
+   เงาเรืองแสงตามสีประจำวิชาเวลาเอาเมาส์ไปวาง
+   --------------------------------------------------------------------------
+   --glow ตั้งจาก data-subject ของการ์ด ทำให้การ์ดคณิตเรืองฟ้า ฟิสิกส์เรืองชมพู
+   ธีมมืดเพิ่มความเข้มขึ้นอีกชั้นให้ดูเป็นนีออน
+   ========================================================================== */
+
+.cc[data-subject="math"]  { --glow: var(--subj-math); }
+.cc[data-subject="phys"]  { --glow: var(--subj-phys); }
+.cc[data-subject="tpat3"] { --glow: var(--subj-tpat3); }
+.cc[data-subject="tgat2"] { --glow: var(--subj-tgat2); }
+.subj.math  { --glow: var(--subj-math); }
+.subj.phys  { --glow: var(--subj-phys); }
+.subj.tpat3 { --glow: var(--subj-tpat3); }
+.subj.tgat2 { --glow: var(--subj-tgat2); }
+.subj.all   { --glow: var(--brand-violet, oklch(0.66 0.23 295)); }
+
+.cc, .subj { transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .28s; }
+
+.cc:hover,
+.subj:hover {
+  border-color: oklch(from var(--glow) l c h / 0.55);
+  box-shadow:
+    0 18px 44px -14px oklch(from var(--glow) l c h / 0.55),
+    0 0 0 1px oklch(from var(--glow) l c h / 0.28);
+}
+.subj[aria-pressed="true"] {
+  box-shadow:
+    0 18px 44px -14px oklch(from var(--glow) l c h / 0.6),
+    0 0 0 1px oklch(0.99 0.005 285 / 0.2) inset;
+}
+
+/* ธีมมืด — เร่งให้เป็นนีออน เพิ่มวงเรืองแสงรอบนอกอีกชั้น */
+:root[data-theme="dark"] .cc:hover,
+:root[data-theme="petronas"] .cc:hover,
+:root[data-theme="f1"] .cc:hover,
+:root[data-theme="dark"] .subj:hover,
+:root[data-theme="petronas"] .subj:hover,
+:root[data-theme="f1"] .subj:hover {
+  border-color: oklch(from var(--glow) l c h / 0.8);
+  box-shadow:
+    0 0 0 1px oklch(from var(--glow) l c h / 0.55),
+    0 0 18px -2px oklch(from var(--glow) l c h / 0.55),
+    0 22px 60px -16px oklch(from var(--glow) l c h / 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc, .subj, .cc-wm, .lvl-mark i, .ribbon-flag { transition: none; }
 }

@@ -52,8 +52,12 @@ export interface Course {
   target_audience: string | null;
   is_active: boolean;
   /* ---- ค่าที่ backend คำนวณให้ ไม่มีในตาราง ---- */
-  /** จำนวนบทเรียน */
+  /** จำนวนบทเรียนทั้งหมด */
   total_lessons: number;
+  /** เฉพาะคลิปวิดีโอ */
+  total_videos: number;
+  /** เฉพาะแบบฝึกหัด */
+  total_exercises: number;
   /** ความยาวรวมของคอร์ส (นาที) */
   total_minutes: number;
   /** จำนวนคนที่ลงเรียนแล้ว */
@@ -61,9 +65,13 @@ export interface Course {
   created_at: string | null;
 }
 
+/** ประเภทบทเรียน — video = คลิป · quiz = แบบฝึกหัด · doc = เอกสาร */
+export type LessonKind = 'video' | 'quiz' | 'doc';
+
 export interface Lesson {
   id: number;
   title: string;
+  kind: LessonKind;
   youtube_id: string;
   duration: number;
   order: number;

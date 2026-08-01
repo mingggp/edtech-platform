@@ -663,3 +663,189 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
 .foot-col a:hover { color: var(--fg-0); }
 .foot-bottom { padding-top:32px; border-top:1px solid var(--line-soft); display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; font-family:"JetBrains Mono"; font-size:11.5px; color: var(--fg-3); letter-spacing:0.02em; }
 @media (max-width: 900px){ .foot-grid { grid-template-columns: 1fr 1fr; gap:40px; } .nav-links { display:none; } }
+
+/* ==========================================================================
+   ปรับหน้ารายละเอียดคอร์สตามที่หมิงสั่ง
+   --------------------------------------------------------------------------
+   ทุกอย่างในบล็อกนี้เขียนทับค่าจากดีไซน์เดิม — ลบทั้งบล็อกแล้วกลับไปแบบเก่าได้
+   สีทั้งหมดผูกกับ --subj-c ที่ตั้งจากวิชาของคอร์ส (ดู course-detail.tsx)
+   ไม่ฮาร์ดโค้ดสีม่วงเหมือนเดิมที่ทำให้คอร์สฟิสิกส์ขึ้นพื้นหลังม่วง
+   ========================================================================== */
+
+.detail-shell { --subj-c: var(--brand-violet, oklch(0.66 0.23 295)); position: relative; }
+
+/* ---- พื้นหลังไล่สี: คลุมทั้งหน้า ไม่เว้นบน/ข้าง ---- */
+.hero-bg {
+  position: fixed;                /* คลุมทั้ง viewport ไม่ใช่แค่หัวหน้า */
+  inset: 0;
+  height: auto;
+  background:
+    radial-gradient(120% 70% at 78% -10%, oklch(from var(--subj-c) calc(l + 0.06) c h / 0.55), transparent 62%),
+    linear-gradient(178deg, oklch(from var(--subj-c) l c h / 0.34) 0%, transparent 46%);
+  z-index: -1;
+  pointer-events: none;
+}
+.hero-bg::after {
+  background: linear-gradient(180deg, transparent 34%, var(--bg-0) 88%);
+}
+.hero-bg .glyph { display: none; }   /* ใช้ลายน้ำในการ์ดแทน */
+
+/* ---- ป้ายเดียวพอ ---- */
+.hero-tags { margin-bottom: 14px; }
+
+/* ==========================================================================
+   สารบัญเนื้อหา — ให้กดได้ลื่นและมีจังหวะ
+   ========================================================================== */
+
+.chapter {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg-1);
+  overflow: hidden;
+  transition: border-color .25s, box-shadow .25s, transform .25s cubic-bezier(.2,.8,.2,1);
+}
+.chapter + .chapter { margin-top: 10px; }
+.chapter:hover {
+  border-color: oklch(from var(--subj-c) l c h / 0.45);
+  box-shadow: 0 10px 30px -16px oklch(from var(--subj-c) l c h / 0.5);
+}
+.chapter[open] {
+  border-color: oklch(from var(--subj-c) l c h / 0.5);
+  box-shadow: 0 14px 40px -20px oklch(from var(--subj-c) l c h / 0.55);
+}
+
+.chapter > summary {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px; cursor: pointer; list-style: none;
+  user-select: none;
+}
+.chapter > summary::-webkit-details-marker { display: none; }
+.chapter > summary .num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px; font-weight: 700;
+  color: oklch(from var(--subj-c) calc(l + 0.14) c h);
+  min-width: 22px;
+}
+.chapter > summary .title { font-weight: 600; font-size: 15.5px; color: var(--fg-0); flex: 1; }
+.chapter > summary .meta { font-size: 12px; color: var(--fg-3); white-space: nowrap; }
+.chapter > summary .chev { color: var(--fg-3); display: flex; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.chapter[open] > summary .chev { transform: rotate(180deg); }
+
+/* เปิดแล้วบทเรียนไล่โผล่ทีละบรรทัด */
+.chapter .lessons { padding: 0 18px 14px; }
+.chapter[open] .lessons > .lesson { animation: lsIn .32s cubic-bezier(.2,.8,.2,1) both; }
+.chapter[open] .lessons > .lesson:nth-child(1) { animation-delay: .02s; }
+.chapter[open] .lessons > .lesson:nth-child(2) { animation-delay: .06s; }
+.chapter[open] .lessons > .lesson:nth-child(3) { animation-delay: .10s; }
+.chapter[open] .lessons > .lesson:nth-child(4) { animation-delay: .14s; }
+.chapter[open] .lessons > .lesson:nth-child(n+5) { animation-delay: .18s; }
+@keyframes lsIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+.lesson {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 10px; border-radius: 10px;
+  transition: background .18s, padding-left .18s;
+}
+.lesson:hover { background: var(--bg-2); padding-left: 16px; }
+.lesson .icon {
+  width: 26px; height: 26px; border-radius: 8px; flex: 0 0 auto;
+  display: grid; place-items: center;
+  background: oklch(from var(--subj-c) l c h / 0.16);
+  color: oklch(from var(--subj-c) calc(l + 0.16) c h);
+}
+.lesson .icon svg { width: 12px; height: 12px; }
+.lesson .icon.quiz { background: oklch(0.78 0.16 82 / 0.18); color: oklch(0.72 0.15 82); }
+.lesson .name { flex: 1; font-size: 14px; color: var(--fg-1); }
+.lesson .duration { font-size: 12px; color: var(--fg-3); font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+/* ==========================================================================
+   ผู้สอน — การ์ดเล็ก ไม่กินพื้นที่
+   สีเดิมฮาร์ดโค้ดเป็นม่วง ทำให้คอร์สฟิสิกส์/TPAT3 สีเพี้ยน -> ผูกกับสีวิชา
+   ========================================================================== */
+.instr-block {
+  grid-template-columns: 68px 1fr;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  align-items: center;
+  margin-top: 16px;
+}
+.instr-photo {
+  width: 68px; height: 68px;
+  border-radius: 16px;
+  background: linear-gradient(150deg,
+    oklch(from var(--subj-c) calc(l - 0.06) c h),
+    oklch(from var(--subj-c) calc(l + 0.10) c calc(h + 22)));
+}
+.instr-info h3 { font-size: 16px; margin: 0; }
+.instr-info p { font-size: 13px; line-height: 1.55; color: var(--fg-2); margin: 6px 0 0; }
+.instr-chip {
+  display: inline-block; margin-top: 4px;
+  font-size: 11.5px; padding: 3px 9px; border-radius: 99px;
+  background: oklch(from var(--subj-c) l c h / 0.16);
+  color: oklch(from var(--subj-c) calc(l + 0.18) c h);
+  border: 1px solid oklch(from var(--subj-c) l c h / 0.3);
+}
+
+/* ==========================================================================
+   กล่อง "สิ่งที่จะได้" ในการ์ดลงทะเบียน
+   ========================================================================== */
+.enroll-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.enroll-stats .st-head {
+  grid-column: 1 / -1;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--fg-3); margin-bottom: 2px;
+}
+.enroll-stats .item {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  transition: border-color .2s, transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.enroll-stats .item:hover {
+  border-color: oklch(from var(--subj-c) l c h / 0.5);
+  transform: translateY(-2px);
+}
+.enroll-stats .item .val {
+  font-family: var(--font-display); font-weight: 700; font-size: 19px;
+  color: var(--fg-0); line-height: 1.1;
+}
+.enroll-stats .item .lab { font-size: 11.5px; color: var(--fg-3); }
+
+/* ==========================================================================
+   คำรับประกัน — เล็กลง + ติ๊กถูก
+   ========================================================================== */
+.enroll-guarantees { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+.enroll-guarantees .item {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 11.5px; line-height: 1.45; color: var(--fg-2);
+}
+.enroll-guarantees .item svg {
+  width: 13px; height: 13px; flex: 0 0 auto; margin-top: 2px;
+  color: var(--success, oklch(0.72 0.18 150));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter, .lesson, .enroll-stats .item { transition: none; }
+  .chapter[open] .lessons > .lesson { animation: none; }
+}
+
+/* ---- ลายน้ำโลโก้วิชาบนปกการ์ดลงทะเบียน ----
+   คลาสชื่อเดียวกับหน้ารายการคอร์ส แต่ CSS อยู่คนละไฟล์ (แต่ละหน้าโหลดของตัวเอง)
+   จึงต้องนิยามซ้ำที่นี่ ไม่ใช่พึ่ง courses.css */
+.enroll-cover .cc-wm {
+  position: absolute;
+  right: -18px; bottom: -24px;
+  width: 128px; height: 128px;
+  color: #fff; opacity: 0.22;
+  pointer-events: none;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s;
+}
+.enroll-cover .cc-wm svg { width: 100%; height: 100%; stroke-width: 1.15; }
+.enroll:hover .cc-wm { transform: translate(-6px,-6px) rotate(-5deg); opacity: 0.3; }

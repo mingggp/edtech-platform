@@ -124,6 +124,20 @@ class Course(Base):
         return sum((l.duration or 0) for ch in self.chapters for l in ch.lessons)
 
     @property
+    def _all_lessons(self):
+        return [l for ch in (self.chapters or []) for l in ch.lessons]
+
+    @property
+    def total_videos(self) -> int:
+        """จำนวนคลิปวิดีโอ"""
+        return sum(1 for l in self._all_lessons if l.kind == "video")
+
+    @property
+    def total_exercises(self) -> int:
+        """จำนวนแบบฝึกหัด/แบบทดสอบท้ายบท"""
+        return sum(1 for l in self._all_lessons if l.kind == "quiz")
+
+    @property
     def student_count(self) -> int:
         """จำนวนคนที่ลงเรียนคอร์สนี้"""
         return len(self.enrollments or [])
@@ -144,6 +158,9 @@ class Lesson(Base):
     id = Column(Integer, primary_key=True, index=True)
     chapter_id = Column(Integer, ForeignKey("chapters.id"))
     title = Column(String)
+    # ประเภทบทเรียน — video = คลิปสอน · quiz = แบบฝึกหัด · doc = เอกสาร/ชีท
+    # ใช้แยกนับ "จำนวนคลิป" กับ "จำนวนแบบฝึกหัด" บนหน้ารายละเอียดคอร์ส
+    kind = Column(String, default="video", nullable=False)
     youtube_id = Column(String)
     duration = Column(Integer, default=0)
     order = Column(Integer)
