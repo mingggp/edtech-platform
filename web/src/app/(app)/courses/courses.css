@@ -275,3 +275,64 @@
 }
 @keyframes ccSkel { 0%, 100% { opacity: .45; } 50% { opacity: .8; } }
 @media (prefers-reduced-motion: reduce) { .cc-skeleton { animation: none; } }
+
+/* ==========================================================================
+   ปรับสัดส่วนการ์ดเลือกวิชา  (หมิงทักว่าไอคอนกับชื่อวิชาชิดกัน + ชื่อไม่เด่น)
+   --------------------------------------------------------------------------
+   เขียนทับค่าจากดีไซน์เดิมไว้ตรงนี้ เพื่อให้เห็นชัดว่าอะไรถูกเปลี่ยน
+   อยากกลับไปแบบเดิม = ลบบล็อกนี้ทิ้งได้เลย
+
+   เดิม: การ์ดสูง 86px · ไอคอน 28px · ชื่อวิชา 16px
+         ไอคอนกับชื่อห่างกันแค่ ~20px ทั้งที่การ์ดกว้าง ~270px
+   ใหม่: การ์ดสูง 132px · ไอคอน 46px · ชื่อวิชาใหญ่ขึ้นเท่าตัว
+         ให้ชื่อวิชาเป็นพระเอกของการ์ด ไอคอนเป็นตัวประกอบ
+   ========================================================================== */
+
+.subject-grid { gap: 14px; }
+
+.subj {
+  min-height: 132px;
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  gap: 12px;                       /* กันไอคอนกับข้อความติดกันเวลาการ์ดเตี้ยลง */
+}
+
+.subj .subj-ico {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+}
+.subj .subj-ico svg { width: 24px; height: 24px; }
+
+.subj .subj-name {
+  /* ใหญ่ขึ้นตามความกว้างจอ แต่ไม่เกินขอบการ์ด */
+  font-size: clamp(21px, 1.7vw, 27px);
+  line-height: 1.08;
+}
+
+.subj .subj-meta {
+  font-size: 10.5px;
+  margin-top: 8px;
+  gap: 10px;
+}
+.subj .subj-meta .count { padding: 3px 10px; }
+
+.subj .check { width: 26px; height: 26px; top: 15px; right: 15px; }
+
+/* ตอนเลือกวิชา ไอคอนเดิมใช้ display:none ทำให้ข้อความกระโดดขึ้นไปติดขอบบน
+   เปลี่ยนเป็นซ่อนแบบยังกินพื้นที่เท่าเดิม การ์ดจะได้ไม่ขยับ */
+.subj[aria-pressed="true"] .subj-ico {
+  display: flex;
+  visibility: hidden;
+}
+
+/* จอแคบ: การ์ดเหลือ 3 คอลัมน์แล้ว ลดขนาดลงหน่อยไม่ให้ชื่อยาวตกบรรทัด */
+@media (max-width: 1280px) {
+  .subj { min-height: 122px; }
+  .subj .subj-name { font-size: clamp(19px, 2.2vw, 24px); }
+}
+@media (max-width: 720px) {
+  .subj { min-height: 116px; padding: 16px; }
+  .subj .subj-ico { width: 42px; height: 42px; }
+  .subj .subj-name { font-size: 21px; }
+}
