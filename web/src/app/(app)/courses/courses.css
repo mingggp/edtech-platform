@@ -315,30 +315,32 @@
   padding: 9px 11px 15px;
   font-size: 10.5px; font-weight: 700;
   letter-spacing: 0.08em;
-  color: #fff; white-space: nowrap;
-  background: var(--grad-signature);
+  white-space: nowrap;
+  /* หางปลาด้านล่าง — พื้นที่นอกรูปนี้ต้องโปร่งใสสนิท */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
-  box-shadow: 0 8px 20px -8px oklch(0 0 0 / 0.55);
   transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  /* ⚠️ ห้ามใส่ backdrop-filter หรือ box-shadow ที่นี่
+     เบราว์เซอร์คำนวณสองอย่างนี้จาก "กล่องสี่เหลี่ยม" ของ element
+     ไม่ใช่จากรูปที่ clip-path ตัด -> สีจะไปโผล่ในช่องหางปลาที่ควรโปร่งใส
+     (บั๊กที่หมิงเห็น) ถ้าอยากได้เอฟเฟกต์กระจก ให้ใช้พื้นทึบโปร่งแสงแทน */
 }
 .cc:hover .ribbon-flag { transform: translateY(3px); }
-/* สีริบบิ้น — ฐานเป็นกระจกเข้มโปร่งแสง อ่านได้บนปกสีอะไรก็ได้
-   ไม่ต้องแข่งกับสีประจำวิชาที่อยู่ข้างหลัง
-   แยกประเภทด้วย "เส้นขอบซ้าย + สีตัวอักษร" แทนการเปลี่ยนสีพื้นทั้งแถบ */
+/* สีริบบิ้น — ฐานเป็นสีเข้มโปร่งแสงโทนเดียวกับธีม petronas (hue 226)
+   ไม่ตีกับสีประจำวิชาที่อยู่บนปกด้านหลัง
+   แยกประเภทด้วยเส้นขอบบน + สีตัวอักษร ไม่ใช่เปลี่ยนสีพื้นทั้งแถบ */
 .cc-thumb .ribbon-flag {
-  background: oklch(0.16 0.02 285 / 0.62);
-  backdrop-filter: blur(14px) saturate(150%);
+  background: oklch(0.19 0.028 226 / 0.86);
   border-top: 2px solid var(--rib, oklch(0.72 0.16 82));
   color: var(--rib, #fff);
-  text-shadow: 0 1px 8px oklch(0 0 0 / 0.5);
+  text-shadow: 0 1px 8px oklch(0.12 0.02 226 / 0.7);
 }
-.cc-thumb .ribbon-flag.hot  { --rib: oklch(0.74 0.21 28); }
-.cc-thumb .ribbon-flag.new  { --rib: oklch(0.80 0.15 196); }
-.cc-thumb .ribbon-flag.rec  { --rib: oklch(0.80 0.14 300); }
-.cc-thumb .ribbon-flag.free { --rib: oklch(0.84 0.18 132); }
+.cc-thumb .ribbon-flag.hot  { --rib: oklch(0.76 0.20 30); }
+.cc-thumb .ribbon-flag.new  { --rib: oklch(0.82 0.14 196); }
+.cc-thumb .ribbon-flag.rec  { --rib: oklch(0.82 0.13 300); }
+.cc-thumb .ribbon-flag.free { --rib: oklch(0.86 0.17 132); }
 :root[data-theme="light"] .cc-thumb .ribbon-flag,
 :root[data-theme="petronas-light"] .cc-thumb .ribbon-flag {
-  background: oklch(0.20 0.02 285 / 0.72);
+  background: oklch(0.21 0.03 226 / 0.92);
 }
 
 /* ==========================================================================

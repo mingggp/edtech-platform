@@ -675,50 +675,62 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
 .detail-shell { --subj-c: var(--brand-violet, oklch(0.66 0.23 295)); position: relative; }
 
 /* ---- พื้นหลังไล่สี ----
-   คลุมเฉพาะพื้นที่เนื้อหา ไม่ล้ำไปโดน sidebar/topbar
-   .detail-shell อยู่ใน .page ซึ่งมี padding 32px รอบ (ล่าง 80px)
-   จึงยืดออกด้วย inset ติดลบให้เต็มพื้นที่ .page พอดี */
+   ต้องกินเต็มความกว้างของคอลัมน์เนื้อหา (ซ้ายสุดถึงขวาสุด) แต่ไม่ล้ำ sidebar
+
+   วิธี: ยืดกว้าง 100vw แล้วจัดกึ่งกลาง — ตัว .scroll ที่ครอบอยู่ตั้ง
+   overflow-x: hidden ไว้ จึงตัดส่วนที่ล้ำออกให้พอดีคอลัมน์เนื้อหาเอง
+   (ถ้ายืดแค่เท่า padding ของ .page จะเหลือขอบว่างสองข้าง เพราะ .page
+    มี max-width 1480px แล้วจัดกึ่งกลาง) */
 .hero-bg {
   position: absolute;
-  inset: -32px -32px -80px -32px;
+  top: -32px;
+  bottom: -80px;
+  left: 50%;
+  right: auto;
+  width: 100vw;
+  transform: translateX(-50%);
   height: auto;
-  border-radius: inherit;
-  background:
-    radial-gradient(120% 62% at 78% -8%, oklch(from var(--subj-c) calc(l + 0.06) c h / 0.55), transparent 62%),
-    linear-gradient(178deg, oklch(from var(--subj-c) l c h / 0.34) 0%, transparent 44%);
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  /* ---- โหมดมืด: สว่างขึ้นกว่าเดิม ---- */
+  background:
+    radial-gradient(120% 64% at 74% -8%,
+      oklch(from var(--subj-c) calc(l + 0.14) calc(c + 0.02) h / 0.72), transparent 64%),
+    linear-gradient(178deg,
+      oklch(from var(--subj-c) calc(l + 0.08) c h / 0.5) 0%,
+      oklch(from var(--subj-c) calc(l + 0.04) c h / 0.22) 26%,
+      transparent 48%);
 }
 .detail-shell > *:not(.hero-bg) { position: relative; z-index: 1; }
 .hero-bg::after {
-  background: linear-gradient(180deg, transparent 32%, var(--bg-0) 82%);
+  background: linear-gradient(180deg, transparent 34%, var(--bg-0) 84%);
 }
 .hero-bg .glyph { display: none; }   /* ใช้ลายน้ำในการ์ดแทน */
 
-/* โหมดสว่าง: สีวิชาจางไปจนตัวหนังสือขาวอ่านไม่ออก -> เพิ่มความเข้มและอิ่มสี
-   โหมดมืดใช้ค่าด้านบนตามเดิม (หมิงบอกว่าโอเคแล้ว) */
+/* ---- โหมดสว่าง: เข้มกว่านี้อีก ไม่งั้นตัวหนังสือขาวจม ---- */
 :root[data-theme="light"] .hero-bg,
 :root[data-theme="petronas-light"] .hero-bg {
   background:
-    radial-gradient(120% 64% at 78% -8%,
-      oklch(from var(--subj-c) calc(l - 0.10) calc(c + 0.05) h / 0.96), transparent 66%),
+    radial-gradient(125% 68% at 74% -10%,
+      oklch(from var(--subj-c) calc(l - 0.20) calc(c + 0.06) h) , transparent 68%),
     linear-gradient(178deg,
-      oklch(from var(--subj-c) calc(l - 0.06) calc(c + 0.04) h / 0.88) 0%,
-      oklch(from var(--subj-c) l c h / 0.34) 30%,
-      transparent 52%);
+      oklch(from var(--subj-c) calc(l - 0.16) calc(c + 0.05) h) 0%,
+      oklch(from var(--subj-c) calc(l - 0.06) calc(c + 0.03) h / 0.82) 22%,
+      oklch(from var(--subj-c) l c h / 0.28) 40%,
+      transparent 56%);
 }
 :root[data-theme="light"] .hero-bg::after,
 :root[data-theme="petronas-light"] .hero-bg::after {
-  background: linear-gradient(180deg, transparent 26%, var(--bg-0) 76%);
+  background: linear-gradient(180deg, transparent 28%, var(--bg-0) 78%);
 }
 /* ตัวหนังสือบนแถบสีต้องขาวจัดทั้งสองโหมด */
 :root[data-theme="light"] .hero-text h1,
 :root[data-theme="petronas-light"] .hero-text h1 { color: #fff; }
 :root[data-theme="light"] .hero-text .tagline,
-:root[data-theme="petronas-light"] .hero-text .tagline { color: oklch(1 0 0 / 0.9); }
+:root[data-theme="petronas-light"] .hero-text .tagline { color: oklch(1 0 0 / 0.92); }
 :root[data-theme="light"] .back-link,
-:root[data-theme="petronas-light"] .back-link { color: oklch(1 0 0 / 0.86); }
+:root[data-theme="petronas-light"] .back-link { color: oklch(1 0 0 / 0.88); }
 
 /* ---- ป้ายเดียวพอ ---- */
 .hero-tags { margin-bottom: 14px; }
