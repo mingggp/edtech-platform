@@ -693,44 +693,29 @@ footer { border-top: 1px solid var(--line-soft); padding: 80px 0 48px; margin-to
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  /* ---- โหมดมืด: สว่างขึ้นกว่าเดิม ---- */
-  background:
-    radial-gradient(120% 64% at 74% -8%,
-      oklch(from var(--subj-c) calc(l + 0.14) calc(c + 0.02) h / 0.72), transparent 64%),
-    linear-gradient(178deg,
-      oklch(from var(--subj-c) calc(l + 0.08) c h / 0.5) 0%,
-      oklch(from var(--subj-c) calc(l + 0.04) c h / 0.22) 26%,
-      transparent 48%);
-}
-.detail-shell > *:not(.hero-bg) { position: relative; z-index: 1; }
-.hero-bg::after {
-  background: linear-gradient(180deg, transparent 34%, var(--bg-0) 84%);
-}
-.hero-bg .glyph { display: none; }   /* ใช้ลายน้ำในการ์ดแทน */
-
-/* ---- โหมดสว่าง: เข้มกว่านี้อีก ไม่งั้นตัวหนังสือขาวจม ---- */
-:root[data-theme="light"] .hero-bg,
-:root[data-theme="petronas-light"] .hero-bg {
+  /* ใช้ชุดสีเดียวกันทุกธีม (หมิงขอให้โหมดมืดเหมือนโหมดสว่าง)
+     ส่วนที่ยังต่างตามธีมคือ ::after ที่ไล่จางลงไปหา --bg-0 ของธีมนั้น ๆ */
   background:
     radial-gradient(125% 68% at 74% -10%,
-      oklch(from var(--subj-c) calc(l - 0.20) calc(c + 0.06) h) , transparent 68%),
+      oklch(from var(--subj-c) calc(l - 0.20) calc(c + 0.06) h), transparent 68%),
     linear-gradient(178deg,
       oklch(from var(--subj-c) calc(l - 0.16) calc(c + 0.05) h) 0%,
       oklch(from var(--subj-c) calc(l - 0.06) calc(c + 0.03) h / 0.82) 22%,
       oklch(from var(--subj-c) l c h / 0.28) 40%,
       transparent 56%);
 }
-:root[data-theme="light"] .hero-bg::after,
-:root[data-theme="petronas-light"] .hero-bg::after {
+.detail-shell > *:not(.hero-bg) { position: relative; z-index: 1; }
+.hero-bg::after {
   background: linear-gradient(180deg, transparent 28%, var(--bg-0) 78%);
 }
+.hero-bg .glyph { display: none; }   /* ใช้ลายน้ำในการ์ดแทน */
+
 /* ตัวหนังสือบนแถบสีต้องขาวจัดทั้งสองโหมด */
-:root[data-theme="light"] .hero-text h1,
-:root[data-theme="petronas-light"] .hero-text h1 { color: #fff; }
-:root[data-theme="light"] .hero-text .tagline,
-:root[data-theme="petronas-light"] .hero-text .tagline { color: oklch(1 0 0 / 0.92); }
-:root[data-theme="light"] .back-link,
-:root[data-theme="petronas-light"] .back-link { color: oklch(1 0 0 / 0.88); }
+/* แถบสีเข้มเหมือนกันทุกธีมแล้ว ตัวหนังสือบนแถบจึงต้องขาวทุกธีมเช่นกัน */
+.hero-text h1 { color: #fff; }
+.hero-text .tagline { color: oklch(1 0 0 / 0.92); }
+.back-link { color: oklch(1 0 0 / 0.88); }
+.back-link:hover { color: #fff; }
 
 /* ---- ป้ายเดียวพอ ---- */
 .hero-tags { margin-bottom: 14px; }
