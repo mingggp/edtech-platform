@@ -1,6 +1,8 @@
-from pydantic import BaseModel, EmailStr, Field, PlainSerializer, model_validator
+from pydantic import BaseModel, EmailStr, Field, PlainSerializer, field_validator, model_validator
 from typing import Annotated, List, Optional, Any, Dict
 from datetime import datetime, timezone
+
+from . import grades
 
 
 # ---------------------------------------------------------------------------
@@ -43,34 +45,57 @@ class TokenData(BaseModel):
 class UserBase(BaseModel):
     email: EmailStr
 
-class UserCreate(UserBase):
+class _GradeField(BaseModel):
+    """ตัวกลางให้ schema ที่รับ grade_level มาสืบทอด
+
+    ยอมรับเฉพาะ key มาตรฐาน (m4/m5/m6/other) แต่แปลงของเก่าให้ก่อน
+    เช่น "M6" หรือ "ม.6" -> "m6" เพื่อไม่ให้แอปเวอร์ชันเก่าที่ยังส่งค่าเดิมมาพัง
+
+    ทำไมต้องเข้ม: ค่าที่สะกดต่างกันแต่หมายถึงสิ่งเดียวกันคือจุดเริ่มของบั๊ก
+    แบบเดียวกับ subject key ที่เคยเจอ — leaderboard กรองด้วย == จึงหาไม่เจอเงียบ ๆ
+    """
+    grade_level: Optional[str] = None
+
+    @field_validator("grade_level", mode="before")
+    @classmethod
+    def _norm_grade(cls, v):
+        if v is None or v == "":
+            return None
+        key = grades.normalize(v)
+        if key is None:
+            raise ValueError(f"grade_level ต้องเป็นหนึ่งใน {grades.GRADE_KEYS}")
+        return key
+
+
+class UserCreate(UserBase, _GradeField):
     password: str
     full_name: str
     nickname: Optional[str] = None
-    grade_level: Optional[str] = None
-    dek_code: Optional[str] = None
+    # ไม่รับ dek_code จากผู้ใช้ — คำนวณจาก grade_level เสมอ (app/grades.py)
+    # เดิมรับได้ = ใครก็ตั้งรุ่นตัวเองเป็นอะไรก็ได้ ซึ่งมีผลกับ leaderboard
+
 
 class UserLogin(UserBase):
     password: str
 
-class UserUpdate(BaseModel):
+class UserUpdate(_GradeField):
     full_name: Optional[str] = None
     nickname: Optional[str] = None
-    grade_level: Optional[str] = None
-    dek_code: Optional[str] = None
+    # ไม่รับ dek_code จากผู้ใช้ — คำนวณจาก grade_level เสมอ (app/grades.py)
+    # เดิมรับได้ = ใครก็ตั้งรุ่นตัวเองเป็นอะไรก็ได้ ซึ่งมีผลกับ leaderboard
 
-class UserUpdateMe(BaseModel):
+class UserUpdateMe(_GradeField):
     full_name: Optional[str] = None
     nickname: Optional[str] = None
-    grade_level: Optional[str] = None
-    dek_code: Optional[str] = None
+    # ไม่รับ dek_code จากผู้ใช้ — คำนวณจาก grade_level เสมอ (app/grades.py)
+    # เดิมรับได้ = ใครก็ตั้งรุ่นตัวเองเป็นอะไรก็ได้ ซึ่งมีผลกับ leaderboard
 
-class AdminUserUpdate(BaseModel):
+class AdminUserUpdate(_GradeField):
     role: Optional[str] = None
     full_name: Optional[str] = None
     nickname: Optional[str] = None
-    grade_level: Optional[str] = None
-    dek_code: Optional[str] = None
+    # ไม่รับ dek_code จากผู้ใช้ — คำนวณจาก grade_level เสมอ (app/grades.py)
+    # เดิมรับได้ = ใครก็ตั้งรุ่นตัวเองเป็นอะไรก็ได้ ซึ่งมีผลกับ leaderboard
 
 class UserRead(UserBase):
     id: int

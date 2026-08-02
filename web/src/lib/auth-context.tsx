@@ -3,8 +3,9 @@
 /**
  * สถานะการล็อกอิน — ใครล็อกอินอยู่ ใช้ร่วมกันทั้งเว็บ
  *
- * เก็บ token ไว้ที่ lib/api/client.ts (localStorage) ส่วนที่นี่เก็บ "ข้อมูลผู้ใช้"
- * ที่โหลดมาแล้ว เพื่อไม่ต้องยิง /users/me ซ้ำทุกหน้า
+ * เก็บ token ไว้ที่ lib/api/client.ts (local หรือ sessionStorage แล้วแต่ว่า
+ * ผู้ใช้ติ๊ก "จดจำฉันไว้" ไหม) ส่วนที่นี่เก็บ "ข้อมูลผู้ใช้" ที่โหลดมาแล้ว
+ * เพื่อไม่ต้องยิง /users/me ซ้ำทุกหน้า
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
@@ -17,8 +18,19 @@ interface AuthCtx {
   user: User | null;
   /** ยังโหลดข้อมูลผู้ใช้ไม่เสร็จ — อย่าเพิ่งตัดสินว่ายังไม่ล็อกอิน */
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  /** @param remember เก็บ token ไว้แม้ปิดเบราว์เซอร์ (ช่อง "จดจำฉันไว้") */
+  login: (email: string, password: string, remember?: boolean) => Promise<void>;
+  signup: (payload: SignupPayload) => Promise<void>;
   logout: () => void;
+}
+
+export interface SignupPayload {
+  email: string;
+  password: string;
+  full_name: string;
+  nickname?: string;
+  /** m4 | m5 | m6 | other — รุ่น DEK backend คำนวณให้เอง ไม่ต้องส่ง */
+  grade_level?: string;
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
@@ -36,9 +48,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const login = useCallback(
-    async (email: string, password: string) => {
-      await authApi.login(email, password);
+    async (email: string, password: string, remember = true) => {
+      await authApi.login(email, password, remember);
       await qc.invalidateQueries({ queryKey: ['me'] });
+    },
+    [qc],
+  );
+
+  const signup = useCallback(
+    async (payload: SignupPayload) => {
+      const r = await authApi.signup(payload);
+      // backend ส่งข้อมูลผู้ใช้มาพร้อม token แล้ว ใส่เข้า cache เลย
+      // ไม่ต้องยิง /users/me ซ้ำ — หน้าถัดไปจึงไม่ต้องรอโหลดอีกรอบ
+      qc.setQueryData(['me'], r.user);
     },
     [qc],
   );
@@ -54,9 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // ยังไม่มี token = รู้ผลแล้วว่าไม่ได้ล็อกอิน ไม่ต้องรอ
       loading: typeof window !== 'undefined' && !!tokenStore.access && isPending && !isFetched,
       login,
+      signup,
       logout,
     }),
-    [data, isPending, isFetched, login, logout],
+    [data, isPending, isFetched, login, signup, logout],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

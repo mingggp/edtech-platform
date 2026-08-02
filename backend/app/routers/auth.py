@@ -22,6 +22,25 @@ from ..limiter import limiter
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def _pw_fingerprint(user) -> str:
+    """ลายนิ้วมือสั้น ๆ ของรหัสผ่านปัจจุบัน — ใช้ทำให้ลิงก์รีเซ็ตใช้ได้ครั้งเดียว
+
+    ปัญหาที่แก้: เดิม token รีเซ็ตรหัสผ่านใช้ซ้ำได้เรื่อย ๆ จนกว่าจะครบ 30 นาที
+    ถ้าลิงก์หลุด (ส่งต่ออีเมล แชร์จอ ประวัติเบราว์เซอร์ อีเมลรั่ว) คนที่ได้ไป
+    ก็เปลี่ยนรหัสซ้ำได้อีก แม้เจ้าของจะตั้งรหัสใหม่ไปแล้ว = ยึดบัญชีได้
+
+    วิธีแก้: ฝังลายนิ้วมือของรหัสผ่าน ณ ตอนออก token ไว้ใน token ด้วย
+    พอรหัสผ่านถูกเปลี่ยน ลายนิ้วมือก็เปลี่ยน -> token เดิมใช้ไม่ได้ทันที
+
+    ทำไมไม่เก็บสถานะในฐานข้อมูล: วิธีนี้ไม่ต้องมีตาราง/คอลัมน์เพิ่ม
+    ไม่ต้องคอยลบของเก่า และไม่พังตอนมีเซิร์ฟเวอร์หลายตัว
+
+    ส่งแค่ 16 ตัวแรกของแฮชอีกชั้น ไม่ได้ส่ง hashed_password ออกไปตรง ๆ
+    """
+    import hashlib
+    return hashlib.sha256((user.hashed_password or "").encode()).hexdigest()[:16]
+
+
 class RefreshRequest(BaseModel):
     refresh_token: str
 
@@ -40,11 +59,21 @@ class ResetPasswordRequest(BaseModel):
     new_password: str = Field(min_length=8)
 
 
-@router.post("/signup", response_model=schemas.UserRead, status_code=201)
+class SignupResult(schemas.Token):
+    """สมัครเสร็จแล้วได้ทั้ง token และข้อมูลผู้ใช้กลับไปในครั้งเดียว
+
+    เดิม endpoint นี้คืนแค่ UserRead ไม่มี token เลย -> สมัครเสร็จยังไม่ได้ล็อกอิน
+    หน้าเว็บต้องยิง /auth/login ตามอีกรอบด้วยรหัสผ่านที่เพิ่งกรอก ซึ่งนอกจาก
+    จะช้าแล้วยังไปชน rate limit 5 ครั้ง/นาที ของ /auth/login ได้ด้วย
+    """
+    user: schemas.UserRead
+
+
+@router.post("/signup", response_model=SignupResult, status_code=201)
 @limiter.limit("5/minute")
 def signup(request: Request, payload: schemas.UserCreate, db: Session = Depends(get_db)):
     if crud.get_user_by_email(db, payload.email):
-        raise HTTPException(400, "Email registered")
+        raise HTTPException(400, "อีเมลนี้ถูกใช้สมัครไปแล้ว")
     u = crud.create_user(
         db,
         payload.email,
@@ -53,7 +82,12 @@ def signup(request: Request, payload: schemas.UserCreate, db: Session = Depends(
         payload.nickname,
         payload.grade_level,
     )
-    return u
+    return {
+        "access_token": create_access_token(u.email),
+        "refresh_token": create_refresh_token(u.email),
+        "token_type": "bearer",
+        "user": u,
+    }
 
 
 @router.post("/login", response_model=schemas.Token)
@@ -119,7 +153,7 @@ def forgot_password(
     user = crud.get_user_by_email(db, payload.email)
     if user:
         reset_token = _encode_token(
-            {"sub": user.email, "type": "password_reset"},
+            {"sub": user.email, "type": "password_reset", "pw": _pw_fingerprint(user)},
             timedelta(minutes=30),
         )
         # TODO: integrate email sending. For now, print to log.
@@ -146,5 +180,10 @@ def reset_password(
     user = crud.get_user_by_email(db, email)
     if not user:
         raise HTTPException(400, "ไม่พบผู้ใช้")
+
+    # ลิงก์ใช้ได้ครั้งเดียว — ดูรายละเอียดที่ _pw_fingerprint()
+    if data.get("pw") != _pw_fingerprint(user):
+        raise HTTPException(400, "ลิงก์นี้ถูกใช้ไปแล้ว กรุณาขอลิงก์ใหม่")
+
     user.hashed_password = get_password_hash(payload.new_password)
     db.commit()

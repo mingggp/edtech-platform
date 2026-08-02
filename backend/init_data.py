@@ -136,7 +136,7 @@ def init_db(force: bool = False):
             full_name="น้องปาล์ม ทดสอบระบบ",
             nickname="ปาล์ม",
             role="student",
-            grade_level="M6",
+            grade_level="m6",
             dek_code="69",
             daily_goal_minutes=30,
         )

@@ -5,6 +5,7 @@
  * (อนาคตถ้าอยากอัตโนมัติ ใช้ `openapi-typescript` ยิงที่ /openapi.json ได้เลย
  *  backend เปิด docs ไว้อยู่แล้ว)
  */
+import type { GradeKey } from '@/config/grades';
 import type { LevelId, SubjectId } from '@/config/subjects';
 
 /* ---------------------------------------------------------------- auth */
@@ -14,12 +15,18 @@ export interface Token {
   token_type?: string;
 }
 
+/** ผลลัพธ์ของ /auth/signup — ได้ token พร้อมใช้เลย ไม่ต้องล็อกอินซ้ำ */
+export interface SignupResult extends Token {
+  user: User;
+}
+
 export interface User {
   id: number;
   email: string;
   full_name: string | null;
   nickname: string | null;
-  grade_level: string | null;
+  /** m4 | m5 | m6 | other — ดู config/grades.ts (ห้ามเก็บเป็น "ม.6") */
+  grade_level: GradeKey | null;
   dek_code: string | null;
   role: 'student' | 'admin';
   avatar_url: string | null;

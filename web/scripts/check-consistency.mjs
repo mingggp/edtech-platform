@@ -60,6 +60,37 @@ if (existsSync(join(BACKEND, 'app/schemas.py'))) {
   note('ไม่เจอ backend/app/schemas.py — ข้ามการเทียบ');
 }
 
+/* --------------------------------------------------------- 1b. ระดับชั้น */
+/* ระดับชั้นเป็นข้อมูลชุดเดียวกันที่เขียนไว้ 2 ที่แบบเดียวกับวิชา
+   ถ้าไม่ตรงกัน leaderboard ที่กรองด้วย grade_level จะหาไม่เจอเงียบ ๆ */
+const EXPECTED_GRADES = ['m4', 'm5', 'm6', 'other'];
+
+const gradeTs = readFileSync(join(WEB, 'src/config/grades.ts'), 'utf8');
+const gradeTsM = gradeTs.match(/GRADE_KEYS\s*=\s*\[([^\]]*)\]/);
+if (!gradeTsM) {
+  fail('หา GRADE_KEYS ใน web/src/config/grades.ts ไม่เจอ');
+} else {
+  const ids = [...gradeTsM[1].matchAll(/'([a-z0-9]+)'/g)].map((x) => x[1]);
+  if (JSON.stringify(ids) !== JSON.stringify(EXPECTED_GRADES)) {
+    fail(`grades.ts มีระดับชั้น [${ids}] ควรเป็น [${EXPECTED_GRADES}]`);
+  }
+}
+
+if (existsSync(join(BACKEND, 'app/grades.py'))) {
+  const py = readFileSync(join(BACKEND, 'app/grades.py'), 'utf8');
+  const m = py.match(/GRADES:\s*dict\[str,\s*str\]\s*=\s*\{([\s\S]*?)\}/);
+  if (!m) {
+    fail('หา GRADES ใน backend/app/grades.py ไม่เจอ');
+  } else {
+    const ids = [...m[1].matchAll(/"([a-z0-9]+)":/g)].map((x) => x[1]);
+    if (JSON.stringify(ids) !== JSON.stringify(EXPECTED_GRADES)) {
+      fail(`backend GRADES = [${ids}] ไม่ตรงกับ [${EXPECTED_GRADES}]`);
+    }
+  }
+} else {
+  note('ไม่เจอ backend/app/grades.py — ข้ามการเทียบระดับชั้น');
+}
+
 /* ---------------------------------------------- 2. คีย์เก่าต้องไม่กลับมา */
 const DEAD = ['tpat3'].length ? [`'tpat'`, `'tgat'`, `'amath'`, `'aphys'`] : [];
 const walk = (dir, out = []) => {
@@ -115,4 +146,8 @@ if (problems.length) {
   for (const p of problems) console.error('   -', p);
   process.exit(1);
 }
-console.log(`\n✅ ผ่าน — วิชา 3 ที่ตรงกัน (${EXPECTED.join(' → ')}) · route ${have.size} หน้า`);
+console.log(
+  `\n✅ ผ่าน — วิชา 3 ที่ตรงกัน (${EXPECTED.join(' → ')})` +
+  ` · ระดับชั้น 2 ที่ตรงกัน (${EXPECTED_GRADES.join(' → ')})` +
+  ` · route ${have.size} หน้า`,
+);

@@ -7,28 +7,48 @@
 import { API_BASE, api, tokenStore } from './client';
 import type {
   AppNotification, Chapter, Checkout, Course, Gamification, LeaderboardPeriod,
-  LeaderboardRow, Payment, Token, User, XpEvent,
+  LeaderboardRow, Payment, SignupResult, Token, User, XpEvent,
 } from './types';
 
 /* ------------------------------------------------------------------ auth */
 export const auth = {
-  async login(email: string, password: string) {
+  /** @param remember เก็บ token ไว้แม้ปิดเบราว์เซอร์ (ช่อง "จดจำฉันไว้") */
+  async login(email: string, password: string, remember = true) {
     const t = await api.post<Token>('/auth/login', { email, password }, { anonymous: true });
-    tokenStore.set(t.access_token, t.refresh_token);
+    tokenStore.set(t.access_token, t.refresh_token, remember);
     return t;
   },
+
+  /**
+   * สมัครสมาชิก
+   *
+   * path คือ /auth/signup ไม่ใช่ /auth/register — เคยเขียนผิดไว้ตรงนี้
+   * ทำให้กดสมัครแล้วได้ 404 เงียบ ๆ (ยังไม่มีหน้าสมัครตอนนั้นเลยไม่มีใครเจอ)
+   *
+   * ไม่ส่ง dek_code — backend คำนวณจาก grade_level ให้เอง
+   */
   async signup(payload: {
-    email: string; password: string; full_name?: string;
-    nickname?: string; grade_level?: string; dek_code?: string;
+    email: string; password: string; full_name: string;
+    nickname?: string; grade_level?: string;
   }) {
-    const t = await api.post<Token>('/auth/register', payload, { anonymous: true });
-    tokenStore.set(t.access_token, t.refresh_token);
-    return t;
+    const r = await api.post<SignupResult>('/auth/signup', payload, { anonymous: true });
+    // สมัครใหม่ถือว่าอยากอยู่ต่อ เก็บแบบค้างไว้
+    tokenStore.set(r.access_token, r.refresh_token, true);
+    return r;
   },
+
   logout() {
     tokenStore.clear();
   },
   me: () => api.get<User>('/users/me'),
+
+  /** ขอลิงก์ตั้งรหัสใหม่ — backend ตอบ 204 เสมอ ไม่บอกว่ามีอีเมลนี้ไหม
+   *  (ถ้าบอก จะกลายเป็นช่องให้คนไล่เดาว่าใครสมัครไว้บ้าง) */
+  forgotPassword: (email: string) =>
+    api.post<void>('/auth/forgot-password', { email }, { anonymous: true }),
+
+  resetPassword: (token: string, new_password: string) =>
+    api.post<void>('/auth/reset-password', { token, new_password }, { anonymous: true }),
 };
 
 /* --------------------------------------------------------------- courses */

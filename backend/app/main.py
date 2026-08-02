@@ -74,11 +74,35 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     )
 
 
+def _safe_errors(exc: RequestValidationError) -> list[dict]:
+    """ทำรายการ error ให้แปลงเป็น JSON ได้แน่นอน
+
+    บั๊กที่เจอ: pydantic v2 ใส่ ValueError ตัวจริงไว้ใน error["ctx"]["error"]
+    ซึ่ง json แปลงไม่ได้ -> handler ตัวนี้พังเอง -> ผู้ใช้ได้ 500 แทนที่จะเป็น 422
+    แปลว่า validator ไหนก็ตามที่ raise ValueError (subject, ribbon, ระดับชั้น)
+    จะทำให้ API ตอบ "เซิร์ฟเวอร์พัง" ทั้งที่ความจริงคือ "ข้อมูลที่ส่งมาไม่ถูก"
+    หน้าเว็บจึงแยกไม่ออกและแสดงข้อความผิดให้นักเรียน
+    """
+    out = []
+    for e in exc.errors():
+        item = {k: v for k, v in e.items() if k != "ctx"}
+        ctx = e.get("ctx")
+        if isinstance(ctx, dict):
+            item["ctx"] = {k: str(v) for k, v in ctx.items()}
+        # loc มี int ปนได้ แปลงเป็น str ให้หมดเพื่อความชัวร์
+        if "loc" in item:
+            item["loc"] = [str(x) for x in item["loc"]]
+        item.pop("input", None)      # อาจมีรหัสผ่านของผู้ใช้ติดมา ไม่ส่งกลับ
+        item.pop("url", None)
+        out.append(item)
+    return out
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
-        content={"success": False, "error": "Validation Error", "details": exc.errors()},
+        content={"success": False, "error": "Validation Error", "details": _safe_errors(exc)},
     )
 
 

@@ -84,11 +84,18 @@ def test_reset_password_wrong_type(client):
 
 
 def test_reset_password_success(client):
-    """token ที่ถูกต้องต้องเปลี่ยนรหัสได้."""
-    reset_token = _encode_token(
-        {"sub": "test@example.com", "type": "password_reset"},
-        timedelta(minutes=5),
-    )
+    """token ที่ถูกต้องต้องเปลี่ยนรหัสได้
+
+    ต้องขอ token ผ่าน /auth/forgot-password จริง ๆ — ปั้น token เองไม่ได้แล้ว
+    เพราะตอนนี้ token ต้องมี 'ลายนิ้วมือรหัสผ่านปัจจุบัน' ติดมาด้วย
+    (กลไกที่ทำให้ลิงก์ใช้ได้ครั้งเดียว ดู tests/test_password_reset.py)
+    """
+    import contextlib, io
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        client.post("/auth/forgot-password", json={"email": "test@example.com"})
+    reset_token = buf.getvalue().split("token=")[1].strip()
+
     res = client.post("/auth/reset-password", json={
         "token": reset_token, "new_password": "freshpassword123"
     })

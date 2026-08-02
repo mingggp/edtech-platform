@@ -1,20 +1,22 @@
 'use client';
 
 /**
- * หน้าล็อกอินขั้นต่ำ
- *
- * ยังไม่ได้พอร์ตดีไซน์เต็มจาก 'Login Signup.html' — ทำขึ้นเพราะทุก endpoint
- * ของการซื้อคอร์สต้องล็อกอินก่อน ถ้าไม่มีหน้านี้จะทดสอบหน้าจ่ายเงินไม่ได้เลย
+ * หน้าเข้าสู่ระบบ — ย้ายจาก 'Login Signup.html' (ส่วน #view-login)
  *
  * รองรับ ?next=/path เพื่อเด้งกลับไปหน้าที่ตั้งใจจะไปหลังล็อกอินสำเร็จ
+ * เช่นกดซื้อคอร์สทั้งที่ยังไม่ล็อกอิน -> ล็อกอินเสร็จกลับมาหน้าจ่ายเงินต่อได้เลย
  */
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
 import { useAuth } from '@/lib/auth-context';
+import {
+  Checkbox, EMAIL_RE, ErrorBanner, Field, GoogleButton, SubmitButton,
+} from '../fields';
 
-/** กัน open-redirect: ยอมเฉพาะ path ภายในเว็บเท่านั้น */
+/** กัน open-redirect: ยอมเฉพาะ path ภายในเว็บเท่านั้น
+ *  ถ้าปล่อยผ่าน คนร้ายส่งลิงก์ /login?next=https://เว็บปลอม ให้นักเรียนได้ */
 function safeNext(raw: string | null): string {
   if (!raw) return '/dashboard';
   if (!raw.startsWith('/') || raw.startsWith('//')) return '/dashboard';
@@ -24,12 +26,15 @@ function safeNext(raw: string | null): string {
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = safeNext(params.get('next'));
+  const rawNext = params.get('next');
+  const next = safeNext(rawNext);
   const { user, login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [remember, setRemember] = useState(true);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [banner, setBanner] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   /* ล็อกอินอยู่แล้วก็ไม่ต้องเห็นหน้านี้ */
@@ -40,58 +45,78 @@ export function LoginForm() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (busy) return;
-    setError(null);
+
+    const found: typeof errors = {};
+    if (!EMAIL_RE.test(email.trim())) found.email = 'กรุณากรอกอีเมลให้ถูกต้อง';
+    if (!password) found.password = 'กรุณากรอกรหัสผ่าน';
+    setErrors(found);
+    if (Object.keys(found).length) return;
+
+    setBanner(null);
     setBusy(true);
     try {
-      await login(email.trim(), password);
+      await login(email.trim(), password, remember);
       router.replace(next);
     } catch (err) {
-      setError((err as Error)?.message ?? 'เข้าสู่ระบบไม่สำเร็จ');
-      setBusy(false);      // สำเร็จแล้วไม่ปลดล็อก กันกดซ้ำระหว่างเปลี่ยนหน้า
+      setBanner((err as Error)?.message ?? 'เข้าสู่ระบบไม่สำเร็จ');
+      setBusy(false);   // สำเร็จแล้วไม่ปลดล็อก กันกดซ้ำระหว่างเปลี่ยนหน้า
     }
   }
 
   return (
-    <form className="auth-card" onSubmit={onSubmit}>
-      <Link href="/" className="brand">
-        <span className="mark" aria-hidden="true">
-          <svg viewBox="0 0 120 120" fill="none">
-            <path d="M40 50 Q40 38 50 38 Q60 38 60 50" stroke="#fff" strokeWidth={9} strokeLinecap="round" />
-            <path d="M68 50 Q68 38 78 38 Q88 38 88 50" stroke="#fff" strokeWidth={9} strokeLinecap="round" />
-            <path d="M34 72 Q60 100 94 72" stroke="#fff" strokeWidth={10} strokeLinecap="round" />
-          </svg>
-        </span>
-        <b>mingsmileyface</b>
-      </Link>
-
-      <h1>เข้าสู่ระบบ</h1>
-      <p className="sub">เข้าเรียนคอร์สที่ซื้อไว้ และเก็บสตรีคต่อ</p>
-
-      {error ? <p className="auth-error" role="alert">{error}</p> : null}
-
-      <div className="auth-field">
-        <label htmlFor="email">อีเมล</label>
-        <input
-          id="email" type="email" autoComplete="email" required
-          value={email} onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-        />
+    <div className="form-card">
+      <div className="fc-head">
+        <div className="fc-eyebrow">เข้าสู่ระบบ</div>
+        <h1 className="fc-title">ยินดีต้อนรับกลับมา 👋</h1>
+        <p className="fc-sub">เข้าสู่ระบบเพื่อกลับไปเรียนต่อจากที่ค้างไว้</p>
       </div>
 
-      <div className="auth-field">
-        <label htmlFor="password">รหัสผ่าน</label>
-        <input
-          id="password" type="password" autoComplete="current-password" required
-          value={password} onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+      <ErrorBanner>{banner}</ErrorBanner>
 
-      <button className="auth-submit" type="submit" disabled={busy}>
-        {busy ? 'กำลังเข้าสู่ระบบ…' : 'เข้าสู่ระบบ'}
-      </button>
+      <form onSubmit={onSubmit} noValidate>
+        <Field
+          label="อีเมล"
+          type="email"
+          autoComplete="email"
+          value={email}
+          error={errors.email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setErrors((s) => ({ ...s, email: undefined }));
+          }}
+        />
+        <Field
+          label="รหัสผ่าน"
+          password
+          autoComplete="current-password"
+          value={password}
+          error={errors.password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setErrors((s) => ({ ...s, password: undefined }));
+          }}
+        />
+
+        <div className="fl-row">
+          <Checkbox checked={remember} onChange={setRemember}>จดจำฉันไว้</Checkbox>
+          <Link href="/forgot-password" className="link">ลืมรหัสผ่าน?</Link>
+        </div>
+
+        <SubmitButton busy={busy}>เข้าสู่ระบบ →</SubmitButton>
+      </form>
+
+      <div className="divider">หรือ</div>
+      <GoogleButton />
+
+      <p className="fc-foot">
+        ยังไม่มีบัญชี?{' '}
+        <Link href={rawNext ? `/signup?next=${encodeURIComponent(rawNext)}` : '/signup'}>
+          สมัครสมาชิกฟรี
+        </Link>
+      </p>
 
       {process.env.NODE_ENV !== 'production' ? (
-        <p className="auth-hint">
+        <p className="dev-hint">
           บัญชีทดสอบ (เฉพาะตอนพัฒนา)
           <br />
           นักเรียน <code>student@test.com</code> / <code>password</code>
@@ -99,6 +124,6 @@ export function LoginForm() {
           แอดมิน <code>admin@test.com</code> / <code>password</code>
         </p>
       ) : null}
-    </form>
+    </div>
   );
 }

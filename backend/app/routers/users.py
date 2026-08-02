@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from ..database import get_db
-from .. import schemas, crud, models
+from .. import grades, schemas, crud, models
 from ..auth import get_current_user
 from ..models import User
 from ..schemas import UserUpdateMe
@@ -22,8 +22,12 @@ def read_me(u=Depends(get_current_user)):
 def update_user_me(user_data: UserUpdateMe, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if user_data.full_name is not None: current_user.full_name = user_data.full_name
     if user_data.nickname is not None: current_user.nickname = user_data.nickname
-    if user_data.grade_level is not None: current_user.grade_level = user_data.grade_level
-    if user_data.dek_code is not None: current_user.dek_code = user_data.dek_code
+    if user_data.grade_level is not None:
+        # รุ่น DEK คำนวณจากระดับชั้นเสมอ ไม่รับค่าจากผู้ใช้
+        # (เดิมรับ dek_code ตรง ๆ ได้ = ใครก็ตั้งรุ่นตัวเองเป็นอะไรก็ได้
+        #  ซึ่งมีผลกับ leaderboard ที่แยกตามรุ่น)
+        current_user.grade_level = grades.normalize(user_data.grade_level)
+        current_user.dek_code = grades.dek_code(current_user.grade_level)
     db.commit()
     db.refresh(current_user)
     return current_user

@@ -21,22 +21,63 @@ const REFRESH_KEY = 'ming-refresh-token';
 
 const isBrowser = () => typeof window !== 'undefined';
 
+/**
+ * เก็บ token ไว้ที่ไหน — ขึ้นกับว่าติ๊ก "จดจำฉันไว้" หรือเปล่า
+ *
+ *   ติ๊ก      localStorage    อยู่ต่อแม้ปิดเบราว์เซอร์
+ *   ไม่ติ๊ก   sessionStorage  หายทันทีที่ปิดแท็บ
+ *
+ * สำคัญกับนักเรียนที่ใช้คอมส่วนกลาง เช่นห้องสมุดหรือคอมที่โรงเรียน —
+ * ถ้าเก็บลง localStorage หมดทุกกรณี คนถัดไปที่มาเปิดเว็บจะเข้าบัญชีเขาได้เลย
+ *
+ * ตอนอ่านต้องดูทั้งสองที่ เพราะไม่รู้ว่ารอบก่อนผู้ใช้เลือกแบบไหน
+ */
+function stores(): Storage[] {
+  if (!isBrowser()) return [];
+  try {
+    return [window.localStorage, window.sessionStorage];
+  } catch {
+    return [];   // โหมดส่วนตัวบางเบราว์เซอร์เข้าถึงไม่ได้
+  }
+}
+
+function read(key: string): string | null {
+  for (const s of stores()) {
+    const v = s.getItem(key);
+    if (v) return v;
+  }
+  return null;
+}
+
 export const tokenStore = {
   get access() {
-    return isBrowser() ? localStorage.getItem(ACCESS_KEY) : null;
+    return read(ACCESS_KEY);
   },
   get refresh() {
-    return isBrowser() ? localStorage.getItem(REFRESH_KEY) : null;
+    return read(REFRESH_KEY);
   },
-  set(access: string, refresh?: string) {
-    if (!isBrowser()) return;
-    localStorage.setItem(ACCESS_KEY, access);
-    if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
+  /** ตอนนี้ token ถูกเก็บแบบค้างข้ามการปิดเบราว์เซอร์อยู่ไหม */
+  get persistent() {
+    const [local] = stores();
+    return !!local?.getItem(ACCESS_KEY);
+  },
+  /** @param remember ค้างไว้แม้ปิดเบราว์เซอร์ (ค่าเริ่มต้น: ค้าง) */
+  set(access: string, refresh?: string, remember = true) {
+    const all = stores();
+    if (!all.length) return;
+    // ลบของเก่าจากทั้งสองที่ก่อน กันค่าค้างในที่ที่ไม่ได้ใช้แล้ว
+    // (ถ้าไม่ลบ: ล็อกอินแบบจำไว้ แล้วรอบหน้าล็อกอินแบบไม่จำ -> token เก่า
+    //  ยังอยู่ใน localStorage และถูกอ่านเจอก่อน = ยังล็อกอินค้างอยู่ทั้งที่ไม่ได้สั่ง)
+    this.clear();
+    const target = remember ? all[0] : all[1];
+    target.setItem(ACCESS_KEY, access);
+    if (refresh) target.setItem(REFRESH_KEY, refresh);
   },
   clear() {
-    if (!isBrowser()) return;
-    localStorage.removeItem(ACCESS_KEY);
-    localStorage.removeItem(REFRESH_KEY);
+    for (const s of stores()) {
+      s.removeItem(ACCESS_KEY);
+      s.removeItem(REFRESH_KEY);
+    }
   },
 };
 
@@ -117,7 +158,10 @@ async function doRefresh(): Promise<string | null> {
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { access_token: string; refresh_token?: string };
-    tokenStore.set(data.access_token, data.refresh_token);
+    // ต้องเก็บที่เดิม — ถ้าปล่อยให้ใช้ค่า default (จำไว้) token ของคนที่
+    // เลือก "ไม่จำ" จะถูกย้ายจาก sessionStorage ไป localStorage ตอน refresh
+    // แล้วค้างอยู่หลังปิดเบราว์เซอร์ ทั้งที่ผู้ใช้สั่งไม่ให้จำ
+    tokenStore.set(data.access_token, data.refresh_token, tokenStore.persistent);
     return data.access_token;
   } catch {
     return null;

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, asc, desc, func
 from typing import Optional, Tuple, List, Dict, Any
-from . import models, schemas
+from . import grades, models, schemas
 import json
 import uuid
 from datetime import datetime, timedelta, date
@@ -74,18 +74,16 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 def create_user(db: Session, email: str, hashed_password: str, full_name: str | None, nickname: str | None = None, grade_level: str | None = None):
-    dek_code = None
-    if grade_level:
-        gl = grade_level.upper().replace(" ", "")
-        dek_code = {"M6":69,"M5":70,"M4":71,"M3":72,"M2":73,"M1":74}.get(gl)
-    
+    # ระดับชั้นเก็บเป็น key มาตรฐาน (m4/m5/m6/other) และรุ่น DEK คำนวณจาก
+    # ปีการศึกษาปัจจุบัน ไม่ใช่ตารางตายตัวที่เก่าตามเวลา — ดู app/grades.py
+    grade_level = grades.normalize(grade_level)
     user = models.User(
-        email=email, 
-        hashed_password=hashed_password, 
-        full_name=full_name, 
-        nickname=nickname, 
-        grade_level=grade_level, 
-        dek_code=dek_code
+        email=email,
+        hashed_password=hashed_password,
+        full_name=full_name,
+        nickname=nickname,
+        grade_level=grade_level,
+        dek_code=grades.dek_code(grade_level),
     )
     db.add(user)
     db.commit()
@@ -129,8 +127,9 @@ def admin_update_user(db: Session, user: models.User, payload: schemas.AdminUser
     if payload.full_name is not None: user.full_name = payload.full_name
     if payload.role is not None: user.role = payload.role
     if payload.grade_level is not None:
-        user.grade_level = payload.grade_level
-        user.dek_code = {"M6":69,"M5":70,"M4":71,"M3":72,"M2":73,"M1":74}.get(payload.grade_level)
+        # เดิมตารางแปลงรุ่น DEK ถูกเขียนซ้ำอีกชุดตรงนี้ ทำให้มีความจริง 2 ที่
+        user.grade_level = grades.normalize(payload.grade_level)
+        user.dek_code = grades.dek_code(user.grade_level)
     
     db.commit()
     db.refresh(user)
