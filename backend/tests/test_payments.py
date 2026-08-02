@@ -6,7 +6,7 @@
   - สถานะที่นักเรียน/แอดมินเห็นมีแค่ สำเร็จ (paid) กับ หมดอายุ (expired)
 """
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -65,7 +65,13 @@ def test_checkout_creates_awaiting_payment(client, course):
     assert d["status"] == "awaiting"
     assert d["amount"] == 1990.0
     assert d["ref"].startswith("MSF-")
-    assert datetime.fromisoformat(d["expires_at"]) > datetime.utcnow()
+
+    # expires_at ต้องติด timezone มาด้วย (ลงท้ายด้วย Z) ไม่งั้นเบราว์เซอร์จะอ่าน
+    # เป็นเวลาท้องถิ่นแล้วคิดว่าหมดอายุไปแล้ว 7 ชม. — เคยเป็นบั๊กจริง
+    # ดูรายละเอียดใน tests/test_datetime_timezone.py
+    assert d["expires_at"].endswith("Z"), d["expires_at"]
+    exp = datetime.fromisoformat(d["expires_at"].replace("Z", "+00:00"))
+    assert exp > datetime.now(timezone.utc)
 
 
 def test_webhook_marks_paid_and_enrolls(client, db_session, course):

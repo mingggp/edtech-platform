@@ -1,6 +1,34 @@
-from pydantic import BaseModel, EmailStr, Field, model_validator
-from typing import List, Optional, Any, Dict
-from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field, PlainSerializer, model_validator
+from typing import Annotated, List, Optional, Any, Dict
+from datetime import datetime, timezone
+
+
+# ---------------------------------------------------------------------------
+# เวลา — ต้องบอก timezone ติดไปด้วยเสมอ
+# ---------------------------------------------------------------------------
+# ทั้งระบบเก็บเวลาเป็น UTC แบบ "ไม่ติด timezone" (datetime.utcnow) ในฐานข้อมูล
+# ซึ่งใช้ได้ตราบใดที่ฝั่ง Python คุยกันเอง เพราะเทียบกันด้วยมาตรฐานเดียวกัน
+#
+# ปัญหาอยู่ตอนส่งออกเป็น JSON:  "2026-08-02T13:58:53"  ไม่มี Z ไม่มี +00:00
+# JavaScript เจอสตริงแบบนี้จะตีความเป็น "เวลาท้องถิ่น" ตามสเปก
+# เครื่องที่ตั้งเวลาไทย (UTC+7) จึงอ่านเป็นเวลาที่ผ่านมาแล้ว 7 ชั่วโมง
+#
+# ของจริงที่เกิดขึ้น: QR ที่เพิ่งสร้างสด ๆ อายุ 15 นาที พอถึงเบราว์เซอร์กลายเป็น
+# "หมดอายุไปแล้ว 405 นาที" -> หน้าจ่ายเงินขึ้น "QR หมดอายุแล้ว" ทันทีที่เปิด
+# กดสร้างใหม่ก็เด้งกลับมาหน้าเดิมทุกครั้ง = นักเรียนจ่ายเงินไม่ได้เลยสักคน
+#
+# ทางแก้: เติม timezone ตอน serialize ให้ทุกฟิลด์ที่เป็นเวลา
+# ใช้ UtcDatetime แทน datetime ในทุก schema ที่ส่งออก (มีเทสต์บังคับไว้)
+def _to_utc_iso(dt: datetime) -> str:
+    if dt.tzinfo is None:                       # ค่าจากฐานข้อมูล = UTC แต่ไม่ติดป้าย
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+UtcDatetime = Annotated[
+    datetime,
+    PlainSerializer(_to_utc_iso, return_type=str, when_used="json"),
+]
 
 # --- Token ---
 class Token(BaseModel):
@@ -54,7 +82,7 @@ class UserRead(UserBase):
     total_minutes: int
     avatar_url: Optional[str] = None
     showcase_badges: Optional[str] = None
-    created_at: Optional[datetime] = None
+    created_at: Optional[UtcDatetime] = None
     
     class Config:
         from_attributes = True
@@ -144,7 +172,7 @@ class CourseRead(CourseBase):
     total_exercises: int = 0      # เฉพาะแบบฝึกหัด
     total_minutes: int = 0        # ความยาวรวม (นาที)
     student_count: int = 0        # จำนวนคนที่ลงเรียน
-    created_at: Optional[datetime] = None
+    created_at: Optional[UtcDatetime] = None
 
     class Config:
         from_attributes = True
@@ -213,7 +241,7 @@ class EnrollmentRead(BaseModel):
     id: int
     course_id: int
     user_id: int
-    enrolled_at: datetime
+    enrolled_at: UtcDatetime
     class Config: from_attributes = True
 
 class ProgressUpdate(BaseModel):
@@ -249,7 +277,7 @@ class CommentRead(BaseModel):
     id: int
     user_id: int
     text: str
-    created_at: datetime
+    created_at: UtcDatetime
     user: UserRead
     class Config: from_attributes = True
 
@@ -262,7 +290,7 @@ class CouponBase(BaseModel):
     discount_type: str
     discount_value: float
     max_usage: int = 0
-    expires_at: Optional[datetime] = None
+    expires_at: Optional[UtcDatetime] = None
 
 class CouponCreate(CouponBase):
     pass
@@ -285,7 +313,7 @@ class CheckoutRead(BaseModel):
     ref: str
     amount: float
     status: str
-    expires_at: datetime
+    expires_at: UtcDatetime
     qr_url: str
 
 class PaymentWebhook(BaseModel):
@@ -301,9 +329,9 @@ class PaymentRead(BaseModel):
     course_id: int
     amount: float
     status: str                       # awaiting | paid | expired
-    created_at: datetime
-    expires_at: Optional[datetime] = None
-    paid_at: Optional[datetime] = None
+    created_at: UtcDatetime
+    expires_at: Optional[UtcDatetime] = None
+    paid_at: Optional[UtcDatetime] = None
     provider: Optional[str] = None
     provider_ref: Optional[str] = None
     coupon_code: Optional[str] = None
@@ -326,7 +354,7 @@ class AuditItem(BaseModel):
     actor_id: Optional[int]
     target_id: Optional[int]
     data: Optional[str]
-    created_at: datetime
+    created_at: UtcDatetime
     created_at_bkk: str = ""
     created_at_iso_bkk: str = ""
     diff: List[dict] = []
@@ -397,7 +425,7 @@ class ExamResultRead(BaseModel):
     exam_id: int
     score: int
     total_score: int
-    submitted_at: datetime
+    submitted_at: UtcDatetime
     # join + parsed
     exam_title: Optional[str] = None
     answers_dict: Optional[Dict[str, int]] = None

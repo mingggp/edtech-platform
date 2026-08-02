@@ -128,12 +128,31 @@ export function CheckoutView({ courseId }: { courseId: number }) {
     return () => { alive = false; clearInterval(t); };
   }, [stage, intent]);
 
-  /* QR หมดเวลาฝั่งจอ — ให้ backend ตัดสินอีกที รอบ poll ถัดไป */
+  /* นาฬิกาบนจอเดินหมด -> ถาม backend ทันที ไม่ตัดสินเอง
+   *
+   * เดิมตรงนี้สั่ง setStage('expired') จากนาฬิกาในเครื่องผู้ใช้ ซึ่งอันตราย:
+   * ถ้านาฬิกาเครื่องเดินผิด (หรือ backend ส่งเวลามาโดยไม่บอก timezone แบบที่
+   * เคยเป็นบั๊กมาแล้ว) หน้าจะขึ้น "QR หมดอายุ" ทั้งที่ยังจ่ายได้อยู่
+   * -> นักเรียนจ่ายเงินไม่ได้เลย และเราจะไม่รู้ด้วยซ้ำว่าเสียลูกค้าไป
+   *
+   * ตอนนี้คนที่ตัดสินว่าหมดอายุคือ backend ที่เดียว (status === 'expired')
+   * นาฬิกาบนจอมีหน้าที่แค่แสดงผลให้ผู้ใช้ดู
+   */
   useEffect(() => {
-    if (stage === 'qr' && intent && msLeft === 0) {
-      const end = new Date(intent.expires_at).getTime();
-      if (Date.now() >= end) setStage('expired');
-    }
+    if (stage !== 'qr' || !intent || msLeft !== 0) return;
+    let alive = true;
+    void paymentsApi
+      .status(intent.ref)
+      .then((p) => {
+        if (!alive) return;
+        if (p.status === 'expired') setStage('expired');
+        else if (p.status === 'paid') {
+          setStage('verify');
+          setTimeout(() => alive && setStage('success'), 1400);
+        }
+      })
+      .catch(() => {/* ถามไม่ได้ก็ปล่อยไว้ รอบ poll ปกติจะถามให้เอง */});
+    return () => { alive = false; };
   }, [stage, intent, msLeft]);
 
   /* ---------------- คูปอง ---------------- */
