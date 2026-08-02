@@ -14,6 +14,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+from app.config import settings
 from app.database import SessionLocal, engine, Base
 from app import models, achievements_seed
 from app.auth import get_password_hash
@@ -83,7 +84,9 @@ COURSES = [
 
 def _guard(force: bool):
     """กันรันทับฐานข้อมูลจริง — พลาดทีเดียวข้อมูลนักเรียนหายหมด"""
-    url = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+    # ต้องอ่านจาก settings ที่เดียว — เคยพังเพราะไฟล์นี้อ่าน env เองแล้วตกไปใช้
+    # SQLite ขณะที่เซิร์ฟเวอร์ใช้ PostgreSQL -> seed ลงคนละฐาน แล้วหาไม่เจอว่าทำไม
+    url = settings.DATABASE_URL
     if force or os.getenv("ALLOW_DB_RESET") == "1":
         return
     print("❌ สคริปต์นี้จะลบข้อมูลทั้งหมดใน:", url)

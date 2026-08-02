@@ -1,86 +1,99 @@
-# EdTech Login Starter (FastAPI + JWT)
+# EdTech — Online Course Platform
 
-A tiny, batteries‑included starter to add **Sign up / Login / Protected APIs** to your EdTech project.
+แพลตฟอร์มคอร์สเรียนออนไลน์สำหรับนักเรียน ม.ปลาย — Backend FastAPI + Frontend Next.js 15
+
+## โครงสร้าง
+
+```
+.
+├── backend/        # FastAPI + SQLAlchemy + JWT
+└── web/            # Next.js 15 + shadcn/ui + TanStack Query
+```
+
+## เริ่มต้นใช้งาน
+
+### 1. Backend (FastAPI)
+
+```bash
+cd backend
+
+# สร้าง virtual environment
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # Mac/Linux
+
+pip install -r requirements.txt
+
+# คัดลอก env แล้วแก้ค่า SECRET_KEY (สำคัญ!)
+copy .env.example .env          # Windows
+# cp .env.example .env          # Mac/Linux
+
+# สร้าง SECRET_KEY ใหม่
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+# เอาค่าที่ได้ไปใส่ใน .env แทน "change-me-..."
+
+# รัน migration (Postgres) หรือข้ามไป (SQLite จะ create_all เอง)
+alembic upgrade head
+
+# รัน dev server
+uvicorn app.main:app --reload
+```
+
+Backend รันที่ http://localhost:8000  
+API docs (Swagger): http://localhost:8000/docs
+
+### 2. Frontend (Next.js)
+
+```bash
+cd web
+
+npm install
+
+# คัดลอก env
+copy .env.local.example .env.local   # Windows
+# cp .env.local.example .env.local   # Mac/Linux
+
+npm run dev
+```
+
+Frontend รันที่ http://localhost:3000
+
+## คำสั่งที่ใช้บ่อย
+
+### Backend
+```bash
+pytest                                    # รัน test
+alembic revision --autogenerate -m "..."  # สร้าง migration ใหม่
+alembic upgrade head                      # apply migration
+python promote_admin.py <email>           # set role เป็น admin
+```
+
+### Frontend
+```bash
+npm run dev        # dev server (Turbopack)
+npm run build      # production build
+npm run typecheck  # ตรวจ TypeScript
+npm run lint       # ESLint
+```
 
 ## Stack
-- **Backend:** FastAPI, SQLAlchemy (SQLite), JWT (python‑jose), passlib[bcrypt]
-- **Frontend demo:** Plain HTML + Tailwind CDN + fetch() (you can swap to React/Next later)
-- **Dev server:** Uvicorn
 
----
-cd backend
-py -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+**Backend:** FastAPI, SQLAlchemy, Alembic, JWT (python-jose), passlib, slowapi (rate limit), fastapi-cache2
 
-python init_data.py
+**Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui primitives, TanStack Query, Zustand, react-hook-form + zod
 
-## 1) Setup (Python 3.10+)
-```bash
-cd backend
-py -m venv .venv
-.venv\Scripts\activate
-    #macOS/Linux:
-    #source .venv/bin/activate
+## Security Notes
 
-pip install -r requirements.txt
-#cp .env.example .env
-# edit .env and set a long random SECRET_KEY
-```
+- `SECRET_KEY` ต้องเป็นค่าสุ่ม 32+ ไบต์ใน production — ห้าม commit เข้า git
+- `backend/.env` และ `web/.env.local` อยู่ใน `.gitignore` แล้ว
+- Admin endpoints ใช้ `Depends(require_admin)` — เช็ค role ที่ฝั่ง backend
+- Frontend ใช้ `<RouteGuard>` เป็นแค่ UX guard เท่านั้น (ของจริงเช็คที่ backend)
 
-## 2) Run
-```bash
-uvicorn app.main:app --reload
-# API docs at: https://edtech-api-zigm.onrender.com/docs
+## ที่ยังเหลือทำ (Roadmap)
 
-
-67) Promote to Admin
-python manage.py promote-admin admin@gmail.com
-
-MAIL_PASSWORD = "vu"
-
-```
-
-ุึุึุ
-
-## 3) Test quickly (HTTPie or curl)
-```bash
-# ping
-http :8000/ping
-
-# sign up
-http POST :8000/auth/signup email=test@example.com password=pass123 full_name=Tester
-
-# login -> copy access_token from response
-http POST :8000/auth/login email=test@example.com password=pass123
-
-# me (replace TOKEN)
-http :8000/users/me "Authorization: Bearer TOKEN"
-```
-
-## 4) Frontend demo
-Open `frontend/login.html` and `frontend/signup.html` with **Live Server** (VS Code extension) or any static server.
-If you use Live Server (usually `http://127.0.0.1:5500`), CORS is already permissive in dev (CORS_ALLOW_ORIGINS=*).
-
-- `login.html` → logs in and stores token in `localStorage`
-- `me.html` → reads `/users/me` with the stored token
-- `signup.html` → creates an account
-
-## 5) Common pitfalls
-- **CORS blocked:** In dev we allow `*`. If you tighten it, add your front‑end origin to `CORS_ALLOW_ORIGINS` in `.env` (comma‑separated).
-- **"Could not validate credentials":** Your Authorization header might be missing or you used an expired/invalid token.
-- **bcrypt import error:** If you see `AttributeError: module 'bcrypt' has no attribute '__about__'`, try `pip install --upgrade bcrypt passlib`.
-- **"Error loading ASGI app":** Make sure you run inside the `backend` folder: `uvicorn app.main:app --reload`.
-- **Email validation error:** Install `email-validator` (included in `requirements.txt`) and ensure the email format is valid when signing up.
-
-## 6) Next steps
-- Replace SQLite with PostgreSQL (change `DATABASE_URL` in `.env`), then add Alembic migrations.
-- Add refresh tokens and revoke lists.
-- Add email verification & password reset (send a link with a short‑lived token).
-- Move front‑end to React/Next and keep using the same APIs.
-- Deploy: Render/Fly.io/Railway for API, Vercel/Netlify for front‑end.
-
-
-Get-Process python* -ErrorAction SilentlyContinue | Stop-Process -Force
-Remove-Item .venv -Recurse -Force -ErrorAction SilentlyContinue
+- [ ] แยก `backend/app/crud.py` (679 บรรทัด) ตาม domain — users/courses/payments/learning
+- [ ] พอร์ต admin pages (Users, Payments, Coupons, Exams, Reports) ไป Next.js
+- [ ] หน้า course detail + course viewer (video player)
+- [ ] Payment flow (PromptPay QR + slip upload)
+- [ ] Email verification + change password หลัง login
+- [ ] Unit tests ฝั่ง frontend

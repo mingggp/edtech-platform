@@ -72,6 +72,31 @@ def _required_secret(key: str, *, dev_default: str | None = None) -> str:
     return dev_default or secrets.token_urlsafe(32)
 
 
+"""หน้าเว็บที่ยอมให้เรียก API ได้ (ตอนไม่ได้ตั้งค่าเอง)
+
+ต้องมี 3000 เพราะ Next.js ใช้พอร์ตนี้  ส่วน 5173 คือ Vite ของเว็บเวอร์ชันเก่า
+เก็บไว้เผื่อยังเปิดคู่กันอยู่
+"""
+_CORS_DEFAULT = (
+    "http://localhost:3000,http://127.0.0.1:3000,"
+    "http://localhost:5173,http://127.0.0.1:5173"
+)
+
+
+def _cors_origins() -> tuple:
+    """อ่านรายชื่อ origin จาก .env
+
+    รับได้ 2 ชื่อ เพราะ .env ที่ใช้อยู่เขียนว่า CORS_ALLOW_ORIGINS แต่โค้ดเดิม
+    อ่าน CORS_ORIGINS -> ค่าที่ตั้งไว้ใน .env ไม่เคยถูกใช้เลยสักครั้ง
+    บั๊กแบบนี้เงียบมาก เพราะตอน DEBUG ปล่อยผ่านทุก origin อยู่แล้ว
+    จะไประเบิดเอาตอนขึ้น production ซึ่งเป็นเวลาที่แย่ที่สุด
+    """
+    raw = os.getenv("CORS_ORIGINS") or os.getenv("CORS_ALLOW_ORIGINS") or _CORS_DEFAULT
+    if raw.strip() == "*":
+        return ("*",)
+    return tuple(o.strip() for o in raw.split(",") if o.strip())
+
+
 @dataclass(frozen=True)
 class Settings:
     ENV: str = field(default_factory=lambda: os.getenv("ENV", "development"))
@@ -90,22 +115,19 @@ class Settings:
         default_factory=lambda: int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
     )
 
-    CORS_ORIGINS: tuple = field(
-        default_factory=lambda: tuple(
-            o.strip()
-            for o in os.getenv(
-                "CORS_ORIGINS",
-                "http://localhost:3000,http://localhost:5173",
-            ).split(",")
-            if o.strip()
-        )
-    )
+    CORS_ORIGINS: tuple = field(default_factory=lambda: _cors_origins())
 
     PROMPTPAY_ID: str = field(
         default_factory=lambda: os.getenv("PROMPTPAY_ID", "0630218621")
     )
 
     REDIS_URL: str | None = field(default_factory=lambda: os.getenv("REDIS_URL"))
+
+    # secret ที่ใช้ตรวจ webhook จากเกตเวย์ — ถ้าว่าง endpoint จะปฏิเสธทุก request
+    # (เดิมอ่าน env เองใน routers/payments.py ย้ายมาที่นี่ตามกฎด้านบน)
+    PAYMENT_WEBHOOK_SECRET: str = field(
+        default_factory=lambda: os.getenv("PAYMENT_WEBHOOK_SECRET", "")
+    )
 
     @property
     def is_production(self) -> bool:

@@ -1,9 +1,16 @@
+import os
+
+# ต้องตั้งก่อน import app — ไม่งั้น app/database.py จะสร้าง engine ชี้ไป PostgreSQL
+# ตาม .env ของเครื่องที่รันอยู่ แล้วเทสต์จะพังถ้า Docker ไม่ได้เปิด (หรือแย่กว่านั้น
+# คือไปแตะฐานข้อมูลจริง)  load_dotenv ไม่ทับค่าที่ตั้งไว้แล้ว จึงปลอดภัย
+os.environ.setdefault("ENV", "test")
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-import os
 
 from app.main import app
 from app.database import Base, get_db

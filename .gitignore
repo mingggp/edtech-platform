@@ -1,0 +1,64 @@
+# ========== Python ==========
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# ========== Node / Frontend ==========
+node_modules/
+.next/
+out/
+dist/
+.cache/
+*.tsbuildinfo
+.eslintcache
+.turbo/
+
+# ========== Env / Secrets ==========
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ========== Database (NEVER commit production data) ==========
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.dump
+*.sql.gz
+
+# ========== Uploads (user-generated content — ห้าม commit) ==========
+backend/static/uploads/*
+!backend/static/uploads/.gitkeep
+static/uploads/*
+!static/uploads/.gitkeep
+
+# ========== IDE ==========
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ========== Logs ==========
+*.log
+logs/
+
+# ========== Misc ==========
+.coverage
+htmlcov/
+coverage.xml

@@ -42,6 +42,9 @@ def main():
         existing = set(insp.get_table_names())
     except Exception as e:
         print(f"❌ ต่อฐานข้อมูลไม่ได้: {e}")
+        if "refused" in str(e).lower() or "could not connect" in str(e).lower():
+            print("\n👉 ฐานข้อมูลของโปรเจกต์นี้รันอยู่ใน Docker")
+            print("   เปิด Docker Desktop ให้คอนเทนเนอร์ postgres ขึ้นก่อน แล้วรันใหม่")
         return 1
 
     # ---- เวอร์ชันที่ alembic คิดว่าอยู่ ----

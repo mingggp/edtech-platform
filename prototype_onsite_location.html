@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Mingsmileyface — สถานที่เรียนออนไซต์ (Prototype)</title>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  :root{
+    --indigo:#5b5bd6; --indigo-2:#7c7cf0; --amber:#f5a524; --amber-2:#ffce6b;
+    --bg:#0b0b14; --card:rgba(20,20,32,.82); --line:rgba(255,255,255,.10);
+    --txt:#f3f3fb; --muted:#a7a7c2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);
+    font-family:"IBM Plex Sans Thai","Plus Jakarta Sans",system-ui,sans-serif;overflow:hidden}
+  #map{position:absolute;inset:0}
+  .display{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;letter-spacing:-.02em}
+
+  /* Brand glow on map edges */
+  .vignette{position:absolute;inset:0;pointer-events:none;z-index:2;
+    box-shadow:inset 0 0 180px 40px rgba(8,8,16,.75)}
+
+  /* Info panel */
+  .panel{position:absolute;z-index:5;top:18px;left:18px;width:340px;max-width:calc(100vw - 36px);
+    background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--line);border-radius:22px;padding:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+    color:var(--amber-2);background:rgba(245,165,36,.12);border:1px solid rgba(245,165,36,.3);
+    padding:5px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+  .photo{position:relative;margin:14px 0;height:140px;border-radius:16px;overflow:hidden;
+    background:
+      radial-gradient(120% 80% at 70% 10%, rgba(124,124,240,.5), transparent 60%),
+      linear-gradient(135deg,#23233a,#15151f);
+    border:1px solid var(--line);display:grid;place-items:center}
+  .photo span{font-size:12px;color:var(--muted)}
+  .photo .cap{position:absolute;left:14px;bottom:12px;font-weight:700;font-size:13px;color:#fff;
+    text-shadow:0 2px 10px rgba(0,0,0,.6)}
+  .photo .dot3{position:absolute;right:12px;top:12px;display:flex;gap:5px}
+  .photo .dot3 i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4)}
+  h1{font-size:20px;margin:4px 0 2px}
+  .addr{font-size:13px;color:var(--muted);line-height:1.5}
+  .row{display:flex;align-items:center;gap:9px;font-size:13px;padding:9px 0;border-top:1px solid var(--line)}
+  .row .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+    background:rgba(124,124,240,.14);color:var(--indigo-2);flex:none;font-size:15px}
+  .btns{display:flex;gap:9px;margin-top:14px}
+  button,a.btn{font-family:inherit;cursor:pointer;border:none;border-radius:13px;font-weight:700;
+    font-size:13.5px;padding:12px 14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    text-decoration:none;transition:transform .12s ease,filter .12s ease}
+  button:active,a.btn:active{transform:scale(.97)}
+  .primary{flex:1;color:#fff;background:linear-gradient(135deg,var(--indigo),#8a5bf0)}
+  .primary:hover{filter:brightness(1.08)}
+  .ghost{color:var(--txt);background:rgba(255,255,255,.07);border:1px solid var(--line)}
+  .ghost:hover{background:rgba(255,255,255,.12)}
+
+  /* Journey stepper */
+  .steps{position:absolute;z-index:5;left:18px;bottom:18px;width:340px;max-width:calc(100vw - 36px);
+    background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--line);border-radius:18px;padding:14px 16px;
+    box-shadow:0 16px 40px rgba(0,0,0,.45);opacity:0;transform:translateY(12px);
+    transition:opacity .4s ease,transform .4s ease}
+  .steps.show{opacity:1;transform:none}
+  .steps h3{margin:0 0 10px;font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .step{display:flex;gap:11px;align-items:flex-start;padding:7px 0;opacity:.4;transition:opacity .3s}
+  .step.active{opacity:1}
+  .step .n{width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;
+    font-size:12px;font-weight:800;background:rgba(255,255,255,.08);color:var(--muted)}
+  .step.active .n{background:linear-gradient(135deg,var(--amber),#f08c00);color:#1a1206}
+  .step .t{font-size:13px;line-height:1.4}
+  .step .t b{display:block;font-weight:700}
+  .step .t small{color:var(--muted)}
+
+  /* Markers */
+  .mk{display:grid;place-items:center;transform:translate(-50%,-50%)}
+  .mk-bts{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#1f7a3d,#34c759);
+    color:#fff;font-size:20px;box-shadow:0 6px 18px rgba(0,0,0,.5);border:2px solid #fff}
+  .mk-store{position:relative;width:46px;height:46px}
+  .mk-store .pin{width:46px;height:46px;border-radius:50% 50% 50% 4px;transform:rotate(45deg);
+    background:linear-gradient(135deg,var(--indigo),#8a5bf0);box-shadow:0 8px 22px rgba(91,91,214,.6);
+    border:2px solid #fff}
+  .mk-store .em{position:absolute;inset:0;display:grid;place-items:center;font-size:20px}
+  .me{width:20px;height:20px;border-radius:50%;background:var(--amber);border:3px solid #fff;
+    box-shadow:0 0 0 6px rgba(245,165,36,.35),0 4px 12px rgba(0,0,0,.5);transform:translate(-50%,-50%)}
+  .me::after{content:"";position:absolute;inset:-3px;border-radius:50%;
+    box-shadow:0 0 0 2px rgba(245,165,36,.5);animation:pulse 1.4s infinite}
+  @keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+
+  /* "คุณอยู่ที่นี่" floating pin over station */
+  .herepin{display:flex;flex-direction:column;align-items:center;animation:bob 1.05s ease-in-out infinite;filter:drop-shadow(0 10px 16px rgba(245,165,36,.45))}
+  .herepin .bub{background:linear-gradient(135deg,var(--amber),#f08c00);color:#1a1206;font-weight:800;
+    font-size:12px;padding:8px 13px;border-radius:13px;white-space:nowrap}
+  .herepin .arw{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;
+    border-top:11px solid #f08c00;margin-top:-1px}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  .tag{background:rgba(11,11,20,.88);border:1px solid var(--line);color:#fff;font-size:11px;font-weight:700;
+    padding:4px 9px;border-radius:8px;transform:translate(-50%,-150%);white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+
+  .toast{position:absolute;z-index:7;top:18px;left:50%;transform:translate(-50%,-20px);opacity:0;
+    background:linear-gradient(135deg,var(--indigo),#8a5bf0);color:#fff;font-weight:700;font-size:14px;
+    padding:12px 20px;border-radius:14px;box-shadow:0 14px 34px rgba(91,91,214,.5);transition:.4s;pointer-events:none}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  .hint{position:absolute;z-index:5;right:18px;top:18px;font-size:11px;color:var(--muted);
+    background:var(--card);border:1px solid var(--line);padding:7px 11px;border-radius:10px;backdrop-filter:blur(10px)}
+  @media (max-width:560px){
+    .panel{top:12px;left:12px;right:12px;width:auto}
+    .steps{left:12px;right:12px;bottom:12px;width:auto}
+    .hint{display:none}
+    .photo{height:120px}
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="vignette"></div>
+<div class="hint">prototype · แผนที่ 3D จริง (MapLibre + OpenFreeMap)</div>
+
+<div class="panel">
+  <span class="badge">● สถานที่เรียนออนไซต์</span>
+  <div class="photo">
+    <span>รูปหน้าร้าน (placeholder)</span>
+    <div class="dot3"><i></i><i></i><i></i></div>
+    <div class="cap">Mingsmileyface Learning Space</div>
+  </div>
+  <h1 class="display">ศูนย์เรียนออนไซต์ครูหมิง</h1>
+  <p class="addr">1604 ถ.พหลโยธิน แขวงจันทรเกษม<br/>เขตจตุจักร กรุงเทพฯ 10900</p>
+  <div class="row"><div class="ic">🚉</div><div>ใกล้ <b style="display:inline">BTS รัชโยธิน (N11)</b> ออก Exit 4 — เดิน ~3 นาที</div></div>
+  <div class="row"><div class="ic">🕒</div><div>จ–ศ 15:00–20:00 · ส–อา 09:00–17:00 <small style="color:var(--muted)">(ตัวอย่าง)</small></div></div>
+  <div class="btns">
+    <button class="primary" id="go">▶ เริ่มนำทางจาก BTS</button>
+    <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=13.830787,100.570975" target="_blank" rel="noopener">📍 แผนที่</a>
+  </div>
+</div>
+
+<div class="steps" id="steps">
+  <h3>เส้นทางจาก BTS รัชโยธิน</h3>
+  <div class="step" data-step="0"><div class="n">1</div><div class="t"><b>ลง BTS รัชโยธิน (N11)</b><small>ออกทางออก 4 (Exit 4)</small></div></div>
+  <div class="step" data-step="1"><div class="n">2</div><div class="t"><b>เดินตามฟุตบาทถนนพหลโยธิน</b><small>ตรงไป ~250 เมตร</small></div></div>
+  <div class="step" data-step="2"><div class="n">3</div><div class="t"><b>เลี้ยวเข้าซอยพหลโยธิน 30/1</b><small>สังเกตปากซอย</small></div></div>
+  <div class="step" data-step="3"><div class="n">4</div><div class="t"><b>ถึง Mingsmileyface 🎓</b></div></div>
+</div>
+
+<div class="toast" id="toast">🎓 ถึงแล้ว! ยินดีต้อนรับสู่ Mingsmileyface</div>
+
+<script>
+const STORE = [100.570975, 13.830787];
+const BTS   = [100.5697, 13.8297];           // BTS รัชโยธิน N11 (Exit 4)
+// เส้นทางเดินคร่าวๆ: Exit 4 → ฟุตบาทพหลโยธิน → เลี้ยวเข้าซอยพหลโยธิน 30/1 → ร้าน
+// (prototype — ยังไม่ใช่เส้นจาก routing engine จริง)
+const ROUTE = [ BTS, [100.57008,13.83000], [100.57082,13.83055], STORE ];
+
+const map = new maplibregl.Map({
+  container:'map',
+  style:'https://tiles.openfreemap.org/styles/liberty',
+  center:[100.5703,13.8303], zoom:15.5, pitch:55, bearing:-18, antialias:true
+});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-right');
+
+// ---------- helpers ----------
+function hav(a,b){const R=6371000,dLat=(b[1]-a[1])*Math.PI/180,dLng=(b[0]-a[0])*Math.PI/180,
+  la1=a[1]*Math.PI/180,la2=b[1]*Math.PI/180;
+  const x=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(x));}
+function bearing(a,b){const y=Math.sin((b[0]-a[0])*Math.PI/180)*Math.cos(b[1]*Math.PI/180),
+  x=Math.cos(a[1]*Math.PI/180)*Math.sin(b[1]*Math.PI/180)-Math.sin(a[1]*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.cos((b[0]-a[0])*Math.PI/180);
+  return Math.atan2(y,x)*180/Math.PI;}
+const segLen=[], cum=[0]; let total=0;
+for(let i=1;i<ROUTE.length;i++){const d=hav(ROUTE[i-1],ROUTE[i]);segLen.push(d);total+=d;cum.push(total);}
+function at(dist){ // point + bearing at distance along route
+  if(dist<=0)return{p:ROUTE[0],b:bearing(ROUTE[0],ROUTE[1])};
+  if(dist>=total)return{p:ROUTE[ROUTE.length-1],b:bearing(ROUTE[ROUTE.length-2],ROUTE[ROUTE.length-1])};
+  let i=1;while(cum[i]<dist)i++;
+  const t=(dist-cum[i-1])/segLen[i-1],a=ROUTE[i-1],c=ROUTE[i];
+  return{p:[a[0]+(c[0]-a[0])*t,a[1]+(c[1]-a[1])*t],b:bearing(a,c)};
+}
+function sliceTo(dist){const out=[ROUTE[0]];let i=1;while(i<ROUTE.length&&cum[i]<dist){out.push(ROUTE[i]);i++;}out.push(at(dist).p);return out;}
+
+// ---------- DOM markers ----------
+function el(cls,html){const d=document.createElement('div');d.className=cls;if(html)d.innerHTML=html;return d;}
+new maplibregl.Marker({element:el('mk mk-bts','🚆'),anchor:'center'}).setLngLat(BTS).addTo(map);
+new maplibregl.Marker({element:el('tag','BTS รัชโยธิน N11'),anchor:'center'}).setLngLat(BTS).addTo(map);
+new maplibregl.Marker({element:el('mk mk-store','<div class="pin"></div><div class="em">🎓</div>'),anchor:'center'}).setLngLat(STORE).addTo(map);
+const meEl=el('me'); const meMarker=new maplibregl.Marker({element:meEl,anchor:'center'}).setLngLat(BTS).addTo(map);
+meEl.style.display='none';
+// หมุด "คุณอยู่ที่นี่" ลอยเหนือสถานี (โชว์ตอนเริ่ม แล้วหยุดให้ดูก่อนเดิน)
+const hereEl=el('herepin','<div class="bub">📍 คุณอยู่ที่นี่ · ออก Exit 4</div><div class="arw"></div>');
+const hereMk=new maplibregl.Marker({element:hereEl,anchor:'bottom',offset:[0,-34]}).setLngLat(BTS).addTo(map);
+hereEl.style.display='none';
+
+map.on('load',()=>{
+  // 3D buildings (OpenMapTiles schema) — รับประกันว่ามีอาคาร 3D
+  try{
+    map.addLayer({id:'ming-3d',source:'openmaptiles','source-layer':'building',type:'fill-extrusion',minzoom:14,
+      paint:{'fill-extrusion-color':['interpolate',['linear'],['get','render_height'],0,'#26263a',60,'#34344f'],
+        'fill-extrusion-height':['get','render_height'],'fill-extrusion-base':['get','render_min_height'],
+        'fill-extrusion-opacity':.9}});
+  }catch(e){console.warn('3d layer',e);}
+  // route layers
+  map.addSource('route-full',{type:'geojson',data:line(ROUTE)});
+  map.addSource('route-prog',{type:'geojson',data:line([ROUTE[0]])});
+  map.addLayer({id:'route-bg',type:'line',source:'route-full',
+    paint:{'line-color':'#ffffff','line-opacity':.18,'line-width':7,'line-dasharray':[2,2]},
+    layout:{'line-cap':'round'}});
+  map.addLayer({id:'route-fg',type:'line',source:'route-prog',
+    paint:{'line-color':'#f5a524','line-width':6,'line-blur':.4},layout:{'line-cap':'round','line-join':'round'}});
+});
+function line(coords){return{type:'Feature',geometry:{type:'LineString',coordinates:coords}};}
+
+// ---------- animation ----------
+let playing=false;
+function setStep(k){document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step<=k));}
+function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+document.getElementById('go').onclick=()=>{
+  if(playing)return; playing=true;
+  document.getElementById('steps').classList.add('show');
+  // reset (เผื่อเล่นซ้ำ)
+  if(map.getSource('route-prog'))map.getSource('route-prog').setData(line([ROUTE[0]]));
+  meMarker.setLngLat(BTS); meEl.style.display='none';
+  hereEl.style.opacity='1'; setStep(0);
+  // 1) บินไปที่สถานี
+  map.flyTo({center:BTS,zoom:17.6,pitch:62,bearing:-18,duration:1700,essential:true});
+  // 2) ถึงสถานี → โชว์หมุด "คุณอยู่ที่นี่" ลอยเหนือสถานี
+  setTimeout(()=>{ hereEl.style.display='flex'; }, 1700);
+  const DUR=8000; let start=null;
+  // 3) หยุดให้ดูสถานี ~2.4 วิ แล้วค่อยเริ่มเดินตาม route
+  setTimeout(()=>{
+    hereEl.style.transition='opacity .5s'; hereEl.style.opacity='0';
+    setTimeout(()=>hereEl.style.display='none',500);
+    meEl.style.display='block';
+    function frame(ts){
+      if(!start)start=ts;
+      const f=Math.min((ts-start)/DUR,1), d=f*total, {p,b}=at(d);
+      meMarker.setLngLat(p);
+      map.getSource('route-prog').setData(line(sliceTo(d)));
+      map.jumpTo({center:p,bearing:b,pitch:62,zoom:17.7});
+      setStep(d>total*0.9?3 : d>total*0.55?2 : 1);
+      if(f<1)requestAnimationFrame(frame);
+      else{ // ถึงร้าน
+        map.flyTo({center:STORE,zoom:18,pitch:50,bearing:b+10,duration:1400});
+        setStep(3); toast(); playing=false;
+        document.getElementById('go').textContent='↺ เล่นอีกครั้ง';
+      }
+    }
+    requestAnimationFrame(frame);
+  }, 4100);
+};
+</script>
+</body>
+</html>

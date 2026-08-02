@@ -13,7 +13,9 @@ from ..promptpay import make_qr_image
 from ..config import UPLOAD_DIR, MY_PROMPTPAY_ID, settings
 
 # secret ที่ใช้ตรวจ webhook จากเกตเวย์ — ถ้าไม่ตั้ง endpoint จะปฏิเสธทุก request
-PAYMENT_WEBHOOK_SECRET = os.getenv("PAYMENT_WEBHOOK_SECRET", "")
+# อ่านผ่าน settings ไม่ใช่ os.getenv เอง (กฎใน config.py) แต่ยังคงเป็นตัวแปรระดับ
+# โมดูลไว้ เพราะเทสต์ monkeypatch ชื่อนี้อยู่
+PAYMENT_WEBHOOK_SECRET = settings.PAYMENT_WEBHOOK_SECRET
 
 router = APIRouter(prefix="", tags=["payments"])
 
