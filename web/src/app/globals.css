@@ -148,14 +148,41 @@ body {
   border: 1px solid var(--glass-line-strong);
   display: flex; flex-direction: column; gap: 2px;
 }
-.av-menu a {
-  display: flex; align-items: center; gap: 10px;
+/* ปุ่มออกจากระบบเป็น <button> ไม่ใช่ <a> เพราะต้องล้าง token ก่อน
+   ไม่ใช่แค่พาไปหน้าอื่น — จึงต้องจัดสไตล์ให้เหมือนกันทั้งสองแบบ */
+.av-menu a,
+.av-menu button {
+  display: flex; align-items: center; gap: 10px; width: 100%;
   padding: 9px 11px; border-radius: 10px;
-  font-size: 13.5px; color: var(--fg-1); text-decoration: none;
+  font: inherit; font-size: 13.5px; text-align: left;
+  color: var(--fg-1); text-decoration: none;
+  background: none; border: 0; cursor: pointer;
 }
-.av-menu a:hover { background: var(--bg-2); color: var(--fg-0); }
-.av-menu a svg { width: 16px; height: 16px; }
-.av-menu a.danger { color: var(--danger, oklch(.65 .2 25)); }
+.av-menu a:hover,
+.av-menu button:hover { background: var(--bg-2); color: var(--fg-0); }
+.av-menu a svg,
+.av-menu button svg { width: 16px; height: 16px; flex-shrink: 0; }
+.av-menu a.danger,
+.av-menu button.danger { color: var(--danger, oklch(.65 .2 25)); }
+
+/* หัวเมนู — บอกว่ากำลังใช้บัญชีไหนอยู่
+   สำคัญตอนใช้คอมร่วมกัน จะได้รู้ว่าต้องออกจากระบบก่อนไหม */
+.avm-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 11px 12px; margin-bottom: 4px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.avm-head .av {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: var(--grad-signature); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 13px;
+}
+.avm-head b { display: block; font-size: 13.5px; color: var(--fg-0); line-height: 1.3; }
+.avm-head span {
+  display: block; font-size: 11.5px; color: var(--fg-3);
+  max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 
 /* ---- การ์ดพื้นฐาน ---- */
 .card {

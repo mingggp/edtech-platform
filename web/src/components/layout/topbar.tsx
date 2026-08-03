@@ -1,16 +1,39 @@
 'use client';
 
-/** แถบบน — เบรดครัมบ์ · สลับธีม · กระดิ่งแจ้งเตือน · รูปโปรไฟล์ */
+/** แถบบน — เบรดครัมบ์ · สลับธีม · กระดิ่งแจ้งเตือน · เมนูโปรไฟล์ */
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import { PROFILE_MENU } from '@/config/nav';
 import { useTheme } from '@/components/theme-provider';
+import { PROFILE_MENU } from '@/config/nav';
+import { useAuth } from '@/lib/auth-context';
 import { NavIcon } from './icons';
+
+/** ตัวอักษรย่อบนวงกลมโปรไฟล์ — เอาชื่อเล่นก่อน ไม่มีค่อยใช้ชื่อจริง/อีเมล */
+function initials(name?: string | null, email?: string): string {
+  const src = (name || email || '').trim();
+  if (!src) return '';
+  return src.slice(0, 2);
+}
 
 export function Topbar({ crumb }: { crumb?: ReactNode }) {
   const { preference, setPreference, theme } = useTheme();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const isDark = theme === 'petronas' || theme === 'dark' || theme === 'f1';
+
+  /**
+   * ออกจากระบบ
+   *
+   * บั๊กเดิม: ตรงนี้เป็นแค่ <Link href="/login"> ไม่ได้ล้าง token เลย
+   * กดแล้วไปหน้า /login จริง แต่ยังล็อกอินอยู่ -> หน้า login เห็นว่ามีผู้ใช้
+   * ก็เด้งกลับ /dashboard ทันที = วนไม่จบ และออกจากบัญชีไม่ได้เลยทั้งเว็บ
+   */
+  function onLogout() {
+    logout();
+    router.replace('/login');
+  }
 
   return (
     <header className="topbar glass">
@@ -48,16 +71,32 @@ export function Topbar({ crumb }: { crumb?: ReactNode }) {
             <span className="av" aria-hidden="true" />
           </summary>
           <div className="av-menu glass">
+            {/* บอกว่ากำลังใช้บัญชีไหนอยู่ — จำเป็นตอนใช้คอมร่วมกับคนอื่น */}
+            {user ? (
+              <div className="avm-head">
+                <span className="av" aria-hidden="true">
+                  {initials(user.nickname ?? user.full_name, user.email)}
+                </span>
+                <div>
+                  <b>{user.nickname || user.full_name || 'นักเรียน'}</b>
+                  <span>{user.email}</span>
+                </div>
+              </div>
+            ) : null}
+
             {PROFILE_MENU.map((it) => (
               <Link key={it.href} href={it.href}>
                 <NavIcon name={it.icon} />
                 {it.label}
               </Link>
             ))}
-            <Link href="/login" className="danger">
-              <NavIcon name="home" />
+
+            <button type="button" className="danger" onClick={onLogout}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+              </svg>
               ออกจากระบบ
-            </Link>
+            </button>
           </div>
         </details>
       </div>

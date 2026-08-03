@@ -8,7 +8,7 @@
  */
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 
 import { useAuth } from '@/lib/auth-context';
 import {
@@ -28,7 +28,7 @@ export function LoginForm() {
   const params = useSearchParams();
   const rawNext = params.get('next');
   const next = safeNext(rawNext);
-  const { user, login } = useAuth();
+  const { user, logout, login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,10 +37,8 @@ export function LoginForm() {
   const [banner, setBanner] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  /* ล็อกอินอยู่แล้วก็ไม่ต้องเห็นหน้านี้ */
-  useEffect(() => {
-    if (user) router.replace(next);
-  }, [user, next, router]);
+  /* เพิ่งกดเข้าสู่ระบบในหน้านี้เอง (ไม่ใช่เดินเข้ามาทั้งที่ล็อกอินอยู่แล้ว) */
+  const justLoggedIn = useRef(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -55,12 +53,51 @@ export function LoginForm() {
     setBanner(null);
     setBusy(true);
     try {
+      justLoggedIn.current = true;
       await login(email.trim(), password, remember);
       router.replace(next);
     } catch (err) {
+      justLoggedIn.current = false;
       setBanner((err as Error)?.message ?? 'เข้าสู่ระบบไม่สำเร็จ');
       setBusy(false);   // สำเร็จแล้วไม่ปลดล็อก กันกดซ้ำระหว่างเปลี่ยนหน้า
     }
+  }
+
+  /* เดินเข้ามาทั้งที่ล็อกอินอยู่แล้ว
+   *
+   * เดิมตรงนี้เด้งไป /dashboard ทันทีแบบเงียบ ๆ ซึ่งเป็นกับดัก:
+   * ถ้าหาปุ่มออกจากระบบไม่เจอ จะเข้าหน้านี้ไม่ได้เลยตลอดกาล
+   * (และเคยเป็นแบบนั้นจริง เพราะปุ่มออกจากระบบไม่ได้ล้าง token)
+   *
+   * ตอนนี้ถามก่อนว่าจะไปต่อหรือจะเปลี่ยนบัญชี — จำเป็นมากเวลาพี่น้อง
+   * ใช้คอมเครื่องเดียวกัน หรือเรียนที่ห้องคอมโรงเรียน
+   */
+  if (user && !justLoggedIn.current) {
+    return (
+      <div className="form-card">
+        <div className="fc-head">
+          <div className="fc-eyebrow">เข้าสู่ระบบอยู่แล้ว</div>
+          <h1 className="fc-title">สวัสดี {user.nickname || user.full_name || ''} 👋</h1>
+          <p className="fc-sub">
+            ตอนนี้ใช้บัญชี <b>{user.email}</b> อยู่
+          </p>
+        </div>
+
+        <Link href={next} className="btn btn-primary btn-submit">
+          <span className="label">ไปต่อ →</span>
+        </Link>
+
+        <div style={{ height: 12 }} />
+
+        <button
+          type="button"
+          className="btn btn-ghost btn-submit"
+          onClick={() => { logout(); }}
+        >
+          <span className="label">เข้าด้วยบัญชีอื่น</span>
+        </button>
+      </div>
+    );
   }
 
   return (
