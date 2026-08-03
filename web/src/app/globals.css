@@ -138,10 +138,32 @@ body {
 .top-av { position: relative; }
 .top-av > summary { list-style: none; cursor: pointer; }
 .top-av > summary::-webkit-details-marker { display: none; }
-.top-av .av {
-  display: block; width: 34px; height: 34px; border-radius: 50%;
-  background: var(--grad-signature);
+/* วงกลมรูปโปรไฟล์ — ใช้ร่วมกันทุกที่ (ดู components/avatar.tsx)
+   ขนาดกำหนดจาก prop ไม่ใช่จาก CSS จะได้ใช้ซ้ำได้ทุกจุดที่ต้องการขนาดต่างกัน */
+.av {
+  display: inline-grid; place-items: center; flex-shrink: 0;
+  border-radius: 50%; overflow: hidden;
+  background: var(--grad-signature); color: #fff;
+  font-family: var(--font-display); font-weight: 700; line-height: 1;
+  user-select: none;
 }
+.av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.top-av > summary .av { cursor: pointer; }
+
+/* ปุ่มเปลี่ยนรูปในเมนูโปรไฟล์ */
+.avm-head { position: relative; }
+.avm-pic { position: relative; }
+.avm-pic .pic-edit {
+  position: absolute; right: -2px; bottom: -2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: grid; place-items: center; padding: 0;
+  background: var(--bg-1); border: 1.5px solid var(--bg-0);
+  color: var(--fg-1); cursor: pointer;
+}
+.avm-pic .pic-edit svg { width: 10px; height: 10px; }
+.avm-pic .pic-edit:hover { color: var(--fg-0); background: var(--bg-2); }
+.avm-msg { padding: 2px 11px 8px; font-size: 11.5px; color: var(--fg-3); }
+.avm-msg.bad { color: var(--danger, oklch(.65 .2 25)); }
 .av-menu {
   position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
   min-width: 210px; padding: 6px; border-radius: 14px;

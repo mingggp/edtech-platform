@@ -42,6 +42,16 @@ export const auth = {
   },
   me: () => api.get<User>('/users/me'),
 
+  /** เปลี่ยนรูปโปรไฟล์ — backend ย่อเป็นจัตุรัส 256px และลบ EXIF ให้เอง */
+  async uploadAvatar(file: File) {
+    const fd = new FormData();
+    fd.append('file', file);
+    // ไม่ตั้ง Content-Type เอง ต้องให้เบราว์เซอร์ใส่ boundary ของ multipart ให้
+    return api.post<{ avatar_url: string }>('/users/me/upload-image', fd);
+  },
+
+  removeAvatar: () => api.del<void>('/users/me/upload-image'),
+
   /** ขอลิงก์ตั้งรหัสใหม่ — backend ตอบ 204 เสมอ ไม่บอกว่ามีอีเมลนี้ไหม
    *  (ถ้าบอก จะกลายเป็นช่องให้คนไล่เดาว่าใครสมัครไว้บ้าง) */
   forgotPassword: (email: string) =>

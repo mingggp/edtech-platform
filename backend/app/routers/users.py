@@ -34,13 +34,38 @@ def update_user_me(user_data: UserUpdateMe, current_user: User = Depends(get_cur
 
 @router.post("/me/upload-image")
 async def upload_user_image(file: UploadFile = File(...), db: Session = Depends(get_db), u=Depends(get_current_user)):
-    from ..uploads import read_validated_image, save_upload
-    data, ext = await read_validated_image(file)
-    url = save_upload(data, ext, prefix=f"user_{u.id}")
+    """เปลี่ยนรูปโปรไฟล์
+
+    รูปที่อัปโหลดมาจะถูก "วาดใหม่" เป็นสี่เหลี่ยมจัตุรัส 256 px เสมอ
+    ไม่ได้เก็บไฟล์เดิมไว้ — เหตุผลสำคัญคือ EXIF ในรูปจากมือถือมีพิกัด GPS
+    ที่ถ่ายติดมาด้วย ถ้าเสิร์ฟไฟล์เดิมออกไปเท่ากับประกาศที่อยู่บ้านนักเรียน
+    (ดูรายละเอียดใน uploads.make_avatar)
+    """
+    from ..uploads import delete_upload, make_avatar, read_validated_image, save_upload
+
+    data, _ext = await read_validated_image(file)
+    old_url = u.avatar_url
+
+    url = save_upload(make_avatar(data), "jpg", prefix=f"user_{u.id}")
     u.avatar_url = url
     db.commit()
     db.refresh(u)
+
+    # ลบไฟล์เก่าหลัง commit สำเร็จแล้วเท่านั้น
+    # ถ้าลบก่อนแล้ว commit พัง จะเหลือ URL ในฐานข้อมูลที่ชี้ไปไฟล์ที่ไม่มีอยู่จริง
+    delete_upload(old_url)
     return {"url": url, "avatar_url": url}
+
+
+@router.delete("/me/upload-image", status_code=204)
+def remove_user_image(db: Session = Depends(get_db), u=Depends(get_current_user)):
+    """เอารูปโปรไฟล์ออก — กลับไปใช้ตัวอักษรย่อ"""
+    from ..uploads import delete_upload
+
+    old_url = u.avatar_url
+    u.avatar_url = None
+    db.commit()
+    delete_upload(old_url)
 
 @router.post("/me/friends")
 def add_friend_api(email: str = Form(...), db: Session = Depends(get_db), u=Depends(get_current_user)): 
