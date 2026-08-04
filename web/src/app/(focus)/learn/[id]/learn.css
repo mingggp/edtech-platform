@@ -263,6 +263,17 @@
 .learn-page .big-play svg { width: 34px; height: 34px; margin-left: 4px; }
 .learn-page .player.playing .big-play { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.8); }
 
+/* ข้อความกลางจอ — ยังไม่มีคลิป / เล่นไม่ได้ */
+.learn-page .player-msg {
+  position: absolute; inset: 0; z-index: 8;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: oklch(0.10 0.02 285 / 0.88); color: #fff; text-align: center; padding: 24px;
+}
+.learn-page .player-msg svg { width: 42px; height: 42px; opacity: 0.6; margin-bottom: 8px; }
+.learn-page .player-msg b { font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+.learn-page .player-msg span { font-size: 13px; color: oklch(0.99 0.005 285 / 0.6); max-width: 320px; line-height: 1.5; }
+.learn-page .player-msg.err svg { color: var(--danger); opacity: 0.85; }
+
 .learn-page .ctrl {
   position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 14px;
   background: linear-gradient(180deg, transparent, oklch(0 0 0 / 0.72));
@@ -297,10 +308,11 @@
 .learn-page .cbtn:hover { background: oklch(0.99 0.005 285 / 0.16); }
 .learn-page .cbtn svg { width: 19px; height: 19px; }
 .learn-page .cbtn.sm svg { width: 17px; height: 17px; }
+/* แถบเสียง — โผล่ออกมาเมื่อชี้ที่ปุ่มลำโพง เพื่อไม่ให้แถบควบคุมรก */
 .learn-page .vol { display: flex; align-items: center; }
 .learn-page .vol input[type=range] { width: 0; opacity: 0; transition: width .2s, opacity .2s; }
 .learn-page .vol:hover input[type=range],
-.learn-page .vol input[type=range]:focus-visible { width: 72px; opacity: 1; margin: 0 6px; }
+.learn-page .vol input[type=range]:focus-visible { width: 84px; opacity: 1; margin: 0 8px; }
 .learn-page .time { font-family: "JetBrains Mono", monospace; font-size: 12px; opacity: 0.9; white-space: nowrap; padding: 0 6px; }
 .learn-page .time b { opacity: 1; font-weight: 600; }
 .learn-page .spacer { flex: 1; }
@@ -312,17 +324,31 @@
 }
 .learn-page .rate-btn:hover { background: oklch(0.99 0.005 285 / 0.14); }
 
+/* แถบเลื่อน (เสียง + ความเร็ว)
+   ส่วนที่เลื่อนผ่านมาแล้วเป็นสีทึบ ส่วนที่เหลือเป็นเส้นจาง
+   ระดับความทึบมาจากตัวแปร --fill ที่ React ส่งมาให้ (เช่น "62%")
+   ใช้ linear-gradient เพราะ input[type=range] ไม่มีวิธีระบายครึ่งเดียวแบบมาตรฐาน
+   ที่ทุกเบราว์เซอร์รองรับ (::-moz-range-progress มีเฉพาะ Firefox) */
 .learn-page input[type=range].rng {
-  -webkit-appearance: none; appearance: none; height: 4px; border-radius: 99px;
-  background: oklch(0.99 0.005 285 / 0.28); outline: none;
+  -webkit-appearance: none; appearance: none; height: 5px; border-radius: 99px;
+  outline: none; cursor: pointer;
+  background:
+    linear-gradient(to right,
+      var(--accent) 0%, var(--accent) var(--fill, 0%),
+      oklch(0.99 0.005 285 / 0.25) var(--fill, 0%), oklch(0.99 0.005 285 / 0.25) 100%);
 }
 .learn-page input[type=range].rng::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #fff;
-  cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4);
+  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff;
+  cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.45), 0 1px 4px oklch(0 0 0 / 0.5);
+  transition: transform .14s;
 }
+.learn-page input[type=range].rng::-webkit-slider-thumb:hover { transform: scale(1.15); }
 .learn-page input[type=range].rng::-moz-range-thumb {
-  width: 13px; height: 13px; border: 0; border-radius: 50%; background: #fff;
-  cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4);
+  width: 14px; height: 14px; border: 0; border-radius: 50%; background: #fff;
+  cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.45), 0 1px 4px oklch(0 0 0 / 0.5);
+}
+.learn-page input[type=range].rng:focus-visible {
+  box-shadow: 0 0 0 2px oklch(0 0 0 / 0.6), 0 0 0 4px var(--accent);
 }
 
 /* กล่องปรับความเร็ว */
@@ -350,7 +376,23 @@
   transition: background .14s, border-color .14s, color .14s;
 }
 .learn-page .speed-presets button:hover { background: oklch(0.99 0.005 285 / 0.12); }
-.learn-page .speed-presets button.on { background: var(--accent-grad); border-color: transparent; color: #fff; }
+.learn-page .speed-presets button.on {
+  background: var(--accent-grad); border-color: transparent; color: #fff;
+  box-shadow: 0 4px 14px -4px oklch(from var(--accent) l c h / 0.7);
+}
+
+/* สไลเดอร์ปรับความเร็วละเอียด */
+.learn-page .speed-slide { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.learn-page .speed-slide input { flex: 1; }
+.learn-page .speed-slide .v {
+  font-family: "JetBrains Mono", monospace; font-size: 12.5px; font-weight: 700;
+  min-width: 52px; text-align: right; color: var(--accent-fg);
+}
+.learn-page .speed-scale {
+  display: flex; justify-content: space-between; margin-top: 6px; padding-right: 64px;
+  font-family: "JetBrains Mono", monospace; font-size: 9.5px;
+  color: oklch(0.99 0.005 285 / 0.35); letter-spacing: 0.04em;
+}
 
 /* ============== ข้อมูลบทเรียน ============== */
 .learn-page .lesson-info { display: flex; flex-direction: column; gap: 14px; }

@@ -18,15 +18,18 @@ import {
   useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent,
 } from 'react';
 
+import { Avatar } from '@/components/avatar';
+import { useTheme } from '@/components/theme-provider';
 import { subjectLabel } from '@/config/subjects';
 import { ApiError } from '@/lib/api/client';
 import { courses as coursesApi, learning as learnApi } from '@/lib/api/endpoints';
 import type { Chapter, Lesson } from '@/lib/api/types';
 import { useAuth } from '@/lib/auth-context';
-import { fmtTime, useYouTube } from './use-youtube';
+import { fmtTime, MAX_RATE, MIN_RATE, useYouTube } from './use-youtube';
 import { useStudyTracker } from './use-study-tracker';
 
-const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2];
+/** ปุ่มลัดความเร็ว 4 ระดับตามที่หมิงเลือก — ปรับละเอียดกว่านี้ใช้สไลเดอร์ */
+const RATES = [0.5, 1, 1.5, 2];
 
 /** บันทึกตำแหน่งทุกกี่วินาทีระหว่างดู */
 const SAVE_POSITION_EVERY_MS = 10_000;
@@ -40,6 +43,8 @@ export function LearnView({ courseId }: Props) {
   const router = useRouter();
   const qc = useQueryClient();
   const { user, loading: authLoading } = useAuth();
+  const { theme, setPreference } = useTheme();
+  const isDark = theme === 'petronas' || theme === 'dark' || theme === 'f1';
 
   /* ---------------- ข้อมูล ---------------- */
   const courseQ = useQuery({
@@ -121,9 +126,15 @@ export function LearnView({ courseId }: Props) {
   const markCompleteRef = useRef<(onlyIfNotDone: boolean) => void>(() => {});
   const goNextRef = useRef<() => void>(() => {});
 
+  /* บทเรียนที่ยังไม่ได้ใส่คลิป — youtube_id เป็นสตริงว่าง ไม่ใช่ null
+     ต้องเช็คด้วย .trim() ไม่ใช่ ?? เพราะ "" ไม่ใช่ null/undefined
+     ถ้าปล่อยผ่านไป player จะสั่งโหลดวิดีโอชื่อ "" แล้วจอดำเงียบ ๆ
+     ไม่มีอะไรบอกว่าเกิดอะไรขึ้น — เป็นสาเหตุที่หมิงเห็นว่า "คลิปไม่ขึ้น" */
+  const videoId = activeLesson?.youtube_id?.trim() || null;
+
   const yt = useYouTube({
     // รอรู้ตำแหน่งก่อนค่อยโหลดวิดีโอ ไม่งั้นจะเริ่มที่ 0 แล้วค่อยกระโดด
-    videoId: positionReady ? (activeLesson?.youtube_id ?? null) : null,
+    videoId: positionReady ? videoId : null,
     startAt,
     onEnded: () => { markCompleteRef.current(true); goNextRef.current(); },
   });
@@ -443,6 +454,30 @@ export function LearnView({ courseId }: Props) {
             </span>
             <span className="text"><b>{doneCount}</b> / {flat.length} บทเรียน</span>
           </div>
+
+          <div className="lp-header-actions">
+            {/* สลับสว่าง/มืด — สั่งผ่าน ThemeProvider ตัวเดียวกับทั้งเว็บ
+                ถ้าเปลี่ยนที่นี่แล้วไปหน้าอื่น ธีมต้องตามไปด้วย */}
+            <button
+              className="icon-btn"
+              onClick={() => setPreference(isDark ? 'petronas-light' : 'petronas')}
+              aria-label={isDark ? 'เปลี่ยนเป็นโหมดสว่าง' : 'เปลี่ยนเป็นโหมดมืด'}
+              aria-pressed={isDark}
+              title={isDark ? 'โหมดสว่าง' : 'โหมดมืด'}
+            >
+              {isDark ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                  <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+                </svg>
+              )}
+            </button>
+            <Avatar person={user} size={32} />
+          </div>
         </header>
 
         {/* ============== สารบัญ ============== */}
@@ -556,18 +591,30 @@ export function LearnView({ courseId }: Props) {
                   <div className="burst"><span>10 วิ</span></div>
                 </div>
 
-                {!playing ? (
+                {!playing && videoId ? (
                   <button className="big-play" onClick={yt.play} aria-label="เล่น">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                   </button>
                 ) : null}
 
+                {/* บทเรียนนี้ยังไม่ได้ใส่คลิป — บอกให้ชัด ดีกว่าปล่อยจอดำเฉย ๆ */}
+                {!videoId ? (
+                  <div className="player-msg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m22 8-6 4 6 4V8z" /><rect x="2" y="6" width="14" height="12" rx="2" />
+                    </svg>
+                    <b>บทเรียนนี้ยังไม่มีคลิป</b>
+                    <span>พี่หมิงยังไม่ได้อัปโหลดวิดีโอของบทนี้</span>
+                  </div>
+                ) : null}
+
                 {yt.error ? (
-                  <div style={{
-                    position: 'absolute', inset: 0, zIndex: 8, display: 'grid', placeItems: 'center',
-                    background: 'oklch(0 0 0 / .7)', color: '#fff', textAlign: 'center', padding: 24,
-                  }}>
-                    {yt.error}
+                  <div className="player-msg err">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round">
+                      <circle cx="12" cy="12" r="10" /><path d="M12 8v5M12 16h.01" />
+                    </svg>
+                    <b>เล่นวิดีโอนี้ไม่ได้</b>
+                    <span>{yt.error}</span>
                   </div>
                 ) : null}
 
@@ -602,16 +649,9 @@ export function LearnView({ courseId }: Props) {
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                       )}
                     </button>
-                    <button className="cbtn sm" onClick={() => { yt.seekBy(-10); flashRipple('left'); }} aria-label="ย้อน 10 วินาที">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 17H7a5 5 0 0 1 0-10h10" /><path d="m14 4 3 3-3 3" />
-                      </svg>
-                    </button>
-                    <button className="cbtn sm" onClick={() => { yt.seekBy(10); flashRipple('right'); }} aria-label="ไปข้างหน้า 10 วินาที">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M13 17h4a5 5 0 0 0 0-10H7" /><path d="m10 4-3 3 3 3" />
-                      </svg>
-                    </button>
+                    {/* ปุ่มย้อน/เดินหน้า 10 วิ เอาออกตามที่หมิงสั่ง
+                        ยังใช้ปุ่มลูกศรซ้าย/ขวาบนคีย์บอร์ดได้เหมือนเดิม
+                        และดับเบิลคลิกซ้าย/ขวาบนจอก็ข้ามได้ */}
 
                     <div className="vol">
                       <button className="cbtn sm" onClick={yt.toggleMute} aria-label={yt.muted ? 'เปิดเสียง' : 'ปิดเสียง'}>
@@ -625,9 +665,12 @@ export function LearnView({ courseId }: Props) {
                           </svg>
                         )}
                       </button>
+                      {/* --fill บอก CSS ว่าต้องระบายสีทึบถึงกี่ % — ทำให้แถบเสียง
+                          มีสีทึบตามระดับ ไม่ใช่มีแค่วงกลมลอยอยู่บนเส้นจาง ๆ */}
                       <input
                         className="rng" type="range" min={0} max={100} step={1}
                         value={yt.muted ? 0 : yt.volume}
+                        style={{ '--fill': `${yt.muted ? 0 : yt.volume}%` } as React.CSSProperties}
                         onChange={(e) => yt.setVolume(Number(e.target.value))}
                         aria-label="ระดับเสียง"
                       />
@@ -652,17 +695,39 @@ export function LearnView({ courseId }: Props) {
 
                 <div className={`pop${ratePop ? ' open' : ''}`}>
                   <div className="pop-sec">
-                    <div className="lbl">ความเร็ว <b>{yt.rate}×</b></div>
+                    <div className="lbl">ความเร็วในการเล่น <b>{yt.rate.toFixed(2)}×</b></div>
+
                     <div className="speed-presets">
                       {RATES.map((r) => (
                         <button
                           key={r}
-                          className={yt.rate === r ? 'on' : ''}
-                          onClick={() => { yt.setRate(r); setRatePop(false); }}
+                          className={Math.abs(yt.rate - r) < 0.001 ? 'on' : ''}
+                          onClick={() => yt.setRate(r)}
                         >
-                          {r}×
+                          {r.toFixed(1)}×
                         </button>
                       ))}
+                    </div>
+
+                    {/* สไลเดอร์ปรับละเอียดระหว่างช่วง
+                        สูงสุด 2 เท่า ไม่ใช่ 3 — YouTube รองรับแค่นี้จริง ๆ
+                        (เอกสารทางการ: ค่าที่ใช้ได้คือ 0.25 ถึง 2)
+                        ถ้าให้เลื่อนถึง 3 ตัวเลขบนจอจะไม่ตรงกับความเร็วจริง */}
+                    <div className="speed-slide">
+                      <input
+                        className="rng" type="range"
+                        min={MIN_RATE} max={MAX_RATE} step={0.05}
+                        value={yt.rate}
+                        style={{
+                          '--fill': `${((yt.rate - MIN_RATE) / (MAX_RATE - MIN_RATE)) * 100}%`,
+                        } as React.CSSProperties}
+                        onChange={(e) => yt.setRate(Number(e.target.value))}
+                        aria-label="ปรับความเร็วละเอียด"
+                      />
+                      <span className="v">{yt.rate.toFixed(2)}×</span>
+                    </div>
+                    <div className="speed-scale" aria-hidden="true">
+                      <span>0.25×</span><span>1×</span><span>2×</span>
                     </div>
                   </div>
                 </div>

@@ -60,6 +60,17 @@ declare global {
 /** สถานะที่หน้าเว็บสนใจ */
 export type PlayState = 'idle' | 'playing' | 'paused' | 'ended';
 
+/**
+ * ช่วงความเร็วที่ YouTube รองรับจริง
+ *
+ * เอกสารทางการระบุว่า getAvailablePlaybackRates() คืน
+ *   [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+ * ส่งค่าเกิน 2 ไป setPlaybackRate จะไม่มีผล (ปัดลงให้เงียบ ๆ)
+ * ถ้าปล่อยให้สไลเดอร์เลื่อนถึง 3 ได้ ตัวเลขบนจอจะโกหกผู้ใช้
+ */
+export const MIN_RATE = 0.25;
+export const MAX_RATE = 2;
+
 let apiPromise: Promise<YTNamespace> | null = null;
 
 /** โหลดสคริปต์ YouTube ครั้งเดียวต่อหนึ่งหน้าเว็บ */
@@ -304,11 +315,22 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     }
   }, [setVolume]);
 
+  /**
+   * ปรับความเร็ว
+   *
+   * YouTube รองรับสูงสุด 2 เท่า (เอกสารทางการ: getAvailablePlaybackRates คืน
+   * [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]) ส่งค่าเกินไปจะถูกปัดลงเงียบ ๆ
+   * จึงจำกัดไว้ที่นี่เลย เพื่อให้ตัวเลขบนหน้าจอตรงกับความเร็วจริงเสมอ
+   *
+   * ปัดเป็นขั้นละ 0.05 เพราะ YouTube รับเฉพาะบางค่า ถ้าส่งค่าละเอียดกว่านั้น
+   * มันจะเลือกค่าใกล้เคียงให้เอง แล้วเลขบนจอกับของจริงจะไม่ตรงกัน
+   */
   const setRate = useCallback((r: number) => {
     const p = playerRef.current;
     if (!p) return;
-    p.setPlaybackRate(r);
-    setRateState(r);
+    const clamped = Math.max(MIN_RATE, Math.min(MAX_RATE, Math.round(r * 20) / 20));
+    p.setPlaybackRate(clamped);
+    setRateState(clamped);
   }, []);
 
   const readTime = useCallback(() => {
