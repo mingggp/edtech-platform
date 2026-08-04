@@ -55,6 +55,12 @@ export function LearnView({ courseId }: Props) {
     queryKey: ['chapters', courseId, user?.id ?? null],
     queryFn: () => coursesApi.chapters(courseId),
     enabled: !authLoading,
+    /* สารบัญคอร์สแทบไม่เปลี่ยนระหว่างที่นักเรียนกำลังดูคลิปอยู่
+     * ถ้าปล่อยให้โหลดใหม่ (react-query โหลดซ้ำทุกครั้งที่สลับกลับมาที่แท็บ)
+     * object ของบทเรียนจะเป็นชิ้นใหม่ -> effect ที่ผูกอยู่ทำงานใหม่ยกชุด
+     * -> คลิปสะดุด/หยุดเอง  ตรึงไว้ 5 นาทีพอ */
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
   const progressQ = useQuery({
     queryKey: ['my-progress', courseId],
@@ -104,21 +110,26 @@ export function LearnView({ courseId }: Props) {
   const [startAt, setStartAt] = useState(0);
   const [positionReady, setPositionReady] = useState(false);
 
+  /* ผูกกับ "ไอดีบทเรียน" ไม่ใช่ object
+     object ถูกสร้างใหม่ทุกครั้งที่สารบัญโหลดซ้ำ ถ้าผูกกับ object
+     effect นี้จะทำงานใหม่แล้วสั่ง setPositionReady(false)
+     ทำให้ videoId กลายเป็น null ชั่วขณะ -> คลิปโหลดใหม่ -> หยุดเล่น */
+  const activeLessonId = activeLesson?.id ?? null;
   useEffect(() => {
     let alive = true;
     setPositionReady(false);
     setStartAt(0);
-    if (!activeLesson || !unlocked || !user) {
+    if (!activeLessonId || !unlocked || !user) {
       setPositionReady(true);
       return;
     }
     learnApi
-      .getPosition(courseId, activeLesson.id)
+      .getPosition(courseId, activeLessonId)
       .then((r) => { if (alive) setStartAt(r.seconds); })
       .catch(() => { /* อ่านไม่ได้ก็เริ่มจากต้นคลิป ไม่ใช่เรื่องคอขาดบาดตาย */ })
       .finally(() => { if (alive) setPositionReady(true); });
     return () => { alive = false; };
-  }, [courseId, activeLesson, unlocked, user]);
+  }, [courseId, activeLessonId, unlocked, user]);
 
   /* ---------------- เครื่องเล่น ---------------- */
   /* onEnded ต้องเรียกฟังก์ชันที่ประกาศอยู่ข้างล่าง — ใช้ ref กันปัญหาลำดับ
@@ -347,6 +358,27 @@ export function LearnView({ courseId }: Props) {
 
   const [ratePop, setRatePop] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  /* แถบความเร็ว: ปิดเมื่อกดที่อื่น หรือกด Esc
+     ผูกที่ pointerdown ระดับ document จะได้ปิดได้แม้กดนอกกรอบวิดีโอ */
+  const popRef = useRef<HTMLDivElement>(null);
+  const rateBtnRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!ratePop) return;
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (popRef.current?.contains(t)) return;        // กดในแถบเอง ไม่ปิด
+      if (rateBtnRef.current?.contains(t)) return;    // ปุ่มเปิด/ปิดจัดการเอง
+      setRatePop(false);
+    };
+    const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setRatePop(false); };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onEsc);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onEsc);
+    };
+  }, [ratePop]);
 
   /* ---------------- สถานะพิเศษ ---------------- */
   if (courseQ.isPending || chaptersQ.isPending || authLoading) {
@@ -577,11 +609,33 @@ export function LearnView({ courseId }: Props) {
                   <div ref={yt.containerRef} />
                 </div>
 
-                {/* ชั้นรับคลิก — กดที่จอเพื่อเล่น/หยุด */}
+                {/* ภาพปกทับไว้ตอนยังไม่ได้กดเล่น
+                    ก่อนเริ่มเล่น YouTube จะโชว์ชื่อคลิป ปุ่ม "ดูภายหลัง" "แชร์"
+                    และ "ดูใน YouTube" เต็มไปหมด ซึ่งเอาออกจากตัว embed ไม่ได้
+                    วิธีที่ได้ผลคือบังด้วยภาพปกของเราเอง แล้วค่อยเปิดให้เห็น
+                    ตอนกดเล่น — ตอนเล่นอยู่ปุ่มพวกนั้นไม่โผล่เพราะเราปิดการรับ
+                    เมาส์ของ iframe ไว้ (hover ไม่ติด) */}
+                {yt.state === 'idle' && videoId && !yt.error ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- ภาพจาก YouTube คนละโดเมน
+                  <img
+                    className="yt-poster"
+                    src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+                    alt=""
+                    aria-hidden="true"
+                  />
+                ) : null}
+
+                {/* ชั้นรับคลิก — กดที่จอเพื่อเล่น/หยุด
+                    ถ้าแถบความเร็วเปิดอยู่ ให้กดแล้วปิดแถบเฉย ๆ ไม่ต้องหยุดคลิป
+                    (เดิมกดที่จอเพื่อปิดแถบ แล้วคลิปหยุดไปด้วย งงว่าทำไม) */}
                 <div
                   className="stage"
-                  onClick={() => { yt.toggle(); wake(); }}
-                  onDoubleClick={toggleFullscreen}
+                  onClick={() => {
+                    if (ratePop) { setRatePop(false); return; }
+                    yt.toggle();
+                    wake();
+                  }}
+                  onDoubleClick={() => { if (!ratePop) toggleFullscreen(); }}
                 />
 
                 <div className={`seek-ripple left${ripple === 'left' ? ' flash' : ''}`}>
@@ -691,7 +745,13 @@ export function LearnView({ courseId }: Props) {
 
                     <span className="spacer" />
 
-                    <button className="rate-btn" onClick={() => setRatePop((v) => !v)} aria-label="ความเร็ว">
+                    <button
+                      ref={rateBtnRef}
+                      className={`rate-btn${ratePop ? ' on' : ''}`}
+                      onClick={() => setRatePop((v) => !v)}
+                      aria-label="ความเร็วในการเล่น"
+                      aria-expanded={ratePop}
+                    >
                       {yt.rate}×
                     </button>
                     <button className="cbtn sm" onClick={toggleFullscreen} aria-label="เต็มจอ">
@@ -702,7 +762,7 @@ export function LearnView({ courseId }: Props) {
                   </div>
                 </div>
 
-                <div className={`pop${ratePop ? ' open' : ''}`}>
+                <div ref={popRef} className={`pop${ratePop ? ' open' : ''}`}>
                   <div className="pop-sec">
                     <div className="lbl">ความเร็วในการเล่น <b>{yt.rate.toFixed(2)}×</b></div>
 

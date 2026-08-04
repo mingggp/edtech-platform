@@ -234,6 +234,15 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
         if (cancelled || !host.isConnected) return;
 
         const p = new YT.Player(host, {
+          /* ⚠️ ต้องบอกขนาดตั้งแต่ตอนสร้าง
+           *
+           * ถ้าไม่ส่ง YouTube จะใส่ width="640" height="360" ให้เอง แล้ววาง
+           * layout ภายในตามขนาดนั้น  ต่อให้เรายืด iframe ด้วย CSS ทีหลัง
+           * ตัวเล่นข้างในก็ยังคิดว่าตัวเองกว้าง 640 อยู่ -> ภาพไปกองมุมบน
+           * และคำบรรยายไปโผล่ผิดที่ (อาการที่หมิงเจอ)
+           */
+          width: '100%',
+          height: '100%',
           /* ใช้โฮสต์มาตรฐานของ YouTube
              เคยตั้งเป็น youtube-nocookie.com เพื่อความเป็นส่วนตัวของนักเรียน
              แต่เอาออกก่อนเพราะเป็นจุดที่ทำให้ onReady ไม่ยิงในบางเครื่อง
@@ -307,10 +316,24 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     return () => clearTimeout(t);
   }, [ready, videoId]);
 
-  /* ---------------- เปลี่ยนบทเรียน = เปลี่ยนวิดีโอในตัวเดิม ---------------- */
+  /* ---------------- เปลี่ยนบทเรียน = เปลี่ยนวิดีโอในตัวเดิม ----------------
+   *
+   * ⚠️ effect นี้ห้ามทำงานพร่ำเพรื่อ — ทุกครั้งที่ทำงาน วิดีโอจะถูกโหลดใหม่
+   * และหยุดเล่นทันที (อาการ "จู่ ๆ คลิปก็หยุดเอง" ที่หมิงเจอ)
+   *
+   * สาเหตุเดิม: หน้าเว็บส่ง videoId เป็น null ชั่วขณะทุกครั้งที่ต้องไปอ่าน
+   * ตำแหน่งที่ดูค้างใหม่ ซึ่งเกิดขึ้นเมื่อ react-query โหลดสารบัญซ้ำ
+   * (โดยปริยายมันโหลดใหม่ทุกครั้งที่สลับกลับมาที่แท็บ)
+   * -> videoId เปลี่ยน null แล้วกลับมา -> cueVideoById -> คลิปหยุด
+   *
+   * กันด้วยการจำไอดีล่าสุดไว้ ถ้าค่าที่ส่งมาเหมือนเดิมก็ไม่ต้องทำอะไร
+   */
+  const cuedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const p = playerRef.current;
     if (!ready || !p || !videoId) return;
+    if (cuedIdRef.current === videoId) return;    // คลิปเดิม ไม่ต้องโหลดซ้ำ
+    cuedIdRef.current = videoId;
     // cue ไม่ใช่ load — ไม่เล่นเองทันที ให้นักเรียนกดเล่นเอง
     // (เบราว์เซอร์ส่วนใหญ่บล็อกการเล่นอัตโนมัติที่มีเสียงอยู่แล้ว)
     p.cueVideoById(videoId, startAtRef.current);
