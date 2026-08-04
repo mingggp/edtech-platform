@@ -237,7 +237,21 @@
 /* iframe ของ YouTube — เต็มกรอบ และไม่รับคลิก
    ให้ .stage ด้านบนรับคลิกแทน จะได้คุมการเล่น/หยุดเองทั้งหมด */
 .learn-page .player .yt-frame { position: absolute; inset: 0; }
-.learn-page .player .yt-frame iframe { width: 100%; height: 100%; display: block; pointer-events: none; border: 0; }
+
+/* ⚠️ กล่องที่ YouTube เอา iframe มาวางแทน — ต้องกางเต็มกรอบ
+ *
+ * นี่คือต้นเหตุจริงของอาการ "ภาพกองเล็ก ๆ ตรงกลางด้านบน" ที่หาอยู่หลายรอบ:
+ * เดิมเป็น <div> เปล่าที่ไม่ได้กำหนดขนาด ความสูงจึงเป็น auto
+ * แล้ว iframe ข้างในตั้ง height: 100% ซึ่งอ้างอิงความสูงของพ่อ
+ * พอพ่อสูง auto เปอร์เซ็นต์จะใช้ไม่ได้ -> iframe ถอยไปใช้ค่า attribute (360px)
+ * ผลคือ iframe กว้างเต็มจอแต่สูงแค่ 360 -> YouTube ใส่ขอบดำซ้ายขวา
+ * แล้วภาพ 16:9 ก็ไปอยู่กลางบนขนาดเล็ก ตรงกับที่เห็นเป๊ะ
+ */
+.learn-page .player .yt-host { position: absolute; inset: 0; }
+.learn-page .player .yt-frame iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; display: block; pointer-events: none; border: 0;
+}
 
 /* ภาพปก — บังหน้าจอ YouTube ตอนยังไม่กดเล่น (ชื่อคลิป · ดูภายหลัง · แชร์)
    z-index ต้องต่ำกว่า .big-play กับ .ctrl แต่สูงกว่า iframe */

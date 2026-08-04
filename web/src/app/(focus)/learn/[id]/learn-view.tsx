@@ -606,7 +606,10 @@ export function LearnView({ courseId }: Props) {
                 onPointerLeave={() => setIdle(true)}
               >
                 <div className="yt-frame">
-                  <div ref={yt.containerRef} />
+                  {/* .yt-host ต้องมีขนาดเต็มกรอบ ห้ามเป็น div เปล่า ๆ
+                      เพราะ iframe ข้างในตั้ง height: 100% ซึ่งอ้างอิงความสูง
+                      ของพ่อ — ถ้าพ่อสูง auto เปอร์เซ็นต์จะใช้ไม่ได้ */}
+                  <div className="yt-host" ref={yt.containerRef} />
                 </div>
 
                 {/* ภาพปกทับไว้ตอนยังไม่ได้กดเล่น

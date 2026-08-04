@@ -42,6 +42,8 @@ interface YTPlayer {
   setPlaybackRate(r: number): void;
   loadVideoById(id: string, start?: number): void;
   cueVideoById(id: string, start?: number): void;
+  /** บอกขนาดใหม่ให้ตัวเล่นจัดผังภายในใหม่ — ต้องเรียกเอง ไม่ทำให้อัตโนมัติ */
+  setSize(width: number, height: number): void;
   destroy(): void;
 }
 
@@ -301,6 +303,43 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
       setReady(false);
     };
   }, [containerEl]);
+
+  /* ---------------- บอกขนาดใหม่ให้ตัวเล่นทุกครั้งที่กรอบเปลี่ยน ----------------
+   *
+   * อาการที่เจอ: ภาพวิดีโอไปกองเล็ก ๆ อยู่ตรงกลางด้านบน ไม่เต็มกรอบ
+   * และคำบรรยายไปโผล่ลอยอยู่ทางซ้ายคนละที่กับภาพ
+   *
+   * สาเหตุ: ตัวเล่นของ YouTube คำนวณผังภายในตอนโหลดครั้งเดียว
+   * แล้ว **ไม่จัดใหม่เอง** เมื่อ iframe ถูกเปลี่ยนขนาดด้วย CSS ทีหลัง
+   * (เช่นตอนกดเต็มจอ หรือพับสารบัญ) — การส่ง width/height ตอนสร้าง
+   * จึงยังไม่พอ เพราะขนาดตอนนั้นกับตอนแสดงผลจริงคนละค่า
+   *
+   * ทางที่ถูกคือเรียก player.setSize() เองทุกครั้งที่กรอบเปลี่ยนขนาด
+   * ใช้ ResizeObserver จับ ครอบคลุมทั้งเต็มจอ ย่อ/ขยายหน้าต่าง และพับสารบัญ
+   */
+  useEffect(() => {
+    if (!ready || !containerEl) return;
+    const apply = () => {
+      const p = playerRef.current;
+      if (!p) return;
+      const r = containerEl.getBoundingClientRect();
+      if (r.width < 1 || r.height < 1) return;
+      try {
+        p.setSize(Math.round(r.width), Math.round(r.height));
+      } catch {
+        /* ตัวเล่นถูกทำลายไปแล้วระหว่างนี้ */
+      }
+    };
+    apply();                                   // ครั้งแรกทันทีที่พร้อม
+    const ro = new ResizeObserver(apply);
+    ro.observe(containerEl);
+    // เข้า/ออกเต็มจอบางเบราว์เซอร์ไม่ยิง resize ให้ ต้องฟังเพิ่ม
+    document.addEventListener('fullscreenchange', apply);
+    return () => {
+      ro.disconnect();
+      document.removeEventListener('fullscreenchange', apply);
+    };
+  }, [ready, containerEl]);
 
   /* ---------------- ตัวเล่นไม่พร้อมสักที = บอกให้รู้ ----------------
    * ถ้า YouTube โหลดไม่ขึ้น (เน็ตองค์กรบล็อก / ส่วนขยายบล็อกโฆษณา / เน็ตหลุด)
