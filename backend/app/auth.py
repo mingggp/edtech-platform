@@ -91,6 +91,35 @@ def get_current_user(
     return user
 
 
+_optional_scheme = OAuth2PasswordBearer(tokenUrl="auth/token", auto_error=False)
+
+
+def get_current_user_optional(
+    db: Session = Depends(get_db),
+    token: str | None = Depends(_optional_scheme),
+) -> models.User | None:
+    """คืนผู้ใช้ถ้าล็อกอินอยู่ ไม่ล็อกอินก็คืน None (ไม่ error)
+
+    ใช้กับหน้าที่คนทั่วไปดูได้ แต่ "เห็นไม่เท่ากัน" ระหว่างคนซื้อกับคนยังไม่ซื้อ
+    เช่นสารบัญคอร์ส — ใครก็ดูชื่อบทเรียนได้ แต่ลิงก์วิดีโอต้องซื้อก่อน
+
+    token พังหรือหมดอายุก็คืน None เหมือนไม่ได้ล็อกอิน ไม่โยน 401
+    เพราะหน้าพวกนี้ควรใช้งานได้อยู่ดี
+    """
+    if not token:
+        return None
+    try:
+        payload = decode_token(token)
+        if payload.get("type") not in (None, "access"):
+            return None
+        email = payload.get("sub")
+        if not email:
+            return None
+    except JWTError:
+        return None
+    return crud.get_user_by_email(db, email=email)
+
+
 def get_current_active_user(
     current_user: models.User = Depends(get_current_user),
 ) -> models.User:

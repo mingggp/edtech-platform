@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi_cache.decorator import cache
 from ..database import get_db
 from .. import schemas, crud
-from ..auth import require_admin, get_current_user
+from ..auth import require_admin, get_current_user, get_current_user_optional
 from ..config import get_youtube_duration
 
 router = APIRouter(prefix="", tags=["courses"])
@@ -27,15 +27,51 @@ def get_c(id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "ไม่พบคอร์สนี้")
     return c
 
-@router.get("/courses/{id}/chapters", response_model=List[schemas.ChapterWithLessons])
-def get_c_chapters(id: int, db: Session = Depends(get_db)):
-    """สารบัญคอร์ส — คอร์สไม่มีอยู่ก็ต้อง 404 ไม่ใช่คืน list ว่าง
+@router.get("/courses/{id}/chapters")
+def get_c_chapters(
+    id: int,
+    db: Session = Depends(get_db),
+    u=Depends(get_current_user_optional),
+):
+    """สารบัญคอร์ส — เห็นไม่เท่ากันระหว่างคนที่ซื้อแล้วกับคนที่ยังไม่ซื้อ
 
-    ถ้าคืน [] หน้าเว็บจะขึ้นว่า "ยังไม่ได้เพิ่มบทเรียน" ทั้งที่จริงคือไม่มีคอร์สนี้
+    ยังไม่ซื้อ  เห็นชื่อบท ชื่อบทเรียน ความยาว จำนวนคลิป (ข้อมูลช่วยตัดสินใจซื้อ)
+    ซื้อแล้ว    เห็นเพิ่ม youtube_id กับ doc_url = ดูวิดีโอได้จริง
+
+    ⚠️ ช่องโหว่ที่เพิ่งอุด: เดิม endpoint นี้คืน youtube_id ให้ทุกคนโดยไม่ต้อง
+    ล็อกอินด้วยซ้ำ  ยิง curl ครั้งเดียวได้ไอดีวิดีโอทั้งคอร์สราคา 2,490
+    เอาไปเปิดบน YouTube ฟรีได้เลย = ขายคอร์สไม่ได้เงินสักบาท
+
+    คอร์สไม่มีอยู่ต้อง 404 ไม่ใช่คืน list ว่าง — ไม่งั้นหน้าเว็บจะขึ้นว่า
+    "ยังไม่ได้เพิ่มบทเรียน" ทั้งที่จริงคือไม่มีคอร์สนี้
     """
-    if not crud.get_course(db, id):
+    course = crud.get_course(db, id)
+    if not course:
         raise HTTPException(404, "ไม่พบคอร์สนี้")
-    return crud.get_course_chapters(db, id)
+
+    chapters = crud.get_course_chapters(db, id)
+
+    unlocked = bool(u) and (
+        u.role == "admin"
+        or (course.price or 0) <= 0          # คอร์สฟรีดูได้เลย
+        or crud.get_enrollment(db, u.id, id) is not None
+    )
+    if unlocked:
+        return [schemas.ChapterWithLessons.model_validate(c) for c in chapters]
+
+    return [
+        schemas.ChapterPublic(
+            id=c.id, course_id=c.course_id, title=c.title, order=c.order,
+            lessons=[
+                schemas.LessonPublic(
+                    id=l.id, chapter_id=l.chapter_id, title=l.title,
+                    kind=l.kind, duration=l.duration or 0, order=l.order,
+                )
+                for l in c.lessons
+            ],
+        )
+        for c in chapters
+    ]
 
 # admin routes
 @router.get("/admin/courses", response_model=List[schemas.CourseRead])

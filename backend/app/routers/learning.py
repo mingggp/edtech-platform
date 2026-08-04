@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_cache.decorator import cache
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,23 @@ from ..database import get_db
 router = APIRouter(prefix="", tags=["learning"])
 
 
+def require_enrollment(db: Session, u, course_id: int):
+    """ต้องซื้อคอร์สแล้วเท่านั้นถึงจะบันทึกความคืบหน้าได้
+
+    ไม่ใช่แค่เรื่องความถูกต้องของข้อมูล — ถ้าไม่เช็ค คนที่ยังไม่ซื้อจะสร้าง
+    ประวัติการเรียนของคอร์สที่ไม่ได้ซื้อไว้ได้ แล้วหน้า "คอร์สของฉัน"
+    กับสถิติต่าง ๆ จะมีข้อมูลปลอมปนอยู่
+    """
+    course = crud.get_course(db, course_id)
+    if not course:
+        raise HTTPException(404, "ไม่พบคอร์สนี้")
+    if (course.price or 0) <= 0:
+        return course                                   # คอร์สฟรี
+    if crud.get_enrollment(db, u.id, course_id) is None:
+        raise HTTPException(403, "ต้องลงทะเบียนคอร์สนี้ก่อน")
+    return course
+
+
 @router.get("/courses/{cid}/my-progress")
 def my_prog(cid: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
     r = crud.get_user_progress_in_course(db, u.id, cid)
@@ -20,12 +37,14 @@ def my_prog(cid: int, db: Session = Depends(get_db), u=Depends(get_current_user)
 
 @router.post("/courses/{cid}/lessons/{lid}/toggle-progress")
 def tog_prog(cid: int, lid: int, db: Session = Depends(get_db), u=Depends(get_current_user)):
+    require_enrollment(db, u, cid)
     return {"completed": crud.toggle_lesson_progress(db, u.id, lid)}
 
 
 @router.post("/courses/{cid}/lessons/{lid}/progress")
 def upd_prog_time(cid: int, lid: int, p: schemas.ProgressUpdate, db: Session = Depends(get_db), u=Depends(get_current_user)):
     # ProgressUpdate field is `seconds_watched` — เคย bug ที่ใช้ p.seconds (field ไม่มี)
+    require_enrollment(db, u, cid)
     crud.update_lesson_progress_time(db, u.id, lid, p.seconds_watched)
     return {"status": "ok"}
 

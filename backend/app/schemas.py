@@ -254,6 +254,34 @@ class LessonRead(LessonBase):
     chapter_id: int
     class Config: from_attributes = True
 
+
+class LessonPublic(BaseModel):
+    """บทเรียนแบบที่คนยังไม่ได้ซื้อคอร์สเห็น
+
+    ⚠️ ห้ามมี youtube_id และ doc_url ในนี้เด็ดขาด
+
+    ช่องโหว่ที่เคยเป็น: /courses/{id}/chapters เปิดให้ทุกคนเรียกได้โดยไม่ต้อง
+    ล็อกอินด้วยซ้ำ และคืน youtube_id ของทุกบทเรียน  ใครก็ตามที่ยิง
+        curl localhost:8000/courses/1/chapters
+    จะได้ไอดีวิดีโอทั้งคอร์สราคา 2,490 แล้วเอาไปเปิดดูบน YouTube ฟรี ๆ
+    ไม่ต้องสมัครสมาชิกด้วยซ้ำ
+
+    ชื่อบทเรียนกับความยาวยังให้ดูได้ เพราะเป็นข้อมูลที่ช่วยตัดสินใจซื้อ
+    """
+    id: int
+    chapter_id: int
+    title: str
+    kind: str
+    duration: int
+    order: int
+    locked: bool = True         # หน้าเว็บใช้ตัดสินว่าจะขึ้นรูปกุญแจไหม
+    class Config: from_attributes = True
+
+
+class ChapterPublic(ChapterRead):
+    lessons: List[LessonPublic] = []
+    class Config: from_attributes = True
+
 class LessonOut(LessonRead):
     pass
 

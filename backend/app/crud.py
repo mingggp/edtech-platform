@@ -483,29 +483,51 @@ def get_user_lesson_rating(db: Session, user_id: int, lesson_id: int):
     r = db.query(models.Rating).filter(models.Rating.user_id == user_id, models.Rating.lesson_id == lesson_id).first()
     return r.score if r else 0
 
-def toggle_lesson_progress(db: Session, user_id: int, lesson_id: int):
-    p = db.query(models.LessonProgress).filter_by(user_id=user_id, lesson_id=lesson_id).first()
-    if p:
-        if p.completed_at: p.completed_at = None
-        else: p.completed_at = datetime.utcnow()
-    else:
-        p = models.LessonProgress(user_id=user_id, lesson_id=lesson_id, completed_at=datetime.utcnow())
+# ---------------------------------------------------------------------------
+# ความคืบหน้าของบทเรียน
+#
+# 3 ฟังก์ชันข้างล่างนี้เคยพังทั้งหมด — อ้างถึง models.LessonProgress ซึ่ง
+# ไม่มีอยู่จริง (ชื่อจริงคือ models.Progress) และใช้ชื่อคอลัมน์ที่ไม่มีด้วย
+# (completed_at / last_watched_second ของจริงคือ completed / seconds_watched)
+#
+# แปลว่าปุ่ม "ทำเครื่องหมายว่าเรียนจบ" และการจำตำแหน่งวิดีโอ พัง 500 ทุกครั้ง
+# ที่กด ตั้งแต่วันแรก  ไม่มีเทสต์ตัวไหนแตะเลยเลยไม่มีใครรู้
+# (มีร่องรอยว่าเคยเจอบั๊กพันธุ์เดียวกันมาแล้วที่ leaderboard — บรรทัด ~697
+#  เขียนคอมเมนต์ไว้ว่า "FIX: ใช้ models.Progress ให้ถูกต้อง" แต่แก้จุดเดียว)
+# ---------------------------------------------------------------------------
+
+def _get_or_create_progress(db: Session, user_id: int, lesson_id: int) -> models.Progress:
+    p = db.query(models.Progress).filter_by(user_id=user_id, lesson_id=lesson_id).first()
+    if not p:
+        p = models.Progress(user_id=user_id, lesson_id=lesson_id)
         db.add(p)
+    return p
+
+
+def toggle_lesson_progress(db: Session, user_id: int, lesson_id: int) -> bool:
+    """สลับสถานะ เรียนจบ/ยังไม่จบ — คืนสถานะใหม่
+
+    เดิมคืน True เสมอไม่ว่าจะสลับไปทางไหน หน้าเว็บเลยเอาไปใช้ไม่ได้
+    """
+    p = _get_or_create_progress(db, user_id, lesson_id)
+    p.completed = not bool(p.completed)
+    p.last_updated = datetime.utcnow()
     db.commit()
-    return True
+    return bool(p.completed)
+
 
 def update_lesson_progress_time(db: Session, user_id: int, lesson_id: int, seconds: int):
-    p = db.query(models.LessonProgress).filter_by(user_id=user_id, lesson_id=lesson_id).first()
-    if p:
-        p.last_watched_second = seconds
-    else:
-        p = models.LessonProgress(user_id=user_id, lesson_id=lesson_id, last_watched_second=seconds)
-        db.add(p)
+    """จำว่าดูค้างไว้ถึงวินาทีที่เท่าไหร่ — ไว้เปิดมาดูต่อจากเดิม"""
+    p = _get_or_create_progress(db, user_id, lesson_id)
+    # กันค่าติดลบและกันค่าถอยหลัง (ผู้ใช้เลื่อนกลับไปดูซ้ำ ไม่ควรลดตำแหน่งที่บันทึก)
+    p.seconds_watched = max(0, int(seconds), int(p.seconds_watched or 0))
+    p.last_updated = datetime.utcnow()
     db.commit()
 
-def get_lesson_progress_time(db: Session, user_id: int, lesson_id: int):
-    p = db.query(models.LessonProgress).filter_by(user_id=user_id, lesson_id=lesson_id).first()
-    return p.last_watched_second if p else 0
+
+def get_lesson_progress_time(db: Session, user_id: int, lesson_id: int) -> int:
+    p = db.query(models.Progress).filter_by(user_id=user_id, lesson_id=lesson_id).first()
+    return int(p.seconds_watched or 0) if p else 0
 
 def get_user_progress_in_course(db: Session, user_id: int, course_id: int):
     return db.query(models.Progress.lesson_id).join(models.Lesson).join(models.Chapter).filter(
