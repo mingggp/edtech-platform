@@ -87,14 +87,19 @@
 .learn-page .lp-header-progress .text { font-size: 12.5px; color: var(--fg-1); white-space: nowrap; }
 .learn-page .lp-header-progress .text b { color: var(--fg-0); font-weight: 600; }
 .learn-page .lp-header-actions { display: flex; align-items: center; gap: 8px; }
+/* ปุ่มไอคอน — ตั้งใจให้ตรงกับ .icon-btn ใน styles/page-shell.css เป๊ะ ๆ
+   (38px · radius 10 · เส้นขอบและสีเดียวกัน) เพื่อให้ปุ่มสลับธีมในห้องเรียน
+   หน้าตาเหมือนกับบนแถบบนของหน้า dashboard ไม่ใช่เล็กกว่านิดหน่อยแล้วดูไม่เข้ากัน
+   ที่ต้องเขียนซ้ำที่นี่เพราะห้องเรียนอยู่ใน (focus) ซึ่งไม่ได้โหลด page-shell.css */
 .learn-page .icon-btn {
-  width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line);
+  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line);
   background: var(--bg-1); display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: var(--fg-1); position: relative;
   transition: color .15s, border-color .15s, background .15s;
 }
 .learn-page .icon-btn svg { width: 18px; height: 18px; }
 .learn-page .icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.learn-page .lp-header-actions { display: flex; align-items: center; gap: 10px; }
 .learn-page .lp-toggle-sidebar { color: var(--fg-2); }
 
 /* ============== สารบัญด้านข้าง ============== */
@@ -273,6 +278,11 @@
 .learn-page .player-msg b { font-family: var(--font-display); font-weight: 700; font-size: 17px; }
 .learn-page .player-msg span { font-size: 13px; color: oklch(0.99 0.005 285 / 0.6); max-width: 320px; line-height: 1.5; }
 .learn-page .player-msg.err svg { color: var(--danger); opacity: 0.85; }
+.learn-page .player-msg-link {
+  margin-top: 12px; font-size: 12.5px; color: var(--accent-fg);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.learn-page .player-msg-link:hover { opacity: 0.8; }
 
 .learn-page .ctrl {
   position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 14px;
@@ -368,11 +378,13 @@
   margin-bottom: 9px; display: flex; align-items: center; justify-content: space-between;
 }
 .learn-page .pop .pop-sec > .lbl b { font-weight: 700; color: var(--accent-fg); }
-.learn-page .speed-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+/* ปุ่มลัดความเร็ว — 4 ปุ่มอยู่บรรทัดเดียวเสมอ
+   ใช้ grid 4 ช่องเท่ากัน แทน flex-wrap ที่ตัดบรรทัดเองเมื่อที่ไม่พอ */
+.learn-page .speed-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .learn-page .speed-presets button {
   appearance: none; border: 1px solid oklch(0.99 0.005 285 / 0.16); background: transparent;
   color: oklch(0.99 0.005 285 / 0.85); font-family: "JetBrains Mono", monospace; font-size: 12px;
-  font-weight: 600; padding: 6px 0; border-radius: 8px; cursor: pointer; flex: 1 1 28%;
+  font-weight: 600; padding: 7px 0; border-radius: 9px; cursor: pointer; white-space: nowrap;
   transition: background .14s, border-color .14s, color .14s;
 }
 .learn-page .speed-presets button:hover { background: oklch(0.99 0.005 285 / 0.12); }

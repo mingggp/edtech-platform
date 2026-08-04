@@ -420,11 +420,25 @@ export function CheckoutView({ courseId }: { courseId: number }) {
             ) : null}
             <div className="stage-actions">
               {/* พาไปเรียนเลย — คนที่เพิ่งจ่ายเงินเสร็จอยากดูคลิปแรก
-                  ไม่ใช่กลับไปอ่านหน้าขายของอีกรอบ */}
-              <Link href={`/learn/${c.id}`} className="btn btn-primary btn-lg">
+                  ไม่ใช่กลับไปอ่านหน้าขายของอีกรอบ
+
+                  ใช้ replace ไม่ใช่ push: ไม่เก็บหน้าจ่ายเงินไว้ในประวัติ
+                  ไม่งั้นนักเรียนกดย้อนกลับจากห้องเรียนจะเด้งมาหน้าจ่ายเงิน
+                  ที่จ่ายไปแล้ว แถมขึ้นว่า "คุณลงทะเบียนคอร์สนี้ไปแล้ว" งงหนัก */}
+              <button
+                type="button"
+                className="btn btn-primary btn-lg"
+                onClick={() => router.replace(`/learn/${c.id}`)}
+              >
                 เริ่มเรียนเลย →
-              </Link>
-              <Link href={`/courses/${c.id}`} className="btn btn-secondary">ดูรายละเอียดคอร์ส</Link>
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => router.replace(`/courses/${c.id}`)}
+              >
+                ดูรายละเอียดคอร์ส
+              </button>
             </div>
           </div>
         </div>

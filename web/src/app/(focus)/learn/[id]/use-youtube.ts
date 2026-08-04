@@ -68,8 +68,34 @@ export type PlayState = 'idle' | 'playing' | 'paused' | 'ended';
  * ส่งค่าเกิน 2 ไป setPlaybackRate จะไม่มีผล (ปัดลงให้เงียบ ๆ)
  * ถ้าปล่อยให้สไลเดอร์เลื่อนถึง 3 ได้ ตัวเลขบนจอจะโกหกผู้ใช้
  */
-export const MIN_RATE = 0.25;
+export const MIN_RATE = 0.5;
 export const MAX_RATE = 2;
+
+/**
+ * แปลงรหัส error ของ YouTube เป็นข้อความที่บอกได้ว่าต้องไปแก้ตรงไหน
+ *
+ * สำคัญมากเพราะสาเหตุแต่ละอย่างแก้คนละทาง:
+ *   101/150 = เจ้าของคลิปปิดการฝังในเว็บอื่น -> ต้องไปแก้ที่ YouTube Studio
+ *   100     = คลิปถูกลบหรือตั้งเป็นส่วนตัว
+ *   2       = ไอดีผิด
+ * ถ้าขึ้นข้อความรวม ๆ ว่า "เล่นไม่ได้" จะไล่หาสาเหตุไม่ถูก
+ * (รหัสตามเอกสาร YouTube IFrame API — onError)
+ */
+function errorText(code: number | undefined): string {
+  switch (code) {
+    case 2:
+      return 'ไอดีคลิปไม่ถูกต้อง — ตรวจลิงก์ YouTube ที่ใส่ไว้อีกที';
+    case 5:
+      return 'เบราว์เซอร์เล่นคลิปนี้ไม่ได้ — ลองเปลี่ยนเบราว์เซอร์ดู';
+    case 100:
+      return 'ไม่พบคลิปนี้ — อาจถูกลบไปแล้วหรือตั้งเป็นส่วนตัว';
+    case 101:
+    case 150:
+      return 'เจ้าของคลิปปิดการฝังในเว็บอื่นไว้ — ต้องเข้า YouTube Studio แล้วเปิด "อนุญาตให้ฝัง"';
+    default:
+      return `เล่นคลิปนี้ไม่ได้${code ? ` (รหัส ${code})` : ''}`;
+  }
+}
 
 let apiPromise: Promise<YTNamespace> | null = null;
 
@@ -182,7 +208,11 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
         if (cancelled || !host.isConnected) return;
 
         const p = new YT.Player(host, {
-          host: 'https://www.youtube-nocookie.com',   // ไม่ให้ YouTube ตามนักเรียน
+          /* ใช้โฮสต์มาตรฐานของ YouTube
+             เคยตั้งเป็น youtube-nocookie.com เพื่อความเป็นส่วนตัวของนักเรียน
+             แต่เอาออกก่อนเพราะเป็นจุดที่ทำให้ onReady ไม่ยิงในบางเครื่อง
+             แล้วจะกลายเป็นจอดำที่หาสาเหตุยาก — ความถูกต้องมาก่อน
+             (ถ้าย้ายไปโฮสต์คลิปเองในอนาคต เรื่องนี้จะหมดไปเอง) */
           playerVars: {
             controls: 0,          // เราวาดแถบควบคุมเอง
             modestbranding: 1,
@@ -213,8 +243,8 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
               const d = p.getDuration();
               if (d > 0) setDuration(d);
             },
-            onError: () => {
-              if (!cancelled) setError('เล่นวิดีโอนี้ไม่ได้ — อาจถูกลบหรือตั้งเป็นส่วนตัว');
+            onError: (e: { data: number }) => {
+              if (!cancelled) setError(errorText(e?.data));
             },
           },
         });
@@ -237,6 +267,20 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     };
   }, []);
 
+  /* ---------------- ตัวเล่นไม่พร้อมสักที = บอกให้รู้ ----------------
+   * ถ้า YouTube โหลดไม่ขึ้น (เน็ตองค์กรบล็อก / ส่วนขยายบล็อกโฆษณา / เน็ตหลุด)
+   * onReady จะไม่ยิงและ onError ก็ไม่ยิง — เหลือแค่จอดำเงียบ ๆ
+   * ตั้งเวลาไว้ 10 วินาที ถ้ายังไม่พร้อมให้ขึ้นข้อความบอกสาเหตุที่เป็นไปได้ */
+  useEffect(() => {
+    if (ready || !videoId) return;
+    const t = setTimeout(() => {
+      if (!playerRef.current) {
+        setError('โหลดตัวเล่นวิดีโอไม่สำเร็จ — ลองปิดส่วนขยายบล็อกโฆษณา หรือเช็คว่าเน็ตเข้า youtube.com ได้ไหม');
+      }
+    }, 10_000);
+    return () => clearTimeout(t);
+  }, [ready, videoId]);
+
   /* ---------------- เปลี่ยนบทเรียน = เปลี่ยนวิดีโอในตัวเดิม ---------------- */
   useEffect(() => {
     const p = playerRef.current;
@@ -247,6 +291,23 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     setState('idle');
     setCurrentTime(startAtRef.current);
     setBuffered(0);
+  }, [ready, videoId]);
+
+  /* ---------------- ส่งค่าที่ค้างไว้ให้ตัวเล่นเมื่อพร้อม ----------------
+   * ผู้ใช้อาจกดปรับความเร็ว/เสียงตั้งแต่ตัวเล่นยังโหลดไม่เสร็จ
+   * หรือปรับไว้ที่บทเรียนก่อนหน้าแล้วเปลี่ยนบท — ต้องยกค่ามาด้วย
+   * ไม่ใช่รีเซ็ตเป็น 1× ทุกครั้งที่เปลี่ยนคลิป */
+  useEffect(() => {
+    const p = playerRef.current;
+    if (!ready || !p) return;
+    p.setPlaybackRate(rate);
+    p.setVolume(volume);
+    if (muted) p.mute();
+    else p.unMute();
+    // ตั้งใจไม่ใส่ rate/volume/muted ใน deps — effect นี้มีหน้าที่ "ยกค่าไปให้"
+    // ตอนตัวเล่นพร้อมหรือเปลี่ยนคลิปเท่านั้น ส่วนตอนผู้ใช้กดปุ่ม
+    // ฟังก์ชัน setRate/setVolume ส่งให้ตัวเล่นเองอยู่แล้ว
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, videoId]);
 
   /* ---------------- อัปเดตเวลา เฉพาะตอนกำลังเล่น ---------------- */
@@ -288,32 +349,43 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     seekTo(p.getCurrentTime() + delta);
   }, [seekTo]);
 
+  /* ⚠️ ตัวควบคุมพวกนี้ต้องขยับหน้าจอได้เสมอ แม้ตัวเล่นยังไม่พร้อม
+   *
+   * บั๊กที่เจอ: เดิมทุกฟังก์ชันเริ่มด้วย `if (!playerRef.current) return;`
+   * พอบทเรียนไม่มีคลิป (หรือคลิปฝังไม่ได้) ตัวเล่นจะไม่มีวันพร้อม
+   * -> กดปุ่มความเร็ว/ลากสไลเดอร์แล้วไม่มีอะไรขยับเลย ดูเหมือน UI พัง
+   *
+   * ตอนนี้เก็บค่าที่ผู้ใช้เลือกไว้ใน state เสมอ แล้วค่อยส่งให้ตัวเล่น
+   * เมื่อพร้อม (ดู effect "ส่งค่าที่ค้างไว้ให้ตัวเล่น" ด้านล่าง)
+   */
   const setVolume = useCallback((v: number) => {
+    const vol = Math.round(Math.max(0, Math.min(100, v)));
+    setVolumeState(vol);
+    if (vol > 0) setMuted(false);
     const p = playerRef.current;
     if (!p) return;
-    const vol = Math.round(Math.max(0, Math.min(100, v)));
     p.setVolume(vol);
-    setVolumeState(vol);
     // ลากเสียงขึ้นจาก 0 ต้องเลิกปิดเสียงให้เอง ไม่งั้นลากแล้วยังเงียบอยู่
-    if (vol > 0 && p.isMuted()) {
-      p.unMute();
-      setMuted(false);
-    }
+    if (vol > 0 && p.isMuted()) p.unMute();
   }, []);
 
   const toggleMute = useCallback(() => {
-    const p = playerRef.current;
-    if (!p) return;
-    if (p.isMuted()) {
-      p.unMute();
-      setMuted(false);
-      // เคยปิดเสียงไว้ตอนระดับเป็น 0 — เปิดกลับมาต้องมีเสียงจริง
-      if (p.getVolume() === 0) setVolume(50);
-    } else {
-      p.mute();
-      setMuted(true);
-    }
-  }, [setVolume]);
+    setMuted((wasMuted) => {
+      const p = playerRef.current;
+      if (wasMuted) {
+        p?.unMute();
+        // เคยปิดเสียงไว้ตอนระดับเป็น 0 — เปิดกลับมาต้องมีเสียงจริง
+        setVolumeState((vol) => {
+          if (vol > 0) return vol;
+          p?.setVolume(50);
+          return 50;
+        });
+      } else {
+        p?.mute();
+      }
+      return !wasMuted;
+    });
+  }, []);
 
   /**
    * ปรับความเร็ว
@@ -326,11 +398,9 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
    * มันจะเลือกค่าใกล้เคียงให้เอง แล้วเลขบนจอกับของจริงจะไม่ตรงกัน
    */
   const setRate = useCallback((r: number) => {
-    const p = playerRef.current;
-    if (!p) return;
     const clamped = Math.max(MIN_RATE, Math.min(MAX_RATE, Math.round(r * 20) / 20));
-    p.setPlaybackRate(clamped);
-    setRateState(clamped);
+    setRateState(clamped);                    // ขยับหน้าจอก่อนเสมอ
+    playerRef.current?.setPlaybackRate(clamped);
   }, []);
 
   const readTime = useCallback(() => {

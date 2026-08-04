@@ -608,13 +608,22 @@ export function LearnView({ courseId }: Props) {
                   </div>
                 ) : null}
 
-                {yt.error ? (
+                {yt.error && videoId ? (
                   <div className="player-msg err">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round">
                       <circle cx="12" cy="12" r="10" /><path d="M12 8v5M12 16h.01" />
                     </svg>
-                    <b>เล่นวิดีโอนี้ไม่ได้</b>
+                    <b>เล่นคลิปนี้ไม่ได้</b>
                     <span>{yt.error}</span>
+                    {/* บอกไอดีคลิปไว้ด้วย จะได้เอาไปเปิดตรวจบน YouTube ได้ทันที
+                        ว่าเป็นที่คลิปเองหรือเป็นที่เว็บเรา */}
+                    <a
+                      className="player-msg-link"
+                      href={`https://www.youtube.com/watch?v=${videoId}`}
+                      target="_blank" rel="noreferrer"
+                    >
+                      เปิดคลิปนี้บน YouTube เพื่อตรวจสอบ ({videoId}) ↗
+                    </a>
                   </div>
                 ) : null}
 
@@ -709,10 +718,9 @@ export function LearnView({ courseId }: Props) {
                       ))}
                     </div>
 
-                    {/* สไลเดอร์ปรับละเอียดระหว่างช่วง
-                        สูงสุด 2 เท่า ไม่ใช่ 3 — YouTube รองรับแค่นี้จริง ๆ
-                        (เอกสารทางการ: ค่าที่ใช้ได้คือ 0.25 ถึง 2)
-                        ถ้าให้เลื่อนถึง 3 ตัวเลขบนจอจะไม่ตรงกับความเร็วจริง */}
+                    {/* สไลเดอร์ปรับละเอียดระหว่าง 0.5× ถึง 2×
+                        ไม่มี 3× เพราะ YouTube รับสูงสุด 2 (ส่งเกินจะถูกปัดลงเงียบ ๆ
+                        แล้วเลขบนจอจะไม่ตรงกับความเร็วจริง) */}
                     <div className="speed-slide">
                       <input
                         className="rng" type="range"
@@ -727,7 +735,7 @@ export function LearnView({ courseId }: Props) {
                       <span className="v">{yt.rate.toFixed(2)}×</span>
                     </div>
                     <div className="speed-scale" aria-hidden="true">
-                      <span>0.25×</span><span>1×</span><span>2×</span>
+                      <span>0.5×</span><span>1×</span><span>1.5×</span><span>2×</span>
                     </div>
                   </div>
                 </div>
