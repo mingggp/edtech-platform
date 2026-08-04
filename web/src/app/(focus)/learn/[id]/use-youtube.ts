@@ -129,8 +129,13 @@ function loadApi(): Promise<YTNamespace> {
 }
 
 export interface UseYouTube {
-  /** ใส่ ref นี้ให้ <div> ที่จะกลายเป็นตัวเล่นวิดีโอ */
-  containerRef: React.RefObject<HTMLDivElement | null>;
+  /**
+   * ใส่ ref นี้ให้ <div> ที่จะกลายเป็นตัวเล่นวิดีโอ
+   *
+   * เป็น "callback ref" ไม่ใช่ useRef ธรรมดา — จำเป็นจริง ๆ ดูเหตุผลใน
+   * คอมเมนต์ของ effect ที่สร้าง player (บั๊กจอดำที่หาอยู่นาน)
+   */
+  containerRef: (node: HTMLDivElement | null) => void;
   ready: boolean;
   error: string | null;
   state: PlayState;
@@ -162,7 +167,28 @@ interface Options {
 }
 
 export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTube {
-  const containerRef = useRef<HTMLDivElement>(null);
+  /**
+   * ⚠️ ต้องเป็น callback ref + state ห้ามใช้ useRef ธรรมดา
+   *
+   * บั๊กที่ทำให้จอดำตลอด ไม่ว่าจะเปลี่ยนคลิปกี่รอบ:
+   *
+   * หน้าห้องเรียนมี early return หลายอัน (กำลังโหลด / ยังไม่ล็อกอิน /
+   * ยังไม่ซื้อ / ไม่มีบทเรียน) กว่าจะ render <div> ของตัวเล่นจริง ๆ
+   * แต่ hook ต้องถูกเรียกก่อน early return เสมอตามกฎของ React
+   *
+   * ผลคือรอบแรกที่ effect ทำงาน containerRef.current ยังเป็น null
+   * (เพราะ React คืนหน้า "กำลังโหลด…" ไปแทน) effect เลย return ทิ้ง
+   * แล้วเพราะ deps เป็น [] มันจะ **ไม่ทำงานอีกเลยตลอดชีวิตของหน้า**
+   * -> ตัวเล่นไม่เคยถูกสร้าง -> จอดำ -> ปุ่มควบคุมตายหมด
+   *
+   * useRef ไม่ทำให้ component render ใหม่ตอน node โผล่ เลยไม่มีอะไรมาปลุก effect
+   * callback ref + useState แก้ตรงจุดนี้: พอ <div> ถูก mount จริง
+   * setState จะทำให้ effect ที่พึ่ง containerEl ทำงานทันที
+   */
+  const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
+  const containerRef = useCallback((node: HTMLDivElement | null) => {
+    setContainerEl(node);
+  }, []);
   const playerRef = useRef<YTPlayer | null>(null);
 
   const [ready, setReady] = useState(false);
@@ -184,10 +210,10 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
   const startAtRef = useRef(startAt);
   startAtRef.current = startAt;
 
-  /* ---------------- สร้าง player ครั้งเดียว ---------------- */
+  /* ---------------- สร้าง player เมื่อ <div> โผล่จริง ---------------- */
   useEffect(() => {
     let cancelled = false;
-    const el = containerRef.current;
+    const el = containerEl;
     if (!el) return;
 
     /* สำคัญ: YouTube จะ "แทนที่" element ที่เราส่งให้ ด้วย <iframe> ของมัน
@@ -265,7 +291,7 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
       el.replaceChildren();
       setReady(false);
     };
-  }, []);
+  }, [containerEl]);
 
   /* ---------------- ตัวเล่นไม่พร้อมสักที = บอกให้รู้ ----------------
    * ถ้า YouTube โหลดไม่ขึ้น (เน็ตองค์กรบล็อก / ส่วนขยายบล็อกโฆษณา / เน็ตหลุด)
@@ -277,7 +303,7 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
       if (!playerRef.current) {
         setError('โหลดตัวเล่นวิดีโอไม่สำเร็จ — ลองปิดส่วนขยายบล็อกโฆษณา หรือเช็คว่าเน็ตเข้า youtube.com ได้ไหม');
       }
-    }, 10_000);
+    }, 6_000);   // 6 วิพอ — รอนานกว่านี้ผู้ใช้นั่งงงว่าเว็บค้างหรือเปล่า
     return () => clearTimeout(t);
   }, [ready, videoId]);
 

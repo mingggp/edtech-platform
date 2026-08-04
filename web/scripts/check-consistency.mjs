@@ -170,6 +170,28 @@ for (const m of epSrc.matchAll(/[`'"]([^`'"]*\/[^`'"]*)[`'"]\s*,\s*\{[^}]*anonym
   }
 }
 
+/* --------------------- 2d. ตัวเล่นวิดีโอต้องใช้ callback ref ไม่ใช่ useRef */
+/* บั๊กจริงที่ทำให้จอดำตลอด หาอยู่หลายรอบ:
+   หน้าห้องเรียนมี early return หลายอัน (กำลังโหลด/ยังไม่ซื้อ/ไม่มีบทเรียน)
+   กว่าจะ render <div> ของตัวเล่น  แต่ hook ต้องถูกเรียกก่อน early return
+   -> รอบแรก ref ยังเป็น null, effect deps [] ทำงานรอบเดียวแล้วเลิก
+   -> พอ <div> โผล่ทีหลัง ไม่มีอะไรปลุก effect -> ตัวเล่นไม่เคยถูกสร้าง
+   callback ref + useState แก้ตรงนี้ เพราะ setState ปลุก effect ให้เอง */
+const ytHook = join(WEB, 'src/app/(focus)/learn/[id]/use-youtube.ts');
+if (existsSync(ytHook)) {
+  const src = readFileSync(ytHook, 'utf8');
+  if (/const containerRef = useRef</.test(src)) {
+    fail(
+      'use-youtube.ts กลับไปใช้ useRef กับ container แล้ว — ต้องเป็น callback ref + useState ' +
+      'ไม่งั้นตัวเล่นจะไม่ถูกสร้างเมื่อ <div> โผล่ทีหลัง (จอดำ)',
+    );
+  }
+  const m = src.match(/\/\* -+ สร้าง player[\s\S]*?\n  \}, \[([^\]]*)\]\);/);
+  if (m && !m[1].includes('containerEl')) {
+    fail(`effect ที่สร้าง player ต้องมี containerEl ใน deps (ตอนนี้เป็น [${m[1]}])`);
+  }
+}
+
 /* ------------------------------------------------------ 3. เมนู ↔ route */
 const appDir = join(WEB, 'src/app');
 /** แปลงโครงโฟลเดอร์ App Router เป็นรายการ path ที่มีจริง */
