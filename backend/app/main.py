@@ -106,6 +106,39 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+def _warn_if_schema_outdated() -> None:
+    """เตือนตั้งแต่เปิดเซิร์ฟเวอร์ ถ้าฐานข้อมูลยังตามโค้ดไม่ทัน
+
+    เคสจริงที่ทำให้ต้องมีอันนี้: เพิ่ม migration ให้คอมเมนต์ตอบกลับได้
+    (คอลัมน์ parent_id) แต่ยังไม่ได้รัน alembic upgrade head บนเครื่องที่ใช้อยู่
+    -> เปิดเว็บได้ ดูคลิปได้ ทุกอย่างดูปกติ  แต่พอกดส่งคอมเมนต์ทีเดียว
+       เจอ 500 พร้อมข้อความ 'column parent_id ... does not exist'
+       ซึ่งอ่านแล้วไม่รู้ว่าต้องไปทำอะไร
+
+    แค่เตือน ไม่ทำให้แอปดับ — บางทีตั้งใจรันเวอร์ชันเก่าชั่วคราว
+    """
+    try:
+        from .schema_check import diff_schema
+
+        d = diff_schema(engine)
+        if d.ok:
+            return
+        log.warning(
+            "\n"
+            "──────────────────────────────────────────────\n"
+            " ⚠️  ฐานข้อมูลยังตามโค้ดไม่ทัน\n"
+            "%s\n"
+            " ฟีเจอร์ที่ใช้ของพวกนี้จะพัง 500 ตอนกดใช้งาน\n"
+            "\n"
+            " แก้ด้วยคำสั่งเดียว:   alembic upgrade head\n"
+            "──────────────────────────────────────────────",
+            "\n".join(f"   - {line}" for line in d.as_lines()),
+        )
+    except Exception:  # noqa: BLE001
+        # ตัวเช็คเองพังไม่ควรทำให้เซิร์ฟเวอร์เปิดไม่ขึ้น
+        log.debug("ตรวจ schema ไม่สำเร็จ", exc_info=True)
+
+
 # ---------- Startup ---------- #
 @app.on_event("startup")
 async def startup():
@@ -130,6 +163,7 @@ async def startup():
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
+        _warn_if_schema_outdated()
     except Exception as exc:  # noqa: BLE001 — อยากจับให้ครบทุกแบบจริง ๆ
         if settings.is_production:
             # production ให้ดับไปเลย ตัวคุม container จะได้ลองเปิดใหม่

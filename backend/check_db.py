@@ -68,16 +68,13 @@ def main():
     print(f"เวอร์ชันล่าสุดในโค้ด:      {head or '(อ่านไม่ได้)'}\n")
 
     # ---- เทียบตาราง/คอลัมน์ ----
-    missing_tables, missing_cols = [], []
-    for name, table in Base.metadata.tables.items():
-        if name not in existing:
-            missing_tables.append(name)
-            continue
-        have = {c["name"] for c in insp.get_columns(name)}
-        want = {c.name for c in table.columns}
-        gap = sorted(want - have)
-        if gap:
-            missing_cols.append((name, gap))
+    # ใช้ตัวเดียวกับที่เซิร์ฟเวอร์ใช้ตอน startup — กติกาจะได้อยู่ที่เดียว
+    # ไม่งั้นวันหนึ่งสคริปต์นี้บอกว่าผ่าน แต่เซิร์ฟเวอร์บอกว่าไม่ผ่าน
+    from app.schema_check import diff_schema
+
+    d = diff_schema(engine)
+    missing_tables = d.missing_tables
+    missing_cols = d.missing_columns
 
     if not missing_tables and not missing_cols:
         print("✅ ตารางในฐานข้อมูลตรงกับโค้ดครบทุกอย่าง")
