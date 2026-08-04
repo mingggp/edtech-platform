@@ -211,7 +211,10 @@ body { overflow-x: hidden; }
 .unlocked .uinfo h3 { font-family: var(--font-display); font-weight: 700; font-size: 15.5px; line-height: 1.25; color: var(--fg-0); margin-bottom: 4px; }
 .unlocked .uinfo p { font-size: 12px; color: var(--fg-2); }
 
-.stage-actions { display: flex; flex-direction: column; gap: 11px; }
+/* ต้องมีระยะห่างจากข้อความด้านบน
+   ดีไซน์เดิมมีการ์ด .unlocked (margin 26px) คั่นระหว่างข้อความกับปุ่มอยู่
+   พอไม่ได้พอร์ตการ์ดนั้นมา ปุ่มเลยไปติดกับป้าย "ชำระแล้ว" พอดี */
+.stage-actions { display: flex; flex-direction: column; gap: 11px; margin-top: 26px; }
 .btn-lg-full { height: 52px; border-radius: 14px; width: 100%; font-size: 15px; }
 
 /* ---------- TWEAKS PANEL ---------- */

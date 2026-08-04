@@ -419,11 +419,12 @@ export function CheckoutView({ courseId }: { courseId: number }) {
               </div>
             ) : null}
             <div className="stage-actions">
-              {/* หน้าห้องเรียนยังไม่ได้ทำ — ขั้นถัดไปของ flow */}
-              <Link href={`/courses/${c.id}`} className="btn btn-primary btn-lg">
-                ไปที่คอร์ส
+              {/* พาไปเรียนเลย — คนที่เพิ่งจ่ายเงินเสร็จอยากดูคลิปแรก
+                  ไม่ใช่กลับไปอ่านหน้าขายของอีกรอบ */}
+              <Link href={`/learn/${c.id}`} className="btn btn-primary btn-lg">
+                เริ่มเรียนเลย →
               </Link>
-              <Link href="/courses" className="btn btn-secondary">ดูคอร์สอื่น</Link>
+              <Link href={`/courses/${c.id}`} className="btn btn-secondary">ดูรายละเอียดคอร์ส</Link>
             </div>
           </div>
         </div>

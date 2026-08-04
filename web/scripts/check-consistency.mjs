@@ -131,6 +131,45 @@ for (const file of walk(join(WEB, 'src'))) {
   }
 }
 
+/* ------------------------ 2c. endpoint ที่ตอบต่างกันตามผู้ใช้ ห้าม anonymous */
+/* บั๊กจริง: /courses/{id}/chapters เดิมเป็น endpoint สาธารณะ ฝั่งเว็บจึงเรียกด้วย
+   anonymous: true (ไม่แนบ token)  พอเพิ่มกำแพงจ่ายเงินทีหลัง — backend เริ่มตอบ
+   ไม่เท่ากันระหว่างคนซื้อแล้วกับยังไม่ซื้อ — แต่ลืมเอา anonymous ออก
+   ผลคือ backend เห็นเป็นคนแปลกหน้าเสมอ -> คนที่จ่ายเงินไปแล้วเข้าห้องเรียนไม่ได้
+
+   วิธีตรวจ: หา endpoint ที่ backend ใช้ get_current_user_optional
+   แล้วดูว่าฝั่งเว็บเรียกแบบ anonymous หรือเปล่า */
+const normPath = (p) => p.replace(/\$\{[^}]*\}/g, '*').replace(/\{[^}]*\}/g, '*').split('?')[0];
+
+const optionalAuthPaths = new Set();
+const routersDir = join(BACKEND, 'app/routers');
+if (existsSync(routersDir)) {
+  for (const f of readdirSync(routersDir).filter((x) => x.endsWith('.py'))) {
+    const src = readFileSync(join(routersDir, f), 'utf8');
+    /* ตัดไฟล์เป็นก้อนละ 1 endpoint (ตั้งแต่ @router. ตัวนี้ ถึงตัวถัดไป)
+       แล้วดูว่าก้อนนั้นมี get_current_user_optional ไหม
+       เขียนแบบนี้แทน regex ก้อนเดียวยาว ๆ เพราะรูปแบบพารามิเตอร์หลากหลาย
+       (ขึ้นบรรทัดใหม่บ้าง มี Depends ซ้อนบ้าง) regex เดียวจับไม่ครบ */
+    for (const chunk of src.split(/(?=@router\.)/)) {
+      const m = chunk.match(/^@router\.(?:get|post|put|patch|delete)\(\s*["']([^"']+)["']/);
+      if (m && chunk.includes('get_current_user_optional')) {
+        optionalAuthPaths.add(normPath(m[1]));
+      }
+    }
+  }
+}
+
+const epSrc = readFileSync(join(WEB, 'src/lib/api/endpoints.ts'), 'utf8');
+for (const m of epSrc.matchAll(/[`'"]([^`'"]*\/[^`'"]*)[`'"]\s*,\s*\{[^}]*anonymous:\s*true/g)) {
+  const p = normPath(m[1]);
+  if (optionalAuthPaths.has(p)) {
+    fail(
+      `endpoints.ts เรียก ${m[1]} แบบ anonymous แต่ backend ตอบไม่เท่ากันตามผู้ใช้ ` +
+      `(ใช้ get_current_user_optional) — ต้องแนบ token ไปด้วย`,
+    );
+  }
+}
+
 /* ------------------------------------------------------ 3. เมนู ↔ route */
 const appDir = join(WEB, 'src/app');
 /** แปลงโครงโฟลเดอร์ App Router เป็นรายการ path ที่มีจริง */

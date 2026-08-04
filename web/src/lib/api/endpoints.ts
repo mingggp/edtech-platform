@@ -65,8 +65,22 @@ export const auth = {
 export const courses = {
   list: () => api.get<Course[]>('/courses', { anonymous: true }),
   get: (id: number) => api.get<Course>(`/courses/${id}`, { anonymous: true }),
-  /** สารบัญคอร์ส — บท + บทเรียนย่อย */
-  chapters: (id: number) => api.get<Chapter[]>(`/courses/${id}/chapters`, { anonymous: true }),
+  /**
+   * สารบัญคอร์ส — บท + บทเรียนย่อย
+   *
+   * ⚠️ ห้ามใส่ anonymous: true เด็ดขาด
+   *
+   * endpoint นี้ตอบ "ไม่เท่ากัน" ระหว่างคนที่ซื้อแล้วกับคนที่ยังไม่ซื้อ
+   * (คนซื้อแล้วได้ youtube_id ด้วย) ถ้าไม่แนบ token ไปด้วย backend จะเห็นเป็น
+   * คนแปลกหน้าเสมอ -> ล็อกทุกบทเรียน -> คนที่จ่ายเงินไปแล้วเข้าห้องเรียนไม่ได้
+   *
+   * เคยเป็นบั๊กจริง: ตอนแรก endpoint นี้เปิดสาธารณะจึงใส่ anonymous ไว้
+   * พอเพิ่มกำแพงจ่ายเงินทีหลังแล้วลืมเอาออก
+   *
+   * คนที่ยังไม่ล็อกอินก็ยังเรียกได้ตามปกติ เพราะ client แนบ token เฉพาะตอนที่มี
+   * และ backend ใช้ get_current_user_optional ที่ไม่ error เมื่อไม่มี token
+   */
+  chapters: (id: number) => api.get<Chapter[]>(`/courses/${id}/chapters`),
   mine: () => api.get<Course[]>('/users/me/courses'),
 };
 
