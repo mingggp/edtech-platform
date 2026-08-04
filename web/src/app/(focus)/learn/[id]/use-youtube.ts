@@ -44,6 +44,9 @@ interface YTPlayer {
   cueVideoById(id: string, start?: number): void;
   /** บอกขนาดใหม่ให้ตัวเล่นจัดผังภายในใหม่ — ต้องเรียกเอง ไม่ทำให้อัตโนมัติ */
   setSize(width: number, height: number): void;
+  /** เปิด/ปิดโมดูลคำบรรยาย — ดู setCaptions() ว่าทำไมต้องลองหลายชื่อ */
+  loadModule(name: string): void;
+  unloadModule(name: string): void;
   destroy(): void;
 }
 
@@ -149,6 +152,9 @@ export interface UseYouTube {
   volume: number;
   muted: boolean;
   rate: number;
+  /** คำบรรยายเปิดอยู่ไหม */
+  captions: boolean;
+  toggleCaptions(): void;
   play(): void;
   pause(): void;
   toggle(): void;
@@ -202,6 +208,9 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
   const [volume, setVolumeState] = useState(100);
   const [muted, setMuted] = useState(false);
   const [rate, setRateState] = useState(1);
+  /* คำบรรยายปิดไว้ก่อนโดยปริยาย — คลิปสอนของพี่หมิงมีสูตรบนจออยู่แล้ว
+     ถ้าคำบรรยายขึ้นทับจะบังพอดี ใครอยากได้ค่อยกดเปิดเอง */
+  const [captions, setCaptions] = useState(false);
 
   /* onEnded เก็บใน ref เพื่อไม่ให้ effect สร้าง player ใหม่ทุกครั้งที่ parent วาดใหม่ */
   const onEndedRef = useRef(onEnded);
@@ -257,6 +266,7 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
             playsinline: 1,       // iPhone เล่นในหน้าไม่เด้งเต็มจอ
             disablekb: 1,         // จัดการคีย์บอร์ดเอง กันชนกัน
             iv_load_policy: 3,
+            cc_load_policy: 0,    // ไม่เปิดคำบรรยายเอง (ดู applyCaptions)
             origin: window.location.origin,
           },
           events: {
@@ -392,6 +402,9 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     p.setVolume(volume);
     if (muted) p.mute();
     else p.unMute();
+    /* ต้องสั่งซ้ำทุกครั้งที่เปลี่ยนคลิป — คำบรรยายเป็นค่าประจำคลิป
+       ไม่ใช่ค่าประจำตัวเล่น ถ้าไม่สั่ง คลิปถัดไปจะเปิดคำบรรยายเองอีก */
+    applyCaptions(captions);
     // ตั้งใจไม่ใส่ rate/volume/muted ใน deps — effect นี้มีหน้าที่ "ยกค่าไปให้"
     // ตอนตัวเล่นพร้อมหรือเปลี่ยนคลิปเท่านั้น ส่วนตอนผู้ใช้กดปุ่ม
     // ฟังก์ชัน setRate/setVolume ส่งให้ตัวเล่นเองอยู่แล้ว
@@ -491,6 +504,41 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
     playerRef.current?.setPlaybackRate(clamped);
   }, []);
 
+  /**
+   * เปิด/ปิดคำบรรยาย
+   *
+   * ปัญหาที่แก้: เราปิดไม่ให้เมาส์แตะ iframe (เพื่อซ่อนปุ่มของ YouTube)
+   * ผลข้างเคียงคือนักเรียนกดปุ่ม CC ของ YouTube เองไม่ได้เลย
+   * ถ้าคลิปเปิดคำบรรยายมาโดยปริยาย ก็จะค้างอยู่แบบนั้นตลอด ปิดไม่ได้
+   *
+   * ⚠️ ตรงนี้ไม่มีในเอกสารทางการของ YouTube (ต่างจาก setPlaybackRate)
+   * เป็นวิธีที่ใช้กันทั่วไปแต่ไม่มีสัญญาว่าจะได้ผลทุกเครื่อง
+   * ชื่อโมดูลเปลี่ยนไปตามยุคของตัวเล่น จึงยิงทั้ง 'captions' และ 'cc'
+   * แล้วกลืน error ไว้ — อย่างแย่ที่สุดคือไม่มีอะไรเกิดขึ้น ไม่ใช่หน้าพัง
+   *
+   * ถ้าวันไหนไม่ได้ผล ทางแก้ที่แน่นอนกว่าคือปิดคำบรรยายที่ YouTube Studio
+   * ของคลิปนั้นเอง (หรือย้ายไปโฮสต์คลิปเองในอนาคต)
+   */
+  const applyCaptions = useCallback((on: boolean) => {
+    const p = playerRef.current;
+    if (!p) return;
+    for (const mod of ['captions', 'cc']) {
+      try {
+        if (on) p.loadModule(mod);
+        else p.unloadModule(mod);
+      } catch {
+        /* ตัวเล่นรุ่นนี้ไม่รู้จักชื่อโมดูลนี้ — ลองชื่อถัดไป */
+      }
+    }
+  }, []);
+
+  const toggleCaptions = useCallback(() => {
+    setCaptions((on) => {
+      applyCaptions(!on);
+      return !on;
+    });
+  }, [applyCaptions]);
+
   const readTime = useCallback(() => {
     try {
       return playerRef.current?.getCurrentTime() ?? 0;
@@ -501,8 +549,9 @@ export function useYouTube({ videoId, startAt = 0, onEnded }: Options): UseYouTu
 
   return {
     containerRef, ready, error, state,
-    currentTime, duration, buffered, volume, muted, rate,
-    play, pause, toggle, seekTo, seekBy, setVolume, toggleMute, setRate, readTime,
+    currentTime, duration, buffered, volume, muted, rate, captions,
+    play, pause, toggle, seekTo, seekBy, setVolume, toggleMute, setRate,
+    toggleCaptions, readTime,
   };
 }
 

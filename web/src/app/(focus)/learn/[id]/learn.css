@@ -340,6 +340,13 @@
 .learn-page .cbtn:hover { background: oklch(0.99 0.005 285 / 0.16); }
 .learn-page .cbtn svg { width: 19px; height: 19px; }
 .learn-page .cbtn.sm svg { width: 17px; height: 17px; }
+/* ปุ่มคำบรรยายตอนเปิดอยู่ — ขีดเส้นใต้ให้เห็นชัดแบบเดียวกับที่คนคุ้นเคย */
+.learn-page .cc-btn.on { color: var(--accent-fg); }
+.learn-page .cc-btn.on::after {
+  content: ""; position: absolute; left: 8px; right: 8px; bottom: 4px;
+  height: 2px; border-radius: 2px; background: currentColor;
+}
+.learn-page .cc-btn { position: relative; }
 /* แถบเสียง — โผล่ออกมาเมื่อชี้ที่ปุ่มลำโพง เพื่อไม่ให้แถบควบคุมรก */
 .learn-page .vol { display: flex; align-items: center; }
 .learn-page .vol input[type=range] { width: 0; opacity: 0; transition: width .2s, opacity .2s; }

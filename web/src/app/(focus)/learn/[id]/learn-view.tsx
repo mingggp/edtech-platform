@@ -319,6 +319,7 @@ export function LearnView({ courseId }: Props) {
         case 'ArrowUp': e.preventDefault(); yt.setVolume(yt.volume + 10); break;
         case 'ArrowDown': e.preventDefault(); yt.setVolume(yt.volume - 10); break;
         case 'm': yt.toggleMute(); break;
+        case 'c': yt.toggleCaptions(); break;
         case 'f': toggleFullscreen(); break;
         default: break;
       }
@@ -747,6 +748,22 @@ export function LearnView({ courseId }: Props) {
                     </span>
 
                     <span className="spacer" />
+
+                    {/* ปุ่มคำบรรยาย — จำเป็นเพราะเราปิดไม่ให้เมาส์แตะ iframe
+                        นักเรียนจึงกดปุ่ม CC ของ YouTube เองไม่ได้ */}
+                    <button
+                      className={`cbtn sm cc-btn${yt.captions ? ' on' : ''}`}
+                      onClick={yt.toggleCaptions}
+                      aria-label={yt.captions ? 'ปิดคำบรรยาย' : 'เปิดคำบรรยาย'}
+                      aria-pressed={yt.captions}
+                      title={yt.captions ? 'ปิดคำบรรยาย' : 'เปิดคำบรรยาย'}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2.5" />
+                        <path d="M8.5 10.5a2 2 0 1 0 0 3M16 10.5a2 2 0 1 0 0 3" />
+                      </svg>
+                    </button>
+
 
                     <button
                       ref={rateBtnRef}
