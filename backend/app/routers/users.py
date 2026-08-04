@@ -129,25 +129,35 @@ def get_public_profile_api(user_id: int, db: Session = Depends(get_db), u=Depend
 #
 # ห้ามประกาศ path นี้ซ้ำที่นี่อีก — มี test_no_duplicate_routes คอยจับ
 
-@router.get("/me/courses")
+@router.get("/me/courses", response_model=List[schemas.MyCourseRead])
 def my_enrolled_courses(db: Session = Depends(get_db), u=Depends(get_current_user)):
-    enrollments = crud.get_enrolled_courses(db, u.id)
+    """คอร์สที่ฉันซื้อไว้ + เรียนไปถึงไหนแล้ว — ใช้ในหน้าหลัก
+
+    เคยมี 2 ปัญหาที่แก้ไปแล้ว:
+      1. ไม่ได้ประกาศ response_model จึงส่ง enrolled_at ออกไปแบบไม่มี timezone
+         เบราว์เซอร์อ่านเป็นเวลาท้องถิ่นแล้วเพี้ยนไป 7 ชั่วโมง
+         (บั๊กพันธุ์เดียวกับที่ทำให้ QR หมดอายุทันที ดู UtcDatetime ใน schemas)
+      2. ส่งฟิลด์ "color": "bg-brand-500" ซึ่งเป็นชื่อคลาส Tailwind
+         จากเว็บเวอร์ชันเก่า ตอนนี้ไม่มีใครใช้ — สีมาจากวิชาแล้ว
+    """
     out = []
-    for e in enrollments:
-        if e.course:
-            # We can calculate simple progress just by fetching complete count.
-            completed = crud.get_course_progress(db, u.id, e.course.id)
-            total = e.course.total_lessons
-            pct = int((len(completed) / total) * 100) if total > 0 else 0
-            
-            out.append({
-                "id": e.course.id,
-                "title": e.course.title,
-                "thumbnail": e.course.thumbnail,
-                "progress": pct,
-                "color": "bg-brand-500",
-                "enrolled_at": e.enrolled_at
-            })
+    for e in crud.get_enrolled_courses(db, u.id):
+        c = e.course
+        if not c:
+            continue
+        total = c.total_lessons
+        done = len(crud.get_course_progress(db, u.id, c.id))
+        out.append(schemas.MyCourseRead(
+            id=c.id,
+            title=c.title,
+            thumbnail=c.thumbnail,
+            subject=c.subject,
+            level=c.level,
+            total_lessons=total,
+            completed_lessons=done,
+            progress=int(done / total * 100) if total > 0 else 0,
+            enrolled_at=e.enrolled_at,
+        ))
     return out
 
 @router.get("/me/courses/{course_id}/progress")

@@ -293,6 +293,23 @@ class ChapterWithLessons(ChapterRead):
     class Config: from_attributes = True
 
 # --- Enrollment & Progress ---
+class MyCourseRead(BaseModel):
+    """คอร์สที่ฉันซื้อไว้ พร้อมความคืบหน้า — ใช้ในหน้าหลัก
+
+    ส่ง subject/level มาด้วยเพื่อให้หน้าเว็บใช้สีและป้ายประจำวิชาได้
+    ไม่ต้องยิงถาม /courses/{id} ซ้ำทีละคอร์ส
+    """
+    id: int
+    title: str
+    thumbnail: Optional[str] = None
+    subject: Optional[str] = None
+    level: Optional[str] = None
+    total_lessons: int = 0
+    completed_lessons: int = 0
+    progress: int = 0            # 0-100
+    enrolled_at: Optional[UtcDatetime] = None
+
+
 class EnrollmentRead(BaseModel):
     id: int
     course_id: int

@@ -105,6 +105,28 @@ export interface Chapter {
   lessons: Lesson[];
 }
 
+/* --------------------------------------------------------- คอร์สของฉัน */
+
+/** คอร์สที่ซื้อไว้ + เรียนไปถึงไหน — ใช้ในหน้าหลัก */
+export interface MyCourse {
+  id: number;
+  title: string;
+  thumbnail: string | null;
+  subject: SubjectId | null;
+  level: LevelId | null;
+  total_lessons: number;
+  completed_lessons: number;
+  /** 0–100 */
+  progress: number;
+  enrolled_at: string | null;
+}
+
+/** เวลาเรียน 7 วันล่าสุด — labels กับ data ยาวเท่ากันเสมอ */
+export interface StudyStats {
+  labels: string[];
+  data: number[];
+}
+
 /* ------------------------------------------------------------- comments */
 
 /**

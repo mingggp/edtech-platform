@@ -1,0 +1,185 @@
+/* ==========================================================================
+   หน้าหลัก /dashboard
+   ย้ายมาจาก 'Claude Design version 1.0/Dashboard.html' (3,403 บรรทัด)
+
+   รอบนี้เอาเฉพาะส่วนที่มีข้อมูลจริงรองรับแล้ว:
+     ทักทาย + สตรีค/XP/เป้าหมายวันนี้  · กราฟเวลาเรียน 7 วัน
+     คอร์สของฉัน + ปุ่มเรียนต่อ        · อันดับสัปดาห์นี้
+
+   ที่ยังไม่ทำ (ไม่มีข้อมูลจริงหรือยังไม่มี UI จัดการ):
+     เพื่อน (ต้องมีหน้าเพิ่มเพื่อนก่อน) · ป้ายวิ่ง marquee · ฟุตเตอร์
+   ========================================================================== */
+
+.dash { display: flex; flex-direction: column; gap: 26px; }
+
+/* ============== ทักทาย + ตัวเลขสำคัญ ============== */
+.dash-hero {
+  position: relative; overflow: hidden;
+  padding: 26px 28px; border-radius: 22px;
+  border: 1px solid var(--line); background: var(--bg-1);
+}
+.dash-hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(70% 120% at 100% 0%, oklch(0.66 0.23 295 / 0.16), transparent 60%),
+    radial-gradient(60% 120% at 0% 100%, oklch(0.80 0.16 205 / 0.10), transparent 60%);
+}
+.dash-hero > * { position: relative; }
+.dash-hero .eyebrow {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--fg-2);
+}
+.dash-hero h1 {
+  font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: -0.03em; line-height: 1.15; color: var(--fg-0); margin: 8px 0 6px;
+}
+.dash-hero .sub { font-size: 13.5px; color: var(--fg-2); }
+
+.stat-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin-top: 22px;
+}
+.stat {
+  display: flex; align-items: center; gap: 12px; padding: 14px;
+  border-radius: 15px; background: var(--bg-2); border: 1px solid var(--line-soft);
+}
+.stat .ic {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  display: grid; place-items: center; color: #fff;
+}
+.stat .ic svg { width: 19px; height: 19px; }
+.stat .ic.fire { background: linear-gradient(140deg, oklch(0.74 0.21 35), oklch(0.68 0.25 5)); }
+.stat .ic.xp { background: var(--grad-signature); }
+.stat .ic.clock { background: linear-gradient(140deg, oklch(0.80 0.16 205), oklch(0.66 0.23 295)); }
+.stat .ic.book { background: linear-gradient(140deg, oklch(0.78 0.18 150), oklch(0.80 0.16 205)); }
+.stat .tx { min-width: 0; }
+.stat .tx b {
+  display: block; font-family: var(--font-display); font-weight: 700; font-size: 19px;
+  letter-spacing: -0.02em; color: var(--fg-0); line-height: 1.15;
+}
+.stat .tx span { font-size: 11.5px; color: var(--fg-2); }
+
+/* แถบเป้าหมายวันนี้ */
+.goal-bar { margin-top: 18px; }
+.goal-bar .head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: 12.5px; color: var(--fg-2); margin-bottom: 7px;
+}
+.goal-bar .head b { color: var(--fg-0); font-weight: 600; }
+.goal-bar .track { height: 8px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.goal-bar .fill {
+  height: 100%; border-radius: 99px; background: var(--grad-signature);
+  transition: width .6s cubic-bezier(.2, .8, .2, 1);
+}
+.goal-bar .fill.done { background: linear-gradient(90deg, oklch(0.72 0.19 150), oklch(0.78 0.18 150)); }
+.goal-bar .note { margin-top: 7px; font-size: 11.5px; color: var(--fg-3); }
+
+/* ============== การ์ดทั่วไป ============== */
+.dash-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; align-items: start; }
+.dash-card {
+  padding: 20px 22px; border-radius: 20px;
+  border: 1px solid var(--line); background: var(--bg-1);
+}
+.dash-card > header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 18px;
+}
+.dash-card h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: 17px;
+  letter-spacing: -0.02em; color: var(--fg-0);
+}
+.dash-card .more { font-size: 12.5px; color: var(--brand-magenta); text-decoration: none; }
+.dash-card .more:hover { text-decoration: underline; }
+.dash-empty { font-size: 13px; color: var(--fg-3); line-height: 1.6; }
+
+/* ============== กราฟเวลาเรียน 7 วัน ============== */
+/* วาดด้วย div ธรรมดา ไม่ลงไลบรารีกราฟเพิ่มเพื่อแท่ง 7 อัน
+   — ประหยัดขนาดที่นักเรียนต้องโหลด และไม่มีอะไรให้พังเพิ่ม */
+.chart {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;
+  align-items: end; height: 168px;
+}
+.chart .col {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  height: 100%; justify-content: flex-end;
+}
+.chart .bar-wrap {
+  width: 100%; flex: 1; display: flex; align-items: flex-end;
+  border-radius: 8px 8px 4px 4px; background: var(--bg-2);
+}
+.chart .bar {
+  width: 100%; border-radius: 8px 8px 4px 4px; background: var(--grad-signature);
+  min-height: 3px; transition: height .5s cubic-bezier(.2, .8, .2, 1);
+  position: relative;
+}
+.chart .col.today .bar { box-shadow: 0 0 14px -2px oklch(0.66 0.23 295 / 0.7); }
+.chart .lbl {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--fg-3);
+}
+.chart .col.today .lbl { color: var(--brand-magenta); font-weight: 700; }
+.chart .val { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--fg-2); }
+.chart-foot {
+  display: flex; justify-content: space-between; margin-top: 14px;
+  padding-top: 14px; border-top: 1px solid var(--line-soft);
+  font-size: 12.5px; color: var(--fg-2);
+}
+.chart-foot b { color: var(--fg-0); font-weight: 600; }
+
+/* ============== คอร์สของฉัน ============== */
+.my-courses { display: flex; flex-direction: column; gap: 12px; }
+.mc {
+  display: flex; align-items: center; gap: 14px; padding: 13px;
+  border-radius: 15px; border: 1px solid var(--line-soft); background: var(--bg-2);
+  text-decoration: none; color: inherit;
+  transition: transform .16s, border-color .16s, box-shadow .16s;
+}
+.mc:hover {
+  transform: translateY(-2px); border-color: var(--glass-line-strong);
+  box-shadow: 0 12px 26px -16px oklch(0 0 0 / 0.5);
+}
+.mc .badge {
+  width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
+  display: grid; place-items: center; color: #fff;
+  font-family: var(--font-display); font-weight: 800; font-size: 15px;
+  background: var(--c, var(--grad-signature));
+}
+.mc .mid { flex: 1; min-width: 0; }
+.mc .mid b {
+  display: block; font-family: var(--font-display); font-weight: 600; font-size: 14.5px;
+  color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mc .mid .meta { font-size: 11.5px; color: var(--fg-2); margin-top: 2px; }
+.mc .mid .track { height: 5px; border-radius: 99px; background: var(--bg-3); margin-top: 8px; overflow: hidden; }
+.mc .mid .track > i { display: block; height: 100%; border-radius: 99px; background: var(--c, var(--grad-signature)); }
+.mc .pct {
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  color: var(--fg-1); flex-shrink: 0; min-width: 42px; text-align: right;
+}
+.mc.done .pct { color: var(--success); }
+
+/* ============== อันดับ ============== */
+.rank-list { display: flex; flex-direction: column; gap: 4px; }
+.rank-row {
+  display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 12px;
+}
+.rank-row.me { background: oklch(0.66 0.23 295 / 0.12); }
+.rank-row .no {
+  width: 24px; text-align: center; flex-shrink: 0;
+  font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; color: var(--fg-3);
+}
+.rank-row.top1 .no { color: oklch(0.83 0.17 82); }
+.rank-row.top2 .no { color: oklch(0.78 0.02 250); }
+.rank-row.top3 .no { color: oklch(0.68 0.11 55); }
+.rank-row .nm { flex: 1; min-width: 0; }
+.rank-row .nm b {
+  display: block; font-size: 13.5px; font-weight: 600; color: var(--fg-0);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rank-row .nm span { font-size: 11px; color: var(--fg-3); }
+.rank-row .mins {
+  font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--fg-1); flex-shrink: 0;
+}
+
+@media (max-width: 1000px) {
+  .dash-grid { grid-template-columns: 1fr; }
+}

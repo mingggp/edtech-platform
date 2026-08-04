@@ -7,7 +7,7 @@
 import { API_BASE, api, tokenStore } from './client';
 import type {
   AppNotification, Chapter, Checkout, Comment, Course, Gamification, LeaderboardPeriod,
-  LeaderboardRow, Payment, SignupResult, Token, User, XpEvent,
+  LeaderboardRow, MyCourse, Payment, SignupResult, StudyStats, Token, User, XpEvent,
 } from './types';
 
 /* ------------------------------------------------------------------ auth */
@@ -81,7 +81,8 @@ export const courses = {
    * และ backend ใช้ get_current_user_optional ที่ไม่ error เมื่อไม่มี token
    */
   chapters: (id: number) => api.get<Chapter[]>(`/courses/${id}/chapters`),
-  mine: () => api.get<Course[]>('/users/me/courses'),
+  /** คอร์สที่ซื้อไว้ + ความคืบหน้า (ไม่ใช่ Course เต็ม ๆ — ดู MyCourse) */
+  mine: () => api.get<MyCourse[]>('/users/me/courses'),
 };
 
 /* -------------------------------------------------------------- payments */
@@ -171,6 +172,9 @@ export const comments = {
 /* ------------------------------------------------------------------- กีม */
 export const gamification = {
   summary: () => api.get<Gamification>('/users/me/gamification'),
+
+  /** เวลาเรียน 7 วันล่าสุด — ใช้วาดกราฟในหน้าหลัก */
+  weeklyStats: () => api.get<StudyStats>('/users/me/study-stats'),
   xpHistory: (limit = 30) => api.get<XpEvent[]>(`/users/me/xp-history?limit=${limit}`),
   setDailyGoal: (minutes: number) =>
     api.put<{ daily_goal_minutes: number }>('/users/me/daily-goal', { minutes }),
