@@ -733,12 +733,37 @@ def update_user_activity(db: Session, user_id: int, activity: str):
         db.commit()
 
 def record_study_time(db: Session, user_id: int, minutes: int):
-    today = datetime.utcnow().date()
-    log = db.query(models.StudyLog).filter_by(user_id=user_id, date=today).first()
-    if log: log.minutes += minutes
-    else: log = models.StudyLog(user_id=user_id, date=today, minutes=minutes); db.add(log)
-    u = db.query(models.User).get(user_id)
-    if u: u.total_minutes += minutes
+    """บันทึกเวลาเรียนลง StudyLog + บวกเข้ายอดรวมของผู้ใช้
+
+    ⚠️ เคยพัง 500 ทุกครั้งที่เรียก: โค้ดเดิมใช้ StudyLog.date ซึ่งไม่มีอยู่จริง
+    (คอลัมน์จริงชื่อ created_at) แปลว่า POST /users/me/study-time ล้มเสมอ
+    -> สตรีค เป้าหมายรายวัน XP และเหรียญ ไม่เคยขยับเลยสักครั้ง
+    ทั้งที่เป็นหัวใจของเว็บ  บั๊กพันธุ์เดียวกับ models.LessonProgress
+    (มีร่องรอยว่าเคยแก้เรื่องนี้ที่ get_weekly_study_stats ไปแล้วจุดเดียว)
+
+    รวมเป็นแถวเดียวต่อวันตามเวลาไทย ไม่ใช่ UTC — ไม่งั้นเรียนตอน 4 ทุ่ม
+    จะถูกนับเป็นของวันถัดไป เพราะ UTC ยังเป็นเช้าวันเดิมอยู่
+    """
+    from .gamification import th_today
+
+    today = th_today()
+    log = (
+        db.query(models.StudyLog)
+        .filter(
+            models.StudyLog.user_id == user_id,
+            func.date(models.StudyLog.created_at) == today,
+        )
+        .first()
+    )
+    if log:
+        log.minutes = (log.minutes or 0) + minutes
+    else:
+        db.add(models.StudyLog(user_id=user_id, minutes=minutes))
+
+    # ⚠️ ไม่บวก user.total_minutes ตรงนี้ — gamification.record_study บวกให้แล้ว
+    # endpoint /users/me/study-time เรียกทั้งสองตัวต่อกัน ถ้าบวกทั้งคู่
+    # เวลาเรียนจะกลายเป็น 2 เท่า (ส่ง 30 นาที กลายเป็น 60)
+    # ยอดนี้ไปโผล่ในโปรไฟล์ ตารางอันดับ และเงื่อนไขปลดเหรียญ = ผิดหมดทั้งสาย
     db.commit()
 
 def get_weekly_study_stats(db: Session, user_id: int):

@@ -75,18 +75,31 @@ export interface Course {
 /** ประเภทบทเรียน — video = คลิป · quiz = แบบฝึกหัด · doc = เอกสาร */
 export type LessonKind = 'video' | 'quiz' | 'doc';
 
+/**
+ * บทเรียนตามที่ backend ส่งมา
+ *
+ * คนที่ยังไม่ได้ซื้อคอร์สจะได้ locked=true และ **ไม่มี** youtube_id / doc_url
+ * ติดมาด้วยเลย (ไม่ใช่ค่าว่าง — ไม่มีฟิลด์นั้นจริง ๆ)
+ * ดูเหตุผลใน backend/app/schemas.py คลาส LessonPublic
+ *
+ * ฟิลด์ที่อาจไม่มาจึงเป็น optional เพื่อให้ TypeScript บังคับให้เช็คก่อนใช้
+ */
 export interface Lesson {
   id: number;
+  chapter_id: number;
   title: string;
   kind: LessonKind;
-  youtube_id: string;
   duration: number;
   order: number;
-  doc_url: string | null;
+  /** true = ยังไม่ได้ซื้อ ดูวิดีโอไม่ได้ */
+  locked: boolean;
+  youtube_id?: string;
+  doc_url?: string | null;
 }
 
 export interface Chapter {
   id: number;
+  course_id: number;
   title: string;
   order: number;
   lessons: Lesson[];

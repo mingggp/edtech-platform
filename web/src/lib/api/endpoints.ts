@@ -93,6 +93,52 @@ export const payments = {
     api.post<{ status: string; course_id: number }>(`/users/me/courses?course_id=${course_id}`),
 };
 
+/* -------------------------------------------------------------- การเรียน */
+export const learning = {
+  /** บทเรียนที่เรียนจบแล้วในคอร์สนี้ */
+  myProgress: (courseId: number) =>
+    api.get<{ completed_ids: number[] }>(`/courses/${courseId}/my-progress`),
+
+  /** สลับสถานะเรียนจบ — คืนสถานะใหม่ */
+  toggleLesson: (courseId: number, lessonId: number) =>
+    api.post<{ completed: boolean }>(
+      `/courses/${courseId}/lessons/${lessonId}/toggle-progress`,
+    ),
+
+  /** ตำแหน่งที่ดูค้างไว้ (วินาที) */
+  getPosition: (courseId: number, lessonId: number) =>
+    api.get<{ seconds: number }>(`/courses/${courseId}/lessons/${lessonId}/progress`),
+
+  savePosition: (courseId: number, lessonId: number, seconds: number) =>
+    api.post<{ status: string }>(
+      `/courses/${courseId}/lessons/${lessonId}/progress`,
+      { seconds_watched: Math.round(seconds) },
+    ),
+
+  /**
+   * บันทึกตำแหน่งตอนกำลังจะปิดหน้า
+   *
+   * fetch ธรรมดาจะถูกยกเลิกทันทีที่หน้าเว็บถูกปิด — นักเรียนดูไป 20 นาที
+   * แล้วปิดแท็บ ตำแหน่งล่าสุดจะหายไปเฉย ๆ
+   * keepalive บอกเบราว์เซอร์ว่า "ส่งให้จบแม้หน้าจะปิดไปแล้ว"
+   * (ใช้แทน sendBeacon เพราะ sendBeacon แนบ header Authorization ไม่ได้)
+   */
+  savePositionOnLeave(courseId: number, lessonId: number, seconds: number) {
+    const token = tokenStore.access;
+    if (!token) return;
+    try {
+      void fetch(`${API_BASE}/courses/${courseId}/lessons/${lessonId}/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ seconds_watched: Math.round(seconds) }),
+        keepalive: true,
+      });
+    } catch {
+      /* ปิดหน้าอยู่แล้ว ทำอะไรต่อไม่ได้ */
+    }
+  },
+};
+
 /* ------------------------------------------------------------------- กีม */
 export const gamification = {
   summary: () => api.get<Gamification>('/users/me/gamification'),

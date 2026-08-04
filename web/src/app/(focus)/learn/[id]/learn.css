@@ -1,0 +1,503 @@
+/* ==========================================================================
+   ห้องเรียน /learn/[id]
+   ย้ายมาจาก 'Claude Design version 1.0/Learn.html' (<style> 399 บรรทัด)
+
+   ทุก selector อยู่ใต้ .learn-page เพราะดีไซน์ใช้ชื่อคลาสกลาง ๆ อย่าง
+   .app .lesson .chapter .player .time ซึ่งถ้าปล่อยไว้ระดับบนสุดจะไปชนกับ
+   หน้าอื่นที่ใช้ชื่อเดียวกัน (.app มีอยู่แล้วใน globals.css)
+
+   ส่วนที่ยังไม่ได้พอร์ตรอบนี้ (ตัด CSS ออกด้วย):
+     .quiz*        โจทย์ท้ายคลิป — ยังไม่มีตารางเก็บคำถามต่อบทเรียน
+     .cmt* .composer .gif* .emoji*  คอมเมนต์ — ตาราง Comment มีแล้วแต่ยังไม่มี API
+     .rating-box .stars             ให้ดาว — ตาราง Rating มีแล้วแต่ยังไม่มี API
+     .lp-notes                      ลิ้นชักจดโน้ต — ยังไม่มีที่เก็บ
+   ========================================================================== */
+
+.learn-page {
+  /* สีประจำวิชา — หน้าเว็บตั้งค่าจริงจาก data-subject ด้านล่าง */
+  --accent: var(--subj-math);
+  --accent-fg: var(--subj-math-fg);
+  --accent-grad: var(--subj-math-grad);
+}
+.learn-page[data-subject="phys"]  { --accent: var(--subj-phys);  --accent-fg: var(--subj-phys-fg);  --accent-grad: var(--subj-phys-grad); }
+.learn-page[data-subject="tpat3"] { --accent: var(--subj-tpat3); --accent-fg: var(--subj-tpat3-fg); --accent-grad: var(--subj-tpat3-grad); }
+.learn-page[data-subject="tgat2"] { --accent: var(--subj-tgat2); --accent-fg: var(--subj-tgat2-fg); --accent-grad: var(--subj-tgat2-grad); }
+
+.learn-page .app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas: "header header" "sidebar main";
+  height: 100vh;
+  transition: grid-template-columns .26s cubic-bezier(.2, .8, .2, 1);
+}
+.learn-page .app.sidebar-collapsed { grid-template-columns: 0 1fr; }
+.learn-page .app.sidebar-collapsed .lp-sidebar { transform: translateX(-100%); }
+
+/* ============== หัวหน้าจอ ============== */
+.learn-page .lp-header {
+  grid-area: header; background: oklch(from var(--bg-0) l c h / 0.75);
+  backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid var(--line-soft);
+  display: flex; align-items: center; padding: 0 16px; gap: 14px; z-index: 30; position: relative;
+}
+.learn-page .lp-back {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px;
+  border-radius: 10px; text-decoration: none; color: var(--fg-1); font-size: 13.5px;
+  font-weight: 500; border: 1px solid transparent;
+  transition: color .15s, background .15s, border-color .15s;
+}
+.learn-page .lp-back:hover { color: var(--fg-0); background: var(--bg-2); border-color: var(--line); }
+.learn-page .lp-back svg { width: 16px; height: 16px; color: var(--fg-2); }
+.learn-page .lp-divider { width: 1px; height: 24px; background: var(--line-soft); }
+.learn-page .lp-logo { display: flex; align-items: center; gap: 10px; }
+.learn-page .lp-logo .mark {
+  width: 28px; height: 28px; border-radius: 9px; background: var(--accent-grad);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px -4px oklch(from var(--accent) l c h / 0.6);
+}
+.learn-page .lp-logo .mark svg { width: 18px; height: 18px; }
+.learn-page .lp-course-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.learn-page .lp-course-info .crumb {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent-fg); font-weight: 500;
+}
+.learn-page .lp-course-info .title {
+  font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: -0.005em;
+  color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.learn-page .lp-header-progress {
+  display: flex; align-items: center; gap: 10px; background: var(--bg-1);
+  border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px 5px 5px;
+}
+/* วงแหวนความคืบหน้า — องศาส่งมาจาก React ผ่านตัวแปร --deg */
+.learn-page .lp-header-progress .ring {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: conic-gradient(var(--accent) 0deg var(--deg, 0deg), var(--bg-3) var(--deg, 0deg));
+  display: flex; align-items: center; justify-content: center; position: relative;
+  flex-shrink: 0; transition: background .5s ease;
+}
+.learn-page .lp-header-progress .ring::before {
+  content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--bg-1);
+}
+.learn-page .lp-header-progress .ring span {
+  position: relative; font-family: "JetBrains Mono", monospace; font-size: 9.5px;
+  font-weight: 700; color: var(--accent-fg);
+}
+.learn-page .lp-header-progress .text { font-size: 12.5px; color: var(--fg-1); white-space: nowrap; }
+.learn-page .lp-header-progress .text b { color: var(--fg-0); font-weight: 600; }
+.learn-page .lp-header-actions { display: flex; align-items: center; gap: 8px; }
+.learn-page .icon-btn {
+  width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--bg-1); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--fg-1); position: relative;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.learn-page .icon-btn svg { width: 18px; height: 18px; }
+.learn-page .icon-btn:hover { color: var(--fg-0); border-color: var(--fg-2); background: var(--bg-2); }
+.learn-page .lp-toggle-sidebar { color: var(--fg-2); }
+
+/* ============== สารบัญด้านข้าง ============== */
+.learn-page .lp-sidebar {
+  grid-area: sidebar; background: oklch(from var(--bg-0) l c h / 0.6);
+  backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-right: 1px solid var(--line-soft); display: flex; flex-direction: column;
+  overflow: hidden; transition: transform .26s cubic-bezier(.2, .8, .2, 1); z-index: 15;
+}
+.learn-page .lp-sidebar-top { padding: 18px 20px; border-bottom: 1px solid var(--line-soft); background: var(--bg-1); }
+.learn-page .lp-sidebar-top h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.015em;
+  color: var(--fg-0); margin-bottom: 4px; line-height: 1.2;
+}
+.learn-page .lp-sidebar-top .meta {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent-fg); font-weight: 500; margin-bottom: 14px;
+}
+.learn-page .lp-progress-block { display: flex; flex-direction: column; gap: 6px; }
+.learn-page .lp-progress-block .head { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; }
+.learn-page .lp-progress-block .head .label { color: var(--fg-2); }
+.learn-page .lp-progress-block .head .val {
+  font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  letter-spacing: -0.01em; color: var(--accent-fg);
+}
+.learn-page .lp-progress-bar { height: 6px; border-radius: 99px; background: var(--bg-3); overflow: hidden; position: relative; }
+.learn-page .lp-progress-bar > div {
+  height: 100%; border-radius: 99px; background: var(--accent-grad);
+  transition: width .6s cubic-bezier(.2, .8, .2, 1);
+}
+.learn-page .lp-progress-meta { font-size: 11.5px; color: var(--fg-2); display: flex; justify-content: space-between; }
+.learn-page .lp-progress-meta b { color: var(--fg-1); font-weight: 600; }
+
+.learn-page .lp-chapters {
+  flex: 1; overflow-y: auto; padding: 14px 12px;
+  scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent;
+}
+.learn-page .lp-chapters::-webkit-scrollbar { width: 6px; }
+.learn-page .lp-chapters::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 4px; }
+.learn-page .chapter { border-radius: 12px; margin-bottom: 6px; border: 1px solid transparent; transition: border-color .2s, background .2s; }
+.learn-page .chapter[open] { border-color: var(--line-soft); background: var(--bg-1); }
+.learn-page .chapter summary {
+  list-style: none; cursor: pointer; padding: 12px 14px; display: grid;
+  grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
+  border-radius: 12px; transition: background .15s;
+}
+.learn-page .chapter summary:hover { background: var(--bg-2); }
+.learn-page .chapter[open] summary:hover { background: transparent; }
+.learn-page .chapter summary::-webkit-details-marker { display: none; }
+.learn-page .chapter summary::marker { content: ""; }
+.learn-page .chapter .num-badge {
+  font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+  width: 26px; height: 26px; border-radius: 8px; background: var(--bg-3); color: var(--fg-2);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.learn-page .chapter.done .num-badge { background: oklch(0.78 0.18 150 / 0.18); color: var(--success); }
+.learn-page .chapter.active .num-badge {
+  background: var(--accent-grad); color: #fff;
+  box-shadow: 0 4px 10px -3px oklch(from var(--accent) l c h / 0.5);
+}
+.learn-page .chapter .info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.learn-page .chapter .info .ctitle {
+  font-family: var(--font-display); font-weight: 600; font-size: 13.5px; letter-spacing: -0.005em;
+  color: var(--fg-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.learn-page .chapter .info .cmeta {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.04em;
+}
+.learn-page .chapter.active .info .cmeta { color: var(--accent-fg); }
+.learn-page .chapter .chev { color: var(--fg-3); transition: transform .26s cubic-bezier(.2, .8, .2, 1); flex-shrink: 0; }
+.learn-page .chapter .chev svg { width: 16px; height: 16px; }
+.learn-page .chapter[open] .chev { transform: rotate(180deg); color: var(--fg-1); }
+
+.learn-page .lessons { padding: 0 8px 8px 8px; }
+.learn-page .lesson {
+  display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+  padding: 8px 10px 8px 16px; margin-left: 26px; border-left: 1.5px solid var(--line-soft);
+  position: relative; cursor: pointer; border-radius: 8px; font-size: 13px; color: var(--fg-1);
+  background: none; border-top: 0; border-right: 0; border-bottom: 0; width: calc(100% - 26px);
+  text-align: left; font-family: inherit;
+  transition: background .15s, color .15s;
+}
+.learn-page .lesson:hover { background: var(--bg-2); color: var(--fg-0); }
+.learn-page .lesson::before {
+  content: ""; position: absolute; left: -5px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 8px; border-radius: 50%; background: var(--bg-3); border: 1.5px solid var(--bg-0);
+}
+.learn-page .lesson.done::before { background: var(--success); }
+.learn-page .lesson.active::before {
+  background: var(--accent); width: 10px; height: 10px;
+  box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.28);
+  animation: lessonPulse 2.4s ease-in-out infinite;
+}
+@keyframes lessonPulse { 50% { box-shadow: 0 0 0 6px oklch(from var(--accent) l c h / 0); } }
+.learn-page .lesson .ico {
+  width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.learn-page .lesson.done .ico { background: oklch(0.78 0.18 150 / 0.18); color: var(--success); }
+.learn-page .lesson.active .ico {
+  background: var(--accent-grad); color: #fff;
+  box-shadow: 0 4px 12px -4px oklch(from var(--accent) l c h / 0.55);
+}
+.learn-page .lesson .ico svg { width: 11px; height: 11px; }
+.learn-page .lesson .name {
+  font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px;
+}
+.learn-page .lesson.done .name { color: var(--fg-2); }
+.learn-page .lesson.active .name { color: var(--fg-0); font-weight: 600; }
+.learn-page .lesson.active { background: linear-gradient(90deg, oklch(from var(--accent) l c h / 0.12), transparent); }
+.learn-page .lesson .dur {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--fg-3); flex-shrink: 0;
+}
+
+/* ============== พื้นที่หลัก ============== */
+.learn-page .lp-main { grid-area: main; position: relative; overflow: hidden; }
+.learn-page .lp-scroll {
+  height: 100%; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin; scrollbar-color: var(--bg-3) transparent;
+}
+.learn-page .lp-scroll::-webkit-scrollbar { width: 10px; }
+.learn-page .lp-scroll::-webkit-scrollbar-track { background: transparent; }
+.learn-page .lp-scroll::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; border: 2px solid var(--bg-0); }
+.learn-page .lp-container {
+  max-width: 980px; margin: 0 auto; padding: 28px 32px 96px;
+  display: flex; flex-direction: column; gap: 26px;
+}
+
+/* ============== เครื่องเล่นวิดีโอ ============== */
+.learn-page .player {
+  aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; position: relative; background: #000;
+  box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.55), 0 0 0 1px var(--line); user-select: none;
+}
+.learn-page .player:fullscreen { border-radius: 0; aspect-ratio: auto; height: 100vh; }
+/* iframe ของ YouTube — เต็มกรอบ และไม่รับคลิก
+   ให้ .stage ด้านบนรับคลิกแทน จะได้คุมการเล่น/หยุดเองทั้งหมด */
+.learn-page .player .yt-frame { position: absolute; inset: 0; }
+.learn-page .player .yt-frame iframe { width: 100%; height: 100%; display: block; pointer-events: none; }
+.learn-page .stage { position: absolute; inset: 0; cursor: pointer; z-index: 2; }
+.learn-page .player.playing.idle .ctrl { opacity: 0; }
+.learn-page .player.playing.idle .stage { cursor: none; }
+
+.learn-page .seek-ripple {
+  position: absolute; top: 0; bottom: 78px; width: 38%; z-index: 5;
+  display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0;
+}
+.learn-page .seek-ripple.left { left: 0; }
+.learn-page .seek-ripple.right { right: 0; }
+.learn-page .seek-ripple.flash { animation: seekFlash .5s ease-out; }
+@keyframes seekFlash { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.learn-page .seek-ripple .burst {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff;
+  background: oklch(0 0 0 / 0.4); width: 92px; height: 92px; border-radius: 50%; justify-content: center;
+}
+.learn-page .seek-ripple .burst svg { width: 24px; height: 24px; }
+.learn-page .seek-ripple .burst span { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 600; }
+
+.learn-page .big-play {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 6;
+  width: 84px; height: 84px; border-radius: 50%; background: oklch(0.99 0.005 285 / 0.96);
+  color: var(--accent); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: 0; box-shadow: 0 16px 44px -8px oklch(0 0 0 / 0.6);
+  transition: transform .2s cubic-bezier(.2, .8, .2, 1), opacity .2s;
+}
+.learn-page .big-play:hover { transform: translate(-50%, -50%) scale(1.06); }
+.learn-page .big-play svg { width: 34px; height: 34px; margin-left: 4px; }
+.learn-page .player.playing .big-play { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.8); }
+
+.learn-page .ctrl {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 14px;
+  background: linear-gradient(180deg, transparent, oklch(0 0 0 / 0.72));
+  z-index: 7; display: flex; flex-direction: column; gap: 8px; opacity: 1; transition: opacity .25s;
+}
+.learn-page .scrub { height: 6px; display: flex; align-items: center; cursor: pointer; position: relative; }
+.learn-page .scrub .track {
+  position: absolute; left: 0; right: 0; height: 4px; border-radius: 99px;
+  background: oklch(0.99 0.005 285 / 0.22); overflow: hidden; transition: height .15s;
+}
+.learn-page .scrub:hover .track { height: 6px; }
+.learn-page .scrub .buffered {
+  position: absolute; left: 0; top: 0; bottom: 0; background: oklch(0.99 0.005 285 / 0.2);
+  border-radius: 99px; width: 0;
+}
+.learn-page .scrub .filled {
+  position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-grad);
+  border-radius: 99px; width: 0;
+}
+.learn-page .scrub .knob {
+  position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%) scale(0);
+  width: 13px; height: 13px; border-radius: 50%; background: #fff;
+  box-shadow: 0 0 0 4px oklch(from var(--accent) l c h / 0.4); transition: transform .15s;
+}
+.learn-page .scrub:hover .knob, .learn-page .scrub.dragging .knob { transform: translate(-50%, -50%) scale(1); }
+.learn-page .ctrl-row { display: flex; align-items: center; gap: 6px; color: #fff; }
+.learn-page .cbtn {
+  appearance: none; border: 0; background: transparent; color: #fff; cursor: pointer;
+  width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; transition: background .15s; flex-shrink: 0;
+}
+.learn-page .cbtn:hover { background: oklch(0.99 0.005 285 / 0.16); }
+.learn-page .cbtn svg { width: 19px; height: 19px; }
+.learn-page .cbtn.sm svg { width: 17px; height: 17px; }
+.learn-page .vol { display: flex; align-items: center; }
+.learn-page .vol input[type=range] { width: 0; opacity: 0; transition: width .2s, opacity .2s; }
+.learn-page .vol:hover input[type=range],
+.learn-page .vol input[type=range]:focus-visible { width: 72px; opacity: 1; margin: 0 6px; }
+.learn-page .time { font-family: "JetBrains Mono", monospace; font-size: 12px; opacity: 0.9; white-space: nowrap; padding: 0 6px; }
+.learn-page .time b { opacity: 1; font-weight: 600; }
+.learn-page .spacer { flex: 1; }
+.learn-page .rate-btn {
+  appearance: none; border: 1px solid oklch(0.99 0.005 285 / 0.2); background: transparent;
+  color: #fff; cursor: pointer; font-family: "JetBrains Mono", monospace; font-size: 12px;
+  font-weight: 700; padding: 0 10px; height: 30px; border-radius: 8px;
+  transition: background .15s, border-color .15s; flex-shrink: 0;
+}
+.learn-page .rate-btn:hover { background: oklch(0.99 0.005 285 / 0.14); }
+
+.learn-page input[type=range].rng {
+  -webkit-appearance: none; appearance: none; height: 4px; border-radius: 99px;
+  background: oklch(0.99 0.005 285 / 0.28); outline: none;
+}
+.learn-page input[type=range].rng::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #fff;
+  cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4);
+}
+.learn-page input[type=range].rng::-moz-range-thumb {
+  width: 13px; height: 13px; border: 0; border-radius: 50%; background: #fff;
+  cursor: pointer; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4);
+}
+
+/* กล่องปรับความเร็ว */
+.learn-page .pop {
+  position: absolute; right: 16px; bottom: 64px; z-index: 9; width: 260px;
+  background: oklch(0.13 0.02 285 / 0.96);
+  backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid oklch(0.99 0.005 285 / 0.14); border-radius: 16px; padding: 16px;
+  box-shadow: 0 24px 60px -16px oklch(0 0 0 / 0.7); color: #fff;
+  display: none; flex-direction: column; gap: 16px;
+}
+.learn-page .pop.open { display: flex; animation: popIn .2s cubic-bezier(.2, .8, .2, 1); }
+@keyframes popIn { from { opacity: 0; transform: translateY(8px); } }
+.learn-page .pop .pop-sec > .lbl {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: oklch(0.99 0.005 285 / 0.5); font-weight: 600;
+  margin-bottom: 9px; display: flex; align-items: center; justify-content: space-between;
+}
+.learn-page .pop .pop-sec > .lbl b { font-weight: 700; color: var(--accent-fg); }
+.learn-page .speed-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.learn-page .speed-presets button {
+  appearance: none; border: 1px solid oklch(0.99 0.005 285 / 0.16); background: transparent;
+  color: oklch(0.99 0.005 285 / 0.85); font-family: "JetBrains Mono", monospace; font-size: 12px;
+  font-weight: 600; padding: 6px 0; border-radius: 8px; cursor: pointer; flex: 1 1 28%;
+  transition: background .14s, border-color .14s, color .14s;
+}
+.learn-page .speed-presets button:hover { background: oklch(0.99 0.005 285 / 0.12); }
+.learn-page .speed-presets button.on { background: var(--accent-grad); border-color: transparent; color: #fff; }
+
+/* ============== ข้อมูลบทเรียน ============== */
+.learn-page .lesson-info { display: flex; flex-direction: column; gap: 14px; }
+.learn-page .lesson-info .top-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.learn-page .lesson-info .tag {
+  font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent-fg); font-weight: 600;
+}
+.learn-page .lesson-info .lmeta {
+  font-size: 12.5px; color: var(--fg-2); display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+}
+.learn-page .lesson-info .lmeta .dot-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--fg-3); }
+.learn-page .lesson-info h1 {
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.6vw, 36px);
+  letter-spacing: -0.025em; line-height: 1.1; color: var(--fg-0);
+}
+.learn-page .nav-row {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 14px 0;
+  border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);
+}
+.learn-page .watch-state {
+  display: inline-flex; align-items: center; gap: 9px; font-size: 13px; color: var(--fg-2);
+  background: none; border: 0; font-family: inherit; cursor: pointer; padding: 4px 2px;
+}
+.learn-page .watch-state .ws-ring {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: conic-gradient(var(--accent) 0deg var(--deg, 0deg), var(--bg-3) var(--deg, 0deg));
+  display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
+}
+.learn-page .watch-state .ws-ring::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--bg-0); }
+.learn-page .watch-state .ws-ring svg {
+  position: relative; width: 12px; height: 12px; color: var(--success); opacity: 0; transition: opacity .3s;
+}
+.learn-page .watch-state.done .ws-ring svg { opacity: 1; }
+.learn-page .watch-state b { color: var(--fg-1); font-weight: 600; }
+.learn-page .watch-state.done b { color: var(--success); }
+.learn-page .prev-next { display: flex; gap: 8px; margin-left: auto; }
+
+/* ============== ปุ่มเอกสาร ============== */
+.learn-page .doc-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.learn-page .doc-btn {
+  display: inline-flex; align-items: center; gap: 11px; padding: 13px 18px; border-radius: 13px;
+  text-decoration: none; cursor: pointer; font: inherit; border: 1px solid var(--line);
+  transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
+}
+.learn-page .doc-btn .ic {
+  width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.learn-page .doc-btn .ic svg { width: 18px; height: 18px; }
+.learn-page .doc-btn .tx { display: flex; flex-direction: column; gap: 1px; text-align: left; }
+.learn-page .doc-btn .tx b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--fg-0); }
+.learn-page .doc-btn .tx span {
+  font-size: 11.5px; color: var(--fg-2); font-family: "JetBrains Mono", monospace; letter-spacing: 0.02em;
+}
+.learn-page .doc-btn.primary {
+  background: var(--accent-grad); border-color: transparent;
+  box-shadow: 0 12px 28px -12px oklch(from var(--accent) l c h / 0.6);
+}
+.learn-page .doc-btn.primary .ic { background: oklch(0.99 0.005 285 / 0.2); color: #fff; }
+.learn-page .doc-btn.primary .tx b { color: #fff; }
+.learn-page .doc-btn.primary .tx span { color: oklch(0.99 0.005 285 / 0.82); }
+.learn-page .doc-btn.primary:hover {
+  transform: translateY(-2px); box-shadow: 0 18px 36px -14px oklch(from var(--accent) l c h / 0.7);
+}
+
+/* ============== สถานะพิเศษ ============== */
+/* ยังไม่ได้ซื้อ / ยังไม่ล็อกอิน / คอร์สไม่มีบทเรียน */
+.learn-page .lp-notice {
+  max-width: 460px; margin: 12vh auto 0; text-align: center; padding: 34px 30px;
+  border-radius: 20px; border: 1px solid var(--line); background: var(--bg-1);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.learn-page .lp-notice .big-ring {
+  width: 74px; height: 74px; border-radius: 50%; margin-bottom: 12px;
+  display: grid; place-items: center;
+  background: oklch(from var(--accent) l c h / 0.12);
+  border: 1.5px solid oklch(from var(--accent) l c h / 0.32); color: var(--accent-fg);
+}
+.learn-page .lp-notice .big-ring svg { width: 32px; height: 32px; }
+.learn-page .lp-notice h1 {
+  font-family: var(--font-display); font-weight: 700; font-size: 23px;
+  letter-spacing: -0.02em; color: var(--fg-0);
+}
+.learn-page .lp-notice p { font-size: 13.5px; color: var(--fg-2); line-height: 1.6; }
+.learn-page .lp-notice .acts { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+
+/* แจ้งเตือนได้ XP/เหรียญ */
+.learn-page .reward-toast {
+  position: fixed; right: 20px; bottom: 20px; z-index: 60;
+  display: flex; align-items: center; gap: 11px; padding: 13px 17px; border-radius: 14px;
+  background: var(--bg-1); border: 1px solid oklch(from var(--accent) l c h / 0.4);
+  box-shadow: 0 20px 44px -18px oklch(0 0 0 / 0.6); font-size: 13.5px; color: var(--fg-0);
+  animation: rewardIn .3s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes rewardIn { from { opacity: 0; transform: translateY(12px); } }
+.learn-page .reward-toast .rt-ic {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--accent-grad);
+  display: grid; place-items: center; color: #fff; flex-shrink: 0;
+}
+.learn-page .reward-toast .rt-ic svg { width: 17px; height: 17px; }
+.learn-page .reward-toast b { font-weight: 600; }
+.learn-page .reward-toast small { display: block; color: var(--fg-2); font-size: 11.5px; }
+
+/* ============== แสง neon โหมดมืด ============== */
+[data-theme="dark"] .learn-page .player,
+[data-theme="petronas"] .learn-page .player {
+  box-shadow: 0 30px 80px -20px oklch(0 0 0 / 0.55),
+              0 0 0 1px oklch(from var(--accent) l c h / 0.35),
+              0 0 70px -12px oklch(from var(--accent) l c h / 0.45);
+}
+[data-theme="dark"] .learn-page .lp-progress-bar > div,
+[data-theme="petronas"] .learn-page .lp-progress-bar > div { box-shadow: 0 0 12px oklch(from var(--accent) l c h / 0.7); }
+[data-theme="dark"] .learn-page .scrub .filled,
+[data-theme="petronas"] .learn-page .scrub .filled { box-shadow: 0 0 10px oklch(from var(--accent) l c h / 0.8); }
+[data-theme="dark"] .learn-page .lp-course-info .crumb,
+[data-theme="dark"] .learn-page .lesson-info .tag { text-shadow: 0 0 12px oklch(from var(--accent-fg) l c h / 0.55); }
+[data-theme="dark"] .learn-page .chapter.active .num-badge,
+[data-theme="dark"] .learn-page .lesson.active .ico { box-shadow: 0 0 16px -2px oklch(from var(--accent) l c h / 0.8); }
+[data-theme="dark"] .learn-page .lesson.active::before {
+  box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.28), 0 0 14px oklch(from var(--accent) l c h / 0.8);
+}
+[data-theme="dark"] .learn-page .doc-btn.primary {
+  box-shadow: 0 8px 26px -6px oklch(from var(--accent) l c h / 0.75), 0 0 30px -8px oklch(from var(--accent) l c h / 0.6);
+}
+[data-theme="dark"] .learn-page .big-play {
+  box-shadow: 0 16px 44px -8px oklch(0 0 0 / 0.6), 0 0 50px -6px oklch(from var(--accent) l c h / 0.7);
+}
+
+/* ============== จอเล็ก ============== */
+@media (max-width: 1100px) {
+  .learn-page .app { grid-template-columns: 0 1fr; }
+  .learn-page .lp-sidebar {
+    position: fixed; top: 56px; bottom: 0; left: 0; width: 320px;
+    transform: translateX(-100%); z-index: 25;
+  }
+  .learn-page .app:not(.sidebar-collapsed) .lp-sidebar {
+    transform: translateX(0); box-shadow: 20px 0 60px -20px oklch(0 0 0 / 0.4);
+  }
+}
+@media (max-width: 720px) {
+  .learn-page .lp-container { padding: 16px 16px 60px; gap: 18px; }
+  .learn-page .lp-course-info { display: none; }
+  .learn-page .lp-header-progress .text { display: none; }
+  .learn-page .prev-next { width: 100%; margin-left: 0; }
+  .learn-page .vol input[type=range] { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learn-page .lesson.active::before { animation: none; }
+}

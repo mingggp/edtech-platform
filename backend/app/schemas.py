@@ -252,6 +252,9 @@ class LessonUpdate(BaseModel):
 class LessonRead(LessonBase):
     id: int
     chapter_id: int
+    # ปลดล็อกแล้ว — มีไว้ให้หน้าเว็บเช็คด้วยฟิลด์เดียวกันทั้งสองกรณี
+    # ถ้าไม่มีฟิลด์นี้ หน้าเว็บต้องเดาจาก "มี youtube_id ไหม" ซึ่งเปราะกว่า
+    locked: bool = False
     class Config: from_attributes = True
 
 

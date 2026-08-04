@@ -117,7 +117,10 @@ export function getSubject(id: string): Subject | undefined {
 }
 
 /** แปลงคีย์เป็นข้อความบนจอ — ใช้ตัวนี้เสมอเวลาจะ render */
-export function subjectLabel(id: string): string {
+export function subjectLabel(id: string | null | undefined): string {
+  // คอร์สที่ยังไม่ได้ตั้งวิชา (subject = null) มีได้จริง — คืนค่าว่างแทนที่จะพัง
+  // ให้รับ null เหมือน levelLabel() จะได้ใช้แบบเดียวกันทั้งคู่ ไม่ต้องจำว่าตัวไหนรับอะไร
+  if (!id) return '';
   return BY_ID.get(id as SubjectId)?.label ?? id;
 }
 
