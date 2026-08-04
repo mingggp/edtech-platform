@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy import or_, asc, desc, func
 from typing import Optional, Tuple, List, Dict, Any
 from . import grades, models, schemas
@@ -450,17 +450,83 @@ def get_coupons(db: Session, skip: int = 0, limit: int = 100):
 #  INTERACTION (Comments, Ratings, Progress)
 # ==========================================
 
-def get_lesson_comments(db: Session, lesson_id: int):
-    # Use joinedload to fetch user details with comments
-    return db.query(models.Comment).options(joinedload(models.Comment.user)).filter(models.Comment.lesson_id == lesson_id).order_by(desc(models.Comment.created_at)).all()
+def get_course_id_for_lesson(db: Session, lesson_id: int) -> Optional[int]:
+    """หาว่าบทเรียนนี้อยู่คอร์สไหน — ใช้เช็คสิทธิ์ก่อนอ่าน/เขียนคอมเมนต์
 
-def create_comment(db: Session, user_id: int, lesson_id: int, text: str):
-    c = models.Comment(user_id=user_id, lesson_id=lesson_id, text=text, created_at=datetime.utcnow())
+    คอมเมนต์เป็นเนื้อหาในคอร์ส (มีคำถาม คำตอบ เฉลย) คนที่ยังไม่ซื้อไม่ควรเห็น
+    """
+    row = (
+        db.query(models.Chapter.course_id)
+        .join(models.Lesson, models.Lesson.chapter_id == models.Chapter.id)
+        .filter(models.Lesson.id == lesson_id)
+        .first()
+    )
+    return row[0] if row else None
+
+
+def get_lesson_comments(db: Session, lesson_id: int):
+    """คอมเมนต์หลักของบทเรียน พร้อมคำตอบใต้แต่ละอัน
+
+    เรียงคอมเมนต์หลักใหม่สุดขึ้นก่อน แต่คำตอบใต้มันเรียงเก่าไปใหม่
+    เพราะบทสนทนาต้องอ่านไล่ตามลำดับเวลาถึงจะเข้าใจ
+
+    ดึงด้วย selectinload ไม่ใช่ปล่อยให้ lazy load — ไม่งั้นคอมเมนต์ 50 อัน
+    จะยิง query ร้อยกว่าครั้ง (N+1) ทุกครั้งที่เปิดหน้าบทเรียน
+    """
+    roots = (
+        db.query(models.Comment)
+        .options(
+            joinedload(models.Comment.user),
+            selectinload(models.Comment.replies).joinedload(models.Comment.user),
+        )
+        .filter(
+            models.Comment.lesson_id == lesson_id,
+            models.Comment.parent_id.is_(None),
+        )
+        .order_by(desc(models.Comment.created_at))
+        .all()
+    )
+    for r in roots:
+        r.replies.sort(key=lambda x: x.created_at or datetime.min)
+    return roots
+
+
+def count_recent_comments(db: Session, user_id: int, seconds: int = 60) -> int:
+    """นับคอมเมนต์ที่คนนี้เพิ่งเขียนไป — ใช้กันสแปม"""
+    since = datetime.utcnow() - timedelta(seconds=seconds)
+    return (
+        db.query(models.Comment)
+        .filter(models.Comment.user_id == user_id, models.Comment.created_at >= since)
+        .count()
+    )
+
+
+def create_comment(db: Session, user_id: int, lesson_id: int, text: str,
+                   parent_id: Optional[int] = None):
+    c = models.Comment(user_id=user_id, lesson_id=lesson_id, text=text,
+                       parent_id=parent_id, created_at=datetime.utcnow())
     db.add(c)
     db.commit()
-    # Re-fetch with user relationship loaded so the response includes profile data
-    c = db.query(models.Comment).options(joinedload(models.Comment.user)).filter(models.Comment.id == c.id).first()
-    return c
+    # โหลด user กลับมาด้วย ไม่งั้นตอนแปลงเป็น JSON จะยิง query เพิ่มอีกรอบ
+    return (
+        db.query(models.Comment)
+        .options(joinedload(models.Comment.user))
+        .filter(models.Comment.id == c.id)
+        .first()
+    )
+
+
+def get_comment(db: Session, comment_id: int):
+    return db.get(models.Comment, comment_id)
+
+
+def delete_comment(db: Session, comment: models.Comment) -> None:
+    """ลบคอมเมนต์ — คำตอบใต้มันหายตามไปด้วย (ตั้งไว้ที่ relationship)
+
+    ไม่ทิ้งคำตอบลอยไว้ เพราะอ่านแล้วไม่รู้ว่าตอบอะไร
+    """
+    db.delete(comment)
+    db.commit()
 
 def set_lesson_rating(db: Session, user_id: int, lesson_id: int, score: int):
     r = db.query(models.Rating).filter_by(user_id=user_id, lesson_id=lesson_id).first()

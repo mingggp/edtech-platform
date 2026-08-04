@@ -326,15 +326,58 @@ class FriendRequest(BaseModel):
     email: str
 
 # --- Comments & Ratings ---
+
+# ความยาวคอมเมนต์ — สั้นเกินไปไม่มีความหมาย ยาวเกินไปคือสแปม/แปะนิยาย
+COMMENT_MIN_LEN = 1
+COMMENT_MAX_LEN = 1000
+
+
+class CommentAuthor(BaseModel):
+    """ข้อมูลคนเขียน "เท่าที่คนอื่นควรเห็น"
+
+    ⚠️ ห้ามใส่ email, grade_level, dek_code, total_minutes ลงในนี้เด็ดขาด
+
+    ช่องโหว่ที่เพิ่งอุด: เดิม CommentRead ใช้ UserRead ทั้งก้อน
+    ทำให้ GET /lessons/{id}/comments ส่ง **อีเมลของนักเรียนทุกคน** ที่คอมเมนต์
+    ไปให้เพื่อนร่วมคอร์สเห็นหมด รวมถึงระดับชั้นและรุ่น DEK
+    ผู้ใช้เว็บนี้เป็นเด็ก ม.ปลาย เรื่องนี้ยอมไม่ได้
+    """
+    id: int
+    nickname: Optional[str] = None
+    full_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    role: str
+    class Config: from_attributes = True
+
+
 class CommentCreate(BaseModel):
-    text: str
+    text: str = Field(min_length=COMMENT_MIN_LEN, max_length=COMMENT_MAX_LEN)
+    # ตอบกลับคอมเมนต์ไหน — เว้นว่างคือเป็นคอมเมนต์ใหม่
+    parent_id: Optional[int] = None
+
+    @field_validator("text")
+    @classmethod
+    def _clean(cls, v: str) -> str:
+        # ตัดช่องว่างหัวท้าย แล้วเช็คอีกที — กันคนกด Enter รัว ๆ ส่งคอมเมนต์ว่าง
+        v = v.strip()
+        if not v:
+            raise ValueError("พิมพ์ข้อความก่อนส่งนะ")
+        return v
+
 
 class CommentRead(BaseModel):
     id: int
     user_id: int
+    lesson_id: int
+    parent_id: Optional[int] = None
     text: str
     created_at: UtcDatetime
-    user: UserRead
+    user: CommentAuthor
+    replies: List["CommentRead"] = []
+    # คนที่กำลังดูอยู่ลบคอมเมนต์นี้ได้ไหม — หน้าเว็บใช้ตัดสินว่าจะโชว์ปุ่มลบ
+    # ให้ backend เป็นคนบอก ไม่ให้หน้าเว็บคิดเองจาก user_id
+    # เพราะกติกาจะได้อยู่ที่เดียว (เจ้าของ หรือ แอดมิน)
+    can_delete: bool = False
     class Config: from_attributes = True
 
 class RatingCreate(BaseModel):

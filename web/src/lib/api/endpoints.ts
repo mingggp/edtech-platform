@@ -6,7 +6,7 @@
  */
 import { API_BASE, api, tokenStore } from './client';
 import type {
-  AppNotification, Chapter, Checkout, Course, Gamification, LeaderboardPeriod,
+  AppNotification, Chapter, Checkout, Comment, Course, Gamification, LeaderboardPeriod,
   LeaderboardRow, Payment, SignupResult, Token, User, XpEvent,
 } from './types';
 
@@ -151,6 +151,21 @@ export const learning = {
       /* ปิดหน้าอยู่แล้ว ทำอะไรต่อไม่ได้ */
     }
   },
+};
+
+/* -------------------------------------------------------------- คอมเมนต์ */
+export const comments = {
+  /** คอมเมนต์ของบทเรียน (คำตอบซ้อนมาใน replies) — ต้องซื้อคอร์สก่อน */
+  list: (lessonId: number) => api.get<Comment[]>(`/lessons/${lessonId}/comments`),
+
+  /** @param parentId ใส่เมื่อเป็นการตอบกลับ */
+  create: (lessonId: number, text: string, parentId?: number) =>
+    api.post<Comment>(`/lessons/${lessonId}/comments`, {
+      text,
+      parent_id: parentId ?? null,
+    }),
+
+  remove: (commentId: number) => api.del<void>(`/lessons/comments/${commentId}`),
 };
 
 /* ------------------------------------------------------------------- กีม */

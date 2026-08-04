@@ -505,6 +505,82 @@
   transform: translateY(-2px); box-shadow: 0 18px 36px -14px oklch(from var(--accent) l c h / 0.7);
 }
 
+/* ============== คอมเมนต์ ============== */
+.learn-page .cmt-wrap { display: flex; flex-direction: column; gap: 18px; }
+.learn-page .comments-head { display: flex; align-items: center; gap: 14px; }
+.learn-page .comments-head h3 {
+  font-family: var(--font-display); font-weight: 700; font-size: 20px;
+  letter-spacing: -0.02em; color: var(--fg-0);
+}
+.learn-page .comments-head h3 b { color: var(--accent-fg); }
+
+.learn-page .composer {
+  display: flex; flex-direction: column; gap: 10px; padding: 14px;
+  border-radius: 16px; border: 1px solid var(--line); background: var(--bg-1);
+  transition: border-color .18s;
+}
+.learn-page .composer:focus-within { border-color: oklch(from var(--accent) l c h / 0.5); }
+.learn-page .composer textarea {
+  width: 100%; resize: vertical; min-height: 60px; font: inherit; font-size: 14px;
+  line-height: 1.6; color: var(--fg-0); background: transparent; border: 0; outline: none;
+}
+.learn-page .composer textarea::placeholder { color: var(--fg-3); }
+.learn-page .composer-bar { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.learn-page .composer-bar .counter {
+  font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--fg-3);
+}
+.learn-page .replying {
+  display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--fg-2);
+  padding: 7px 11px; border-radius: 9px; background: oklch(from var(--accent) l c h / 0.1);
+  border: 1px solid oklch(from var(--accent) l c h / 0.25);
+}
+.learn-page .replying b { color: var(--accent-fg); font-weight: 600; }
+.learn-page .replying button {
+  margin-left: auto; background: none; border: 0; cursor: pointer;
+  color: var(--fg-2); font: inherit; font-size: 12px; text-decoration: underline;
+}
+.learn-page .replying button:hover { color: var(--fg-0); }
+.learn-page .cmt-error { font-size: 12.5px; color: var(--danger); }
+.learn-page .cmt-empty { font-size: 13.5px; color: var(--fg-3); padding: 8px 2px; }
+
+.learn-page .cmt-list { display: flex; flex-direction: column; gap: 20px; }
+.learn-page .cmt { display: flex; gap: 12px; }
+.learn-page .cmt-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.learn-page .cmt-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.learn-page .cmt-head b {
+  font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--fg-0);
+}
+.learn-page .cmt-head time { font-size: 11.5px; color: var(--fg-3); }
+.learn-page .cmt-badge {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em; color: #fff;
+  padding: 2px 8px; border-radius: 99px; background: var(--accent-grad);
+}
+/* ข้อความคอมเมนต์ — ขึ้นบรรทัดใหม่ตามที่ผู้ใช้พิมพ์
+   และ break-word กันคนพิมพ์คำยาว ๆ ติดกันจนดันหน้าเว็บเบี้ยว */
+.learn-page .cmt-text {
+  font-size: 14px; line-height: 1.65; color: var(--fg-1);
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.learn-page .cmt-actions { display: flex; gap: 14px; margin-top: 2px; }
+.learn-page .cmt-actions button {
+  background: none; border: 0; padding: 0; cursor: pointer; font: inherit;
+  font-size: 12.5px; font-weight: 500; color: var(--fg-2); transition: color .15s;
+}
+.learn-page .cmt-actions button:hover { color: var(--fg-0); }
+.learn-page .cmt-actions button.danger:hover { color: var(--danger); }
+.learn-page .cmt-actions button:disabled { opacity: 0.5; cursor: default; }
+
+.learn-page .cmt-replies {
+  display: flex; flex-direction: column; gap: 16px; margin-top: 14px;
+  padding-left: 14px; border-left: 2px solid var(--line-soft);
+}
+.learn-page .cmt.is-reply .cmt-head b { font-size: 12.5px; }
+.learn-page .cmt.is-reply .cmt-text { font-size: 13.5px; }
+
+@media (max-width: 720px) {
+  .learn-page .cmt-replies { padding-left: 10px; }
+}
+
 /* ============== สถานะพิเศษ ============== */
 /* ยังไม่ได้ซื้อ / ยังไม่ล็อกอิน / คอร์สไม่มีบทเรียน */
 .learn-page .lp-notice {

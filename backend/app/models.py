@@ -2,7 +2,7 @@ from sqlalchemy import (
     Column, Integer, String, Boolean, ForeignKey, Float, DateTime, Date, Text,
     UniqueConstraint, Index,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 from .database import Base
 from datetime import datetime
 
@@ -285,14 +285,29 @@ class ExamResult(Base):
     submitted_at = Column(DateTime, default=datetime.utcnow)
 
 class Comment(Base):
+    """คอมเมนต์ใต้บทเรียน — ถามได้ ตอบได้ ลึก 1 ชั้น
+
+    ตั้งใจให้ลึกแค่ชั้นเดียว (คอมเมนต์ -> ตอบกลับ) ไม่ทำเป็นต้นไม้ซ้อนลึก
+    เพราะใต้คลิปเรียนคนอ่านต้องกวาดตาเจอคำตอบของพี่หมิงเร็ว ๆ
+    ถ้าซ้อนได้ไม่จำกัดจะกลายเป็นเธรดยาวที่หาคำตอบไม่เจอ
+    """
     __tablename__ = "comments"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"), index=True)
+    # ตอบกลับคอมเมนต์ไหน — None = เป็นคอมเมนต์หลัก
+    parent_id = Column(Integer, ForeignKey("comments.id", ondelete="CASCADE"),
+                       nullable=True, index=True)
     text = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+
     user = relationship("User", back_populates="comments")
     lesson = relationship("Lesson", back_populates="comments")
+    # ลบคอมเมนต์หลัก = ลบคำตอบใต้มันด้วย ไม่ทิ้งคำตอบลอยที่ไม่รู้ตอบอะไร
+    replies = relationship(
+        "Comment", cascade="all, delete-orphan",
+        backref=backref("parent", remote_side=[id]),
+    )
 
 class Rating(Base):
     __tablename__ = "ratings"

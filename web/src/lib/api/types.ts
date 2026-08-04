@@ -105,6 +105,35 @@ export interface Chapter {
   lessons: Lesson[];
 }
 
+/* ------------------------------------------------------------- comments */
+
+/**
+ * ข้อมูลคนเขียนคอมเมนต์ "เท่าที่คนอื่นควรเห็น"
+ *
+ * ไม่มี email / grade_level / dek_code โดยตั้งใจ — backend ไม่ส่งมาให้
+ * (เคยหลุดมาก่อน ดู backend/app/schemas.py คลาส CommentAuthor)
+ */
+export interface CommentAuthor {
+  id: number;
+  nickname: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  role: 'student' | 'admin';
+}
+
+export interface Comment {
+  id: number;
+  user_id: number;
+  lesson_id: number;
+  parent_id: number | null;
+  text: string;
+  created_at: string;
+  user: CommentAuthor;
+  replies: Comment[];
+  /** backend เป็นคนตัดสินว่าลบได้ไหม หน้าเว็บไม่ต้องคิดเอง */
+  can_delete: boolean;
+}
+
 /* ------------------------------------------------------------- payments */
 /**
  * awaiting = สร้าง QR แล้วรอผู้ใช้จ่ายภายใน 15 นาที

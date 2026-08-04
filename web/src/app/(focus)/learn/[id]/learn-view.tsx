@@ -25,6 +25,7 @@ import { ApiError } from '@/lib/api/client';
 import { courses as coursesApi, learning as learnApi } from '@/lib/api/endpoints';
 import type { Chapter, Lesson } from '@/lib/api/types';
 import { useAuth } from '@/lib/auth-context';
+import { Comments } from './comments';
 import { fmtTime, MAX_RATE, MIN_RATE, useYouTube } from './use-youtube';
 import { useStudyTracker } from './use-study-tracker';
 
@@ -867,6 +868,9 @@ export function LearnView({ courseId }: Props) {
                   </div>
                 </div>
               </div>
+
+              {/* ---------- คอมเมนต์ ---------- */}
+              <Comments lessonId={activeLesson?.id ?? null} />
 
               {/* ---------- เอกสารประกอบ ---------- */}
               {activeLesson?.doc_url ? (
